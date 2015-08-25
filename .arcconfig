@@ -1,0 +1,8 @@
+{
+	"phabricator.uri" : "https://hawksnest.ddns.net:8446",
+	"repository.callsign" : "P",
+	"https.blindly-trust-domains" : ["hawksnest.ddns.net"],
+	"load" : [
+		".arclibs/cppcheck"
+	]
+}
