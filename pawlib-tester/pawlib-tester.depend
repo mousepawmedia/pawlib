@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1440636491 source:/home/jason/Code/Repositories/pawlib-git/pawlib-tester/main.cpp
+	<iochannel.hpp>
+
+1440563130 /home/jason/Code/Repositories/pawlib-git/pawlib/include/iochannel.hpp
+	<iostream>
+
+1440641542 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug/include/iochannel.hpp
+	<iostream>
+	<string>
+	<queue>
+

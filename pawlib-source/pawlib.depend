@@ -1,0 +1,18 @@
+# depslib dependency file v1.0
+1440566014 source:/home/jason/Code/Repositories/pawlib-git/pawlib/main.cpp
+	"iochannel.hpp"
+
+1440563130 /home/jason/Code/Repositories/pawlib-git/pawlib/include/iochannel.hpp
+	<iostream>
+
+1440563205 source:/home/jason/Code/Repositories/pawlib-git/pawlib/src/iochannel.cpp
+	"iochannel.hpp"
+
+1440640175 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/iochannel.cpp
+	"iochannel.hpp"
+
+1440640397 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/iochannel.hpp
+	<iostream>
+	<string>
+	<queue>
+
