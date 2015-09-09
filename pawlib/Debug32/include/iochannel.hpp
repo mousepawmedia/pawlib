@@ -59,11 +59,6 @@ via the same interface.
 #include <stdio.h>
 #include <iostream>
 
-//Needed for the `intptr_t` type
-#include <cstdint>
-
-#include <typeinfo>
-
 //TODO: Swap to pawlib::flexarray
 #include <vector>
 
@@ -138,65 +133,6 @@ namespace pawlib
             base_34 = 34,
             base_35 = 35,
             base_36 = 36
-        };
-
-        //PRECISION
-        struct set_precision
-        {
-            set_precision(int p):precision(p){}
-            int precision = 14;
-        };
-
-        enum IOFormatSciNotation
-        {
-            ///Turn off all scientific notation.
-            sci_none = 0,
-            ///Automatically select the best option.
-            sci_auto = 1,
-            ///Turn on all scientific notation.
-            sci_on = 2
-        };
-
-        enum IOFormatPointer
-        {
-            ///Print the value at the address.
-            ptr_value = 0,
-            ///Print the actual memory address.
-            ptr_address = 1,
-            ///Dump the hexadecimal representation of the memory at address.
-            ptr_memory = 2
-        };
-
-        /**Indicate how many bytes to read from any pointer that isn't
-         * recognized explicitly by iochannel, including void pointers.
-         * This will not override the memory dump read size of built-in types.*/
-        struct read_size
-        {
-            /**Indicate how many bytes to read from any pointer that isn't
-             * recognized explicitly by iochannel, including void pointers.
-             * This will not override the memory dump read size of built-in
-             * types.
-             * CAUTION: Misuse can cause SEGFAULT or other memory errors.
-             \param the number of bytes to read*/
-            read_size(unsigned int i):readsize(i){}
-            unsigned int readsize = 1;
-        };
-
-        enum IOFormatMemorySeperators
-        {
-            ///Output as one long string.
-            mem_nosep = 0,
-            mem_bytesep = (1 << 0),
-            mem_wordsep = (1 << 1),
-            mem_allsep = 3
-        };
-
-        enum IOFormatNumeralCase
-        {
-            ///Print all non-numeral digits as lowercase.
-            num_lower = 0,
-            ///Print all non-numeral digits as uppercase.
-            num_upper = 1
         };
 
         /**The standard ANSI text attributes.*/
@@ -288,9 +224,7 @@ namespace pawlib
             /**Error messages.*/
             cat_error = 2,
             /**Debug messages, such as variable outputs.*/
-            cat_debug = 3,
-            /**All message categories. Does not have a correlating signal.*/
-            cat_all = 4
+            cat_debug = 3
         };
 
         /**Special structures for iochannel, such as "END".*/
@@ -298,13 +232,6 @@ namespace pawlib
         {
             /**End of message, remove formatting.*/
             io_end = 0
-        };
-
-        enum IOEchoMode
-        {
-            echo_none = 0,
-            echo_printf = 1,
-            echo_cout = 2
         };
     }
 
@@ -352,66 +279,30 @@ namespace pawlib
             Callback must be of form 'void callback(char*){}'*/
             sigc::signal<void, std::string> signal_all;
 
-            /*C DATA TYPES*/
+            /*The stream insertion operators.*/
+            //TODO: Add doc comments.
             iochannel& operator<<(const bool&);
             iochannel& operator<<(const int&);
             iochannel& operator<<(const float&);
             iochannel& operator<<(const double&);
-            iochannel& operator<<(const char&);
-
-            /*C DATA TYPE POINTERS*/
-            iochannel& operator<<(const bool*);
-            iochannel& operator<<(const int*);
-            iochannel& operator<<(const float*);
-            iochannel& operator<<(const double*);
             iochannel& operator<<(const char*);
-            iochannel& operator<<(const void*);
 
-            /*C++ DATA TYPES*/
-            iochannel& operator<<(const std::string&);
-
-            /*C++ DATA TYPE POINTERS*/
-            iochannel& operator<<(const std::string*);
-
-            /*MATH FLAGS*/
             iochannel& operator<<(const IOFormatBase&);
-            iochannel& operator<<(const set_precision&);
-            iochannel& operator<<(const IOFormatSciNotation&);
-            iochannel& operator<<(const IOFormatNumeralCase&);
-            iochannel& operator<<(const IOFormatPointer&);
-            iochannel& operator<<(const read_size&);
-            iochannel& operator<<(const IOFormatMemorySeperators&);
-
-            /*FORMAT FLAGS*/
             iochannel& operator<<(const IOFormatTextBG&);
             iochannel& operator<<(const IOFormatTextFG&);
             iochannel& operator<<(const IOFormatTextAttributes&);
-
-            /*BROADCAST FLAGS*/
             iochannel& operator<<(const IOFormatCategory&);
             iochannel& operator<<(const IOFormatVerbosity&);
             iochannel& operator<<(const IOSpecial&);
-
-            void configure_echo(IOEchoMode, IOFormatVerbosity = vrb_tmi, IOFormatCategory = cat_all);
 
             ~iochannel();
         protected:
             //TODO: Swap for pawlib::string
             std::string msg;
 
-            IOEchoMode echomode = echo_printf;
-            IOFormatVerbosity echovrb = vrb_tmi;
-            IOFormatCategory echocat = cat_all;
-
             /*Current settings set by enums and flags. These change as we go,
             and should be reset after each message.*/
             IOFormatBase base = base_10;
-            int precision = 14;
-            IOFormatSciNotation sci = sci_auto;
-            IOFormatNumeralCase numcase = num_lower;
-            IOFormatPointer ptr = ptr_value;
-            unsigned int readsize = 1;
-            unsigned char memformat = 3;
 
             IOFormatTextAttributes ta = ta_none;
             IOFormatTextBG bg = bg_none;
@@ -431,21 +322,13 @@ namespace pawlib
             */
             void inject(std::string, bool=false);
 
-            /**Insert a memory address or its raw contents into the output
-            * stream.
-            * \param the address to insert
-            * \param the size of the object referenced
-            * \param whether to print literal address (false) or memory
-            * dump (true); default false*/
-            void inject(const void*, unsigned int len, bool=false);
-
             /**Transmit the current pending output stream and reset in
             * preparation for the next message.
             */
             void transmit();
 
             ///Dirty flag raised when attributes are changed and not yet applied.
-            bool dirty_attributes = false;
+            bool dirty_attributes;
 
             /**Apply formatting attributes (usually ANSI) that are pending.
             * \param true if new attributes were applied

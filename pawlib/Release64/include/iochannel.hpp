@@ -162,33 +162,7 @@ namespace pawlib
             ///Print the value at the address.
             ptr_value = 0,
             ///Print the actual memory address.
-            ptr_address = 1,
-            ///Dump the hexadecimal representation of the memory at address.
-            ptr_memory = 2
-        };
-
-        /**Indicate how many bytes to read from any pointer that isn't
-         * recognized explicitly by iochannel, including void pointers.
-         * This will not override the memory dump read size of built-in types.*/
-        struct read_size
-        {
-            /**Indicate how many bytes to read from any pointer that isn't
-             * recognized explicitly by iochannel, including void pointers.
-             * This will not override the memory dump read size of built-in
-             * types.
-             * CAUTION: Misuse can cause SEGFAULT or other memory errors.
-             \param the number of bytes to read*/
-            read_size(unsigned int i):readsize(i){}
-            unsigned int readsize = 1;
-        };
-
-        enum IOFormatMemorySeperators
-        {
-            ///Output as one long string.
-            mem_nosep = 0,
-            mem_bytesep = (1 << 0),
-            mem_wordsep = (1 << 1),
-            mem_allsep = 3
+            ptr_address = 1
         };
 
         enum IOFormatNumeralCase
@@ -288,9 +262,7 @@ namespace pawlib
             /**Error messages.*/
             cat_error = 2,
             /**Debug messages, such as variable outputs.*/
-            cat_debug = 3,
-            /**All message categories. Does not have a correlating signal.*/
-            cat_all = 4
+            cat_debug = 3
         };
 
         /**Special structures for iochannel, such as "END".*/
@@ -298,13 +270,6 @@ namespace pawlib
         {
             /**End of message, remove formatting.*/
             io_end = 0
-        };
-
-        enum IOEchoMode
-        {
-            echo_none = 0,
-            echo_printf = 1,
-            echo_cout = 2
         };
     }
 
@@ -379,8 +344,6 @@ namespace pawlib
             iochannel& operator<<(const IOFormatSciNotation&);
             iochannel& operator<<(const IOFormatNumeralCase&);
             iochannel& operator<<(const IOFormatPointer&);
-            iochannel& operator<<(const read_size&);
-            iochannel& operator<<(const IOFormatMemorySeperators&);
 
             /*FORMAT FLAGS*/
             iochannel& operator<<(const IOFormatTextBG&);
@@ -392,16 +355,10 @@ namespace pawlib
             iochannel& operator<<(const IOFormatVerbosity&);
             iochannel& operator<<(const IOSpecial&);
 
-            void configure_echo(IOEchoMode, IOFormatVerbosity = vrb_tmi, IOFormatCategory = cat_all);
-
             ~iochannel();
         protected:
             //TODO: Swap for pawlib::string
             std::string msg;
-
-            IOEchoMode echomode = echo_printf;
-            IOFormatVerbosity echovrb = vrb_tmi;
-            IOFormatCategory echocat = cat_all;
 
             /*Current settings set by enums and flags. These change as we go,
             and should be reset after each message.*/
@@ -410,8 +367,6 @@ namespace pawlib
             IOFormatSciNotation sci = sci_auto;
             IOFormatNumeralCase numcase = num_lower;
             IOFormatPointer ptr = ptr_value;
-            unsigned int readsize = 1;
-            unsigned char memformat = 3;
 
             IOFormatTextAttributes ta = ta_none;
             IOFormatTextBG bg = bg_none;
@@ -431,21 +386,13 @@ namespace pawlib
             */
             void inject(std::string, bool=false);
 
-            /**Insert a memory address or its raw contents into the output
-            * stream.
-            * \param the address to insert
-            * \param the size of the object referenced
-            * \param whether to print literal address (false) or memory
-            * dump (true); default false*/
-            void inject(const void*, unsigned int len, bool=false);
-
             /**Transmit the current pending output stream and reset in
             * preparation for the next message.
             */
             void transmit();
 
             ///Dirty flag raised when attributes are changed and not yet applied.
-            bool dirty_attributes = false;
+            bool dirty_attributes;
 
             /**Apply formatting attributes (usually ANSI) that are pending.
             * \param true if new attributes were applied

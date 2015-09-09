@@ -6,10 +6,10 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
-				<Option output="bin/Debug/pawlib" prefix_auto="1" extension_auto="1" />
+			<Target title="Debug64">
+				<Option output="bin/Debug64/pawlib" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="obj/Debug/" />
+				<Option object_output="obj/Debug64/" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -18,48 +18,109 @@
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add option="-m64" />
 					<Add directory="include" />
 				</Compiler>
 				<ExtraCommands>
-					<Add before="rm -rf ../pawlib/Debug/include" />
-					<Add before="rm -rf ../pawlib/Debug/lib" />
-					<Add after="cp -r ./include ../pawlib/Debug/include" />
-					<Add after="cp -r ./bin/Debug ../pawlib/Debug/lib" />
+					<Add after="rm -rf ../pawlib/Debug64/include" />
+					<Add after="rm -rf ../pawlib/Debug64/lib" />
+					<Add after="cp -r ./include ../pawlib/Debug64/include" />
+					<Add after="cp -r ./bin/Debug64 ../pawlib/Debug64/lib" />
+					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
-			<Target title="Release">
-				<Option output="bin/Release/pawlib" prefix_auto="1" extension_auto="1" />
+			<Target title="Release64">
+				<Option output="bin/Release64/pawlib" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="obj/Release/" />
+				<Option object_output="obj/Release64/" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-std=c++11" />
+					<Add option="-m64" />
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 				</Linker>
 				<ExtraCommands>
-					<Add before="rm -rf ../pawlib/Release/include" />
-					<Add before="rm -rf ../pawlib/Release/lib" />
-					<Add after="cp -r ./include ../pawlib/Release/include" />
-					<Add after="cp -r ./bin/Debug ../pawlib/Release/lib" />
+					<Add after="rm -rf ../pawlib/Release64/include" />
+					<Add after="rm -rf ../pawlib/Release64/lib" />
+					<Add after="cp -r ./include ../pawlib/Release64/include" />
+					<Add after="cp -r ./bin/Release64 ../pawlib/Release64/lib" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Debug32">
+				<Option output="bin/Debug32/pawlib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Debug32/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-m32" />
+					<Add directory="include" />
+				</Compiler>
+				<ExtraCommands>
+					<Add after="rm -rf ../pawlib/Debug32/include" />
+					<Add after="rm -rf ../pawlib/Debug32/lib" />
+					<Add after="cp -r ./include ../pawlib/Debug32/include" />
+					<Add after="cp -r ./bin/Debug32 ../pawlib/Debug32/lib" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="Release32">
+				<Option output="bin/Release32/pawlib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release32/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-std=c++11" />
+					<Add option="-m32" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="rm -rf ../pawlib/Release32/include" />
+					<Add after="rm -rf ../pawlib/Release32/lib" />
+					<Add after="cp -r ./include ../pawlib/Release32/include" />
+					<Add after="cp -r ./bin/Debug32 ../pawlib/Release32/lib" />
+					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug64;Release64;Debug32;Release32;" />
+			<Add alias="Debug" targets="Debug64;Debug32;" />
+			<Add alias="Release" targets="Release64;Release32;" />
+		</VirtualTargets>
 		<Compiler>
 			<Add option="-std=c++11" />
+			<Add option="`pkg-config --cflags --libs sigc++-2.0`" />
 		</Compiler>
 		<Unit filename="include/iochannel.hpp" />
+		<Unit filename="include/stdutils.h" />
 		<Unit filename="src/iochannel.cpp" />
+		<Unit filename="src/stdutils.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
-			<lib_finder disable_auto="1" />
+			<lib_finder disable_auto="1">
+				<lib name="sigc++-2.0" />
+			</lib_finder>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
