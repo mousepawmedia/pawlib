@@ -116,10 +116,6 @@ string binconv::toBinary(float num)
                 binary[pageIndex] = '1';
                 temp -= 1;
             }
-            else
-            {
-                int mike = 1;
-            }
             pageIndex++;
         }
         //the exponent used for conversion
@@ -215,7 +211,7 @@ string binconv::toBinary(double num)
     //the number of bits used to store this type of number (16 bytes)
     int numBits = 64;
     //stores the new binary format
-    string binary(64, '0');
+    string binary(numBits, '0');
     if (num != 0)
     {
         //stores a 0 if the number is positive
