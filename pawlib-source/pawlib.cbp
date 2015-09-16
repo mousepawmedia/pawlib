@@ -53,7 +53,9 @@
 		<Compiler>
 			<Add option="-std=c++11" />
 		</Compiler>
+		<Unit filename="include/binconv.hpp" />
 		<Unit filename="include/iochannel.hpp" />
+		<Unit filename="src/binconv.cpp" />
 		<Unit filename="src/iochannel.cpp" />
 		<Extensions>
 			<code_completion />

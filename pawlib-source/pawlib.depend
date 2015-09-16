@@ -16,3 +16,20 @@
 	<string>
 	<queue>
 
+1442380168 source:/home/michael/MousePaw/pawlib-git/pawlib-source/src/iochannel.cpp
+	"iochannel.hpp"
+
+1442380168 /home/michael/MousePaw/pawlib-git/pawlib-source/include/iochannel.hpp
+	<iostream>
+	<string>
+	<queue>
+
+1442445082 source:/home/michael/MousePaw/pawlib-git/pawlib-source/src/binconv.cpp
+	"binconv.hpp"
+
+1442380837 /home/michael/MousePaw/pawlib-git/pawlib-source/include/binconv.hpp
+	<string>
+	<sstream>
+	<math.h>
+	<vector>
+
