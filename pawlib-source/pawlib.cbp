@@ -110,6 +110,7 @@
 			<Add option="-std=c++11" />
 			<Add option="`pkg-config --cflags --libs sigc++-2.0`" />
 		</Compiler>
+		<Unit filename="include/binconv.hpp" />
 		<Unit filename="include/iochannel.hpp" />
 		<Unit filename="include/stdutils.h" />
 		<Unit filename="src/iochannel.cpp" />
