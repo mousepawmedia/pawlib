@@ -463,6 +463,9 @@ namespace pawlib
             void reset_flags();
 
     };
+
+    ///Global static instance of iochannel.
+    static iochannel ioc;
 }
 
 

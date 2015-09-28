@@ -7,6 +7,7 @@ using pawlib::iochannel;
 
 //Format enumerations.
 using namespace pawlib::ioformat;
+using namespace pawlib;
 
 void print(std::string msg)
 {
@@ -15,7 +16,7 @@ void print(std::string msg)
 
 int main()
 {
-    iochannel ioc;
+    //iochannel ioc;
     //This has to live here because evil.
     ioc.signal_all.connect(sigc::ptr_fun(print));
 
