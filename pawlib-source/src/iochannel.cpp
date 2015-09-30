@@ -11,13 +11,11 @@ namespace pawlib
         dirty_attributes = false;
     }
 
-    iochannel::~iochannel()
-    {
-        //Destructor
-    }
-
     iochannel& iochannel::operator<<(const bool& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         const char* str = (rhs ? "TRUE" : "FALSE");
         inject(str);
         return *this;
@@ -25,6 +23,9 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const bool* rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         switch(ptr)
         {
             //If we are to print as value...
@@ -53,17 +54,151 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const int& rhs)
     {
-        //size_t len = stdutils::intlen(rhs, base, true);
-        //char str[len];
-        //memcpy(str, stdutils::itoa(rhs, base), len);
-        //inject(str);
-        inject(stdutils::itos(rhs, base, numcase));
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        int len = stdutils::intlen(rhs, base, true);
+        char cstr[len+1] = {'\0'};
+        stdutils::itoa(cstr, rhs, base, len, numcase);
+        inject(cstr);
         return *this;
     }
 
     iochannel& iochannel::operator<<(const int* rhs)
     {
-       switch(ptr)
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        switch(ptr)
+        {
+            //If we are to print as value...
+            case ptr_value:
+            {
+                *this << *rhs;
+                break;
+            }
+            //If we are to print as address...
+            case ptr_address:
+            {
+                //Inject raw address.
+                inject(rhs, sizeof(*rhs), false);
+                break;
+            }
+            //If we are to print the raw memory...
+            case ptr_memory:
+            {
+                //Inject address for memory dump.
+                inject(rhs, sizeof(*rhs), true);
+                break;
+            }
+        }
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const long int& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        int len = stdutils::lintlen(rhs, base, true);
+        char cstr[len+1] = {'\0'};
+        stdutils::litoa(cstr, rhs, base, len, numcase);
+        inject(cstr);
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const long int* rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        switch(ptr)
+        {
+            //If we are to print as value...
+            case ptr_value:
+            {
+                *this << *rhs;
+                break;
+            }
+            //If we are to print as address...
+            case ptr_address:
+            {
+                //Inject raw address.
+                inject(rhs, sizeof(*rhs), false);
+                break;
+            }
+            //If we are to print the raw memory...
+            case ptr_memory:
+            {
+                //Inject address for memory dump.
+                inject(rhs, sizeof(*rhs), true);
+                break;
+            }
+        }
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const unsigned int& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        int len = stdutils::uintlen(rhs, base);
+        char cstr[len+1] = {'\0'};
+        stdutils::uitoa(cstr, rhs, base, len, numcase);
+        inject(cstr);
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const unsigned int* rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        switch(ptr)
+        {
+            //If we are to print as value...
+            case ptr_value:
+            {
+                *this << *rhs;
+                break;
+            }
+            //If we are to print as address...
+            case ptr_address:
+            {
+                //Inject raw address.
+                inject(rhs, sizeof(*rhs), false);
+                break;
+            }
+            //If we are to print the raw memory...
+            case ptr_memory:
+            {
+                //Inject address for memory dump.
+                inject(rhs, sizeof(*rhs), true);
+                break;
+            }
+        }
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const unsigned long int& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        int len = stdutils::ulintlen(rhs, base);
+        char cstr[len+1] = {'\0'};
+        stdutils::ulitoa(cstr, rhs, base, len, numcase);
+        inject(cstr);
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const unsigned long int* rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        switch(ptr)
         {
             //If we are to print as value...
             case ptr_value:
@@ -91,6 +226,9 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const float& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         //We use the same functions as for doubles, so just static_cast.
         *this << static_cast<double>(rhs);
         return *this;
@@ -98,6 +236,9 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const float* rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         switch(ptr)
         {
             //If we are to print as value...
@@ -126,12 +267,18 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const double& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         inject(stdutils::dtos(rhs, precision, sci).c_str());
         return *this;
     }
 
     iochannel& iochannel::operator<<(const double* rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         switch(ptr)
         {
             //If we are to print as value...
@@ -160,6 +307,9 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const void* rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         switch(ptr)
         {
             //If we are to print as value...
@@ -188,13 +338,36 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const char& rhs)
     {
-        char ch[2] = {rhs, '\0'};
-        inject(ch);
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        switch(charval)
+        {
+            //Output as character.
+            case char_char:
+            {
+                //This will call the inject(char) function.
+                inject(rhs);
+                break;
+            }
+            //Output as integer.
+            case char_int:
+            {
+                int len = stdutils::intlen(rhs, base, true);
+                char cstr[len+1] = {'\0'};
+                stdutils::itoa(cstr, rhs, base, len, numcase);
+                inject(cstr);
+                break;
+            }
+        }
         return *this;
     }
 
     iochannel& iochannel::operator<<(const char* rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         switch(ptr)
         {
             //If we are to print as value...
@@ -208,7 +381,7 @@ namespace pawlib
             case ptr_address:
             {
                 //Inject raw address.
-                inject(rhs, sizeof(rhs), false);
+                inject(rhs, sizeof(*rhs), false);
                 break;
             }
             //If we are to print the raw memory...
@@ -224,42 +397,72 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const std::string& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         inject(rhs.c_str());
         return *this;
     }
 
     iochannel& iochannel::operator<<(const IOFormatBase& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         base = rhs;
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const IOFormatCharValue& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        charval = rhs;
         return *this;
     }
 
     iochannel& iochannel::operator<<(const set_precision& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         precision = rhs.precision;
         return *this;
     }
 
     iochannel& iochannel::operator<<(const IOFormatSciNotation& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         sci = rhs;
         return *this;
     }
 
     iochannel& iochannel::operator<<(const IOFormatNumeralCase& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         numcase = rhs;
         return *this;
     }
 
     iochannel& iochannel::operator<<(const IOFormatPointer& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         ptr = rhs;
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOFormatMemorySeperators& rhs)
+    iochannel& iochannel::operator<<(const IOFormatMemorySeparators& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         if(rhs == 0)
         {
             memformat = 0;
@@ -268,10 +471,15 @@ namespace pawlib
         {
             memformat = (memformat | rhs);
         }
+
+        return *this;
     }
 
     iochannel& iochannel::operator<<(const IOFormatTextBG& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         //Save the setting.
         bg = rhs;
         //Raise dirty flag for attributes.
@@ -281,6 +489,9 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const IOFormatTextFG& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         //Save the setting.
         fg = rhs;
         //Raise dirty flag for attributes.
@@ -290,6 +501,9 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const IOFormatTextAttributes& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         //Save the setting.
         ta = rhs;
         //Raise dirty flag for attributes.
@@ -299,7 +513,12 @@ namespace pawlib
 
     iochannel& iochannel::operator<<(const read_size& rhs)
     {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
         readsize = rhs.readsize;
+
+        return *this;
     }
 
     iochannel& iochannel::operator<<(const IOFormatVerbosity& rhs)
@@ -323,20 +542,118 @@ namespace pawlib
             case io_end:
             {
                 reset_attributes();
-                inject("\n");
+                (can_parse()) ? inject("\n") : inject("");
                 transmit();
+                break;
+            }
+            case io_end_keep:
+            {
+                (can_parse()) ? inject("\n") : inject("");
+                transmit(true);
+                break;
+            }
+            case io_send:
+            {
+                reset_attributes();
+                inject("");
+                transmit(true);
+                break;
+            }
+            case io_send_keep:
+            {
+                inject("");
+                transmit(true);
+                break;
+            }
+            case io_endline:
+            {
+                reset_attributes();
+                (can_parse()) ? inject("\n") : inject("");
+                break;
+            }
+            case io_endline_keep:
+            {
+                (can_parse()) ? inject("\n") : inject("");
                 break;
             }
         }
         return *this;
     }
 
-    void iochannel::inject(std::string str, bool recursive)
+    bool iochannel::apply_attributes()
+    {
+        bool r = false;
+        //If we have unapplied attributes.
+        if(dirty_attributes)
+        {
+            //TODO: We will need to switch formats. For now, just ANSI.
+            format = "\033[";
+            format.append(stdutils::itos(ta));
+
+            if(bg > 0)
+            {
+                format.append(";");
+                format.append(stdutils::itos(bg));
+            }
+
+            if(fg > 0)
+            {
+                format.append(";");
+                format.append(stdutils::itos(fg));
+            }
+
+            format.append("m");
+
+            //We took care of the attributes. Lower the dirty flag.
+            dirty_attributes = false;
+            r = true;
+        }
+        return r;
+    }
+
+    bool iochannel::can_parse()
+    {
+        /* If the verbosity is in range or the category is
+         * set to parse, then return false. Otherwise,
+         * return true.*/
+        return ((vrb <= process_v) && (process_c & cat)) ? true : false;
+    }
+
+    void iochannel::clear_msg()
+    {
+        /*TODO: This function may need to be either expanded once we stop using
+        std::vector, or just dropped in favor of `msg.clear()`
+        */
+
+        msg.clear();
+        msg = "";
+    }
+
+    void iochannel::configure_echo(IOEchoMode echo, IOFormatVerbosity echo_vrb, IOFormatCategory echo_cat)
+    {
+        echomode = echo;
+        echovrb = echo_vrb;
+        echocat = echo_cat;
+    }
+
+    void iochannel::inject(char ch)
+    {
+        //If we just applied attributes, push them now.
+        if(apply_attributes())
+        {
+            inject(format.c_str());
+        }
+
+        msg.push_back(ch);
+        //TODO: Swap for pawlib::string
+    }
+
+    void iochannel::inject(const char* str, bool recursive)
     {
         //If we just applied attributes, push them now.
         if(!recursive && apply_attributes())
         {
-            inject(format);
+            inject(format.c_str());
         }
 
         //Append to the message.
@@ -393,137 +710,31 @@ namespace pawlib
         }
     }
 
-    void iochannel::transmit()
+    void iochannel::shutup(IOFormatCategory cat)
     {
-        if(msg != "")
+        process_c = process_c & ~cat;
+        if(process_c == 0)
         {
-            switch(vrb)
-            {
-                case vrb_quiet:
-                {
-                    signal_v_quiet(msg);
-                    /* Fall through, so the lower signals get emitted to.
-                     * This allows outputs to connect to the HIGHEST
-                     * verbosity they will allow, and get the rest regardless.
-                     */
-                }
-                case vrb_normal:
-                {
-                    signal_v_normal(msg);
-                    //Fall through.
-                }
-                case vrb_chatty:
-                {
-                    signal_v_chatty(msg);
-                    //Fall through.
-                }
-                case vrb_tmi:
-                {
-                    signal_v_tmi(msg);
-                    break;
-                }
-            }
-
-            switch(cat)
-            {
-                case cat_normal:
-                {
-                    signal_c_normal(msg);
-                    break;
-                }
-                case cat_debug:
-                {
-                    signal_c_debug(msg);
-                    break;
-                }
-                case cat_warning:
-                {
-                    signal_c_warning(msg);
-                    break;
-                }
-                case cat_error:
-                {
-                    signal_c_error(msg);
-                    break;
-                }
-            }
-
-            signal_all(msg);
-
-            //If we are supposed to be echoing
-            if(echomode != echo_none)
-            {
-                //If the verbosity and category is correct...
-                if(vrb <= echovrb && (cat == echocat || echocat == cat_all))
-                {
-                    switch(echomode)
-                    {
-                        case echo_printf:
-                        {
-                            printf("%s", msg.c_str());
-                            break;
-                        }
-                        case echo_cout:
-                        {
-                            std::cout << msg.c_str();
-                            break;
-                        }
-                    }
-                }
-            }
-
-            //Reset the system in prep for the next message.
-            clear_msg();
-            reset_flags();
+            printf("WARNING: All message categories have been turned off!\n");
         }
     }
 
-    bool iochannel::apply_attributes()
+    void iochannel::shutup(IOFormatVerbosity vrb)
     {
-        bool r = false;
-        //If we have unapplied attributes.
-        if(dirty_attributes)
-        {
-            //TODO: We will need to switch formats. For now, just ANSI.
-            format = "\033[";
-            format.append(stdutils::itos(ta));
-
-            if(bg > 0)
-            {
-                format.append(";");
-                format.append(stdutils::itos(bg));
-            }
-
-            if(fg > 0)
-            {
-                format.append(";");
-                format.append(stdutils::itos(fg));
-            }
-
-            format.append("m");
-
-            //We took care of the attributes. Lower the dirty flag.
-            dirty_attributes = false;
-            r = true;
-        }
-        return r;
+        //Set the processing verbosity.
+        process_v = vrb;
     }
 
-    void iochannel::configure_echo(IOEchoMode echo, IOFormatVerbosity echo_vrb, IOFormatCategory echo_cat)
+    void iochannel::speakup()
     {
-        echomode = echo;
-        echovrb = echo_vrb;
-        echocat = echo_cat;
+        process_v = vrb_tmi;
+        process_c = cat_all;
     }
 
-    void iochannel::clear_msg()
+    void iochannel::speakup(IOFormatCategory cat)
     {
-        /*TODO: This function may need to be either expanded once we stop using
-        std::vector, or just dropped in favor of `msg.clear()`
-        */
-
-        msg.clear();
-        msg = "";
+        //Allow the category through by turning on its bit.
+        process_c = process_c | cat;
     }
 
     void iochannel::reset_attributes()
@@ -548,15 +759,121 @@ namespace pawlib
 
         //Reset the base.
         base = base_dec;
+        charval = char_char;
         precision = 14;
         sci = sci_auto;
         numcase = num_lower;
         ptr = ptr_value;
         readsize = 1;
-        memformat = 3;
+        memformat = 0;
 
         //We reset the verbosity and category.
         vrb = vrb_normal;
         cat = cat_normal;
+    }
+
+    void iochannel::transmit(bool keep)
+    {
+        if(msg != "")
+        {
+            switch(vrb)
+            {
+                case vrb_quiet:
+                {
+                    signal_v_quiet(msg, cat);
+                    /* Fall through, so the lower signals get emitted to.
+                     * This allows outputs to connect to the HIGHEST
+                     * verbosity they will allow, and get the rest regardless.
+                     */
+                }
+                case vrb_normal:
+                {
+                    signal_v_normal(msg, cat);
+                    //Fall through.
+                }
+                case vrb_chatty:
+                {
+                    signal_v_chatty(msg, cat);
+                    //Fall through.
+                }
+                case vrb_tmi:
+                {
+                    signal_v_tmi(msg, cat);
+                    break;
+                }
+            }
+
+            switch(cat)
+            {
+                case cat_normal:
+                {
+                    signal_c_normal(msg, vrb);
+                    break;
+                }
+                case cat_debug:
+                {
+                    signal_c_debug(msg, vrb);
+                    break;
+                }
+                case cat_warning:
+                {
+                    signal_c_warning(msg, vrb);
+                    break;
+                }
+                case cat_error:
+                {
+                    signal_c_error(msg, vrb);
+                    break;
+                }
+                case cat_all:
+                {
+                    //This has no corresponding signal.
+                    break;
+                }
+            }
+
+            signal_all(msg, vrb, cat);
+
+            //If we are supposed to be echoing
+            if(echomode != echo_none)
+            {
+                //If the verbosity and category is correct...
+                if(vrb <= echovrb && (cat == echocat || echocat == cat_all))
+                {
+                    switch(echomode)
+                    {
+                        case echo_printf:
+                        {
+                            printf("%s", msg.c_str());
+                            break;
+                        }
+                        case echo_cout:
+                        {
+                            std::cout << msg.c_str();
+                            break;
+                        }
+                        case echo_none:
+                        {
+                            //We should never reach this point!
+                            break;
+                        }
+                    }
+                }
+            }
+
+            //Reset the system in prep for the next message.
+            if(!keep)
+            {
+                reset_flags();
+            }
+
+            clear_msg();
+
+        }
+    }
+
+    iochannel::~iochannel()
+    {
+        //Destructor
     }
 }

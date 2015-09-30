@@ -8,15 +8,16 @@
 1440563205 source:/home/jason/Code/Repositories/pawlib-git/pawlib/src/iochannel.cpp
 	"iochannel.hpp"
 
-1443324099 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/iochannel.cpp
+1444078379 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/iochannel.cpp
 	"iochannel.hpp"
 
-1443474395 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/iochannel.hpp
+1444078266 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/iochannel.hpp
 	<stdio.h>
 	<iostream>
 	<cstdint>
 	<typeinfo>
 	<vector>
+	<bitset>
 	<sigc++/signal.h>
 	<sigc++/trackable.h>
 	<string>
@@ -92,14 +93,14 @@
 	<sigc++/trackable.h>
 	<sigc++/functors/functor_trait.h>
 
-1443474388 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/stdutils.h
+1444077723 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/stdutils.h
 	<cmath>
 	<cstring>
 	<cstdio>
 	<cstdint>
 	<string>
 
-1443322621 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/stdutils.cpp
+1444077690 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/stdutils.cpp
 	"stdutils.h"
 
 1414227986 /usr/include/sigc++-2.0/sigc++/sigc++.h

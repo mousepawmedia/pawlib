@@ -67,6 +67,9 @@ via the same interface.
 //TODO: Swap to pawlib::flexarray
 #include <vector>
 
+//TODO: Remove me.
+#include <bitset>
+
 //Import what we need from sigc++
 #include <sigc++/signal.h>
 #include <sigc++/trackable.h>
@@ -182,21 +185,30 @@ namespace pawlib
             unsigned int readsize = 1;
         };
 
-        enum IOFormatMemorySeperators
+        enum IOFormatMemorySeparators
         {
             ///Output as one long string.
             mem_nosep = 0,
+            ///Output with spaces between bytes.
             mem_bytesep = (1 << 0),
+            ///Output with bars between words (8 bytes).
             mem_wordsep = (1 << 1),
+            ///Output with spaces between bytes and bars between words.
             mem_allsep = 3
         };
 
         enum IOFormatNumeralCase
         {
-            ///Print all non-numeral digits as lowercase.
+            ///Print all letter digits as lowercase.
             num_lower = 0,
-            ///Print all non-numeral digits as uppercase.
+            ///Print all letter digits as uppercase.
             num_upper = 1
+        };
+
+        enum IOFormatCharValue
+        {
+            char_char = 0,
+            char_int = 1
         };
 
         /**The standard ANSI text attributes.*/
@@ -282,22 +294,32 @@ namespace pawlib
         enum IOFormatCategory
         {
             /**The default value - anything that doesn't fit elsewhere.*/
-            cat_normal = 0,
+            cat_normal = (1 << 0),
             /**Warnings, but not necessarily errors.*/
-            cat_warning = 1,
+            cat_warning = (1 << 1),
             /**Error messages.*/
-            cat_error = 2,
+            cat_error = (1 << 2),
             /**Debug messages, such as variable outputs.*/
-            cat_debug = 3,
+            cat_debug = (1 << 3),
             /**All message categories. Does not have a correlating signal.*/
-            cat_all = 4
+            cat_all = 15
         };
 
         /**Special structures for iochannel, such as "END".*/
         enum IOSpecial
         {
+            /**Newline, end of message, remove formatting.*/
+            io_end = 0,
+            /**Newline, end of message, retain formatting.*/
+            io_end_keep = 1,
             /**End of message, remove formatting.*/
-            io_end = 0
+            io_send = 2,
+            /**End of message, retain formatting.*/
+            io_send_keep = 3,
+            /**Newline, NOT end of message, retain formatting.*/
+            io_endline_keep = 4,
+            /**Newline, NOT end of message, remove formatting.*/
+            io_endline = 5,
         };
 
         enum IOEchoMode
@@ -323,38 +345,41 @@ namespace pawlib
             iochannel();
 
             /**Emitted when a message with verbosity 0 (quiet) is broadcast.
-            Callback must be of form 'void callback(char*){}'*/
-            sigc::signal<void, std::string> signal_v_quiet;
+            Callback must be of form 'void callback(string, IOFormatCategory){}'*/
+            sigc::signal<void, std::string, IOFormatCategory> signal_v_quiet;
             /**Emitted when a message with verbosity <= 1 (normal) is broadcast.
-            Callback must be of form 'void callback(char*){}'*/
-            sigc::signal<void, std::string> signal_v_normal;
+            Callback must be of form 'void callback(string, IOFormatCategory){}'*/
+            sigc::signal<void, std::string, IOFormatCategory> signal_v_normal;
             /**Emitted when a message with verbosity <=2 (chatty) is broadcast.
-            Callback must be of form 'void callback(char*){}'*/
-            sigc::signal<void, std::string> signal_v_chatty;
+            Callback must be of form 'void callback(string, IOFormatCategory){}'*/
+            sigc::signal<void, std::string, IOFormatCategory> signal_v_chatty;
             /**Emitted when a message with verbosity <=3 (tmi) is broadcast.
-            Callback must be of form 'void callback(char*){}'*/
-            sigc::signal<void, std::string> signal_v_tmi;
+            Callback must be of form 'void callback(string, IOFormatCategory){}'*/
+            sigc::signal<void, std::string, IOFormatCategory> signal_v_tmi;
 
             /**Emitted when a message with category "normal" is broadcast.
-            Callback must be of form 'void callback(char*){}'*/
-            sigc::signal<void, std::string> signal_c_normal;
+            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
+            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_normal;
             /**Emitted when a message with category "warning" is broadcast.
-            Callback must be of form 'void callback(char*){}'*/
-            sigc::signal<void, std::string> signal_c_warning;
+            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
+            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_warning;
             /**Emitted when a message with category "error" is broadcast.
-            Callback must be of form 'void callback(char*){}'*/
-            sigc::signal<void, std::string> signal_c_error;
+            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
+            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_error;
             /**Emitted when a message with category "debug" is broadcast.
-            Callback must be of form 'void callback(char*){}'*/
-            sigc::signal<void, std::string> signal_c_debug;
+            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
+            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_debug;
 
             /**Emitted when any message is broadcast.
-            Callback must be of form 'void callback(char*){}'*/
-            sigc::signal<void, std::string> signal_all;
+            Callback must be of form 'void callback(string, IOFormatVerbosity, IOFormatCategory){}'*/
+            sigc::signal<void, std::string, IOFormatVerbosity, IOFormatCategory> signal_all;
 
             /*C DATA TYPES*/
             iochannel& operator<<(const bool&);
             iochannel& operator<<(const int&);
+            iochannel& operator<<(const unsigned int&);
+            iochannel& operator<<(const long int&);
+            iochannel& operator<<(const unsigned long int&);
             iochannel& operator<<(const float&);
             iochannel& operator<<(const double&);
             iochannel& operator<<(const char&);
@@ -362,6 +387,9 @@ namespace pawlib
             /*C DATA TYPE POINTERS*/
             iochannel& operator<<(const bool*);
             iochannel& operator<<(const int*);
+            iochannel& operator<<(const unsigned int*);
+            iochannel& operator<<(const long int*);
+            iochannel& operator<<(const unsigned long int*);
             iochannel& operator<<(const float*);
             iochannel& operator<<(const double*);
             iochannel& operator<<(const char*);
@@ -375,12 +403,13 @@ namespace pawlib
 
             /*MATH FLAGS*/
             iochannel& operator<<(const IOFormatBase&);
+            iochannel& operator<<(const IOFormatCharValue&);
             iochannel& operator<<(const set_precision&);
             iochannel& operator<<(const IOFormatSciNotation&);
             iochannel& operator<<(const IOFormatNumeralCase&);
             iochannel& operator<<(const IOFormatPointer&);
             iochannel& operator<<(const read_size&);
-            iochannel& operator<<(const IOFormatMemorySeperators&);
+            iochannel& operator<<(const IOFormatMemorySeparators&);
 
             /*FORMAT FLAGS*/
             iochannel& operator<<(const IOFormatTextBG&);
@@ -394,10 +423,19 @@ namespace pawlib
 
             void configure_echo(IOEchoMode, IOFormatVerbosity = vrb_tmi, IOFormatCategory = cat_all);
 
+            void shutup(IOFormatCategory);
+            void shutup(IOFormatVerbosity = vrb_normal);
+            void speakup(IOFormatCategory);
+            void speakup(IOFormatVerbosity);
+            void speakup();
+
             ~iochannel();
         protected:
             //TODO: Swap for pawlib::string
             std::string msg;
+
+            char process_c = cat_all;
+            IOFormatVerbosity process_v = vrb_tmi;
 
             IOEchoMode echomode = echo_printf;
             IOFormatVerbosity echovrb = vrb_tmi;
@@ -406,12 +444,13 @@ namespace pawlib
             /*Current settings set by enums and flags. These change as we go,
             and should be reset after each message.*/
             IOFormatBase base = base_10;
+            IOFormatCharValue charval = char_char;
             int precision = 14;
             IOFormatSciNotation sci = sci_auto;
             IOFormatNumeralCase numcase = num_lower;
             IOFormatPointer ptr = ptr_value;
             unsigned int readsize = 1;
-            unsigned char memformat = 3;
+            unsigned char memformat = 0;
 
             IOFormatTextAttributes ta = ta_none;
             IOFormatTextBG bg = bg_none;
@@ -424,12 +463,17 @@ namespace pawlib
             std::string format = "";
             //TODO: Swap for pawlib::string
 
+            /**Insert a single character without need for null terminator.
+            * \param the character to insert
+            */
+            void inject(char);
+
             /**Insert a C string into the output stream. Automatically applies
             * unapplied attributes before inserting text.
-            * \param the string to insert.
+            * \param the C-string to insert.
             * \param whether the call was recursive. (Internal use only!)
             */
-            void inject(std::string, bool=false);
+            void inject(const char*, bool=false);
 
             /**Insert a memory address or its raw contents into the output
             * stream.
@@ -441,8 +485,9 @@ namespace pawlib
 
             /**Transmit the current pending output stream and reset in
             * preparation for the next message.
+            * \param whether to retain the flags
             */
-            void transmit();
+            void transmit(bool=false);
 
             ///Dirty flag raised when attributes are changed and not yet applied.
             bool dirty_attributes = false;
@@ -452,9 +497,11 @@ namespace pawlib
             */
             bool apply_attributes();
 
+            /**Returns whether the vrb and cat match parsing (shutup) rules.*/
+            bool can_parse();
+
             /**Clear the channel's message substring array.*/
             void clear_msg();
-            //TODO: Kill
 
             /**Reset all attributes.*/
             void reset_attributes();

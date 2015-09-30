@@ -29,20 +29,34 @@ namespace pawlib
 
             /**Count the number of digits/characters in an integer. Does not
              * count the null terminator.
-             * http://stackoverflow.com/a/1489873/472647
+             * Based on http://stackoverflow.com/a/1489873/472647
              * \param the number to count the digits in
              * \param the base, default 10
              * \param whether to count the symbols
              * \return the number of digits in the integer*/
             static int intlen(int, int=10, bool=true);
 
+            /**Count the number of digits/characters in an long integer. Does
+             * not count the null terminator.
+             * \param the number to count the digits in
+             * \param the base, default 10
+             * \param whether to count the symbols
+             * \return the number of digits in the integer*/
+            static int lintlen(long int, int=10, bool=true);
+
             /**Count the number of digits/characters in an unsigned integer.
              * Does not count the null terminator.
-             * http://stackoverflow.com/a/1489873/472647
              * \param the number to count the digits in
              * \param the base, default 10
              * \return the number of digits in the integer*/
             static int uintlen(unsigned int, int=10);
+
+            /**Count the number of digits/characters in an unsigned long integer.
+             * Does not count the null terminator.
+             * \param the number to count the digits in
+             * \param the base, default 10
+             * \return the number of digits in the integer*/
+            static int ulintlen(unsigned long int, int=10);
 
             /**Count the maximum (safest) estimated number of digits/characters
              * in a float/double. Does not count null terminator. WARNING: This
@@ -66,6 +80,16 @@ namespace pawlib
              * \param whether to use capital letters for base > 10*/
             static void itoa(char*, int, int=10, int=0, bool=false);
 
+            /**Convert a long integer to a C-string.
+             * \param the C-string to write to
+             * \param the long integer to convert
+             * \param the base to convert in, default 10.
+             * \param the length of the C-string, not counting the null
+             * terminator. If 0 or omitted, this will be automatically
+             * calculated.
+             * \param whether to use capital letters for base > 10*/
+            static void litoa(char*, long int, int=10, int=0, bool=false);
+
             /**Convert an unsigned integer to a C-string.
              * \param the C-string to write to
              * \param the unsigned integer to convert
@@ -76,6 +100,16 @@ namespace pawlib
              * \param whether to use capital letters for base > 10
              * \param whether this is interpreting a byte (use leading 0)*/
             static void uitoa(char*, unsigned int, int=10, int=0, bool=false, bool=false);
+
+            /**Convert an unsigned long integer to a C-string.
+             * \param the C-string to write to
+             * \param the unsigned integer to convert
+             * \param the base to convert in, default 10.
+             * \param the length of the C-string, not counting the null
+             * terminator. If 0 or omitted, this will be automatically
+             * calculated.
+             * \param whether to use capital letters for base > 10*/
+            static void ulitoa(char*, long unsigned int, int=10, int=0, bool=false);
 
             /**Convert a double to a C-string.
              * \param the C-string to write to

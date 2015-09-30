@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug64" />
-	<File name="src/iochannel.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include/stdutils.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="11560" topLine="448" />
+			<Cursor1 position="5042" topLine="79" />
 		</Cursor>
 	</File>
 	<File name="src/stdutils.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="5618" topLine="0" />
+			<Cursor1 position="7215" topLine="18" />
 		</Cursor>
 		<Folding>
 			<Collapse line="10" />
 			<Collapse line="34" />
-			<Collapse line="81" />
-			<Collapse line="129" />
-			<Collapse line="247" />
-			<Collapse line="326" />
+			<Collapse line="59" />
+			<Collapse line="84" />
+			<Collapse line="106" />
+			<Collapse line="128" />
+			<Collapse line="176" />
+			<Collapse line="239" />
+			<Collapse line="338" />
+			<Collapse line="417" />
+			<Collapse line="477" />
+			<Collapse line="647" />
+			<Collapse line="656" />
+			<Collapse line="670" />
+			<Collapse line="679" />
 		</Folding>
-	</File>
-	<File name="include/stdutils.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5147" topLine="64" />
-		</Cursor>
 	</File>
 	<File name="include/iochannel.hpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="9250" topLine="295" />
+			<Cursor1 position="9964" topLine="308" />
+		</Cursor>
+	</File>
+	<File name="src/iochannel.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="11238" topLine="382" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

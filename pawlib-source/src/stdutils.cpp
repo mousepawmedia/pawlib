@@ -56,7 +56,54 @@ namespace pawlib
         return digits;
     }
 
+    int stdutils::lintlen(long int number, int base, bool count_neg)
+    {
+        if(base < 2 || base > 36)
+        {
+            return -1;
+        }
+        int digits = 0;
+        if (number < 0 && count_neg)
+        {
+            digits = 1;
+        }
+        //Else if the number is literally "0"...
+        else if(number == 0)
+        {
+            digits = 1;
+        }
+        while (number)
+        {
+            number /= base;
+            digits++;
+        }
+
+        return digits;
+    }
+
     int stdutils::uintlen(unsigned int number, int base)
+    {
+        if(base < 2 || base > 36)
+        {
+            return -1;
+        }
+        unsigned int digits = 0;
+
+        //If the number is literally "0"...
+        if(number == 0)
+        {
+            digits = 1;
+        }
+        while (number)
+        {
+            number /= base;
+            digits++;
+        }
+
+        return digits;
+    }
+
+    int stdutils::ulintlen(unsigned long int number, int base)
     {
         if(base < 2 || base > 36)
         {
@@ -244,6 +291,50 @@ namespace pawlib
         strcpy(str, strrev(temp));
     }
 
+    void stdutils::ulitoa(char* str, unsigned long int val, int base, int len, bool use_caps)
+    {
+        len = (len == 0) ? uintlen(val, base) : len;
+
+        char* pos = str;
+
+        if (val == 0)
+        {
+            //Write out a literal 0
+            *(pos++) = '0';
+        }
+
+        while (val)
+        {
+            unsigned int digit = val % base;
+
+            /*To get the corresponding character, just add 48 for a numeral,
+            or 55 for a letter. We don't have to worry about verifying that
+            the character is appropriate for the base, as the `i % base` will
+            never yield a value more than the base.
+            */
+
+            //48 [0] - 57 [9] (+48)
+            if(/*digit >= 0 && */digit <= 9)
+            {
+                *(pos++) = static_cast<char>(digit+48);
+            }
+            //65 [A] - 90 [Z] (+55) or 97 [a] - 122 [z] (+87)
+            else if(digit >= 10 && digit <= 35)
+            {
+                unsigned int offset = (use_caps ? 55 : 87);
+                *(pos++) = static_cast<char>(digit+offset);
+            }
+
+            //Divide the number by the base to remove the last parsed digit.
+            val /= base;
+        }
+
+        //Reverse the string.
+        char temp[strlen(str)] = {'\0'};
+        strcpy(temp, str);
+        strcpy(str, strrev(temp));
+    }
+
     void stdutils::itoa(char* str, int val, int base, int len, bool use_caps)
     {
         /*Adapted from comp.lang.c++, Re: Integer to Ustring
@@ -265,6 +356,66 @@ namespace pawlib
         Afterwards you reverse the digits.
         */
 
+        /* If no length was provided, get the length of the integer,
+         * including negative sign.*/
+        len = (len == 0) ? intlen(val, base, true) : len;
+
+        char* pos = str;
+
+        bool neg = false;
+        if (val < 0)
+        {
+            //Make the number positive;
+            val *= -1;
+            neg = true;
+        }
+
+        if (val == 0)
+        {
+            //Write out a literal 0
+            *(pos++) = '0';
+        }
+
+        while (val)
+        {
+            int digit = val % base;
+
+            /*To get the corresponding character, just add 48 for a numeral,
+            or 55 for a letter. We don't have to worry about verifying that
+            the character is appropriate for the base, as the `i % base` will
+            never yield a value more than the base.
+            */
+
+            //48 [0] - 57 [9] (+48)
+            if(digit >= 0 && digit <= 9)
+            {
+                *(pos++) = static_cast<char>(digit+48);
+            }
+            //65 [A] - 90 [Z] (+55) or 97 [a] - 122 [z] (+87)
+            else if(digit >= 10 && digit <= 35)
+            {
+                int offset = (use_caps ? 55 : 87);
+                *(pos++) = static_cast<char>(digit+offset);
+            }
+
+            //Divide the number by the base to remove the last parsed digit.
+            val /= base;
+        }
+
+        if(neg)
+        {
+            //Place the symbol at the start of the string.
+            *(pos++) = '-';
+        }
+
+        //Reverse the string.
+        char temp[strlen(str)] = {'\0'};
+        strcpy(temp, str);
+        strcpy(str, strrev(temp));
+    }
+
+    void stdutils::litoa(char* str, long int val, int base, int len, bool use_caps)
+    {
         /* If no length was provided, get the length of the integer,
          * including negative sign.*/
         len = (len == 0) ? intlen(val, base, true) : len;
