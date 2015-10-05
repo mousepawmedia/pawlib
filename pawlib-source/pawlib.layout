@@ -6,6 +6,11 @@
 			<Cursor1 position="113" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="include/iochannel.hpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="16169" topLine="445" />
+		</Cursor>
+	</File>
 	<File name="src/iochannel.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="15852" topLine="570" />
@@ -19,10 +24,5 @@
 			<Collapse line="10" />
 			<Collapse line="34" />
 		</Folding>
-	</File>
-	<File name="include/iochannel.hpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="16169" topLine="445" />
-		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
