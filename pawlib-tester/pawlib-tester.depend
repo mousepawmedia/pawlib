@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1444078060 source:/home/jason/Code/Repositories/pawlib-git/pawlib-tester/main.cpp
+1444078851 source:/home/jason/Code/Repositories/pawlib-git/pawlib-tester/main.cpp
 	<iochannel.hpp>
 	<stdutils.h>
 	<sigc++/signal.h>
@@ -18,13 +18,12 @@
 	<string>
 	<queue>
 
-1444078418 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/iochannel.hpp
+1444080113 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/iochannel.hpp
 	<stdio.h>
 	<iostream>
 	<cstdint>
 	<typeinfo>
 	<vector>
-	<bitset>
 	<sigc++/signal.h>
 	<sigc++/trackable.h>
 	<string>
@@ -100,7 +99,7 @@
 	<sigc++/trackable.h>
 	<sigc++/functors/functor_trait.h>
 
-1444078418 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/stdutils.h
+1444080113 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/stdutils.h
 	<cmath>
 	<cstring>
 	<cstdio>

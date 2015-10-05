@@ -11,13 +11,12 @@
 1444078379 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/iochannel.cpp
 	"iochannel.hpp"
 
-1444078266 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/iochannel.hpp
+1444080028 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/iochannel.hpp
 	<stdio.h>
 	<iostream>
 	<cstdint>
 	<typeinfo>
 	<vector>
-	<bitset>
 	<sigc++/signal.h>
 	<sigc++/trackable.h>
 	<string>

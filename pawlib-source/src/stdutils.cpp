@@ -574,7 +574,6 @@ namespace pawlib
                     val -= (digit * weight);
 
                     //Append the digit to the string.
-                    //TODO: Replace this.
                     *(c++) = '0' + digit;
                 }
                 //If our magnitude is 0 and our value is > 0.

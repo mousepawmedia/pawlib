@@ -67,9 +67,6 @@ via the same interface.
 //TODO: Swap to pawlib::flexarray
 #include <vector>
 
-//TODO: Remove me.
-#include <bitset>
-
 //Import what we need from sigc++
 #include <sigc++/signal.h>
 #include <sigc++/trackable.h>
@@ -336,9 +333,7 @@ namespace pawlib
     /**An iochannel allows console output to be custom routed to one or more
     * text-based output channels, including the terminal. It supports various
     * advanced functions, formatting and colors, and message priority.*/
-    //TODO: Waiting on StackOverflow.
     class iochannel : public sigc::trackable
-//    class iochannel
     {
         public:
             /**Declares a new iochannel instance.*/
