@@ -79,7 +79,7 @@ These need to be swapped out for pawlib alternatives ASAP.*/
 //We use C's classes often.
 #include <cstdio>
 
-#include <stdutils.h>
+#include <stdutils.hpp>
 
 namespace pawlib
 {
@@ -138,6 +138,15 @@ namespace pawlib
             base_34 = 34,
             base_35 = 35,
             base_36 = 36
+        };
+
+        enum IOFormatBool
+        {
+            bool_lower = 0,
+            bool_upper = 1,
+            bool_caps = 2,
+            bool_numeral = 3,
+            bool_scott = 4
         };
 
         //PRECISION
@@ -298,25 +307,33 @@ namespace pawlib
             cat_error = (1 << 2),
             /**Debug messages, such as variable outputs.*/
             cat_debug = (1 << 3),
+            /**Testing messages that we may want shut off during benchmarking.*/
+            cat_testing = (1 << 4),
             /**All message categories. Does not have a correlating signal.*/
-            cat_all = 15
+            cat_all = 31
         };
 
         /**Special structures for iochannel, such as "END".*/
         enum IOSpecial
         {
-            /**Newline, end of message, remove formatting.*/
+            /**Newline, end of message (EoM), remove formatting.*/
             io_end = 0,
-            /**Newline, end of message, retain formatting.*/
+            /**Newline, EoM, retain formatting.*/
             io_end_keep = 1,
-            /**End of message, remove formatting.*/
+            /**EoM, remove formatting.*/
             io_send = 2,
-            /**End of message, retain formatting.*/
+            /**EoM, retain formatting.*/
             io_send_keep = 3,
-            /**Newline, NOT end of message, retain formatting.*/
+            /**Newline, NOT EoM, retain formatting.*/
             io_endline_keep = 4,
-            /**Newline, NOT end of message, remove formatting.*/
+            /**Newline, NOT EoM, remove formatting.*/
             io_endline = 5,
+            /**Carriage return and flush, EoM, remove formatting.*/
+            io_show = 6,
+            /**Carriage return and flush, EoM, retain formatting.*/
+            io_show_keep = 7,
+            /**Flush only.*/
+            io_flush = 8
         };
 
         enum IOEchoMode
@@ -364,56 +381,65 @@ namespace pawlib
             /**Emitted when a message with category "debug" is broadcast.
             Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
             sigc::signal<void, std::string, IOFormatVerbosity> signal_c_debug;
+            /**Emitted when a message with category "testing" is broadcast.
+            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
+            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_testing;
 
             /**Emitted when any message is broadcast.
             Callback must be of form 'void callback(string, IOFormatVerbosity, IOFormatCategory){}'*/
             sigc::signal<void, std::string, IOFormatVerbosity, IOFormatCategory> signal_all;
 
-            /*C DATA TYPES*/
+            //These three need custom enumerations.
             iochannel& operator<<(const bool&);
-            iochannel& operator<<(const int&);
-            iochannel& operator<<(const unsigned int&);
-            iochannel& operator<<(const long int&);
-            iochannel& operator<<(const unsigned long int&);
-            iochannel& operator<<(const float&);
-            iochannel& operator<<(const double&);
             iochannel& operator<<(const char&);
-
-            /*C DATA TYPE POINTERS*/
-            iochannel& operator<<(const bool*);
-            iochannel& operator<<(const int*);
-            iochannel& operator<<(const unsigned int*);
-            iochannel& operator<<(const long int*);
-            iochannel& operator<<(const unsigned long int*);
-            iochannel& operator<<(const float*);
-            iochannel& operator<<(const double*);
-            iochannel& operator<<(const char*);
-            iochannel& operator<<(const void*);
-
-            /*C++ DATA TYPES*/
             iochannel& operator<<(const std::string&);
 
-            /*C++ DATA TYPE POINTERS*/
-            iochannel& operator<<(const std::string*);
+            inline iochannel& operator<<(const unsigned char& rhs){return resolve_integer(rhs);}
+            inline iochannel& operator<<(const int& rhs){return resolve_integer(rhs);}
+            inline iochannel& operator<<(const unsigned int& rhs){return resolve_integer(rhs);}
+            inline iochannel& operator<<(const short int& rhs){return resolve_integer(rhs);}
+            inline iochannel& operator<<(const unsigned short int& rhs){return resolve_integer(rhs);}
+            inline iochannel& operator<<(const long int& rhs){return resolve_integer(rhs);}
+            inline iochannel& operator<<(const unsigned long int& rhs){return resolve_integer(rhs);}
+            inline iochannel& operator<<(const long long int& rhs){return resolve_integer(rhs);}
+            inline iochannel& operator<<(const unsigned long long int& rhs){return resolve_integer(rhs);}
 
-            /*MATH FLAGS*/
+            inline iochannel& operator<<(const float& rhs){return resolve_float(rhs);}
+            inline iochannel& operator<<(const double& rhs){return resolve_float(rhs);}
+            inline iochannel& operator<<(const long double& rhs){return resolve_float(rhs);}
+
+            inline iochannel& operator<<(const void* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const bool* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const char* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const unsigned char* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const int* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const unsigned int* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const short int* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const unsigned short int* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const long int* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const unsigned long int* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const long long int* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const unsigned long long int* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const float* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const double* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const long double* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const std::string* rhs){return resolve_pointer(rhs);}
+
+            //All of these need custom implementations.
             iochannel& operator<<(const IOFormatBase&);
+            iochannel& operator<<(const IOFormatBool&);
             iochannel& operator<<(const IOFormatCharValue&);
             iochannel& operator<<(const set_precision&);
             iochannel& operator<<(const IOFormatSciNotation&);
             iochannel& operator<<(const IOFormatNumeralCase&);
             iochannel& operator<<(const IOFormatPointer&);
-            iochannel& operator<<(const read_size&);
             iochannel& operator<<(const IOFormatMemorySeparators&);
-
-            /*FORMAT FLAGS*/
             iochannel& operator<<(const IOFormatTextBG&);
             iochannel& operator<<(const IOFormatTextFG&);
             iochannel& operator<<(const IOFormatTextAttributes&);
-
-            /*BROADCAST FLAGS*/
-            iochannel& operator<<(const IOFormatCategory&);
+            iochannel& operator<<(const read_size&);
             iochannel& operator<<(const IOFormatVerbosity&);
+            iochannel& operator<<(const IOFormatCategory&);
             iochannel& operator<<(const IOSpecial&);
 
             void configure_echo(IOEchoMode, IOFormatVerbosity = vrb_tmi, IOFormatCategory = cat_all);
@@ -429,7 +455,7 @@ namespace pawlib
             //TODO: Swap for pawlib::string
             std::string msg;
 
-            char process_c = cat_all;
+            int16_t process_c = cat_all;
             IOFormatVerbosity process_v = vrb_tmi;
 
             IOEchoMode echomode = echo_printf;
@@ -439,6 +465,7 @@ namespace pawlib
             /*Current settings set by enums and flags. These change as we go,
             and should be reset after each message.*/
             IOFormatBase base = base_10;
+            IOFormatBool boolstyle = bool_lower;
             IOFormatCharValue charval = char_char;
             int precision = 14;
             IOFormatSciNotation sci = sci_auto;
@@ -454,9 +481,24 @@ namespace pawlib
             IOFormatVerbosity vrb = vrb_normal;
             IOFormatCategory cat = cat_normal;
 
+            /**Resolves a pointer.*/
+            template <typename T>
+            iochannel& resolve_pointer(const T*);
+            iochannel& resolve_pointer(const void*);
+            iochannel& resolve_pointer(const char*);
+
+            template <typename T>
+            iochannel& resolve_integer(const T&);
+
+            template <typename T>
+            iochannel& resolve_float(const T&);
+
             //The string containing the format.
             std::string format = "";
             //TODO: Swap for pawlib::string
+
+            /**Flush the standard output.*/
+            void flush();
 
             /**Insert a single character without need for null terminator.
             * \param the character to insert
@@ -471,11 +513,11 @@ namespace pawlib
             void inject(const char*, bool=false);
 
             /**Insert a memory address or its raw contents into the output
-            * stream.
-            * \param the address to insert
-            * \param the size of the object referenced
-            * \param whether to print literal address (false) or memory
-            * dump (true); default false*/
+             * stream.
+             * \param the address to insert
+             * \param the size of the object referenced
+             * \param whether to print literal address (false) or memory
+             * dump (true); default false*/
             void inject(const void*, unsigned int len, bool=false);
 
             /**Transmit the current pending output stream and reset in
@@ -506,8 +548,8 @@ namespace pawlib
 
     };
 
-    ///Global static instance of iochannel.
-    static iochannel ioc;
+    ///Global external (static) instance of iochannel.
+    extern iochannel ioc;
 }
 
 

@@ -1,0 +1,14 @@
+*.a
+*.o
+*.exe
+**/bin
+**/obj
+<<<<<<< HEAD
+/pawlib
+=======
+**/lib
+<<<<<<< HEAD
+>>>>>>> 07282b9ac31f2f2123e703f044dffed1a031d46d
+=======
+pawlib/
+>>>>>>> master

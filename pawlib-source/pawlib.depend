@@ -8,10 +8,10 @@
 1440563205 source:/home/jason/Code/Repositories/pawlib-git/pawlib/src/iochannel.cpp
 	"iochannel.hpp"
 
-1444078379 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/iochannel.cpp
+1446693483 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/iochannel.cpp
 	"iochannel.hpp"
 
-1444080028 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/iochannel.hpp
+1446337045 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/iochannel.hpp
 	<stdio.h>
 	<iostream>
 	<cstdint>
@@ -22,7 +22,7 @@
 	<string>
 	<queue>
 	<cstdio>
-	<stdutils.h>
+	<stdutils.hpp>
 
 1414227986 /usr/include/sigc++-2.0/sigc++/signal.h
 	<list>
@@ -92,15 +92,20 @@
 	<sigc++/trackable.h>
 	<sigc++/functors/functor_trait.h>
 
-1444077723 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/stdutils.h
+1445800940 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/stdutils.h
 	<cmath>
 	<cstring>
 	<cstdio>
 	<cstdint>
 	<string>
 
+<<<<<<< HEAD
+1446259543 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/stdutils.cpp
+	"stdutils.hpp"
+=======
 1444080103 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/stdutils.cpp
 	"stdutils.h"
+>>>>>>> 07282b9ac31f2f2123e703f044dffed1a031d46d
 
 1414227986 /usr/include/sigc++-2.0/sigc++/sigc++.h
 	<sigc++/signal.h>
@@ -200,4 +205,30 @@
 	<sstream>
 	<math.h>
 	<vector>
+
+1446157912 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/testsuite.cpp
+	"testsuite.hpp"
+
+1446344070 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/testsuite.hpp
+	<vector>
+	<cstdlib>
+	<iochannel.hpp>
+
+1446256800 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/stdutils.hpp
+	<cmath>
+	<cstring>
+	<cstdio>
+	<cstdint>
+	<limits>
+	<string>
+
+1447554007 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/goldilocks.cpp
+	"goldilocks.hpp"
+
+1447553698 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/goldilocks.hpp
+	<cstdlib>
+	<memory>
+	<map>
+	<vector>
+	<iochannel.hpp>
 

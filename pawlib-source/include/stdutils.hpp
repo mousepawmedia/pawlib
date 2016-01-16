@@ -5,6 +5,7 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdint>
+#include <limits>
 
 //TODO: Replace with pawlib::string!
 #include <string>
@@ -19,6 +20,29 @@ namespace pawlib
         public:
             stdutils();
 
+            template <typename T>
+            static void selection_sort(T arr[], int len)
+            {
+                int start;
+                T minVal;
+
+                for(start = 0; start < (len - 1); start++)
+                {
+                    int minI = start;
+                    minVal = arr[start];
+                    for(int i = start + 1; i < len; i++)
+                    {
+                        if(arr[i] < minVal)
+                        {
+                            minVal = arr[i];
+                            minI = i;
+                        }
+                    }
+                    arr[minI] = arr[start];
+                    arr[start] = minVal;
+                }
+            }
+
             /** Reverse a C-string. Algorithm from
             * http://stackoverflow.com/a/784567/472647
             * \param the C-string to reverse.
@@ -32,8 +56,13 @@ namespace pawlib
              * Based on http://stackoverflow.com/a/1489873/472647
              * \param the number to count the digits in
              * \param the base, default 10
-             * \param whether to count the symbols
+             * \param whether to count the symbols (ignored if unsigned)
              * \return the number of digits in the integer*/
+<<<<<<< HEAD:pawlib-source/include/stdutils.hpp
+            //static int intlen(int, int=10, bool=true);
+            template <typename T>
+            static int intlen(T, int, bool=false);
+=======
             static int intlen(int, int=10, bool=true);
 
             /**Count the number of digits/characters in an long integer. Does
@@ -50,6 +79,7 @@ namespace pawlib
              * \param the base, default 10
              * \return the number of digits in the integer*/
             static int uintlen(unsigned int, int=10);
+>>>>>>> 07282b9ac31f2f2123e703f044dffed1a031d46d:pawlib/Release64/include/stdutils.h
 
             /**Count the number of digits/characters in an unsigned long integer.
              * Does not count the null terminator.
@@ -68,7 +98,8 @@ namespace pawlib
              * \param the precision (default 14)
              * \param whether to count the symbols
              * \return the number of digits in the float*/
-            static int floatlen(double, int=14, int=1, bool=true);
+            template <typename T>
+            static int floatlen(T, int=14, int=1, bool=true);
 
             /**Convert an integer to a C-string.
              * \param the C-string to write to
@@ -78,8 +109,12 @@ namespace pawlib
              * terminator. If 0 or omitted, this will be automatically
              * calculated.
              * \param whether to use capital letters for base > 10*/
-            static void itoa(char*, int, int=10, int=0, bool=false);
+            template <typename T>
+            static void itoa(char*, T, int=10, int=0, bool=false);
 
+<<<<<<< HEAD:pawlib-source/include/stdutils.hpp
+            /**Convert a byte to a C-string.
+=======
             /**Convert a long integer to a C-string.
              * \param the C-string to write to
              * \param the long integer to convert
@@ -91,9 +126,9 @@ namespace pawlib
             static void litoa(char*, long int, int=10, int=0, bool=false);
 
             /**Convert an unsigned integer to a C-string.
+>>>>>>> 07282b9ac31f2f2123e703f044dffed1a031d46d:pawlib/Release64/include/stdutils.h
              * \param the C-string to write to
-             * \param the unsigned integer to convert
-             * \param the base to convert in, default 10.
+             * \param the unsigned integer containing the byte
              * \param the length of the C-string, not counting the null
              * terminator. If 0 or omitted, this will be automatically
              * calculated.
@@ -109,15 +144,20 @@ namespace pawlib
              * terminator. If 0 or omitted, this will be automatically
              * calculated.
              * \param whether to use capital letters for base > 10*/
+<<<<<<< HEAD:pawlib-source/include/stdutils.hpp
+            static void btoa(char*, unsigned int, int=0, bool=false);
+=======
             static void ulitoa(char*, long unsigned int, int=10, int=0, bool=false);
+>>>>>>> 07282b9ac31f2f2123e703f044dffed1a031d46d:pawlib/Release64/include/stdutils.h
 
-            /**Convert a double to a C-string.
+            /**Convert a floating point number to a C-string.
              * \param the C-string to write to
-             * \param the double to convert
+             * \param the number to convert
              * \param the precision, as the number of significands (an integer)
              * \param whether to use scientific notation. 0=none, 1=automatic,
              * 2=force scientific notation.*/
-            static void dtoa(char*, double, int=14, int=1);
+            template <typename T>
+            static void ftoa(char*, T, int=14, int=1);
 
             /**Convert an unsigned pointer integer to a Cstring.
              * Does not presently export the flag value, just the

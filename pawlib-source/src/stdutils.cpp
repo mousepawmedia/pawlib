@@ -1,4 +1,4 @@
-#include "stdutils.h"
+#include "stdutils.hpp"
 
 namespace pawlib
 {
@@ -31,7 +31,8 @@ namespace pawlib
         return str;
     }
 
-    int stdutils::intlen(int number, int base, bool count_neg)
+    template <typename T>
+    int stdutils::intlen(T number, int base, bool count_neg)
     {
         if(base < 2 || base > 36)
         {
@@ -56,286 +57,19 @@ namespace pawlib
         return digits;
     }
 
-    int stdutils::lintlen(long int number, int base, bool count_neg)
-    {
-        if(base < 2 || base > 36)
-        {
-            return -1;
-        }
-        int digits = 0;
-        if (number < 0 && count_neg)
-        {
-            digits = 1;
-        }
-        //Else if the number is literally "0"...
-        else if(number == 0)
-        {
-            digits = 1;
-        }
-        while (number)
-        {
-            number /= base;
-            digits++;
-        }
+    template int stdutils::intlen<char>(char, int, bool);
+    template int stdutils::intlen<unsigned char>(unsigned char, int, bool);
+    template int stdutils::intlen<int>(int, int, bool);
+    template int stdutils::intlen<unsigned int>(unsigned int, int, bool);
+    template int stdutils::intlen<short int>(short int, int, bool);
+    template int stdutils::intlen<unsigned short int>(unsigned short int, int, bool);
+    template int stdutils::intlen<long int>(long int, int, bool);
+    template int stdutils::intlen<unsigned long int>(unsigned long int, int, bool);
+    template int stdutils::intlen<long long int>(long long int, int, bool);
+    template int stdutils::intlen<unsigned long long int>(unsigned long long int, int, bool);
 
-        return digits;
-    }
-
-    int stdutils::uintlen(unsigned int number, int base)
-    {
-        if(base < 2 || base > 36)
-        {
-            return -1;
-        }
-        unsigned int digits = 0;
-
-        //If the number is literally "0"...
-        if(number == 0)
-        {
-            digits = 1;
-        }
-        while (number)
-        {
-            number /= base;
-            digits++;
-        }
-
-        return digits;
-    }
-
-    int stdutils::ulintlen(unsigned long int number, int base)
-    {
-        if(base < 2 || base > 36)
-        {
-            return -1;
-        }
-        unsigned int digits = 0;
-
-        //If the number is literally "0"...
-        if(number == 0)
-        {
-            digits = 1;
-        }
-        while (number)
-        {
-            number /= base;
-            digits++;
-        }
-
-        return digits;
-    }
-
-    int stdutils::floatlen(double val, int precision, int sci, bool count_sym)
-    {
-        int len = 0;
-
-        //Flag if the number is negative.
-        bool neg = val < 0;
-
-        //If we have a negative value...
-        if(neg)
-        {
-            //Flip the value.
-            val = -val;
-            //If we're counting symbols, add one for the negative sign.
-            if(count_sym){len++;}
-        }
-
-        //Calculate the magnitude.
-        int m = log10(val);
-
-        //Determine if we're using scientific notation.
-        bool useExp = (
-            ((sci == 1) && (m >= 14 || (neg && m >= 9) || m <= -9)) ||
-            (sci == 2)
-        );
-
-        /* The maximum number of digits is usually the significand, which is our
-         * 'precision' variable.*/
-        len += precision;
-
-        /* Sometimes, the whole part goes past the size of the significand,
-         * so add the intlen of the whole part of the float.*/
-        len += intlen(static_cast<int>(val), 10, false);
-
-        //If we're using an exponent AND we're counting symbols.
-        if(useExp && count_sym)
-        {
-            /* We add the intlen of the absolute value of the magnitude,
-             * plus one for the sign and one for the 'e'.*/
-            len += (intlen(m, 10, false) + 2);
-        }
-
-        //If we're counting symbols, add one for the decimal point.
-        if(count_sym){len++;}
-
-        //Return the finished maximum length.
-        return len;
-    }
-
-    void stdutils::ptrtoa(char* str, uintptr_t val, bool use_caps)
-    {
-        /* 64-bits, plus sign and 0x.*/
-        ////int len = 67;
-        //TODO: Use 32-bit on 32-bit system.
-
-        /*Declare a new C-string.*/
-        //char str[len+1] = {'\0'};
-
-        //The current position is length - 1 (to offset)
-        char* pos = str;
-
-        /*if (val < 0)
-        {
-            //Make the number positive;
-            val *= -1;
-            //Place the symbol at the start of the string.
-            //// *pos = '-';
-        }*/
-
-
-        if (val == 0)
-        {
-            //Write out a literal 0
-            *(pos++) = '0';
-        }
-
-        while (val)
-        {
-            uintptr_t digit = val % 16;
-
-            /*To get the corresponding character, just add 48 for a numeral,
-            or 55 for a letter. We don't have to worry about verifying that
-            the character is appropriate for the base, as the `i % base` will
-            never yield a value more than the base.
-            */
-
-            //48 [0] - 57 [9] (+48)
-            if(/*digit >= 0 && */digit <= 9)
-            {
-                *(pos++) = static_cast<char>(digit+48);
-            }
-            //65 [A] - 90 [Z] (+55) or 97 [a] - 122 [z] (+87)
-            else if(digit >= 10 && digit <= 35)
-            {
-                int offset = (use_caps ? 55 : 87);
-                *(pos++) = static_cast<char>(digit+offset);
-            }
-
-            //Divide the number by the base to remove the last parsed digit.
-            val /= 16;
-        }
-
-        //Add the hexadecimal indicator 0x".
-        *(pos++) = 'x';
-        *(pos++) = '0';
-
-        //Reverse the string.
-        char temp[strlen(str)] = {'\0'};
-        strcpy(temp, str);
-        strcpy(str, strrev(temp));
-    }
-
-    void stdutils::uitoa(char* str, unsigned int val, int base, int len, bool use_caps, bool byte)
-    {
-        len = (len == 0) ? uintlen(val, base) : len;
-
-        char* pos = str;
-
-        bool leadZero = false;
-        if(val < base && byte)
-        {
-            leadZero = true;
-        }
-
-        if (val == 0)
-        {
-            //Write out a literal 0
-            *(pos++) = '0';
-        }
-
-        while (val)
-        {
-            unsigned int digit = val % base;
-
-            /*To get the corresponding character, just add 48 for a numeral,
-            or 55 for a letter. We don't have to worry about verifying that
-            the character is appropriate for the base, as the `i % base` will
-            never yield a value more than the base.
-            */
-
-            //48 [0] - 57 [9] (+48)
-            if(/*digit >= 0 && */digit <= 9)
-            {
-                *(pos++) = static_cast<char>(digit+48);
-            }
-            //65 [A] - 90 [Z] (+55) or 97 [a] - 122 [z] (+87)
-            else if(digit >= 10 && digit <= 35)
-            {
-                unsigned int offset = (use_caps ? 55 : 87);
-                *(pos++) = static_cast<char>(digit+offset);
-            }
-
-            //Divide the number by the base to remove the last parsed digit.
-            val /= base;
-        }
-
-        if(leadZero)
-        {
-            *(pos++) = '0';
-        }
-
-        //Reverse the string.
-        char temp[strlen(str)] = {'\0'};
-        strcpy(temp, str);
-        strcpy(str, strrev(temp));
-    }
-
-    void stdutils::ulitoa(char* str, unsigned long int val, int base, int len, bool use_caps)
-    {
-        len = (len == 0) ? uintlen(val, base) : len;
-
-        char* pos = str;
-
-        if (val == 0)
-        {
-            //Write out a literal 0
-            *(pos++) = '0';
-        }
-
-        while (val)
-        {
-            unsigned int digit = val % base;
-
-            /*To get the corresponding character, just add 48 for a numeral,
-            or 55 for a letter. We don't have to worry about verifying that
-            the character is appropriate for the base, as the `i % base` will
-            never yield a value more than the base.
-            */
-
-            //48 [0] - 57 [9] (+48)
-            if(/*digit >= 0 && */digit <= 9)
-            {
-                *(pos++) = static_cast<char>(digit+48);
-            }
-            //65 [A] - 90 [Z] (+55) or 97 [a] - 122 [z] (+87)
-            else if(digit >= 10 && digit <= 35)
-            {
-                unsigned int offset = (use_caps ? 55 : 87);
-                *(pos++) = static_cast<char>(digit+offset);
-            }
-
-            //Divide the number by the base to remove the last parsed digit.
-            val /= base;
-        }
-
-        //Reverse the string.
-        char temp[strlen(str)] = {'\0'};
-        strcpy(temp, str);
-        strcpy(str, strrev(temp));
-    }
-
-    void stdutils::itoa(char* str, int val, int base, int len, bool use_caps)
+    template <typename T>
+    void stdutils::itoa(char* str, T val, int base, int len, bool use_caps)
     {
         /*Adapted from comp.lang.c++, Re: Integer to Ustring
         Christian Gollwitzer <auriocus@gmx.de>
@@ -414,21 +148,91 @@ namespace pawlib
         strcpy(str, strrev(temp));
     }
 
-    void stdutils::litoa(char* str, long int val, int base, int len, bool use_caps)
-    {
-        /* If no length was provided, get the length of the integer,
-         * including negative sign.*/
-        len = (len == 0) ? intlen(val, base, true) : len;
+    template void stdutils::itoa<char>(char*, char, int, int, bool);
+    template void stdutils::itoa<unsigned char>(char*, unsigned char, int, int, bool);
+    template void stdutils::itoa<int>(char*, int, int, int, bool);
+    template void stdutils::itoa<unsigned int>(char*, unsigned int, int, int, bool);
+    template void stdutils::itoa<short int>(char*, short int, int, int, bool);
+    template void stdutils::itoa<unsigned short int>(char*, unsigned short int, int, int, bool);
+    template void stdutils::itoa<long int>(char*, long int, int, int, bool);
+    template void stdutils::itoa<unsigned long int>(char*, unsigned long int, int, int, bool);
+    template void stdutils::itoa<long long int>(char*, long long int, int, int, bool);
+    template void stdutils::itoa<unsigned long long int>(char*, unsigned long long int, int, int, bool);
 
+
+    template <typename T>
+    int stdutils::floatlen(T val, int precision, int sci, bool count_sym)
+    {
+        int len = 0;
+
+        //Flag if the number is negative.
+        bool neg = val < 0;
+
+        //If we have a negative value...
+        if(neg)
+        {
+            //Flip the value.
+            val = -val;
+            //If we're counting symbols, add one for the negative sign.
+            if(count_sym){len++;}
+        }
+
+        //Calculate the magnitude.
+        int m = log10(val);
+
+        //Determine if we're using scientific notation.
+        bool useExp = (
+            ((sci == 1) && (m >= 14 || (neg && m >= 9) || m <= -9)) ||
+            (sci == 2)
+        );
+
+        /* The maximum number of digits is usually the significand, which is our
+         * 'precision' variable.*/
+        len += precision;
+
+        /* Sometimes, the whole part goes past the size of the significand,
+         * so add the intlen of the whole part of the float.*/
+        len += intlen(static_cast<int>(val), 10, false);
+
+        //If we're using an exponent AND we're counting symbols.
+        if(useExp && count_sym)
+        {
+            /* We add the intlen of the absolute value of the magnitude,
+             * plus one for the sign and one for the 'e'.*/
+            len += (intlen(m, 10, false) + 2);
+        }
+
+        //If we're counting symbols, add one for the decimal point.
+        if(count_sym){len++;}
+
+        //Return the finished maximum length.
+        return len;
+    }
+    template int stdutils::floatlen<float>(float, int, int, bool);
+    template int stdutils::floatlen<double>(double, int, int, bool);
+    template int stdutils::floatlen<long double>(long double, int, int, bool);
+
+
+    void stdutils::ptrtoa(char* str, uintptr_t val, bool use_caps)
+    {
+        /* 64-bits, plus sign and 0x.*/
+        ////int len = 67;
+        //TODO: Use 32-bit on 32-bit system.
+
+        /*Declare a new C-string.*/
+        //char str[len+1] = {'\0'};
+
+        //The current position is length - 1 (to offset)
         char* pos = str;
 
-        bool neg = false;
-        if (val < 0)
+        /*if (val < 0)
         {
             //Make the number positive;
             val *= -1;
-            neg = true;
-        }
+            //Place the symbol at the start of the string.
+            //// *pos = '-';
+        }*/
+
 
         if (val == 0)
         {
@@ -438,7 +242,7 @@ namespace pawlib
 
         while (val)
         {
-            int digit = val % base;
+            uintptr_t digit = val % 16;
 
             /*To get the corresponding character, just add 48 for a numeral,
             or 55 for a letter. We don't have to worry about verifying that
@@ -447,7 +251,7 @@ namespace pawlib
             */
 
             //48 [0] - 57 [9] (+48)
-            if(digit >= 0 && digit <= 9)
+            if(/*digit >= 0 && */digit <= 9)
             {
                 *(pos++) = static_cast<char>(digit+48);
             }
@@ -459,13 +263,66 @@ namespace pawlib
             }
 
             //Divide the number by the base to remove the last parsed digit.
-            val /= base;
+            val /= 16;
         }
 
-        if(neg)
+        //Add the hexadecimal indicator 0x".
+        *(pos++) = 'x';
+        *(pos++) = '0';
+
+        //Reverse the string.
+        char temp[strlen(str)] = {'\0'};
+        strcpy(temp, str);
+        strcpy(str, strrev(temp));
+    }
+
+    void stdutils::btoa(char* str, unsigned int val, int len, bool use_caps)
+    {
+        len = (len == 0) ? intlen(val, 16) : len;
+
+        char* pos = str;
+
+        bool leadZero = false;
+        if(val < 16)
         {
-            //Place the symbol at the start of the string.
-            *(pos++) = '-';
+            leadZero = true;
+        }
+
+        if (val == 0)
+        {
+            //Write out a literal 0
+            *(pos++) = '0';
+        }
+
+        while (val)
+        {
+            unsigned int digit = val % 16;
+
+            /*To get the corresponding character, just add 48 for a numeral,
+            or 55 for a letter. We don't have to worry about verifying that
+            the character is appropriate for the base, as the `i % base` will
+            never yield a value more than the base.
+            */
+
+            //48 [0] - 57 [9] (+48)
+            if(/*digit >= 0 && */digit <= 9)
+            {
+                *(pos++) = static_cast<char>(digit+48);
+            }
+            //65 [A] - 90 [Z] (+55) or 97 [a] - 122 [z] (+87)
+            else if(digit >= 10 && digit <= 35)
+            {
+                unsigned int offset = (use_caps ? 55 : 87);
+                *(pos++) = static_cast<char>(digit+offset);
+            }
+
+            //Divide the number by the base to remove the last parsed digit.
+            val /= 16;
+        }
+
+        if(leadZero)
+        {
+            *(pos++) = '0';
         }
 
         //Reverse the string.
@@ -474,7 +331,8 @@ namespace pawlib
         strcpy(str, strrev(temp));
     }
 
-    void stdutils::dtoa(char* str, double val, int precision, int sci)
+    template <typename T>
+    void stdutils::ftoa(char* str, T val, int precision, int sci)
     {
         //If the value is not a number...
         if (isnan(val))
@@ -503,7 +361,7 @@ namespace pawlib
             char* c = str;
 
             //Convert "precision" (actually significand) to precision decimal.
-            double p = 1 / pow(10, precision);
+            T p = 1 / pow(10, precision);
 
             //Determine whether the number is negative.
             bool neg = (val < 0);
@@ -562,7 +420,7 @@ namespace pawlib
             while (val > p || m >= 0)
             {
                 //Set our weight to 10^m.
-                double weight = pow(10.0, m);
+                T weight = pow(10.0, m);
 
                 //Weight (place value) is greater than 0 and not infinite.
                 if (weight > 0 && !isinf(weight))
@@ -642,6 +500,9 @@ namespace pawlib
             *(c) = '\0';
         }
     }
+    template void stdutils::ftoa<float>(char*, float, int, int);
+    template void stdutils::ftoa<double>(char*, double, int, int);
+    template void stdutils::ftoa<long double>(char*, long double, int, int);
 
     std::string stdutils::itos(int val, int base, bool use_caps)
     {
@@ -659,7 +520,7 @@ namespace pawlib
          * terminator.*/
         char cstr[floatlen(val, precision, sci, true) + 1] = {'\0'};
         //Convert the float to a cstring, and dump into cstr.
-        dtoa(cstr, val, precision, sci);
+        ftoa(cstr, val, precision, sci);
         //Convert the cstring into a string.
         std::string str = cstr;
         //Return the string.
@@ -683,7 +544,7 @@ namespace pawlib
         const uint8_t* p = reinterpret_cast<const uint8_t*>(mem);
         for (unsigned int i = 0; i < bytes; i++)
         {
-            uitoa(byte, p[i], 16, 2, use_caps, true);
+            btoa(byte, p[i], 2, use_caps);
             strcat(str, byte);
             //If we use byte spacing and we're not on the last byte...
             if(bytespacing && i != (bytes-1))

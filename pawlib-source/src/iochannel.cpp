@@ -2,6 +2,9 @@
 
 namespace pawlib
 {
+    //Declaring global instance of ioc.
+    iochannel ioc;
+
     iochannel::iochannel()
     {
         ta = ta_none;
@@ -11,328 +14,41 @@ namespace pawlib
         dirty_attributes = false;
     }
 
+    //------------ DATA TYPES ------------//
+
     iochannel& iochannel::operator<<(const bool& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
-
-        const char* str = (rhs ? "TRUE" : "FALSE");
-        inject(str);
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const bool* rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        switch(ptr)
+        switch(boolstyle)
         {
-            //If we are to print as value...
-            case ptr_value:
+            case bool_lower:
             {
-                *this << *rhs;
+                inject(rhs ? "true" : "false");
                 break;
             }
-            //If we are to print as address...
-            case ptr_address:
+            case bool_upper:
             {
-                //Inject raw address.
-                inject(rhs, sizeof(*rhs), false);
+                inject(rhs ? "True" : "False");
                 break;
             }
-            //If we are to print the raw memory...
-            case ptr_memory:
+            case bool_caps:
             {
-                //Inject address for memory dump.
-                inject(rhs, sizeof(*rhs), true);
+                inject(rhs ? "TRUE" : "FALSE");
+                break;
+            }
+            case bool_numeral:
+            {
+                inject(rhs ? "1" : "0");
+                break;
+            }
+            case bool_scott:
+            {
+                inject(rhs ? "Yea" : "Nay");
                 break;
             }
         }
-        return *this;
-    }
 
-    iochannel& iochannel::operator<<(const int& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        int len = stdutils::intlen(rhs, base, true);
-        char cstr[len+1] = {'\0'};
-        stdutils::itoa(cstr, rhs, base, len, numcase);
-        inject(cstr);
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const int* rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        switch(ptr)
-        {
-            //If we are to print as value...
-            case ptr_value:
-            {
-                *this << *rhs;
-                break;
-            }
-            //If we are to print as address...
-            case ptr_address:
-            {
-                //Inject raw address.
-                inject(rhs, sizeof(*rhs), false);
-                break;
-            }
-            //If we are to print the raw memory...
-            case ptr_memory:
-            {
-                //Inject address for memory dump.
-                inject(rhs, sizeof(*rhs), true);
-                break;
-            }
-        }
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const long int& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        int len = stdutils::lintlen(rhs, base, true);
-        char cstr[len+1] = {'\0'};
-        stdutils::litoa(cstr, rhs, base, len, numcase);
-        inject(cstr);
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const long int* rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        switch(ptr)
-        {
-            //If we are to print as value...
-            case ptr_value:
-            {
-                *this << *rhs;
-                break;
-            }
-            //If we are to print as address...
-            case ptr_address:
-            {
-                //Inject raw address.
-                inject(rhs, sizeof(*rhs), false);
-                break;
-            }
-            //If we are to print the raw memory...
-            case ptr_memory:
-            {
-                //Inject address for memory dump.
-                inject(rhs, sizeof(*rhs), true);
-                break;
-            }
-        }
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const unsigned int& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        int len = stdutils::uintlen(rhs, base);
-        char cstr[len+1] = {'\0'};
-        stdutils::uitoa(cstr, rhs, base, len, numcase);
-        inject(cstr);
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const unsigned int* rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        switch(ptr)
-        {
-            //If we are to print as value...
-            case ptr_value:
-            {
-                *this << *rhs;
-                break;
-            }
-            //If we are to print as address...
-            case ptr_address:
-            {
-                //Inject raw address.
-                inject(rhs, sizeof(*rhs), false);
-                break;
-            }
-            //If we are to print the raw memory...
-            case ptr_memory:
-            {
-                //Inject address for memory dump.
-                inject(rhs, sizeof(*rhs), true);
-                break;
-            }
-        }
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const unsigned long int& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        int len = stdutils::ulintlen(rhs, base);
-        char cstr[len+1] = {'\0'};
-        stdutils::ulitoa(cstr, rhs, base, len, numcase);
-        inject(cstr);
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const unsigned long int* rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        switch(ptr)
-        {
-            //If we are to print as value...
-            case ptr_value:
-            {
-                *this << *rhs;
-                break;
-            }
-            //If we are to print as address...
-            case ptr_address:
-            {
-                //Inject raw address.
-                inject(rhs, sizeof(*rhs), false);
-                break;
-            }
-            //If we are to print the raw memory...
-            case ptr_memory:
-            {
-                //Inject address for memory dump.
-                inject(rhs, sizeof(*rhs), true);
-                break;
-            }
-        }
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const float& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        //We use the same functions as for doubles, so just static_cast.
-        *this << static_cast<double>(rhs);
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const float* rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        switch(ptr)
-        {
-            //If we are to print as value...
-            case ptr_value:
-            {
-                *this << *rhs;
-                break;
-            }
-            //If we are to print as address...
-            case ptr_address:
-            {
-                //Inject raw address.
-                inject(rhs, sizeof(*rhs), false);
-                break;
-            }
-            //If we are to print the raw memory...
-            case ptr_memory:
-            {
-                //Inject address for memory dump.
-                inject(rhs, sizeof(*rhs), true);
-                break;
-            }
-        }
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const double& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        inject(stdutils::dtos(rhs, precision, sci).c_str());
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const double* rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        switch(ptr)
-        {
-            //If we are to print as value...
-            case ptr_value:
-            {
-                *this << *rhs;
-                break;
-            }
-            //If we are to print as address...
-            case ptr_address:
-            {
-                //Inject raw address.
-                inject(rhs, sizeof(*rhs), false);
-                break;
-            }
-            //If we are to print the raw memory...
-            case ptr_memory:
-            {
-                //Inject address for memory dump.
-                inject(rhs, sizeof(*rhs), true);
-                break;
-            }
-        }
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const void* rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        switch(ptr)
-        {
-            //If we are to print as value...
-            case ptr_value:
-            {
-                *this << "[iochannel cannot interpret value at pointer of this type.]";
-                break;
-            }
-            //If we are to print as address...
-            case ptr_address:
-            {
-                //Inject raw address, overriding with byte read size 1.
-                inject(rhs, 1, false);
-                break;
-            }
-            //If we are to print the raw memory...
-            case ptr_memory:
-            {
-                //Inject raw address with the read_size() given by the user.
-                inject(rhs, readsize, true);
-                break;
-            }
-        }
         return *this;
     }
 
@@ -353,42 +69,7 @@ namespace pawlib
             //Output as integer.
             case char_int:
             {
-                int len = stdutils::intlen(rhs, base, true);
-                char cstr[len+1] = {'\0'};
-                stdutils::itoa(cstr, rhs, base, len, numcase);
-                inject(cstr);
-                break;
-            }
-        }
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const char* rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        switch(ptr)
-        {
-            //If we are to print as value...
-            case ptr_value:
-            {
-                //We can just inject the C-string.
-                inject(rhs);
-                break;
-            }
-            //If we are to print as address...
-            case ptr_address:
-            {
-                //Inject raw address.
-                inject(rhs, sizeof(*rhs), false);
-                break;
-            }
-            //If we are to print the raw memory...
-            case ptr_memory:
-            {
-                //Inject address for memory dump.
-                inject(rhs, ((strlen(rhs) + 1) * sizeof(char)), true);
+                resolve_integer(rhs);
                 break;
             }
         }
@@ -404,12 +85,23 @@ namespace pawlib
         return *this;
     }
 
+    //------------ ENUMERATIONS ------------//
+
     iochannel& iochannel::operator<<(const IOFormatBase& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
         base = rhs;
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const IOFormatBool& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        boolstyle = rhs;
         return *this;
     }
 
@@ -542,9 +234,7 @@ namespace pawlib
             case io_end:
             {
                 reset_attributes();
-                (can_parse()) ? inject("\n") : inject("");
-                transmit();
-                break;
+                //Fall through to twin.
             }
             case io_end_keep:
             {
@@ -555,9 +245,7 @@ namespace pawlib
             case io_send:
             {
                 reset_attributes();
-                inject("");
-                transmit(true);
-                break;
+                //Fall through to twin.
             }
             case io_send_keep:
             {
@@ -568,17 +256,179 @@ namespace pawlib
             case io_endline:
             {
                 reset_attributes();
-                (can_parse()) ? inject("\n") : inject("");
-                break;
+                //Fall through to twin.
             }
             case io_endline_keep:
             {
                 (can_parse()) ? inject("\n") : inject("");
                 break;
             }
+            case io_show:
+            {
+                reset_attributes();
+                //Fall through to twin.
+            }
+            case io_show_keep:
+            {
+                (can_parse()) ? inject("\r") : inject("");
+                //Fall through to flush.
+            }
+            case io_flush:
+            {
+                flush();
+                break;
+            }
         }
         return *this;
     }
+
+    iochannel& iochannel::resolve_pointer(const char* rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        switch(ptr)
+        {
+            //If we are to print as value...
+            case ptr_value:
+            {
+                //We can just inject the C-string.
+                inject(rhs);
+                break;
+            }
+            //If we are to print as address...
+            case ptr_address:
+            {
+                //Inject raw address.
+                inject(rhs, sizeof(*rhs), false);
+                break;
+            }
+            //If we are to print the raw memory...
+            case ptr_memory:
+            {
+                //Inject address for memory dump.
+                inject(rhs, ((strlen(rhs) + 1) * sizeof(char)), true);
+                break;
+            }
+        }
+        return *this;
+    }
+
+    iochannel& iochannel::resolve_pointer(const void* rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        switch(ptr)
+        {
+            //If we are to print as value...
+            case ptr_value:
+            {
+                *this << "[iochannel cannot interpret value at pointer of this type.]";
+                break;
+            }
+            //If we are to print as address...
+            case ptr_address:
+            {
+                //Inject raw address, overriding with byte read size 1.
+                inject(rhs, 1, false);
+                break;
+            }
+            //If we are to print the raw memory...
+            case ptr_memory:
+            {
+                //Inject raw address with the read_size() given by the user.
+                inject(rhs, readsize, true);
+                break;
+            }
+        }
+        return *this;
+    }
+
+    template <typename T>
+    iochannel& iochannel::resolve_pointer(const T* rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        switch(ptr)
+        {
+            //If we are to print as value...
+            case ptr_value:
+            {
+                *this << *rhs;
+                break;
+            }
+            //If we are to print as address...
+            case ptr_address:
+            {
+                //Inject raw address.
+                inject(rhs, sizeof(*rhs), false);
+                break;
+            }
+            //If we are to print the raw memory...
+            case ptr_memory:
+            {
+                //Inject address for memory dump.
+                inject(rhs, sizeof(*rhs), true);
+                break;
+            }
+        }
+        return *this;
+    }
+    template iochannel& iochannel::resolve_pointer<bool>(const bool*);
+    template iochannel& iochannel::resolve_pointer<unsigned char>(const unsigned char*);
+    template iochannel& iochannel::resolve_pointer<int>(const int*);
+    template iochannel& iochannel::resolve_pointer<unsigned int>(const unsigned int*);
+    template iochannel& iochannel::resolve_pointer<short int>(const short int*);
+    template iochannel& iochannel::resolve_pointer<unsigned short int>(const unsigned short int*);
+    template iochannel& iochannel::resolve_pointer<long int>(const long int*);
+    template iochannel& iochannel::resolve_pointer<unsigned long int>(const unsigned long int*);
+    template iochannel& iochannel::resolve_pointer<long long int>(const long long int*);
+    template iochannel& iochannel::resolve_pointer<unsigned long long int>(const unsigned long long int*);
+    template iochannel& iochannel::resolve_pointer<float>(const float*);
+    template iochannel& iochannel::resolve_pointer<double>(const double*);
+    template iochannel& iochannel::resolve_pointer<long double>(const long double*);
+    template iochannel& iochannel::resolve_pointer<std::string>(const std::string*);
+
+    template <typename T>
+    iochannel& iochannel::resolve_integer(const T& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        int len = stdutils::intlen(rhs, base, true) + 1;
+        char cstr[len] = {'\0'};
+        stdutils::itoa(cstr, rhs, base, len, numcase);
+        inject(cstr);
+        return *this;
+    }
+    template iochannel& iochannel::resolve_integer<char>(const char&);
+    template iochannel& iochannel::resolve_integer<unsigned char>(const unsigned char&);
+    template iochannel& iochannel::resolve_integer<int>(const int&);
+    template iochannel& iochannel::resolve_integer<unsigned int>(const unsigned int&);
+    template iochannel& iochannel::resolve_integer<short int>(const short int&);
+    template iochannel& iochannel::resolve_integer<unsigned short int>(const unsigned short int&);
+    template iochannel& iochannel::resolve_integer<long int>(const long int&);
+    template iochannel& iochannel::resolve_integer<unsigned long int>(const unsigned long int&);
+    template iochannel& iochannel::resolve_integer<long long int>(const long long int&);
+    template iochannel& iochannel::resolve_integer<unsigned long long int>(const unsigned long long int&);
+
+    template <typename T>
+    iochannel& iochannel::resolve_float(const T& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        char cstr[stdutils::floatlen(rhs, precision, sci, true) + 1] = {'\0'};
+        //Convert the float to a cstring, and dump into cstr.
+        stdutils::ftoa(cstr, rhs, precision, sci);
+        inject(cstr);
+        return *this;
+    }
+    template iochannel& iochannel::resolve_float<float>(const float&);
+    template iochannel& iochannel::resolve_float<double>(const double&);
+    template iochannel& iochannel::resolve_float<long double>(const long double&);
 
     bool iochannel::apply_attributes()
     {
@@ -634,6 +484,31 @@ namespace pawlib
         echomode = echo;
         echovrb = echo_vrb;
         echocat = echo_cat;
+    }
+
+    void iochannel::flush()
+    {
+        /* TODO: For non-standard outputs, this should attach a bytecode to
+         * tell external outputs to flush.*/
+
+        //Flush is essential for progress-style outputs (after \r and no \n).
+        switch(echomode)
+        {
+            case echo_cout:
+            {
+                std::cout << std::flush;
+                break;
+            }
+            case echo_printf:
+            {
+                fflush(stdout);
+                break;
+            }
+            case echo_none:
+            {
+                break;
+            }
+        }
     }
 
     void iochannel::inject(char ch)
@@ -759,6 +634,7 @@ namespace pawlib
 
         //Reset the base.
         base = base_dec;
+        boolstyle = bool_lower;
         charval = char_char;
         precision = 14;
         sci = sci_auto;
@@ -825,6 +701,11 @@ namespace pawlib
                     signal_c_error(msg, vrb);
                     break;
                 }
+                case cat_testing:
+                {
+                    signal_c_testing(msg, vrb);
+                    break;
+                }
                 case cat_all:
                 {
                     //This has no corresponding signal.
@@ -844,12 +725,27 @@ namespace pawlib
                     {
                         case echo_printf:
                         {
-                            printf("%s", msg.c_str());
+                            if(cat == cat_error)
+                            {
+                                fprintf(stderr, "%s", msg.c_str());
+                            }
+                            else
+                            {
+                                printf("%s", msg.c_str());
+                            }
                             break;
                         }
                         case echo_cout:
                         {
-                            std::cout << msg.c_str();
+                            if(cat == cat_error)
+                            {
+                                std::cerr << msg.c_str();
+                            }
+                            else
+                            {
+                                std::cout << msg.c_str();
+                            }
+
                             break;
                         }
                         case echo_none:
