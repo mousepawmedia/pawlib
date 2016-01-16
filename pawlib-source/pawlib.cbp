@@ -113,8 +113,10 @@
 		<Unit filename="include/binconv.hpp" />
 		<Unit filename="include/iochannel.hpp" />
 		<Unit filename="include/stdutils.h" />
+		<Unit filename="include/testsuite.hpp" />
 		<Unit filename="src/iochannel.cpp" />
 		<Unit filename="src/stdutils.cpp" />
+		<Unit filename="src/testsuite.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
