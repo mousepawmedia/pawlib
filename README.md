@@ -19,10 +19,10 @@ It is used by virtually all of MousePaw Games' core projects.
 
 Authors
 -------------
-Nate Groggett
-Jason C. McDonald
-Michael Parkman
-Scott Taylor
+ - Nate Groggett
+ - Jason C. McDonald
+ - Michael Parkman
+ - Scott Taylor
 
 Building
 -------------
@@ -45,7 +45,7 @@ Dependencies
 -------------
 PawLIB depends on the following third-party libraries.
 
-<Fill me in later.>
+<To be filled in before 1.0 release.>
 
 Contributions
 -------------
