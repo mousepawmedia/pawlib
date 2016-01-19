@@ -1,8 +1,8 @@
 PawLIB
 =====================
 
-The PawLIB static library provides various common utility functions, 
-many of which are designed as high-performance, near-drop-in-replacements 
+The **PawLIB** static library provides various common utility functions,
+many of which are designed as high-performance, near-drop-in-replacements
 for common C++ Standard Library (std) classes.
 
 PawLIB focuses on minimizing CPU usage first, and memory second, and as
@@ -11,9 +11,18 @@ resources.
 
 It is used by virtually all of MousePaw Games' core projects.
 
+ - Data Structures: High performance alternatives to C++ data structures.
+ - Goldilocks: Testing and benchmarking framework.
+ - IOChannel: Feature-rich multi-output text output system. (Alternative to std::cout)
+ - PawString: Performance string class with full Unicode support. (Alternative to std::string)
+ - PuppeteerXML: OOP-based XML system based on Xerces.
+
 Authors
 -------------
+Nate Groggett
 Jason C. McDonald
+Michael Parkman
+Scott Taylor
 
 Building
 -------------
@@ -38,12 +47,22 @@ PawLIB depends on the following third-party libraries.
 
 <Fill me in later.>
 
-License and Development Terms
+Contributions
+-------------
+We do not accept pull requests through GitHub.
+If you would like to contribute code, please read our
+[Contribution Guide][2].
+
+All contributions are licensed to us under the
+[MousePaw Games Terms of Development][3].
+
+License
 -------------
 PawLIB is licenced under the MIT License. (See LICENCE.md)
-The project is owned and maintained by [MousePaw Games][2].
-All third-party contributions to this project are governed under the [MousePaw Games Terms of Development][3].
 
-[2]: http://www.mousepawgames.com/opensource
+The project is owned and maintained by [MousePaw Games][1].
+
+[1]: http://www.mousepawgames.com/opensource
+[2]: http://www.mousepawgames.com/getinvolved/opensource#contribute
 [3]: http://www.mousepawgames.com/termsofdevelopment
 
