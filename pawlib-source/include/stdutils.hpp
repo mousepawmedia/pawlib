@@ -58,35 +58,9 @@ namespace pawlib
              * \param the base, default 10
              * \param whether to count the symbols (ignored if unsigned)
              * \return the number of digits in the integer*/
-<<<<<<< HEAD:pawlib-source/include/stdutils.hpp
             //static int intlen(int, int=10, bool=true);
             template <typename T>
             static int intlen(T, int, bool=false);
-=======
-            static int intlen(int, int=10, bool=true);
-
-            /**Count the number of digits/characters in an long integer. Does
-             * not count the null terminator.
-             * \param the number to count the digits in
-             * \param the base, default 10
-             * \param whether to count the symbols
-             * \return the number of digits in the integer*/
-            static int lintlen(long int, int=10, bool=true);
-
-            /**Count the number of digits/characters in an unsigned integer.
-             * Does not count the null terminator.
-             * \param the number to count the digits in
-             * \param the base, default 10
-             * \return the number of digits in the integer*/
-            static int uintlen(unsigned int, int=10);
->>>>>>> 07282b9ac31f2f2123e703f044dffed1a031d46d:pawlib/Release64/include/stdutils.h
-
-            /**Count the number of digits/characters in an unsigned long integer.
-             * Does not count the null terminator.
-             * \param the number to count the digits in
-             * \param the base, default 10
-             * \return the number of digits in the integer*/
-            static int ulintlen(unsigned long int, int=10);
 
             /**Count the maximum (safest) estimated number of digits/characters
              * in a float/double. Does not count null terminator. WARNING: This
@@ -112,21 +86,7 @@ namespace pawlib
             template <typename T>
             static void itoa(char*, T, int=10, int=0, bool=false);
 
-<<<<<<< HEAD:pawlib-source/include/stdutils.hpp
             /**Convert a byte to a C-string.
-=======
-            /**Convert a long integer to a C-string.
-             * \param the C-string to write to
-             * \param the long integer to convert
-             * \param the base to convert in, default 10.
-             * \param the length of the C-string, not counting the null
-             * terminator. If 0 or omitted, this will be automatically
-             * calculated.
-             * \param whether to use capital letters for base > 10*/
-            static void litoa(char*, long int, int=10, int=0, bool=false);
-
-            /**Convert an unsigned integer to a C-string.
->>>>>>> 07282b9ac31f2f2123e703f044dffed1a031d46d:pawlib/Release64/include/stdutils.h
              * \param the C-string to write to
              * \param the unsigned integer containing the byte
              * \param the length of the C-string, not counting the null
@@ -144,11 +104,7 @@ namespace pawlib
              * terminator. If 0 or omitted, this will be automatically
              * calculated.
              * \param whether to use capital letters for base > 10*/
-<<<<<<< HEAD:pawlib-source/include/stdutils.hpp
             static void btoa(char*, unsigned int, int=0, bool=false);
-=======
-            static void ulitoa(char*, long unsigned int, int=10, int=0, bool=false);
->>>>>>> 07282b9ac31f2f2123e703f044dffed1a031d46d:pawlib/Release64/include/stdutils.h
 
             /**Convert a floating point number to a C-string.
              * \param the C-string to write to

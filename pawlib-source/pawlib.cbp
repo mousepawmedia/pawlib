@@ -113,13 +113,13 @@
 		<Unit filename="include/binconv.hpp" />
 		<Unit filename="include/goldilocks.hpp" />
 		<Unit filename="include/iochannel.hpp" />
+		<Unit filename="include/pawstring.hpp" />
 		<Unit filename="include/stdutils.hpp" />
-		<Unit filename="include/testsuite.hpp" />
 		<Unit filename="src/binconv.cpp" />
 		<Unit filename="src/goldilocks.cpp" />
 		<Unit filename="src/iochannel.cpp" />
+		<Unit filename="src/pawstring.cpp" />
 		<Unit filename="src/stdutils.cpp" />
-		<Unit filename="src/testsuite.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
