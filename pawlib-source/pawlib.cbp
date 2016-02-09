@@ -24,6 +24,7 @@
 				<ExtraCommands>
 					<Add after="rm -rf ../pawlib/Debug64/include" />
 					<Add after="rm -rf ../pawlib/Debug64/lib" />
+					<Add after="mkdir -p ../pawlib/Debug64" />
 					<Add after="cp -r ./include ../pawlib/Debug64/include" />
 					<Add after="cp -r ./bin/Debug64 ../pawlib/Debug64/lib" />
 					<Mode after="always" />
@@ -48,6 +49,7 @@
 				<ExtraCommands>
 					<Add after="rm -rf ../pawlib/Release64/include" />
 					<Add after="rm -rf ../pawlib/Release64/lib" />
+					<Add after="mkdir -p ../pawlib/Release64" />
 					<Add after="cp -r ./include ../pawlib/Release64/include" />
 					<Add after="cp -r ./bin/Release64 ../pawlib/Release64/lib" />
 					<Mode after="always" />
@@ -71,6 +73,7 @@
 				<ExtraCommands>
 					<Add after="rm -rf ../pawlib/Debug32/include" />
 					<Add after="rm -rf ../pawlib/Debug32/lib" />
+					<Add after="mkdir -p ../pawlib/Debug32" />
 					<Add after="cp -r ./include ../pawlib/Debug32/include" />
 					<Add after="cp -r ./bin/Debug32 ../pawlib/Debug32/lib" />
 					<Mode after="always" />
@@ -95,6 +98,7 @@
 				<ExtraCommands>
 					<Add after="rm -rf ../pawlib/Release32/include" />
 					<Add after="rm -rf ../pawlib/Release32/lib" />
+					<Add after="mkdir -p ../pawlib/Release32" />
 					<Add after="cp -r ./include ../pawlib/Release32/include" />
 					<Add after="cp -r ./bin/Debug32 ../pawlib/Release32/lib" />
 					<Mode after="always" />

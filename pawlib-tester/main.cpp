@@ -24,8 +24,16 @@ int main()
 {
     //This has to live here because evil.
     ioc.signal_all.connect(sigc::ptr_fun(print));
-    //ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
+    ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
 
+    //Test code goes here.
+
+    return 0;
+}
+
+//Temporary storage for Pawstring test.
+int pawstringtest()
+{
     const char* test = "走dðnde?¶";
     PawString<8> bat(test);
     cout<< bat <<endl;
@@ -197,6 +205,4 @@ int main()
     PawString<16> emoji2 = "\xF0\x9F\x98\xA2";
     cout<< emoji2 <<endl;
     cout<< (emoji2 < emoji1)<<endl;
-
-    return 0;
 }
