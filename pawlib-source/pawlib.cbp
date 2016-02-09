@@ -14,7 +14,6 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-std=c++11" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -39,7 +38,6 @@
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O3" />
-					<Add option="-std=c++11" />
 					<Add option="-m64" />
 					<Add directory="include" />
 				</Compiler>
@@ -63,7 +61,6 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-std=c++11" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -88,7 +85,6 @@
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O3" />
-					<Add option="-std=c++11" />
 					<Add option="-m32" />
 					<Add directory="include" />
 				</Compiler>
@@ -111,7 +107,7 @@
 			<Add alias="Release" targets="Release64;Release32;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option="-std=c++11" />
+			<Add option="-std=c++14" />
 			<Add option="`pkg-config --cflags --libs sigc++-2.0`" />
 		</Compiler>
 		<Unit filename="include/binconv.hpp" />

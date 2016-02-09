@@ -8,10 +8,10 @@
 1440563205 source:/home/jason/Code/Repositories/pawlib-git/pawlib/src/iochannel.cpp
 	"iochannel.hpp"
 
-1446693483 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/iochannel.cpp
+1454885514 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/iochannel.cpp
 	"iochannel.hpp"
 
-1446337045 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/iochannel.hpp
+1454885614 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/iochannel.hpp
 	<stdio.h>
 	<iostream>
 	<cstdint>
@@ -24,7 +24,7 @@
 	<cstdio>
 	<stdutils.hpp>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/signal.h
+1414227986 /usr/include/sigc++-2.0/sigc++/signal.h
 	<list>
 	<sigc++/signal_base.h>
 	<sigc++/type_traits.h>
@@ -32,7 +32,7 @@
 	<sigc++/functors/slot.h>
 	<sigc++/functors/mem_fun.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/signal_base.h
+1414227986 /usr/include/sigc++-2.0/sigc++/signal_base.h
 	<cstddef>
 	<list>
 	<sigc++config.h>
@@ -41,25 +41,25 @@
 	<sigc++/functors/slot.h>
 	<sigc++/functors/mem_fun.h>
 
-1438925566 /usr/lib/x86_64-linux-gnu/sigc++-2.0/include/sigc++config.h
+1414227986 /usr/lib/x86_64-linux-gnu/sigc++-2.0/include/sigc++config.h
 
-1438925565 /usr/include/sigc++-2.0/sigc++/type_traits.h
+1414227986 /usr/include/sigc++-2.0/sigc++/type_traits.h
 	<sigc++config.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/trackable.h
+1414227986 /usr/include/sigc++-2.0/sigc++/trackable.h
 	<list>
 	<sigc++config.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/slot.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/slot.h
 	<sigc++/trackable.h>
 	<sigc++/visit_each.h>
 	<sigc++/adaptors/adaptor_trait.h>
 	<sigc++/functors/slot_base.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/visit_each.h
+1414227986 /usr/include/sigc++-2.0/sigc++/visit_each.h
 	<sigc++/type_traits.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/adaptors/adaptor_trait.h
+1414227986 /usr/include/sigc++-2.0/sigc++/adaptors/adaptor_trait.h
 	<sigc++config.h>
 	<sigc++/visit_each.h>
 	<sigc++/functors/functor_trait.h>
@@ -67,27 +67,27 @@
 	<sigc++/functors/mem_fun.h>
 	<sigc++/adaptors/deduce_result_type.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/functor_trait.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/functor_trait.h
 	<sigc++/type_traits.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/ptr_fun.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/ptr_fun.h
 	<sigc++/type_traits.h>
 	<sigc++/functors/functor_trait.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/mem_fun.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/mem_fun.h
 	<sigc++/type_traits.h>
 	<sigc++/functors/functor_trait.h>
 	<sigc++/limit_reference.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/limit_reference.h
+1414227986 /usr/include/sigc++-2.0/sigc++/limit_reference.h
 	<sigc++/visit_each.h>
 	<sigc++/type_traits.h>
 	<sigc++/trackable.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/adaptors/deduce_result_type.h
+1414227986 /usr/include/sigc++-2.0/sigc++/adaptors/deduce_result_type.h
 	<sigc++/functors/functor_trait.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/slot_base.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/slot_base.h
 	<sigc++config.h>
 	<sigc++/trackable.h>
 	<sigc++/functors/functor_trait.h>
@@ -101,9 +101,8 @@
 
 1445800940 D
 
-1444080103 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/stdutils.cpp
+1454885514 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/stdutils.cpp
 	"stdutils.hpp"
-	"stdutils.h"
 
 1446259543 hpp"
 
@@ -216,7 +215,7 @@
 	<cstdlib>
 	<iochannel.hpp>
 
-1446256800 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/stdutils.hpp
+1454978674 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/stdutils.hpp
 	<cmath>
 	<cstring>
 	<cstdio>
@@ -224,10 +223,10 @@
 	<limits>
 	<string>
 
-1447554007 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/goldilocks.cpp
+1454885514 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/goldilocks.cpp
 	"goldilocks.hpp"
 
-1447553698 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/goldilocks.hpp
+1454885514 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/goldilocks.hpp
 	<cstdlib>
 	<memory>
 	<map>
@@ -292,4 +291,26 @@
 
 1454902157 source:/home/scott/Code/Repositories/pawlib-git/pawlib-source/src/stdutils.cpp
 	"stdutils.hpp"
+
+1454885514 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/binconv.cpp
+	"binconv.hpp"
+
+1454885607 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/binconv.hpp
+	<string>
+	<sstream>
+	<math.h>
+	<vector>
+
+1454978674 source:/home/jason/Code/Repositories/pawlib-git/pawlib-source/src/pawstring.cpp
+	"pawstring.hpp"
+	<unicode/uchar.h>
+	<iostream>
+	<iomanip>
+	<cstring>
+	<iochannel.hpp>
+
+1454978674 /home/jason/Code/Repositories/pawlib-git/pawlib-source/include/pawstring.hpp
+	<unicode/uchar.h>
+	<iostream>
+	<iochannel.hpp>
 

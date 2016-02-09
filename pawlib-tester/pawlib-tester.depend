@@ -1,6 +1,9 @@
 # depslib dependency file v1.0
-1447470124 source:/home/jason/Code/Repositories/pawlib-git/pawlib-tester/main.cpp
+1454979031 source:/home/jason/Code/Repositories/pawlib-git/pawlib-tester/main.cpp
+	<iostream>
 	<iochannel.hpp>
+	<pawstring.hpp>
+	<stdutils.hpp>
 	<goldilocks.hpp>
 	<stdutils.hpp>
 	<sigc++/signal.h>
@@ -19,7 +22,7 @@
 	<string>
 	<queue>
 
-1447560272 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/iochannel.hpp
+1454979216 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/iochannel.hpp
 	<stdio.h>
 	<iostream>
 	<cstdint>
@@ -32,7 +35,7 @@
 	<cstdio>
 	<stdutils.hpp>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/signal.h
+1414227986 /usr/include/sigc++-2.0/sigc++/signal.h
 	<list>
 	<sigc++/signal_base.h>
 	<sigc++/type_traits.h>
@@ -40,7 +43,7 @@
 	<sigc++/functors/slot.h>
 	<sigc++/functors/mem_fun.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/signal_base.h
+1414227986 /usr/include/sigc++-2.0/sigc++/signal_base.h
 	<cstddef>
 	<list>
 	<sigc++config.h>
@@ -49,25 +52,25 @@
 	<sigc++/functors/slot.h>
 	<sigc++/functors/mem_fun.h>
 
-1438925566 /usr/lib/x86_64-linux-gnu/sigc++-2.0/include/sigc++config.h
+1414227986 /usr/lib/x86_64-linux-gnu/sigc++-2.0/include/sigc++config.h
 
-1438925565 /usr/include/sigc++-2.0/sigc++/type_traits.h
+1414227986 /usr/include/sigc++-2.0/sigc++/type_traits.h
 	<sigc++config.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/trackable.h
+1414227986 /usr/include/sigc++-2.0/sigc++/trackable.h
 	<list>
 	<sigc++config.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/slot.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/slot.h
 	<sigc++/trackable.h>
 	<sigc++/visit_each.h>
 	<sigc++/adaptors/adaptor_trait.h>
 	<sigc++/functors/slot_base.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/visit_each.h
+1414227986 /usr/include/sigc++-2.0/sigc++/visit_each.h
 	<sigc++/type_traits.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/adaptors/adaptor_trait.h
+1414227986 /usr/include/sigc++-2.0/sigc++/adaptors/adaptor_trait.h
 	<sigc++config.h>
 	<sigc++/visit_each.h>
 	<sigc++/functors/functor_trait.h>
@@ -75,27 +78,27 @@
 	<sigc++/functors/mem_fun.h>
 	<sigc++/adaptors/deduce_result_type.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/functor_trait.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/functor_trait.h
 	<sigc++/type_traits.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/ptr_fun.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/ptr_fun.h
 	<sigc++/type_traits.h>
 	<sigc++/functors/functor_trait.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/mem_fun.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/mem_fun.h
 	<sigc++/type_traits.h>
 	<sigc++/functors/functor_trait.h>
 	<sigc++/limit_reference.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/limit_reference.h
+1414227986 /usr/include/sigc++-2.0/sigc++/limit_reference.h
 	<sigc++/visit_each.h>
 	<sigc++/type_traits.h>
 	<sigc++/trackable.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/adaptors/deduce_result_type.h
+1414227986 /usr/include/sigc++-2.0/sigc++/adaptors/deduce_result_type.h
 	<sigc++/functors/functor_trait.h>
 
-1438925565 /usr/include/sigc++-2.0/sigc++/functors/slot_base.h
+1414227986 /usr/include/sigc++-2.0/sigc++/functors/slot_base.h
 	<sigc++config.h>
 	<sigc++/trackable.h>
 	<sigc++/functors/functor_trait.h>
@@ -196,7 +199,7 @@
 	<map>
 	<iochannel.hpp>
 
-1447560272 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/stdutils.hpp
+1454979216 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/stdutils.hpp
 	<cmath>
 	<cstring>
 	<cstdio>
@@ -204,7 +207,7 @@
 	<limits>
 	<string>
 
-1447560272 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/goldilocks.hpp
+1454979216 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/goldilocks.hpp
 	<cstdlib>
 	<memory>
 	<map>
@@ -252,5 +255,10 @@
 	<memory>
 	<map>
 	<vector>
+	<iochannel.hpp>
+
+1454979216 /home/jason/Code/Repositories/pawlib-git/pawlib/Debug64/include/pawstring.hpp
+	<unicode/uchar.h>
+	<iostream>
 	<iochannel.hpp>
 
