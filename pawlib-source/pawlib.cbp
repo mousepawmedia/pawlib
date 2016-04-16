@@ -64,7 +64,7 @@
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-m32" />
+					<Add option="-m32 -v" />
 					<Add directory="include" />
 				</Compiler>
 				<ExtraCommands>
@@ -108,17 +108,33 @@
 		</VirtualTargets>
 		<Compiler>
 			<Add option="-std=c++14" />
-			<Add option="`pkg-config --cflags --libs sigc++-2.0`" />
+			<Add directory="../libs/include" />
 		</Compiler>
+		<Linker>
+			<Add library="../libs/lib/libcpgf.a" />
+			<Add directory="../libs/lib" />
+		</Linker>
+		<Unit filename="include/avl_tree.hpp" />
+		<Unit filename="include/base_flex_array.hpp" />
 		<Unit filename="include/binconv.hpp" />
+		<Unit filename="include/flex_array.hpp" />
 		<Unit filename="include/goldilocks.hpp" />
 		<Unit filename="include/iochannel.hpp" />
+		<Unit filename="include/map.hpp" />
+		<Unit filename="include/pawsort.hpp" />
+		<Unit filename="include/pawsort_tests.hpp" />
 		<Unit filename="include/pawstring.hpp" />
+		<Unit filename="include/pawstring_tests.hpp" />
+		<Unit filename="include/queue.hpp" />
+		<Unit filename="include/singly_linked_list.hpp" />
+		<Unit filename="include/stack.hpp" />
 		<Unit filename="include/stdutils.hpp" />
 		<Unit filename="src/binconv.cpp" />
 		<Unit filename="src/goldilocks.cpp" />
 		<Unit filename="src/iochannel.cpp" />
+		<Unit filename="src/pawsort_tests.cpp" />
 		<Unit filename="src/pawstring.cpp" />
+		<Unit filename="src/pawstring_tests.cpp" />
 		<Unit filename="src/stdutils.cpp" />
 		<Extensions>
 			<code_completion />

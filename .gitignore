@@ -6,4 +6,7 @@
 **/bin
 **/obj
 **/lib
+**/libs
 pawlib/
+*.depend
+*.layout

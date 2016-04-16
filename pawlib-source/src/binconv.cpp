@@ -152,7 +152,7 @@ float binconv::toFloat(string binary)
 {
     //the value starts at 0
     float val = 0;
-    if(binary.find("1") == -1)
+    if(binary.find("1") == (size_t) (-1))
         return 0;
     //used to determine if the number is a positive or negative number
     int theSign = 1;
@@ -295,7 +295,7 @@ double binconv::toDouble(string binary)
 {
     //stores the new decimal value
     double val = 0;
-    if(binary.find("1") == -1)
+    if(binary.find("1") == (size_t)(-1))
         return 0;
     int theSign = 1;
     //if the sign bit is set, the number needs to be multiplied by a negative 1 at the end
@@ -376,7 +376,7 @@ string binconv::binaryToString(string binary)
 {
     stringstream r;
     string character;
-    for(int i = 0; i < binary.length() / 8; i++)
+    for(unsigned int i = 0; i < binary.length() / 8; i++)
     {
         character = binary.substr(i * 8, 8);
         r << toChar(character);

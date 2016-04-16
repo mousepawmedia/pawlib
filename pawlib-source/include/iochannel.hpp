@@ -1,56 +1,85 @@
-/**PawLIB: IOChannel
-* Allows managed, custom output to any console or terminal.
-* @since 1.0
-* @author Jason C. McDonald
-*/
+/** IOChannel [PawLIB]
+  * Version: 1.0
+  *
+  * Allows managed, custom output to any console or terminal.
+  * See WHAT IS IOCHANNEL? below.
+  *
+  * Last Updated: 6 April 2016
+  * Author: Jason C. McDonald
+  */
 
-/*
-WHAT IS IOCHANNEL?
-IOChannel is intended both as a replacement and wrapper for `std::iostream` and
-`stdio.h/printf`. It allows for messages and errors to be output to multiple
-sources simultaneously and asyncronously using signals (libsigc++). New
-messages from any source are added to the back of the queue, and arbitrary
-outputs can read them asynchronously from the front, either destructively or
-non-destructively.
+/* LICENSE
+ * Copyright (C) 2016 MousePaw Games.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * CONTRIBUTING
+ * See http://www.mousepawgames.com/participate/opensource for information
+ * on how to contribute to our projects.
+ */
 
-Each output is also able to individually timing, as well as which messages it is
-interested in and how it reads them, without interfering with the behavior
-of other outputs.
 
-EXTERNAL OUTPUTS
-An external output waits for a signal to be dispatched before it collects its
-messages. Different signals are dispatched for different levels of verbosity
-and categories.
-
-INTERNAL OUTPUTS
-Optionally, iochannel can output to the terminal automatically via either
-`std::iostream` or `stdio.h/printf`. This output can be controlled externally.
-For example, a developer might choose to create pseudocommands in their
-command-line that allow them to change verbosity on-the-fly while the program
-is running.
-
-VERBOSITY
-The concept of verbosity allows for developers to write and leave all manner
-of useful output data, including debug information, detailed error messages,
-and outright snark. Verbosity can be toggled globally for a channel,
-or on a connection-by-connection basis.
-
-Verbosity ranges from 0 (only essential messages) to 3 (literally all messages).
-
-CATEGORY
-Messages can be assigned a category, which makes it easier to different messages
-to be sent to different outputs, or otherwise be handled differently. At the
-moment, the categories are...
- * Normal Messages
- * Warnings
- * Errors
- * Debug Output
-
-CROSS-PLATFORM FORMATTING
-IOChannel offers coloring and basic formatting on both UNIX and Windows systems
-via the same interface.
-
-*/
+/* WHAT IS IOCHANNEL?
+ * IOChannel is intended both as a replacement and wrapper for `std::iostream` and
+ * `stdio.h/printf`. It allows for messages and errors to be output to multiple
+ * sources simultaneously and asyncronously using signals (libsigc++). New
+ * messages from any source are added to the back of the queue, and arbitrary
+ * outputs can read them asynchronously from the front, either destructively or
+ * non-destructively.
+ *
+ * Each output is also able to individually timing, as well as which messages it is
+ * interested in and how it reads them, without interfering with the behavior
+ * of other outputs.
+ *
+ * EXTERNAL OUTPUTS
+ * An external output waits for a signal to be dispatched before it collects its
+ * messages. Different signals are dispatched for different levels of verbosity
+ * and categories.
+ *
+ * INTERNAL OUTPUTS
+ * Optionally, iochannel can output to the terminal automatically via either
+ * `std::iostream` or `stdio.h/printf`. This output can be controlled externally.
+ * For example, a developer might choose to create pseudocommands in their
+ * command-line that allow them to change verbosity on-the-fly while the program
+ * is running.
+ *
+ * VERBOSITY
+ * The concept of verbosity allows for developers to write and leave all manner
+ * of useful output data, including debug information, detailed error messages,
+ * and outright snark. Verbosity can be toggled globally for a channel,
+ * or on a connection-by-connection basis.
+ *
+ * Verbosity ranges from 0 (only essential messages) to 3 (literally all messages).
+ *
+ * CATEGORY
+ * Messages can be assigned a category, which makes it easier to different messages
+ * to be sent to different outputs, or otherwise be handled differently. At the
+ * moment, the categories are...
+ * - Normal Messages
+ * - Warnings
+ * - Errors
+ * - Debug Output
+ *
+ * CROSS-PLATFORM FORMATTING
+ * IOChannel offers coloring and basic formatting on both UNIX and Windows systems
+ * via the same interface.
+ */
 
 #ifndef PAWLIB_IOCHANNEL_H
 #define PAWLIB_IOCHANNEL_H
@@ -67,9 +96,13 @@ via the same interface.
 //TODO: Swap to pawlib::flexarray
 #include <vector>
 
+//TODO: DROP THIS!
 //Import what we need from sigc++
-#include <sigc++/signal.h>
-#include <sigc++/trackable.h>
+/*#include <sigc++/signal.h>
+#include <sigc++/trackable.h>*/
+
+//Signals and callbacks.
+#include "cpgf/gcallbacklist.h"
 
 /*We are only using std::string and std::queue temporarily.
 These need to be swapped out for pawlib alternatives ASAP.*/
@@ -152,7 +185,7 @@ namespace pawlib
         //PRECISION
         struct set_precision
         {
-            set_precision(int p):precision(p){}
+            explicit set_precision(unsigned int p):precision(p){}
             int precision = 14;
         };
 
@@ -187,7 +220,7 @@ namespace pawlib
              * types.
              * CAUTION: Misuse can cause SEGFAULT or other memory errors.
              \param the number of bytes to read*/
-            read_size(unsigned int i):readsize(i){}
+            explicit read_size(unsigned int i):readsize(i){}
             unsigned int readsize = 1;
         };
 
@@ -300,15 +333,15 @@ namespace pawlib
         enum IOFormatCategory
         {
             /**The default value - anything that doesn't fit elsewhere.*/
-            cat_normal = (1 << 0),
+            cat_normal = 1,
             /**Warnings, but not necessarily errors.*/
-            cat_warning = (1 << 1),
+            cat_warning = 2,
             /**Error messages.*/
-            cat_error = (1 << 2),
+            cat_error = 4,
             /**Debug messages, such as variable outputs.*/
-            cat_debug = (1 << 3),
+            cat_debug = 8,
             /**Testing messages that we may want shut off during benchmarking.*/
-            cat_testing = (1 << 4),
+            cat_testing = 16,
             /**All message categories. Does not have a correlating signal.*/
             cat_all = 31
         };
@@ -338,8 +371,11 @@ namespace pawlib
 
         enum IOEchoMode
         {
+            /** Don't automatically output messages via the stdout echo. */
             echo_none = 0,
+            /** Output messages to stdout via C-style `printf`. */
             echo_printf = 1,
+            /** Output messages to stdout via C++-style `std::cout`. */
             echo_cout = 2
         };
     }
@@ -350,49 +386,104 @@ namespace pawlib
     /**An iochannel allows console output to be custom routed to one or more
     * text-based output channels, including the terminal. It supports various
     * advanced functions, formatting and colors, and message priority.*/
-    class iochannel : public sigc::trackable
+    class iochannel
     {
         public:
             /**Declares a new iochannel instance.*/
             iochannel();
 
-            /**Emitted when a message with verbosity 0 (quiet) is broadcast.
-            Callback must be of form 'void callback(string, IOFormatCategory){}'*/
-            sigc::signal<void, std::string, IOFormatCategory> signal_v_quiet;
-            /**Emitted when a message with verbosity <= 1 (normal) is broadcast.
-            Callback must be of form 'void callback(string, IOFormatCategory){}'*/
-            sigc::signal<void, std::string, IOFormatCategory> signal_v_normal;
-            /**Emitted when a message with verbosity <=2 (chatty) is broadcast.
-            Callback must be of form 'void callback(string, IOFormatCategory){}'*/
-            sigc::signal<void, std::string, IOFormatCategory> signal_v_chatty;
-            /**Emitted when a message with verbosity <=3 (tmi) is broadcast.
-            Callback must be of form 'void callback(string, IOFormatCategory){}'*/
-            sigc::signal<void, std::string, IOFormatCategory> signal_v_tmi;
+            /** CPGF multi-output signal (callback list) for categories. */
+            typedef cpgf::GCallbackList<void (std::string,
+                IOFormatCategory)> IOSignalCat;
+            /** CPGF multi-output signal (callback list) for verbosities. */
+            typedef cpgf::GCallbackList<void (std::string,
+                IOFormatVerbosity)> IOSignalVrb;
+            /** CPGF multi-output signal (callback list) for everything,
+              * transmitting the message, the verbosity, and the catgeory. */
+            typedef cpgf::GCallbackList<void (std::string,
+                IOFormatVerbosity, IOFormatCategory)> IOSignalFull;
+            /** CPGF multi-output signal (callback list) for everything,
+              * transmitting only the message. */
+            typedef cpgf::GCallbackList<void (std::string)> IOSignalAll;
 
-            /**Emitted when a message with category "normal" is broadcast.
-            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
-            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_normal;
-            /**Emitted when a message with category "warning" is broadcast.
-            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
-            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_warning;
-            /**Emitted when a message with category "error" is broadcast.
-            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
-            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_error;
-            /**Emitted when a message with category "debug" is broadcast.
-            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
-            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_debug;
-            /**Emitted when a message with category "testing" is broadcast.
-            Callback must be of form 'void callback(string, IOFormatVerbosity){}'*/
-            sigc::signal<void, std::string, IOFormatVerbosity> signal_c_testing;
+            /* NOTE: In the examples below, the verbosity-related signals must
+             * transmit what category the message is (since verbosity is
+             * inherent and assumed). The inverse is true of category-related
+             * signals. */
 
-            /**Emitted when any message is broadcast.
-            Callback must be of form 'void callback(string, IOFormatVerbosity, IOFormatCategory){}'*/
-            sigc::signal<void, std::string, IOFormatVerbosity, IOFormatCategory> signal_all;
+            /** Emitted when a message with verbosity 0 (quiet) is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatCategory){}'
+              */
+            IOSignalCat signal_v_quiet;
 
-            //These three need custom enumerations.
+            /** Emitted when a message with verbosity <= 1 (normal) is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatCategory){}'
+              */
+            IOSignalCat signal_v_normal;
+
+            /** Emitted when a message with verbosity <=2 (chatty) is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatCategory){}'
+              */
+            IOSignalCat signal_v_chatty;
+
+            /** Emitted when a message with verbosity <=3 (tmi) is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatCategory){}'
+              */
+            IOSignalCat signal_v_tmi;
+
+            /** Emitted when a message with category "normal" is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatVerbosity){}'
+              */
+            IOSignalVrb signal_c_normal;
+
+            /** Emitted when a message with category "warning" is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatVerbosity){}'
+              */
+            IOSignalVrb signal_c_warning;
+
+            /** Emitted when a message with category "error" is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatVerbosity){}'
+              */
+            IOSignalVrb signal_c_error;
+
+            /** Emitted when a message with category "debug" is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatVerbosity){}'
+              */
+            IOSignalVrb signal_c_debug;
+
+            /** Emitted when a message with category "testing" is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatVerbosity){}'
+              */
+            IOSignalVrb signal_c_testing;
+
+            /** Emitted when any message is broadcast.
+              * Callback must be of form 'void callback(string,
+              * IOFormatVerbosity, IOFormatCategory){}'
+              */
+            IOSignalFull signal_full;
+
+            /** Emitted when any message is broadcast, but only transmits the
+              * message, and omits the verbosity and category.
+              * Callback must be of form 'void callback(string){}'
+              */
+            IOSignalAll signal_all;
+
+            // Overloaded stream insertion operators for IOChannel.
+
+            //These three need custom implementations.
             iochannel& operator<<(const bool&);
             iochannel& operator<<(const char&);
             iochannel& operator<<(const std::string&);
+            //TODO: Add support for PawString.
 
             inline iochannel& operator<<(const unsigned char& rhs){return resolve_integer(rhs);}
             inline iochannel& operator<<(const int& rhs){return resolve_integer(rhs);}
@@ -444,52 +535,122 @@ namespace pawlib
 
             void configure_echo(IOEchoMode, IOFormatVerbosity = vrb_tmi, IOFormatCategory = cat_all);
 
+            /** Suppress a category from broadcasting at all.
+              * \param the category to suppress
+              */
             void shutup(IOFormatCategory);
+
+            /** Suppress verbosities higher than the one given.
+              * This is also mainly used to reset verbosity back to "normal"
+              * (the default).
+              * \param the maximum verbosity to permit (default=vrb_normal)
+              */
             void shutup(IOFormatVerbosity = vrb_normal);
+
+            /** Permit a category to broadcast.
+              * \param the category to broadcast
+              */
             void speakup(IOFormatCategory);
+
+            /** Permit a verbosity (and all below it) to broadcast.
+              * Functionally identical to `shutup(IOFormatVerbosity)`.
+              * \param the maximum verbosity to permit
+              */
             void speakup(IOFormatVerbosity);
+
+            /** Permit all messages (full verbosity and all categories)
+              * to be broadcast.
+              */
             void speakup();
 
             ~iochannel();
         protected:
-            //TODO: Swap for pawlib::string
+            // TODO: Swap for pawlib::string(?)
             std::string msg;
 
+            // The bitfield storing which categories are permitted.
             int16_t process_c = cat_all;
+            // The maximum verbosity to permit.
             IOFormatVerbosity process_v = vrb_tmi;
 
+            // Which method should be used for IOChannel's default stdout echo?
             IOEchoMode echomode = echo_printf;
+            // The maximum verbosity to echo.
             IOFormatVerbosity echovrb = vrb_tmi;
+            // The category to echo.
             IOFormatCategory echocat = cat_all;
+            // TODO: Change echocat to a bitfield.
 
-            /*Current settings set by enums and flags. These change as we go,
-            and should be reset after each message.*/
+            /* MESSAGE ATTRIBUTES
+             * These are set by enums and flags,
+             * and should be reset after each message (unless
+             * the user ends the message with an EoM stream
+             * control with a "keep" flag.
+             */
+
+            /* The base or radix to display numbers in. */
             IOFormatBase base = base_10;
+            /* The boolean value output style. This will also be used
+             * later for trilean. */
             IOFormatBool boolstyle = bool_lower;
+            /* What data type to interpret char values as. */
             IOFormatCharValue charval = char_char;
+            /* The precision to use in displaying floating point values. */
             int precision = 14;
+            // NOTE: Is `precision` a lie?
+            /* Whether to display in scientific notation or not. */
             IOFormatSciNotation sci = sci_auto;
-            IOFormatNumeralCase numcase = num_lower;
+            /* Whether to display digits > 9 [radix > 10] as uppercase
+             * or lowercase. */
+            IOFormatNumeralCase numcase = num_upper;
+            /* What to print out when given a pointer.*/
             IOFormatPointer ptr = ptr_value;
+            /* How many bytes of data to read from a pointer. */
             unsigned int readsize = 1;
+            /* Bitfield for binary data display formats. */
             unsigned char memformat = 0;
 
+            /* Text attributes. */
             IOFormatTextAttributes ta = ta_none;
+            // TODO: Change `ta` to a bitfield, to allow multiple format flags.
+            /* Text background color. */
             IOFormatTextBG bg = bg_none;
+            /* Text foreground color. */
             IOFormatTextFG fg = fg_none;
 
+            /* Message verbosity. */
             IOFormatVerbosity vrb = vrb_normal;
+            /* Message category. */
             IOFormatCategory cat = cat_normal;
 
-            /**Resolves a pointer.*/
+            /** Resolves any common pointer. This can handle
+              * all atomic and numeric C and C++ types.
+              * \param the pointer to resolve
+              */
             template <typename T>
             iochannel& resolve_pointer(const T*);
+
+            /** Resolves a void pointer, which allows
+              * for raw data dumps from any pointer
+              * imaginable.
+              * \param the pointer to resolve
+              */
             iochannel& resolve_pointer(const void*);
+
+            /** Resolves a char pointer.
+              * \param the pointer to resolve
+              */
             iochannel& resolve_pointer(const char*);
 
+            /** Resolves any integer.
+              * \param the integer variable to resolve
+              */
             template <typename T>
             iochannel& resolve_integer(const T&);
 
+            /** Resolves any floating point number variable.
+              * \param the floating point variable to resolve
+              */
             template <typename T>
             iochannel& resolve_float(const T&);
 

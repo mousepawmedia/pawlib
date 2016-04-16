@@ -1,3 +1,39 @@
+/** Standard Utilities [PawLIB]
+  * Version: 1.0
+  *
+  * Common utility functions used by the rest of PawLIB.
+  *
+  * Last Updated: 8 February 2016
+  * Authors: Jason C. McDonald, Scott Taylor
+  */
+
+/* LICENSE
+ * Copyright (C) 2016 MousePaw Games.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * CONTRIBUTING
+ * See http://www.mousepawgames.com/participate/opensource for information
+ * on how to contribute to our projects.
+ */
+
+
 #ifndef STDUTILS_H
 #define STDUTILS_H
 
@@ -20,29 +56,6 @@ namespace pawlib
         public:
             stdutils();
 
-            template <typename T>
-            static void selection_sort(T arr[], int len)
-            {
-                int start;
-                T minVal;
-
-                for(start = 0; start < (len - 1); start++)
-                {
-                    int minI = start;
-                    minVal = arr[start];
-                    for(int i = start + 1; i < len; i++)
-                    {
-                        if(arr[i] < minVal)
-                        {
-                            minVal = arr[i];
-                            minI = i;
-                        }
-                    }
-                    arr[minI] = arr[start];
-                    arr[start] = minVal;
-                }
-            }
-
             /** Reverse a C-string. Algorithm from
             * http://stackoverflow.com/a/784567/472647
             * \param the C-string to reverse.
@@ -58,7 +71,6 @@ namespace pawlib
              * \param the base, default 10
              * \param whether to count the symbols (ignored if unsigned)
              * \return the number of digits in the integer*/
-            //static int intlen(int, int=10, bool=true);
             template <typename T>
             static int intlen(T, int, bool=false);
 

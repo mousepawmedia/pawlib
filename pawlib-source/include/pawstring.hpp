@@ -1,19 +1,46 @@
-/* PawString, version 1.0 [PawLIB]
+/** PawString [PawLIB]
+  * Version: 1.0
+  *
+  * PawString is a multi-sized, Unicode-compatible replacement
+  * for std::string. PawString contains all the
+  * basic functions found in std::string all while
+  * avoiding dynamic allocation whenever possible.
+  * To handle Unicode, each PawString is made of PawChars,
+  * which are enhanced characters.
+  *
+  * Last Updated: 10 April 2016
+  * Author: Scott Taylor
+  */
+
+/* LICENSE
+ * Copyright (C) 2016 MousePaw Games.
  *
- * PawString is a multi-sized, Unicode-compatible replacement
- * for std::string. PawString contains all the
- * basic functions found in std::string all while
- * avoiding dynamic allocation whenever possible.
- * To handle Unicode, each PawString is made of PawChars,
- * which are enhanced characters.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * Last Updated: 6 February 2016
- * Author: Scott Taylor
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * CONTRIBUTING
+ * See http://www.mousepawgames.com/participate/opensource for information
+ * on how to contribute to our projects.
  */
+
 
 #ifndef PAWSTRING_HPP
 #define PAWSTRING_HPP
-#include <unicode/uchar.h>
 #include <iostream>
 #include <iochannel.hpp>
 
@@ -117,6 +144,7 @@ namespace pawlib
              * \param the string to be converted to PawString
              * \return a PawString representation of str.
              *         All Unicode will be parsed appropriately. */
+            // cppcheck-suppress noExplicitConstructor
             PawString(std::string str);
 
             /**Create a PawString from const char*
@@ -124,16 +152,19 @@ namespace pawlib
              * \param the const char* to be converted to PawString
              * \return a PawString representation of str.
              *         All Unicode will be parsed appropriately. */
+            // cppcheck-suppress noExplicitConstructor
             PawString(const char* str);
 
             /**Create a PawString from a single char
              * \param the char to be converted to PawString
              * \return a PawString representation of ch. */
+            // cppcheck-suppress noExplicitConstructor
             PawString(char ch);
 
             /**Create a PawString from a PawChar
              * \param the PawChar to be converted to PawString
              * \return a PawString representation of ch */
+            // cppcheck-suppress noExplicitConstructor
             PawString(PawChar ch);
 
             /* Inorder to interact with other PawString types, a function must
@@ -875,7 +906,7 @@ namespace pawlib
 
 
             int len;
-            int MAX_SIZE = pawSize ;
+            int MAX_SIZE = pawSize;
             PawChar master[pawSize];
     };
 

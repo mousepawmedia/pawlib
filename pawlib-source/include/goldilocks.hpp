@@ -1,20 +1,21 @@
-/* Goldilocks Test System, version 1.0 [PawLIB]
- *
- * Goldilocks stores, manages, and calls tests.
- * It also contains a runtime benchmarker which
- * measures CPU cycles for any given test with
- * as much accuracy as is possible from user-level
- * assembly code. Goldilock's benchmarker also
- * calculates additional useful statistical data,
- * especially for comparing the execution of two
- * tests.
- *
- * Last Updated: 16 November 2015
- * Author: Jason C. McDonald
- */
+/** Goldilocks Test System [PawLIB]
+  * Version: 1.0
+  *
+  * Goldilocks stores, manages, and calls tests.
+  * It also contains a runtime benchmarker which
+  * measures CPU cycles for any given test with
+  * as much accuracy as is possible from user-level
+  * assembly code. Goldilock's benchmarker also
+  * calculates additional useful statistical data,
+  * especially for comparing the execution of two
+  * tests.
+  *
+  * Last Updated: 6 April 2016
+  * Author: Jason C. McDonald
+  */
 
 /* LICENSE
- * Copyright (C) MousePaw Games.
+ * Copyright (C) 2016 MousePaw Games.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +34,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * CONTRIBUTING
+ * See http://www.mousepawgames.com/participate/opensource for information
+ * on how to contribute to our projects.
  */
+
 
 #ifndef TESTSUITE_H
 #define TESTSUITE_H
@@ -50,6 +56,9 @@
 //Output
 #include <iochannel.hpp>
 
+//Sorting
+#include <pawsort.hpp>
+
 using namespace pawlib;
 using namespace pawlib::ioformat;
 
@@ -57,7 +66,7 @@ namespace pawlib
 {
     /** All tests are derived from this base
      * class.*/
-    class Test : public sigc::trackable
+    class Test
     {
         public:
             /**A Test generally should not have a constructor.
@@ -78,7 +87,11 @@ namespace pawlib
              * \return true if successful, false if it fails.*/
             virtual bool prefail(){return true;}
 
-            /**Clean up from a failed pre-test.
+            /**Clean up between successful runs, in preparation for a repeat.
+             * \return true if successful, false if it fails.*/
+            virtual bool janitor(){return true;}
+
+            /**Run test.
              * \return true if successful, false if it fails.*/
             virtual bool run()=0;
 
@@ -97,18 +110,20 @@ namespace pawlib
             virtual ~Test(){}
     };
 
-    /* Q: Where Is TestSuite?
-     * A: It turns out that having a separate TestSuite is rather
-     * redundant. Since the idea is that multiple tests need to be
-     * run, but that each test suite requires different rules, outputs,
-     * and other custom functionality to work as expected in each situation,
-     * it is just more efficient to have the end-developer write a Test
-     * that runs multiple tests via `testmanager.run_test()`. Most tests
-     * handle their own setup and cleanup, so a suite's pre/post tasks would
-     * also be completely custom, like a Test is. Therefore, since a TestSuite
-     * is just a Test with a different name, we don't bother increasing the
-     * size of our code, class, or memory usage to accommodate it.
+    /**A TestSuite is responsible for registering a batch of Tests with
+     * Goldilocks Test Manager on demand. This is primarily useful if an
+     * interactive test console is implemented, as we can load batches of
+     * tests when, and only when, we need them. A TestSuite should also
+     * be able to report what tests it contains, for user reference while
+     * using the interactive test console.
      */
+    class TestSuite
+    {
+        public:
+            TestSuite(){}
+            virtual void load_tests() = 0;
+            virtual ~TestSuite(){}
+    };
 
     /**TestManager stores and calls tests by names. It exposes functions for
      * testing and benchmarking, and automatically handles the proper call
@@ -122,19 +137,34 @@ namespace pawlib
              * automatically later.*/
 
              /* The Test smart pointer type shall henceforth be known
-              * as "test_ptr".*/
-            typedef std::unique_ptr<Test> test_ptr;
+              * as "testptr_t".*/
+            typedef std::unique_ptr<Test> testptr_t;
 
             /* The type we use for storing test names shall henceforth be
              * known as "name". Basically, I'm doing this so we can swap to
              * `pawlib::pawstring` later, and back again if necessary.*/
-            typedef std::string name;
-            // TODO: Change `name` typedef to pawstring.
+            typedef std::string testname_t;
+
+            /* The type we use for storing documentation strings. Like with
+             * `testname_t`, I'm doing this so we can swap to another string
+             * library, such as `pawlib::pawstring`, later, and back again
+             * if necessary. */
+            typedef std::string testdoc_t;
 
             /**The TestManager doesn't need anything to its constructor,
              * as all of its tests will be added ("registered") after the
              * fact, and it doesn't do any heap allocation besides that.*/
             TestManager(){}
+
+            /**List all tests registered with the TestManager.
+             */
+            void list_tests(bool=false);
+
+            /**Get the documentation string for a given test.
+             * \param the test to return the documentation string for
+             * \return the documentation string.
+             */
+            void show_docs(testname_t);
 
             /**Register a new test with the TestManager.
              * \param a string of the test's name
@@ -142,11 +172,30 @@ namespace pawlib
              * pass the "new Test" as this argument, since TestManager will be
              * taking exclusive ownership of the instance. It will handle
              * NULL automatically, so no error checking is required.*/
-            void register_test(name, Test*);
+            void register_test(testname_t, Test*, testdoc_t = "", testdoc_t = "");
+
+            /**Interactively (confirm before start) run a test by name.
+             * \param the name of the test to run*/
+            void i_run_test(testname_t);
+
+            /**Interactively run a benchmark by name.
+             *
+             * \param the name of the test to benchmark
+             * \param the number of times to run the test */
+            void i_run_benchmark(testname_t, unsigned int=100);
+
+            /**Interactively (confirm before start) run a comparative
+             * benchmark by test name.
+             * \param the name of test A
+             * \param the name of test B
+             * \param the number of times to run each test per pass
+             * \param whether to print all of the output, or just the summaried
+             * verdict */
+            void i_run_compare(testname_t, testname_t, unsigned int=100, bool=true);
 
             /**Run a test by name.
              * \param the name of the test to run*/
-            void run_test(name);
+            void run_test(testname_t);
 
             /**Measure the approximate number of CPU cycles that a particular
              * test takes to run.
@@ -158,7 +207,7 @@ namespace pawlib
              * (10 - 10,000, default 100). The more repetitions we have,
              * the more accurate the benchmark will be - but bear execution
              * time in mind, as some tests can take a while.*/
-            void run_benchmark(name, int=100);
+            void run_benchmark(testname_t, unsigned int=100);
 
             /**Benchmark and compare two tests using a three-pass system.
              * The three passes - MAMA BEAR, PAPA BEAR, and BABY BEAR -
@@ -173,17 +222,28 @@ namespace pawlib
              * \param the name of test A
              * \param the name of test B
              * \param the number of times to run each test per pass
+             * \param whether to print all of the output, or just the summaried
+             * verdict.
              * (10 - 10,000, default 100). The more repetitions we have,
              * the more accurate the benchmark will be - but bear execution
              * time in mind, as some tests can take a while.
              * In short, we have 100 repetitions each * 2 tests * 3 passes,
              * or 100 => 600 total repetitions.*/
-            void run_compare(name, name, int=100);
+            void run_compare(testname_t, testname_t, unsigned int=100, bool=true);
 
             /**We don't need anything in the destructor, as the smart pointers
              * handle deletion automatically.*/
             ~TestManager(){}
         protected:
+            /**Validate that the test (by name) is registered with Golidlocks.
+             * this is critical in preventing segfaults from accessing
+             * invalid tests.
+             *
+             * \param the name of the test to check for
+             * \param whether to display an error message if there is no match
+             * \return true if the test exists, else false
+             */
+            bool validate(testname_t, bool=false);
 
             /**The BenchmarkResult struct stores all of the statistical data
              * from a single test benchmark. Having this struct makes our
@@ -246,6 +306,17 @@ namespace pawlib
                 uint8_t rsd_adj = 0;
             };
 
+            struct TestInfo
+            {
+                TestInfo(testdoc_t titleIn="", testdoc_t docIn="")
+                    :title(titleIn), doc(docIn)
+                    {}
+                /// The human-readable title for the test.
+                testdoc_t title;
+                /// The documentation string for the test.
+                testdoc_t doc;
+            };
+
             /**Convert a raw array of clock measurements into a complete
              * benchmark result. This does all of our statistical computations.
              * \param the BenchmarkResult instance to write to
@@ -271,7 +342,7 @@ namespace pawlib
              * \param the BenchmarkResult from test B
              * \param the name of test A (optional)
              * \param the name of test B (optional)*/
-            void printVerdict(BenchmarkResult&, BenchmarkResult&, name = "TEST A", name = "TEST B");
+            void printVerdict(BenchmarkResult&, BenchmarkResult&, testname_t = "TEST A", testname_t = "TEST B");
 
             /** Calibrate the CPU clocking functionality by serializing the
              * assembly instruction cache, per Intel's documentation on RDTSC.*/
@@ -291,16 +362,16 @@ namespace pawlib
             /** Print the banner for the benchmarker functions using IOChannel.*/
             void benchmark_banner();
 
-            /// Stores all of the test pointers for access-by-name-string.
-            std::map<name, test_ptr> tests;
+            /** Stores all of the test pointers for access-by-name-string. */
+            std::map<testname_t, testptr_t> tests;
+            /**Stores all of the test info (and docs), accessed by
+              * name string.*/
+            std::map<testname_t, TestInfo> test_info;
 
             /* We are using std::map intentionally above. Dynamic allocation is
              * more appropriate in this situation, especially since test
              * registration should be on-demand and front-loaded (all at once).*/
     };
-
-    /// The static (extern) global instance of the TestManager.
-    extern TestManager testmanager;
 }
 
 

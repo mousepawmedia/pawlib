@@ -17,6 +17,7 @@
 					<Add option="-g" />
 					<Add option="-m64 -v" />
 					<Add directory="../pawlib/Debug64/include" />
+					<Add directory="include" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="../pawlib/Debug64/include" />
@@ -32,9 +33,11 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
 					<Add option="-m64" />
 					<Add directory="../pawlib/Release64/include" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -48,10 +51,12 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-m32" />
+					<Add option="-m32 -v" />
 					<Add directory="../pawlib/Debug32/include" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add library="../pawlib/Debug32/lib/libpawlib.a" />
@@ -64,9 +69,10 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-O3" />
 					<Add option="-m32" />
 					<Add directory="../pawlib/Release32/include" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -82,14 +88,16 @@
 		</VirtualTargets>
 		<Compiler>
 			<Add option="-std=c++14" />
-			<Add option="-Wall" />
 			<Add option="-fexceptions" />
-			<Add option="`pkg-config --cflags --libs sigc++-2.0`" />
+			<Add directory="../libs/include" />
+			<Add directory="../libs/lib" />
 		</Compiler>
 		<Linker>
-			<Add option="`pkg-config --libs sigc++-2.0`" />
+			<Add library="../libs/lib/libcpgf.a" />
 		</Linker>
+		<Unit filename="include/TestSystem.hpp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/TestSystem.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

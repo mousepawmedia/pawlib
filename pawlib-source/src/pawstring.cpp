@@ -8,7 +8,6 @@
 */
 
 #include "pawstring.hpp"
-#include <unicode/uchar.h>
 #include <iostream>
 #include <iomanip>
 #include <cstring>
@@ -22,7 +21,7 @@ namespace pawlib
     **************************************************************************/
     PawChar::PawChar()
     {
-        miniChar[0] = '\0';
+        //miniChar[0] = '\0'; code profiling
     }
 
     char PawChar::operator[](int pos) const
@@ -37,22 +36,13 @@ namespace pawlib
 
     PawChar PawChar::operator=(char newChar)
     {
-        // Check to make sure that the char argument is a 1-byte ASCII char.
-        // Return a warning otherwise.
-        if((newChar < 0) || (newChar > 127))
-        {
-            ioc << cat_error << "WARNING: ' ' can only store 1-byte ASCII chars."
-            << "Use \" \" for Unicode characters." << io_end;
-            PawChar();
-        }
-        else
-        {
-            // Add the char to the beginning of an array of chars,
-            // and then add a null terminator to the next position in the array.
-            this->miniChar[0] = newChar;
-            this->miniChar[1] = '\0';
-            return *this;
-        }
+        // Due to the nature of char, we know it is one bite
+
+        // Add the char to the beginning of an array of chars,
+        // and then add a null terminator to the next position in the array.
+        this->miniChar[0] = newChar;
+        this->miniChar[1] = '\0';
+        return *this;
     }
 
     PawChar PawChar::operator=(char* newChar)
@@ -97,30 +87,36 @@ namespace pawlib
     {
         // To display the full PawChar we loop through the char array
         // until a null-terminator is found.
-        for(int i = 0; pchr.miniChar[i] != '\0'; i++)
+        for(int i = 0; pchr.miniChar[i] != '\0'; ++i)
+        {
             os<< pchr.miniChar[i];
+        }
         return os;
     }
 
     bool operator==(const PawChar& pchr, const PawChar& newChar)
     {
         // Two PawChars are equal if every value in their arrays are equivalent
-        for(int i = 0; newChar.miniChar[i] != '\0'; i++)
+        for(int i = 0; newChar.miniChar[i] != '\0'; ++i)
         {
             if(pchr.miniChar[i] != newChar.miniChar[i])
+            {
                 return false;
+            }
         }
         return true;
     }
 
     bool operator==(const PawChar& pchr, char* newChar)
     {
-        for(int i = 0; newChar[i] != '\0'; i++)
+        for(int i = 0; newChar[i] != '\0'; ++i)
         {
             // Check if each position in the char* is equal to the
             // same position in the PawChar
             if(pchr.miniChar[i] != newChar[i])
+            {
                 return false;
+            }
         }
         return true;
     }
@@ -134,13 +130,17 @@ namespace pawlib
 
     bool operator<(const PawChar& pchr, const PawChar &newChar)
     {
-        for(int i = 0; pchr[i] != '\0'; i++)
+        for(int i = 0; pchr[i] != '\0'; ++i)
         {
             // If newChar has reached the end then pchr is larger.
             if(newChar[i] == '\0')
+            {
                 return false;
+            }
             if(pchr[i] < newChar[i])
+            {
                 return true;
+            }
         }
         return false;
     }
@@ -156,55 +156,7 @@ namespace pawlib
     template <const int pawSize>
     PawString<pawSize>::PawString(const char* str):len(0)
     {
-        int index = 0;
-        // Loop to end of char*
-        while(str[index] != '\0')
-        {
-            // Check if the PawString is full
-            if(len > MAX_SIZE)
-            {
-                ioc << cat_error << ta_bold << fg_red <<
-                "PawString Error: Input string is too large." << io_end;
-                PawString();
-                break;
-            }
-
-            // Does it start with an F?
-            if((str[index] & 0xF0) == 0xF0)
-            {
-                // Insert a 4 byte Unicode Char into the PawString
-                parseChar(str, index, 4);
-                index+=4;
-            }
-            // Does it start with an E?
-            else if((str[index] & 0xF0) == 0xE0)
-            {
-                // Insert a 3 byte Unicode Char into the PawString
-                parseChar(str, index, 3);
-                index+=3;
-            }
-            // Does it start with a C?
-            else if((str[index] & 0xF0) == 0xC0)
-            {
-                // Insert a 2 byte Unicode Char into the PawString
-                parseChar(str, index, 2);
-                index+=2;
-            }
-            // Is the character invalid?
-            else if((str[index] & 0xF0) == 0x80)
-            {
-                ioc << cat_error << ta_bold << fg_red <<
-                "PawString Error: Invalid Character In String At Position: " << index << io_end;
-                break;
-            }
-            else
-            {
-                // Insert a standard char
-                parseChar(str, index, 1);
-                index++;
-            }
-            len++; //Increase the size
-        }
+        append(str);
     }
 
     // Initialization with std::string. To do this, we convert the std::string
@@ -344,7 +296,7 @@ namespace pawlib
         /* have the exact same PawChars */ \
         if(len == pstr.size()) \
         { \
-            for(int i = 0; i < len; i++) \
+            for(int i = 0; i < len; ++i) \
             { \
                 if(!(master[i] == pstr[i])) \
                     return false; \
@@ -440,7 +392,7 @@ namespace pawlib
         else\
         {\
             /* Insert each PawChar at the very end of the PawString*/ \
-            for(int i= 0; i < pstr.size(); i++)\
+            for(int i= 0; i < pstr.size(); ++i)\
             {\
                 master[len] = pstr[i];\
                 len++;\
@@ -510,9 +462,58 @@ namespace pawlib
     template <const int pawSize>
     void PawString<pawSize>::append(const char* pstr)
     {
-        // Convert the char* to a PawString and call append
-        PawString<pawSize> copyStr = pstr;
-        append(copyStr);
+        int index = 0;
+        while(pstr[index] != '\0')
+        {
+             // Check if the PawString is full
+            if(len > MAX_SIZE)
+            {
+                ioc << cat_error << ta_bold << fg_red <<
+                "PawString Error: Input string is too large." << io_end;
+                PawString();
+                break;
+            }
+
+            // Can tell how many bytes by masking the first character
+            switch(pstr[index] & 0xF0)
+            {
+                case 0xF0 :
+                    {
+                        // Insert a 4 byte Unicode Char into the PawString
+                        parseChar(pstr, index, 4);
+                        index+=4;
+                        break;
+                    }
+                case 0xE0 :
+                    {
+                        // Insert a 3 byte Unicode Char into the PawString
+                        parseChar(pstr, index, 3);
+                        index+=3;
+                        break;
+                    }
+                case 0xC0:
+                    {
+                        // Insert a 2 byte Unicode Char into the PawString
+                        parseChar(pstr, index, 2);
+                        index+=2;
+                        break;
+                    }
+                case 0x80:
+                    {
+                        ioc << cat_error << ta_bold << fg_red <<
+                        "PawString Error: Invalid Character In String At Position: " << index << io_end;
+                        return;
+                    }
+                default :
+                    {
+                        // Insert a standard char
+                        parseChar(pstr, index, 1);
+                        ++index;
+                    }
+
+            }
+             ++ len;
+        }
     }
 
     template <const int pawSize>
@@ -903,10 +904,10 @@ namespace pawlib
             return master[pos];
         else
         {
+            // Display error and return last character
             ioc << cat_error << ta_bold << fg_red << "PawString Error" <<
             ": INDEX OUT OF BOUNDS" <<io_end;
-            PawChar err;
-            return err;
+            return master[len - 1];
         }
     }
 
@@ -1071,7 +1072,7 @@ namespace pawlib
         // Bytes indicates the size of the desired parsing area while
         // index indicates the start of the parse area. Loop through the parse
         // area and add each character to the current PawChar in the PawString
-        for(int i = 0; i < bytes; i++)
+        for(int i = 0; i < bytes; ++i)
             master[len][i] = str[index + i];
         master[len][bytes] = '\0'; // Terminate the PawChar
     }

@@ -1,0 +1,169 @@
+#ifndef FLEX_ARRAY_HPP_INCLUDED
+#define FLEX_ARRAY_HPP_INCLUDED
+
+#include "stack.hpp"
+#include "queue.hpp"
+#include <iochannel.hpp>
+
+using pawlib::iochannel;
+using namespace pawlib::ioformat;
+
+namespace pawlib
+    {
+    template<class type>
+    class FlexArray : public Base_FlexArr<type>
+    {
+        public:
+
+            FlexArray() : Base_FlexArr<type>() { }
+            // cppcheck-suppress noExplicitConstructor
+            FlexArray(int numElements) : Base_FlexArr<type>(numElements) { }
+
+            //insert an element into the flex_array at a given index
+            void insert(type newElement, int index)
+            {
+                //if the index is greater than the number of elements in the array currently
+                if(index < 0 || index > this->currElements - 1)
+                {
+                    //throw an index out of bounds exception
+                    ioc << cat_error << vrb_quiet << "Index out of bounds" << io_end;
+                }
+                //otherwise the index is in bounds
+                else
+                {
+                    //if the nubmer of elements is equal to the number of avaiable slots
+                    if(this->currElements == this->size)
+                    {
+                        //double the number of slots
+                        this->double_size(&this->theArray);
+                    }
+
+                    //shift every element to the right of the index, right 1 slot
+                    for(int i = this->currElements - 1; i > index; i--)
+                    {
+                        this->theArray[i] = this->theArray[i - 1];
+                    }
+                    //assign the desired index the passed in value
+                    this->theArray[index] = newElement;
+                    //incrememnt the number of elements
+                    this->currElements++;
+                }
+            }
+
+            //remove the element at the given index
+            type yank(int index)
+            {
+                //if there are no elements in the array
+                if(this->currElements == 0)
+                {
+                    //throw error and return null
+                    ioc << cat_error << vrb_quiet << "Flex Array is emptry" << io_end;
+                    return nullptr;
+                }
+                //else if index is out of bounds
+                else if(index < 0 || index > this->size)
+                {
+                    //throw error and return null
+                    ioc << cat_error << vrb_quiet << "Index out of bounds" << io_end;
+                    return nullptr;
+                }
+                else
+                {
+                    //assign temp to be the element at the passed in index
+                    type temp = this->theArray[index];
+                    //shift all of the elements to the right of the index, to the left 1
+                    //this effectivly deletes the element from the array
+                    for(int i = index; i < this->currElements - 1; i++)
+                    {
+                        this->theArray[i] = this->theArray[i + 1];
+                    }
+                    //decrement the number of elements
+                    this->currElements--;
+                    //return the deleted element
+                    return temp;
+                }
+            }
+
+            //insert in the beginning
+            void shift(type newElement)
+            {
+                //if there are elements in the currently in the array
+                if(this->currElements > 0)
+                {
+                    //if the array is currently maxed out
+                    if(this->currElements == this->size)
+                    {
+                        //double the size of the array
+                        this->double_size(&this->theArray);
+                    }
+                    //shift all the elements to the left 1 index
+                    for(int i = this->currElements - 1; i > 0; i--)
+                    {
+                        this->theArray[i] = this->theArray[i - 1];
+                    }
+                }
+                //assign the first element to be the passed in element
+                this->theArray[0] = newElement;
+                //increment the nubmer of elements
+                this->currElements++;
+            }
+
+            //returns the first value in the array
+            type peek()
+            {
+                return this->at(0);
+            }
+
+            //deletes the first element in the array
+            type unshift()
+            {
+                //if there is at least 1 element in the array
+                if(this->currElements > 0)
+                {
+                    //assign temp to be the first element in the array
+                    type temp = this->theArray[0];
+                    //shift all elements to the left 1 index. This effectively deletes the first element from the array
+                    for(int i = 0; i < this->currElements - 1; i++)
+                    {
+                        this->theArray[i] = this->theArray[i + 1];
+                    }
+                    //decrement the number of elements
+                    this->currElements--;
+                    //return the deleted elementvalue
+                    return temp;
+                }
+                //if there are no elements in the array
+                else
+                {
+                    //throw error and return null
+                    ioc << cat_error << vrb_quiet << "Flex Array is empty" << io_end;
+                    return nullptr;
+                }
+            }
+
+            //remove the last element in the array
+            type pop()
+            {
+                //if there are no elements
+                if(this->currElements == 0)
+                {
+                    //throw error and return null
+                    ioc << cat_error << vrb_quiet << "Flex Array is empty" << io_end;
+                    return nullptr;
+                }
+                //if there is at least 1 element
+                else
+                {
+                    //return the last element and decrement the number of elements
+                    return this->theArray[--this->currElements];
+                }
+            }
+
+            //push the passed in element to the back of the array
+            void push(type newElement)
+            {
+                this->push_back(newElement);
+            }
+    };
+}
+#endif // FLEX_ARRAY_HPP_INCLUDED

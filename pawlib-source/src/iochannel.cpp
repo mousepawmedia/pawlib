@@ -612,6 +612,15 @@ namespace pawlib
         process_c = process_c | cat;
     }
 
+    void iochannel::speakup(IOFormatVerbosity vrb)
+    {
+        //Allow verbosity through by turning on its bit.
+        if(process_v < vrb)
+        {
+            process_v = vrb;
+        }
+    }
+
     void iochannel::reset_attributes()
     {
         if(ta > 0 || fg > 0 || bg > 0)
@@ -656,7 +665,8 @@ namespace pawlib
             {
                 case vrb_quiet:
                 {
-                    signal_v_quiet(msg, cat);
+                    // Dispatch the "quiet" verbosity signal.
+                    signal_v_quiet.dispatch(msg, cat);
                     /* Fall through, so the lower signals get emitted to.
                      * This allows outputs to connect to the HIGHEST
                      * verbosity they will allow, and get the rest regardless.
@@ -664,17 +674,20 @@ namespace pawlib
                 }
                 case vrb_normal:
                 {
-                    signal_v_normal(msg, cat);
+                    // Dispatch the "normal" verbosity signal.
+                    signal_v_normal.dispatch(msg, cat);
                     //Fall through.
                 }
                 case vrb_chatty:
                 {
-                    signal_v_chatty(msg, cat);
+                    // Dispatch the "chatty" verbosity signal.
+                    signal_v_chatty.dispatch(msg, cat);
                     //Fall through.
                 }
                 case vrb_tmi:
                 {
-                    signal_v_tmi(msg, cat);
+                    // Dispatch the "TMI" verbosity signal.
+                    signal_v_tmi.dispatch(msg, cat);
                     break;
                 }
             }
@@ -683,37 +696,45 @@ namespace pawlib
             {
                 case cat_normal:
                 {
-                    signal_c_normal(msg, vrb);
+                    // Dispatch the "normal" category signal.
+                    signal_c_normal.dispatch(msg, vrb);
                     break;
                 }
                 case cat_debug:
                 {
-                    signal_c_debug(msg, vrb);
+                    // Dispatch the "debug" category signal.
+                    signal_c_debug.dispatch(msg, vrb);
                     break;
                 }
                 case cat_warning:
                 {
-                    signal_c_warning(msg, vrb);
+                    // Dispatch the "warning" category signal.
+                    signal_c_warning.dispatch(msg, vrb);
                     break;
                 }
                 case cat_error:
                 {
-                    signal_c_error(msg, vrb);
+                    // Dispatch the "error" category signal.
+                    signal_c_error.dispatch(msg, vrb);
                     break;
                 }
                 case cat_testing:
                 {
-                    signal_c_testing(msg, vrb);
+                    // Dispatch the "testing" category signal.
+                    signal_c_testing.dispatch(msg, vrb);
                     break;
                 }
                 case cat_all:
                 {
-                    //This has no corresponding signal.
+                    /* This has no corresponding signal. I just leave
+                     * the case here to make the compiler warnings happy. */
                     break;
                 }
             }
 
-            signal_all(msg, vrb, cat);
+            // Dispatch the general purpose signals.
+            signal_full.dispatch(msg, vrb, cat);
+            signal_all.dispatch(msg);
 
             //If we are supposed to be echoing
             if(echomode != echo_none)
@@ -723,46 +744,57 @@ namespace pawlib
                 {
                     switch(echomode)
                     {
+                        // If we're supposed to use `printf`...
                         case echo_printf:
                         {
                             if(cat == cat_error)
                             {
+                                /* Route the message through stderr
+                                 * instead of stdout.*/
                                 fprintf(stderr, "%s", msg.c_str());
                             }
                             else
                             {
+                                /* Route the message through stdout. */
                                 printf("%s", msg.c_str());
                             }
                             break;
                         }
+                        // If we're supposed to use `std::cout`...
                         case echo_cout:
                         {
                             if(cat == cat_error)
                             {
+                                /* Route the message through stderr
+                                 * instead of stdout.*/
                                 std::cerr << msg.c_str();
                             }
                             else
                             {
+                                /* Route the message through stdout. */
                                 std::cout << msg.c_str();
                             }
 
                             break;
                         }
+                        // This case is here for completeness...
                         case echo_none:
                         {
-                            //We should never reach this point!
+                            // ...we should never reach this point!
                             break;
                         }
                     }
                 }
             }
 
-            //Reset the system in prep for the next message.
+            /* If we aren't flagged to keep formatting,
+             * reset the system in prep for the next message. */
             if(!keep)
             {
                 reset_flags();
             }
 
+            // Clear the message out in preparation for the next.
             clear_msg();
 
         }
