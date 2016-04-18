@@ -1,8 +1,8 @@
 /** Flex Array [PawLIB]
   * Version: 1.0
   *
-  * Allows managed, custom output to any console or terminal.
-  * See WHAT IS IOCHANNEL? below.
+  * The a dynamic array with a low dynamic allocation demand.
+  * Designed to take the place of 'std::vector'.
   *
   * Last Updated: 8 March 2016
   * Author: Michael Parkman
