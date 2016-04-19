@@ -9,6 +9,8 @@ TestSystem::TestSystem()
      * on-demand instead of hardcoded, but that requires a few more changes.*/
     pawlib::TestSuite_Pawsort::load_tests(testmanager);
     pawlib::TestSuite_Pawstring::load_tests(testmanager);
+
+    pawlib::TestSuite_FlexArray::load_tests(testmanager);
 }
 
 TestSystem::~TestSystem()

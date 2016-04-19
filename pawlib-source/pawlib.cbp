@@ -118,6 +118,7 @@
 		<Unit filename="include/base_flex_array.hpp" />
 		<Unit filename="include/binconv.hpp" />
 		<Unit filename="include/flex_array.hpp" />
+		<Unit filename="include/flex_array_tests.hpp" />
 		<Unit filename="include/goldilocks.hpp" />
 		<Unit filename="include/iochannel.hpp" />
 		<Unit filename="include/map.hpp" />
@@ -130,6 +131,7 @@
 		<Unit filename="include/stack.hpp" />
 		<Unit filename="include/stdutils.hpp" />
 		<Unit filename="src/binconv.cpp" />
+		<Unit filename="src/flex_array_tests.cpp" />
 		<Unit filename="src/goldilocks.cpp" />
 		<Unit filename="src/iochannel.cpp" />
 		<Unit filename="src/pawsort_tests.cpp" />
