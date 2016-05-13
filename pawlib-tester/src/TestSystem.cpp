@@ -8,7 +8,7 @@ TestSystem::TestSystem()
     /* We are loading suites directly right now. Eventually, this will be
      * on-demand instead of hardcoded, but that requires a few more changes.*/
     pawlib::TestSuite_Pawsort::load_tests(testmanager);
-    pawlib::TestSuite_Pawstring::load_tests(testmanager);
+    pawlib::TestSuite_Onestring::load_tests(testmanager);
 }
 
 TestSystem::~TestSystem()

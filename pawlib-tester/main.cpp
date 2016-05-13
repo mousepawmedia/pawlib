@@ -5,7 +5,7 @@
 #include <time.h>
 
 #include <iochannel.hpp>
-#include <pawstring.hpp>
+#include <onestring.hpp>
 #include <pawsort.hpp>
 #include <stdutils.hpp>
 #include <goldilocks.hpp>

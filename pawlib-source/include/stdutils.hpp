@@ -45,6 +45,8 @@
 
 //TODO: Replace with pawlib::string!
 #include <string>
+using std::isnan;
+using std::isinf;
 
 namespace pawlib
 {

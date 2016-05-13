@@ -10,7 +10,7 @@
 #include <goldilocks.hpp>
 
 #include <pawsort_tests.hpp>
-#include <pawstring_tests.hpp>
+#include <onestring_tests.hpp>
 
 using pawlib::iochannel;
 

@@ -4,7 +4,7 @@
 #include <string>
 
 #include <goldilocks.hpp>
-#include <pawstring.hpp>
+#include <onestring.hpp>
 
 namespace pawlib
 {
@@ -391,9 +391,9 @@ namespace pawlib
         protected:
             TestType tType;
             std::string mainStr;
-            PawString<1024> mainPStr;
+            OneString<1024> mainPStr;
             std::string compStr;
-            PawString<1024> compPStr;
+            OneString<1024> compPStr;
 
     };
 
@@ -438,7 +438,7 @@ namespace pawlib
 
     };
 
-    class TestSuite_Pawstring : public TestSuite
+    class TestSuite_Onestring : public TestSuite
     {
         public:
             static void load_tests(TestManager*);
