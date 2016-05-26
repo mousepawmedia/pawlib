@@ -10,3 +10,4 @@
 pawlib/
 *.depend
 *.layout
+build/
