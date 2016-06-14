@@ -50,39 +50,45 @@ namespace pawlib
     class FlexArray : public Base_FlexArr<type>
     {
         public:
-
             FlexArray() : Base_FlexArr<type>() { }
             // cppcheck-suppress noExplicitConstructor
             FlexArray(int numElements) : Base_FlexArr<type>(numElements) { }
 
-            //insert an element into the flex_array at a given index
-            void insert(type newElement, int index)
+            //insert an element into the flex_array at a given index. Unsigned to prevent negatives.
+            bool insert(type newElement, unsigned int index)
             {
                 //if the index is greater than the number of elements in the array currently
-                if(index < 0 || index > this->currElements - 1)
+                if(index > 0 && index > this-> currElements - 1)
                 {
                     //throw an index out of bounds exception
-                    ioc << cat_error << vrb_quiet << "Index out of bounds" << io_end;
+                    //prints current index
+                    ioc << cat_error << vrb_quiet << "Index " << index
+                       //prints elements minus one.
+                       << " out of bounds [0 - " << this->currElements - 1
+                       << "]." << io_end;
+                       return false;
                 }
                 //otherwise the index is in bounds
                 else
                 {
-                    //if the nubmer of elements is equal to the number of avaiable slots
+                    //if the number of elements is equal to the number of avaiable slots
                     if(this->currElements == this->size)
                     {
                         //double the number of slots
                         this->double_size(&this->theArray);
                     }
-
-                    //shift every element to the right of the index, right 1 slot
-                    for(int i = this->currElements - 1; i > index; i--)
-                    {
-                        this->theArray[i] = this->theArray[i - 1];
-                    }
+                    if(this->currElements > 0)
+                    { //shift every element to the right of the index, right 1 slot
+                        for(unsigned int i = this->currElements - 1; i > index; i--)
+                        {
+                            this->theArray[i] = this->theArray[i - 1];
+                        }
                     //assign the desired index the passed in value
-                    this->theArray[index] = newElement;
+                        this->theArray[index] = newElement;
+                    }
                     //incrememnt the number of elements
                     this->currElements++;
+                    return true;
                 }
             }
 
@@ -121,9 +127,9 @@ namespace pawlib
             }
 
             //insert in the beginning
-            void shift(type newElement)
+            bool shift(type newElement)
             {
-                //if there are elements in the currently in the array
+                //if there are elements currently within the array
                 if(this->currElements > 0)
                 {
                     //if the array is currently maxed out
@@ -132,7 +138,7 @@ namespace pawlib
                         //double the size of the array
                         this->double_size(&this->theArray);
                     }
-                    //shift all the elements to the left 1 index
+                    //shift all the elements to the right 1 index
                     for(int i = this->currElements - 1; i > 0; i--)
                     {
                         this->theArray[i] = this->theArray[i - 1];
@@ -142,6 +148,7 @@ namespace pawlib
                 this->theArray[0] = newElement;
                 //increment the nubmer of elements
                 this->currElements++;
+                return true;
             }
 
             //returns the first value in the array
@@ -165,7 +172,7 @@ namespace pawlib
                     }
                     //decrement the number of elements
                     this->currElements--;
-                    //return the deleted elementvalue
+                    //return the deleted element value
                     return temp;
                 }
                 //if there are no elements in the array
@@ -196,9 +203,9 @@ namespace pawlib
             }
 
             //push the passed in element to the back of the array
-            void push(type newElement)
+            bool push(type newElement)
             {
-                this->push_back(newElement);
+                return this->push_back(newElement);
             }
     };
 }

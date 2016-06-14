@@ -5,6 +5,7 @@
 		<Option title="pawlib" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="include/;" />
 		<Build>
 			<Target title="Debug64">
 				<Option output="bin/Debug64/pawlib" prefix_auto="1" extension_auto="1" />
@@ -107,7 +108,6 @@
 			<Add alias="Release" targets="Release64;Release32;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option="-std=c++14" />
 			<Add directory="../libs/include" />
 		</Compiler>
 		<Linker>
@@ -118,6 +118,9 @@
 		<Unit filename="include/base_flex_array.hpp" />
 		<Unit filename="include/binconv.hpp" />
 		<Unit filename="include/flex_array.hpp" />
+		<Unit filename="include/flex_array_tests.hpp" />
+		<Unit filename="include/flex_queue.hpp" />
+		<Unit filename="include/flex_stack.hpp" />
 		<Unit filename="include/goldilocks.hpp" />
 		<Unit filename="include/iochannel.hpp" />
 		<Unit filename="include/map.hpp" />
@@ -125,11 +128,13 @@
 		<Unit filename="include/onestring_tests.hpp" />
 		<Unit filename="include/pawsort.hpp" />
 		<Unit filename="include/pawsort_tests.hpp" />
-		<Unit filename="include/queue.hpp" />
 		<Unit filename="include/singly_linked_list.hpp" />
-		<Unit filename="include/stack.hpp" />
+		<Unit filename="include/stack_tests">
+			<Option virtualFolder="include/" />
+		</Unit>
 		<Unit filename="include/stdutils.hpp" />
 		<Unit filename="src/binconv.cpp" />
+		<Unit filename="src/flex_array_tests.cpp" />
 		<Unit filename="src/goldilocks.cpp" />
 		<Unit filename="src/iochannel.cpp" />
 		<Unit filename="src/onestring.cpp" />

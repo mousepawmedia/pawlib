@@ -64,7 +64,8 @@ namespace pawlib
             // cppcheck-suppress noExplicitConstructor
             Base_FlexArr(int numElements)
             {
-                //set the size to be the power of 2 just below the entered number. double_size funtion will initiate with enough room in array
+                /*set the size to be the power of 2 just below the entered number.
+                *double_size funtion will initiate with enough room in array*/
                 size = pow(2, floor(log2(numElements)));
                 currElements = 0;
                 //NOTE: Replace with NULL?
@@ -107,10 +108,10 @@ namespace pawlib
 
         protected:
             type* theArray;
-            int currElements, size;
+            unsigned int currElements, size;
             bool resizable;
 
-            void double_size(type** daArray)
+            bool double_size(type** daArray)
             {
                 //double the size
                 size *= 2;
@@ -121,17 +122,17 @@ namespace pawlib
                 if(*daArray != nullptr)
                 {
                     //transfer all the elements over
-                    for(int i = 0; i < currElements; i++)
+                    for(unsigned int i = 0; i < currElements; i++)
                     {
                         tempArray[i] = (*daArray)[i];
                     }
                     free(*daArray);
                 }
                 *daArray = tempArray;
+                return true;
             }
-
             //add the new element to the back of the array
-            void push_back(type newElement)
+            bool push_back(type newElement)
             {
                 if(currElements > size - 2 && resizable)
                 {
@@ -139,9 +140,16 @@ namespace pawlib
                 }
                 else if(currElements > size - 2 && !resizable)
                 {
-                    //TODO: Throw Error. Out of room and not allowed to resize
+                    /*Note:Throw Error. Out of room and not allowed to resize
+                     *throw an index out of bounds exception
+                     *print current size*/
+                    ioc << cat_error << vrb_quiet << "Flex Array Size = " << size
+                       //this->currElements - 1 //prints elements minus one
+                       << " Array is full and cannot be resized" << io_end; .
+                       return false;
                 }
                 theArray[currElements++] = newElement;
+                return true;
             }
 
     };

@@ -45,9 +45,9 @@
 
 //TODO: Replace with pawlib::string!
 #include <string>
-using std::isnan;
-using std::isinf;
-
+//NOTE: Leave this commented out until you are on g++ 5.3 or higher.
+//using std::isinf;
+//using std::isnan;
 namespace pawlib
 {
     ////const double PRECISION = 0.00000000000001;
