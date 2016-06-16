@@ -5,7 +5,6 @@
 		<Option title="pawlib" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="include/;" />
 		<Build>
 			<Target title="Debug64">
 				<Option output="bin/Debug64/pawlib" prefix_auto="1" extension_auto="1" />
@@ -129,9 +128,6 @@
 		<Unit filename="include/pawsort.hpp" />
 		<Unit filename="include/pawsort_tests.hpp" />
 		<Unit filename="include/singly_linked_list.hpp" />
-		<Unit filename="include/stack_tests">
-			<Option virtualFolder="include/" />
-		</Unit>
 		<Unit filename="include/stdutils.hpp" />
 		<Unit filename="src/binconv.cpp" />
 		<Unit filename="src/flex_array_tests.cpp" />
