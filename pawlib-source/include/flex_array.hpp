@@ -37,15 +37,14 @@
 #ifndef FLEX_ARRAY_HPP_INCLUDED
 #define FLEX_ARRAY_HPP_INCLUDED
 
-#include "stack.hpp"
-#include "queue.hpp"
+#include "base_flex_array.hpp"
 #include <iochannel.hpp>
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;
 
 namespace pawlib
-    {
+{
     template<class type>
     class FlexArray : public Base_FlexArr<type>
     {

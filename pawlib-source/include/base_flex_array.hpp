@@ -145,7 +145,7 @@ namespace pawlib
                      *print current size*/
                     ioc << cat_error << vrb_quiet << "Flex Array Size = " << size
                        //this->currElements - 1 //prints elements minus one
-                       << " Array is full and cannot be resized" << io_end; .
+                       << " Array is full and cannot be resized" << io_end;
                        return false;
                 }
                 theArray[currElements++] = newElement;
