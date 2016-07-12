@@ -8,6 +8,8 @@
 **/lib
 **/libs
 pawlib/
+docs/build
+cpgf/build/temp_cache**
 *.depend
 *.layout
-build/
+**/build_temp

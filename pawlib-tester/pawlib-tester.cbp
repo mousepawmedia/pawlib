@@ -3,11 +3,47 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="pawlib-tester" />
+		<Option makefile_is_custom="1" />
+		<Option execution_dir="../../pawlib-git" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
+		<MakeCommands>
+			<Build command="" />
+			<CompileFile command="" />
+			<Clean command="make clean" />
+			<DistClean command="$make -f $makefile distclean$target" />
+			<AskRebuildNeeded command="" />
+			<SilentBuild command=" &gt; $(CMD_NULL)" />
+		</MakeCommands>
 		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/pawlib-tester" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<MakeCommands>
+					<Build command="make tester_debug" />
+					<CompileFile command="" />
+					<Clean command="make cleandebug" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make tester_debug &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/pawlib-tester" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<MakeCommands>
+					<Build command="make tester" />
+					<CompileFile command="" />
+					<Clean command="make cleanrelease" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make tester &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
 			<Target title="Debug64">
-				<Option output="bin/Debug64/pawlib-tester" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/pawlib-tester" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug64/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -16,19 +52,29 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-m64 -v" />
-					<Add directory="../pawlib/Debug64/include" />
+					<Add directory="../pawlib-source/include" />
 					<Add directory="include" />
+					<Add directory="../cpgf/include" />
 				</Compiler>
 				<ResourceCompiler>
 					<Add directory="../pawlib/Debug64/include" />
 				</ResourceCompiler>
 				<Linker>
-					<Add library="../pawlib/Debug64/lib/libpawlib.a" />
-					<Add directory="../pawlib/Debug64/lib" />
+					<Add library="../pawlib-source/lib/Debug/libpawlib.a" />
+					<Add directory="../pawlib-source/lib/Debug" />
+					<Add directory="../cpgf/lib" />
 				</Linker>
+				<MakeCommands>
+					<Build command="make tester_debug ARCH=64" />
+					<CompileFile command="" />
+					<Clean command="make cleandebug" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make tester_debug ARCH=64 &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 			<Target title="Release64">
-				<Option output="bin/Release64/pawlib-tester" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/pawlib-tester" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release64/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -36,17 +82,27 @@
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-O3" />
 					<Add option="-m64" />
-					<Add directory="../pawlib/Release64/include" />
+					<Add directory="../pawlib-source/include" />
 					<Add directory="include" />
+					<Add directory="../cpgf/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="../pawlib/Release64/lib/libpawlib.a" />
-					<Add directory="../pawlib/Release64/lib" />
+					<Add library="../pawlib-source/lib/Release/libpawlib.a" />
+					<Add directory="../pawlib-source/lib/Release" />
+					<Add directory="../cpgf/lib" />
 				</Linker>
+				<MakeCommands>
+					<Build command="make tester ARCH=64" />
+					<CompileFile command="" />
+					<Clean command="make cleanrelease" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make tester ARCH=64 &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 			<Target title="Debug32">
-				<Option output="bin/Debug32/pawlib-tester" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/pawlib-tester" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug32/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -55,49 +111,76 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-m32 -v" />
-					<Add directory="../pawlib/Debug32/include" />
+					<Add directory="../pawlib-source/include" />
 					<Add directory="include" />
+					<Add directory="../cpgf/include" />
 				</Compiler>
 				<Linker>
-					<Add library="../pawlib/Debug32/lib/libpawlib.a" />
-					<Add directory="../pawlib/Debug32/lib" />
+					<Add library="../pawlib-source/lib/Debug/libpawlib.a" />
+					<Add directory="../pawlib-source/lib/Debug" />
+					<Add directory="../cpgf/lib" />
 				</Linker>
+				<MakeCommands>
+					<Build command="make tester_debug ARCH=32" />
+					<CompileFile command="" />
+					<Clean command="make cleandebug" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make tester_debug ARCH=32 &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 			<Target title="Release32">
-				<Option output="bin/Release32/pawlib-tester" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/pawlib-tester" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release32/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-m32" />
-					<Add directory="../pawlib/Release32/include" />
+					<Add directory="../pawlib-source/include" />
 					<Add directory="include" />
+					<Add directory="../cpgf/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="../pawlib/Release32/lib/libpawlib.a" />
-					<Add directory="../pawlib/Release32/lib" />
+					<Add library="../pawlib-source/lib/Release/libpawlib.a" />
+					<Add directory="../pawlib-source/lib/Release" />
+					<Add directory="../cpgf/lib" />
 				</Linker>
+				<MakeCommands>
+					<Build command="make tester ARCH=32" />
+					<CompileFile command="" />
+					<Clean command="make cleanrelease" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make tester ARCH=32 &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 		</Build>
-		<VirtualTargets>
-			<Add alias="All" targets="Debug64;Release64;Debug32;Release32;" />
-			<Add alias="Debug" targets="Debug64;Debug32;" />
-			<Add alias="Release" targets="Release64;Release32;" />
-		</VirtualTargets>
 		<Compiler>
 			<Add option="-std=c++14" />
 			<Add option="-fexceptions" />
 			<Add directory="../libs/include" />
 			<Add directory="../libs/lib" />
 		</Compiler>
-		<Linker>
-			<Add library="../libs/lib/libcpgf.a" />
-		</Linker>
-		<Unit filename="include/TestSystem.hpp" />
-		<Unit filename="main.cpp" />
-		<Unit filename="src/TestSystem.cpp" />
+		<Unit filename="include/TestSystem.hpp">
+			<Option target="Debug64" />
+			<Option target="Release64" />
+			<Option target="Debug32" />
+			<Option target="Release32" />
+		</Unit>
+		<Unit filename="main.cpp">
+			<Option target="Debug64" />
+			<Option target="Release64" />
+			<Option target="Debug32" />
+			<Option target="Release32" />
+		</Unit>
+		<Unit filename="src/TestSystem.cpp">
+			<Option target="Debug64" />
+			<Option target="Release64" />
+			<Option target="Debug32" />
+			<Option target="Release32" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />

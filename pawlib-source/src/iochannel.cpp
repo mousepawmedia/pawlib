@@ -227,7 +227,7 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOSpecial& rhs)
+    iochannel& iochannel::operator<<(const IOControl& rhs)
     {
         switch(rhs)
         {

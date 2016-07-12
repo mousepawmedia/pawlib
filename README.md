@@ -14,7 +14,7 @@ It is used by virtually all of MousePaw Games' core projects.
  - Data Structures: High performance alternatives to C++ data structures.
  - Goldilocks: Testing and benchmarking framework.
  - IOChannel: Feature-rich multi-output text output system. (Alternative to std::cout)
- - PawString: Performance string class with full Unicode support. (Alternative to std::string)
+ - OneString: Performance string class with full Unicode support. (Alternative to std::string)
  - PuppeteerXML: OOP-based XML system based on Xerces.
 
 Authors
@@ -22,30 +22,21 @@ Authors
  - Nate Groggett
  - Jason C. McDonald
  - Michael Parkman
+ - Sergio Ramirez
  - Scott Taylor
-
-Building
--------------
-PawLIB was written and built in CodeBlocks. The projects (.cbp) in this
-repository are pre-configured to build directly in the repository.
-
-The '/pawlib' directory contains the compiled library ('/pawlib/XX/lib/'),
-and the header files ('/pawlib/XX/include'), where 'XX' is either the
-Debug or Release version of the library.
-
-The '/pawlib-source' folder contains the source code for the PawLIB
-library. It is set up to automatically update the appropriate 'pawlib'
-folder (Debug or Release), depending on the build target.
-
-The '/pawlib-tester' folder contains the console application for testing
-the PawLIB library. Building this project will automatically rebuild
-the PawLIB library on the same build target.
+ - Jonathan Theodore
 
 Dependencies
 -------------
-PawLIB depends on the following third-party libraries.
+PawLIB depends on CPGF, which is included in this repository.
 
-<To be filled in before 1.0 release.>
+Building
+--------------
+If you have the full source repository, see BUILDING.md for information
+on how to build PawLIB, PawLIB Tester, CPGF, and the documentation.
+
+The Ready-To-Use version of PawLIB only contains the folders 'include'
+and 'lib'. You can find the full source repository on [Github][5].
 
 Contributions
 -------------
@@ -66,4 +57,4 @@ The project is owned and maintained by [MousePaw Games][2].
 [2]: http://www.mousepawgames.com/opensource
 [3]: http://www.mousepawgames.com/opensource#contribute
 [4]: http://www.mousepawgames.com/termsofdevelopment
-
+[5]: http://github.com/mousepawgames/pawlib
