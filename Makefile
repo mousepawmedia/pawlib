@@ -35,8 +35,8 @@ cleandebug:
 	$(MAKE) cleandebug -C pawlib-tester
 
 cleanrelease:
-	$(MAKE) cleandebug -C pawlib-source
-	$(MAKE) cleandebug -C pawlib-tester
+	$(MAKE) cleanrelease -C pawlib-source
+	$(MAKE) cleanrelease -C pawlib-tester
 
 cpgf:
 	$(MAKE) linux -C cpgf/build

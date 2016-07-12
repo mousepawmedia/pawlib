@@ -36,21 +36,21 @@ clean:
 	@cmake -E remove_directory $(TEMP_DIR)
 
 cleandebug:
-	@cmake -E remove_directory $(BUILD_DIR)/debug
-	@cmake -E remove_directory $(TEMP_DIR)/debug
+	@cmake -E remove_directory $(BUILD_DIR)/Debug
+	@cmake -E remove_directory $(TEMP_DIR)/Debug
 
 cleanrelease:
-	@cmake -E remove_directory $(BUILD_DIR)/release
-	@cmake -E remove_directory $(TEMP_DIR)/release
+	@cmake -E remove_directory $(BUILD_DIR)/Release
+	@cmake -E remove_directory $(TEMP_DIR)/Release
 
 debug: archswitch
-	$(MK_DIR) $(TEMP_DIR)/debug$(ARCH)
-	$(CH_DIR) $(TEMP_DIR)/debug$(ARCH) $(CMAKE) $(T_DEBUG)
-	$(EXEC_BUILD)/debug$(ARCH) make $(TARGET)
+	$(MK_DIR) $(TEMP_DIR)/Debug$(ARCH)
+	$(CH_DIR) $(TEMP_DIR)/Debug$(ARCH) $(CMAKE) $(T_DEBUG)
+	$(EXEC_BUILD)/Debug$(ARCH) make $(TARGET)
 
 release: archswitch
-	$(MK_DIR) $(TEMP_DIR)/release$(ARCH)
-	$(CH_DIR) $(TEMP_DIR)/release$(ARCH) $(CMAKE) $(T_RELEASE)
-	$(EXEC_BUILD)/release$(ARCH) make $(TARGET)
+	$(MK_DIR) $(TEMP_DIR)/Release$(ARCH)
+	$(CH_DIR) $(TEMP_DIR)/Release$(ARCH) $(CMAKE) $(T_RELEASE)
+	$(EXEC_BUILD)/Release$(ARCH) make $(TARGET)
 
 .PHONY: clean cleandebug cleanrelease archswitch
