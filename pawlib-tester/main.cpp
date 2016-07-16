@@ -13,6 +13,8 @@
 
 #include <TestSystem.hpp>
 
+#include <pool.hpp>
+
 using pawlib::iochannel;
 
 //Format enumerations.

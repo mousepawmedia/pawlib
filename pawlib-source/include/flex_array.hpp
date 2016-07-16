@@ -1,7 +1,7 @@
 /** Flex Array [PawLIB]
   * Version: 1.0
   *
-  * The a dynamic array with a low dynamic allocation demand.
+  * A dynamic array with a low dynamic allocation demand.
   * Designed to take the place of 'std::vector'.
   *
   * Last Updated: 8 March 2016
@@ -190,8 +190,8 @@ namespace pawlib
                 if(this->currElements == 0)
                 {
                     //throw error and return null
-                    ioc << cat_error << vrb_quiet << "Flex Array is empty" << io_end;
-                    return nullptr;
+                    //ioc << cat_error << vrb_quiet << "Flex Array is empty" << io_end;
+                    throw std::out_of_range("Flex Array is empty.");
                 }
                 //if there is at least 1 element
                 else

@@ -131,7 +131,7 @@ also allows a single transmission to be split up over multiple lines, if
 necessary. Other stream control enumerations have different behaviors.
 (See `Stream Control`_)
 
-.. code-block:: c++
+..  code-block:: c++
 
     ioc << "This is the first part. ";
     //Some more code here.
@@ -150,7 +150,7 @@ These are passed in using the ``<<`` operator, as with anything being output
 via IOChannel. The message will not be broadcast until an EoT
 (end-of-transmission) flag is passed.
 
-.. code-block:: c++
+..  code-block:: c++
 
     ioc << "Hello, world!" << io_end;
     //OUTPUT: "Hello, world!"
@@ -173,7 +173,7 @@ Cross-platform output formatting is built in to IOChannel. This means that
 formatting can be set using the IOFormat enumerations, and it will display
 correctly on each output and environment.
 
-.. code-block:: c++
+..  code-block:: c++
 
     ioc << ta_bold << fg_red << "This is bold, red text. " << ta_underline << fg_blue << bg_yellow << "This is bold, underline, blue text with a yellow background. " << ta_none << fg_none << bg_none << "This is normal text." << io_end;
     //The output is exactly what you'd expect.
@@ -183,7 +183,7 @@ correctly on each output and environment.
    outputs will be added soon.
 
 ..  index::
-   pair: output; variables
+    pair: output; variables
 
 Variable Input
 ----------------------------------------
@@ -204,7 +204,7 @@ Boolean
 
 Output for boolean is pretty basic and boring.
 
-.. code-block:: c++
+..  code-block:: c++
 
     bool foo = true;
     ioc << foo << io_end;
@@ -212,7 +212,7 @@ Output for boolean is pretty basic and boring.
 
 The output style can be adjusted, however, using the ``bool_`` enumerations.
 
-.. code-block:: c++
+..  code-block:: c++
 
     bool foo = true;
     ioc << bool_lower << foo << io_end;
@@ -234,7 +234,7 @@ Since char can represent both an integer and a character, IOChannel lets
 you display it as either. By default, IOChannel displays the char as a literal
 character. Using the ``char_int`` flag forces it to print as an integer.
 
-.. code-block:: c++
+..  code-block:: c++
 
     char foo = 'A';
     ioc << "Character " << foo << " has ASCII value " << char_int << foo << io_end;
@@ -252,7 +252,7 @@ Integer
 An ``int`` can be represented in any base (radix) from binary (base 2) to
 base 35 using the base enumerations.
 
-.. code-block:: c++
+..  code-block:: c++
 
     int foo = 12345;
     ioc << "Binary: " << base_bin << foo << io_end;
@@ -274,7 +274,7 @@ base 35 using the base enumerations.
 In bases larger than decimal (10), the letter numerals can be output as
 lowercase or uppercase (default).
 
-.. code-block:: c++
+..  code-block:: c++
 
     int foo = 187254;
     ioc << "Hexadecimal Lower: " << base_hex << foo << io_end;
@@ -302,7 +302,7 @@ Precision can be modified using the ``set_precision(#)`` function. Scientific
 notation can be turned on with ``sci_on``, and off using ``sci_none``. It can
 also be reset to automatic with ``sci_auto``.
 
-.. code-block:: c++
+..  code-block:: c++
 
     float foo = 12345.12345678912345;
     ioc << "Precision 5, no sci: " << set_precision(5) << foo << io_end;
@@ -331,7 +331,7 @@ Pointer Value
 By default, IOChannel will attempt to print the value at the pointers. This
 can also be forced using ``ptr_value``.
 
-.. code-block:: c++
+..  code-block:: c++
 
     int foo = 12345;
     int* fooptr = &foo;
@@ -352,7 +352,7 @@ IOChannel can print out the address of the pointer in hexadecimal using
 though these can be displayed in uppercase using ``num_upper``. It is capable
 of doing this with any pointer, even for custom objects.
 
-.. code-block:: c++
+..  code-block:: c++
 
     int foo = 12345;
     int* fooptr = &foo;
@@ -378,7 +378,7 @@ Spacing can be added between bytes (``mem_bytesep``) and bytewords
 (``mem_wordsep``), or both (``mem_allsep``). By default, the memory dumps
 with no spacing (``mem_nosep``).
 
-.. code-block:: c++
+..  code-block:: c++
 
     int foo = 12345;
     int* fooptr = &foo;
@@ -402,7 +402,7 @@ bytes to read using ``read_bytes()``.
 
 The following is the safest way to dump the raw memory for a custom object.
 
-.. code-block:: c++
+..  code-block:: c++
 
     //Let's define a struct as our custom object, and make an instance of it.
     struct CustomStruct
@@ -431,7 +431,7 @@ compatible with ``std::cout`` and ``printf``.
 For example, one might want to display progress on the same line, and then
 move to a new line for a final message. This can be accomplished via...
 
-.. code-block:: c++
+..  code-block:: c++
 
     ioc << "Let's Watch Progress!" << io_end;
     ioc << fg_blue << ta_bold << io_send_keep;
@@ -500,7 +500,7 @@ also be changed.
 These settings are modified using the ``configure_echo()`` member function.
 (The arguments are all IOFormat enumerations).
 
-.. code-block:: c++
+..  code-block:: c++
 
     //Set to use `std::cout`
     ioc.configure_echo(echo_cout);
@@ -527,7 +527,7 @@ The main signal is ``signal_all``, which requires a callback function of the
 form ``void callback(std::string, IOFormatVerbosity, IOFormatCategory)``,
 as seen in the following example.
 
-.. code-block:: c++
+..  code-block:: c++
 
     //This is our callback function.
     void print(std::string msg, IOFormatVerbosity vrb, IOFormatCategory cat)
@@ -551,7 +551,7 @@ Almost all categories have a signal: ``signal_c_normal``, ``signal_c_warning``,
 The callbacks for category signals require the form
 ``void callback(std::string, IOFormatVerbosity)``. Below is an example.
 
-.. code-block:: c++
+..  code-block:: c++
 
     //This is our callback function.
     void print_error(std::string msg, IOFormatVerbosity vrb)
@@ -575,7 +575,7 @@ The callbacks for verbosity signals require the form
 ``void callback(std::string, IOFormatCategory)``. Below is an example inside
 the context of a class.
 
-.. code-block:: c++
+..  code-block:: c++
 
     class TestClass
     {
@@ -847,7 +847,7 @@ Scientific Notation (``IOFormatSciNotation``)
 | ``sci_on``      | Force use of scientific notation.     |
 +-----------------+---------------------------------------+
 
-.. WARNING:: ``sci_none`` has been known to cause truncation in very large and
+..  WARNING:: ``sci_none`` has been known to cause truncation in very large and
     very small values, regardless of precision.
 
 ..  index::

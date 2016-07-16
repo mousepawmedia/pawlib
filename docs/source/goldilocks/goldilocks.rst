@@ -57,7 +57,7 @@ itself, so ``prefail()`` must succeed in any reasonable circumstance.
 The function should return a boolean indicating whether the tear-down was
 successful or not.
 
-.. NOTE:: Goldilocks currently ignores ``prefail()``'s return.
+..  NOTE:: Goldilocks currently ignores ``prefail()``'s return.
 
 ``run()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -73,7 +73,7 @@ prompting a random one to be generated.
 
 The function should return true if the test succeeded, and false if it failed.
 
-.. IMPORTANT:: ``run()`` (with no arguments) should be consistent in its
+..  IMPORTANT:: ``run()`` (with no arguments) should be consistent in its
     success. Assuming pre() was successful, if the first consecutive call to
     ``run()`` is successful, all subsequent calls to run() must also be successful.
     This is vital to the benchmarker functions, as they can call a single test
@@ -101,7 +101,7 @@ benchmarking regardless of ``run()``'s success.
 This function should return a boolean indicating success. It has no fail
 handler itself, so ``post()`` should succeed in all reasonable circumstances.
 
-.. NOTE:: Goldilocks currently ignores ``post()``'s return.
+..  NOTE:: Goldilocks currently ignores ``post()``'s return.
 
 ``postmortem()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -124,7 +124,7 @@ Creating a Test
 Creating a test is as simple as creating a class that inherits from
 ``pawlib::Test (from goldilocks.hpp)``, which is a pure virtual base class.
 
-.. IMPORTANT:: The constructor and destructor must obviously be defined,
+..  IMPORTANT:: The constructor and destructor must obviously be defined,
     however, it is not recommended that they actually do anything - all setup
     and teardown tasks must be handled by the other functions in order to
     ensure proper functionality - a test instance is defined once when
@@ -137,7 +137,9 @@ so you only need to define them if you require them to do something.
 The following example exhibits a properly-defined, though overly
 simplistic, test. In reality, we could have skipped ``pre()``, ``prefail()``,
 ``janitor()``, ``postmortem()``, and ``post()``, but they are defined to
-demonstrate their behavior.::
+demonstrate their behavior.
+
+..  code-block:: c++
 
     #include <iochannel.hpp>
     #include <goldilocks.hpp>
@@ -195,7 +197,9 @@ Registering a Test
 
 Registering a test with Goldilocks is a trivial task, thanks to its
 ``register_test()`` function. Once a test class has been defined, as above,
-simply register it via...::
+simply register it via...
+
+.. code-block:: c++
 
     //Assuming testmanager is our instance of the Goldilocks test manager.
     testmanager.register_test("TestFoo", new TestFoo);
@@ -216,7 +220,9 @@ The test can now be called by name using Goldilocks' various functions. (See bel
 Running a Test
 ----------------------------------------------------
 
-Once a test is registered with Goldilocks, running it is quite easy.::
+Once a test is registered with Goldilocks, running it is quite easy.
+
+..  code-block:: c++
 
     //Run the test once.
     testmanager.run_test("TestFoo");

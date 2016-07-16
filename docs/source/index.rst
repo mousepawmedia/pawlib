@@ -14,6 +14,7 @@ Contents:
    goldilocks/goldilocks
    iochannel/iochannel
    onestring/onestring
+   core/pool
    puppeteerxml/puppeteerxml
    core/stdutils
 

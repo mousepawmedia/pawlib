@@ -52,12 +52,12 @@ using namespace pawlib::ioformat;
 namespace pawlib
 {
     template <class type>
-    class flex_stack : public Base_FlexArr<type>
+    class FlexStack : public Base_FlexArr<type>
     {
         public:
-            Stack() : Base_FlexArr<type>() { }
+            FlexStack() : Base_FlexArr<type>() { }
             // cppcheck-suppress noExplicitConstructor
-            Stack(int numElements) : Base_FlexArr<type>(numElements) { }
+            FlexStack(int numElements) : Base_FlexArr<type>(numElements) { }
 
             //removes the last element in the stack
             type pop()
@@ -65,8 +65,7 @@ namespace pawlib
                 //if the stack is empty
                 if(this->currElements == 0)
                 {
-                    ioc << cat_error << vrb_quiet << "The stack is empty" << io_end;
-                    return nullptr;
+                    throw std::length_error("The stack is empty");
                 }
                 else
                 {

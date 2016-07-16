@@ -144,154 +144,41 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug64;Release64;Debug32;Release32;" />
+		</VirtualTargets>
 		<Compiler>
 			<Add option="-std=c++14" />
 			<Add directory="../libs/include" />
 		</Compiler>
-		<Unit filename="include/avl_tree.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/base_flex_array.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/binconv.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/flex_array.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/flex_array_tests.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/flex_queue.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/flex_stack.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/goldilocks.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/iochannel.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/map.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/onestring.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/onestring_tests.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/pawsort.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/pawsort_tests.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/singly_linked_list.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="include/stdutils.hpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="src/binconv.cpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="src/flex_array_tests.cpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="src/goldilocks.cpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="src/iochannel.cpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="src/onestring.cpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="src/onestring_tests.cpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="src/pawsort_tests.cpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
-		<Unit filename="src/stdutils.cpp">
-			<Option target="Debug64" />
-			<Option target="Release64" />
-			<Option target="Debug32" />
-			<Option target="Release32" />
-		</Unit>
+		<Unit filename="include/avl_tree.hpp" />
+		<Unit filename="include/base_flex_array.hpp" />
+		<Unit filename="include/binconv.hpp" />
+		<Unit filename="include/flex_array.hpp" />
+		<Unit filename="include/flex_array_tests.hpp" />
+		<Unit filename="include/flex_queue.hpp" />
+		<Unit filename="include/flex_stack.hpp" />
+		<Unit filename="include/goldilocks.hpp" />
+		<Unit filename="include/iochannel.hpp" />
+		<Unit filename="include/map.hpp" />
+		<Unit filename="include/onestring.hpp" />
+		<Unit filename="include/onestring_tests.hpp" />
+		<Unit filename="include/pawsort.hpp" />
+		<Unit filename="include/pawsort_tests.hpp" />
+		<Unit filename="include/pool.hpp" />
+		<Unit filename="include/pool_tests.hpp" />
+		<Unit filename="include/rigid_stack.hpp" />
+		<Unit filename="include/singly_linked_list.hpp" />
+		<Unit filename="include/stdutils.hpp" />
+		<Unit filename="src/binconv.cpp" />
+		<Unit filename="src/flex_array_tests.cpp" />
+		<Unit filename="src/goldilocks.cpp" />
+		<Unit filename="src/iochannel.cpp" />
+		<Unit filename="src/onestring.cpp" />
+		<Unit filename="src/onestring_tests.cpp" />
+		<Unit filename="src/pawsort_tests.cpp" />
+		<Unit filename="src/pool_tests.cpp" />
+		<Unit filename="src/stdutils.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

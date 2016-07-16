@@ -12,6 +12,8 @@ TestSystem::TestSystem()
     pawlib::TestSuite_Onestring::load_tests(testmanager);
 
     pawlib::TestSuite_FlexArray::load_tests(testmanager);
+
+    pawlib::TestSuite_Pool::load_tests(testmanager);
 }
 
 TestSystem::~TestSystem()
