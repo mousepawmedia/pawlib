@@ -16,7 +16,7 @@ can emulate that).
 Ready-To-Use Build
 --------------------
 If you just want to build PawLIB to use in your own project, the fastest way
-is to run "make dist". This will build CPGF, PawLIB, and the documentation,
+is to run "make ready". This will build CPGF, PawLIB, and the documentation,
 and place them all in a folder called "pawlib". Simply copy that folder to
 a convenient location, and point your compiler and linker to "pawlib/include"
 and "pawlib/lib" respectively.

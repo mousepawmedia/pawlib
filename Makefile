@@ -76,13 +76,12 @@ pawlib_debug: cpgf
 ready: docs_pdf pawlib
 	@rm -rf pawlib
 	@echo "Creating file structure..."
-	@mkdir -p pawlib/include
 	@mkdir -p pawlib/lib
 	@echo "Copying CPGF..."
-	@cp -r cpgf/include pawlib/include
+	@cp -r cpgf/include pawlib/
 	@cp cpgf/lib/libcpgf.a pawlib/lib/libcpgf.a
 	@echo "Copying PawLIB..."
-	@cp -r pawlib-source/include pawlib/include
+	@cp -r pawlib-source/include pawlib/
 	@cp pawlib-source/lib/Release/libpawlib.a pawlib/lib/libpawlib.a
 	@echo "Copying PDF Documentation..."
 	@cp docs/build/latex/PawLIB.pdf pawlib/PawLIB.pdf
