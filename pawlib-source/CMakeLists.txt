@@ -53,6 +53,9 @@ add_library(pawlib STATIC
     include/onestring_tests.hpp
     include/pawsort.hpp
     include/pawsort_tests.hpp
+    include/pool.hpp
+    include/pool_tests.hpp
+    include/rigid_stack.hpp
     include/singly_linked_list.hpp
     include/stdutils.hpp
     src/binconv.cpp
@@ -62,6 +65,7 @@ add_library(pawlib STATIC
     src/onestring.cpp
     src/onestring_tests.cpp
     src/pawsort_tests.cpp
+    src/pool_tests.cpp
     src/stdutils.cpp
 )
 

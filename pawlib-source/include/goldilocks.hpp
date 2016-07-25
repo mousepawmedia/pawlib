@@ -108,7 +108,7 @@ namespace pawlib
 
             /**Clean up after a failed test.
              * \return true if successful, false if it fails.*/
-            virtual bool postmortem(){return true;}
+            virtual bool postmortem(){return this->post();}
 
             /**Like the constructor, a destructor is unnecessary for a Test.
              * Cleanup should be handled by `prefail()`, `post()`, and
