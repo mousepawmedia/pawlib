@@ -98,15 +98,14 @@
 //Needed for the `intptr_t` type
 #include <cstdint>
 
+//Needed for checking types.
 #include <typeinfo>
+
+//Needed for handling passed-in exceptions.
+#include <exception>
 
 //TODO: Swap to pawlib::flexarray
 #include <vector>
-
-//TODO: DROP THIS!
-//Import what we need from sigc++
-/*#include <sigc++/signal.h>
-#include <sigc++/trackable.h>*/
 
 //Signals and callbacks.
 #include "cpgf/gcallbacklist.h"
@@ -522,6 +521,8 @@ namespace pawlib
             inline iochannel& operator<<(const double* rhs){return resolve_pointer(rhs);}
             inline iochannel& operator<<(const long double* rhs){return resolve_pointer(rhs);}
             inline iochannel& operator<<(const std::string* rhs){return resolve_pointer(rhs);}
+
+            iochannel& operator<<(const std::exception& rhs);
 
             //All of these need custom implementations.
             iochannel& operator<<(const IOFormatBase&);

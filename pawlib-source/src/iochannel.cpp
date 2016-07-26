@@ -81,7 +81,19 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
+        //Inject the C string form of the string into the iochannel.
         inject(rhs.c_str());
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const std::exception& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        /* Inject the exception message into the iochannel. Assume that
+         * the exception itself has been handled externally. */
+        inject(rhs.what());
         return *this;
     }
 
