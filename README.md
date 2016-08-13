@@ -49,7 +49,7 @@ All contributions are licensed to us under the
 
 License
 -------------
-PawLIB is licenced under the MIT License. (See LICENCE.md)
+PawLIB is licenced under the BSD-3 License. (See LICENCE.md)
 
 The project is owned and maintained by [MousePaw Games][2].
 

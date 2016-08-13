@@ -27,7 +27,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Our global compiler flags.
-add_definitions(-Wall -Wextra)
+add_definitions(-Wall -Wextra -Werror)
 
 # Set debug flags. -g is a default.
 #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ")
