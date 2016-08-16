@@ -1,8 +1,5 @@
 #include "goldilocks.hpp"
 
-
-
-
 namespace pawlib
 {
     // MACRO IF we are using a GCC-style compiler.
@@ -157,7 +154,7 @@ namespace pawlib
         /* Loop through all the indexes in the map `tests`...
          * SOURCE: http://stackoverflow.com/a/110255/472647
          */
-        for(std::map<testname_t, TestInfo>::iterator it = test_info.begin(); it != test_info.end(); ++it)
+        for(std::map<testname_t, testptr_t>::iterator it = tests.begin(); it != tests.end(); ++it)
         {
             // Print out the index to IOChannel.
             ioc << it->first;
@@ -165,7 +162,28 @@ namespace pawlib
             if(showTitles)
             {
                 // Show the title.
-                ioc << ": " << it->second.title;
+                ioc << ": " << it->second->get_title();
+            }
+            // Newline.
+            ioc << io_endline;
+        }
+        ioc << io_end;
+    }
+
+    void TestManager::list_suites(bool showTitles)
+    {
+        /* Loop through all the indexes in the map `suites`...
+         * SOURCE: http://stackoverflow.com/a/110255/472647
+         */
+        for(std::map<testsuitename_t, testsuiteptr_t>::iterator it = suites.begin(); it != suites.end(); ++it)
+        {
+            // Print out the index to IOChannel.
+            ioc << it->first;
+            // If we're supposed to also display the title...
+            if(showTitles)
+            {
+                // Show the title.
+                ioc << ": " << it->second->get_title();
             }
             // Newline.
             ioc << io_endline;
@@ -175,39 +193,117 @@ namespace pawlib
 
     void TestManager::show_docs(testname_t test_name)
     {
-        // Ensure the test DOES NOT already exists before continuing.
+        // Ensure the test DOES NOT already exist before continuing.
         if(!validate(test_name, true))
         {
             return;
         }
-        ioc << ta_bold << test_info[test_name].title
+        ioc << ta_bold << tests[test_name]->get_title()
             << "[" << test_name << "]: " << io_send;
-        ioc << test_info[test_name].doc << io_end;
+        ioc << tests[test_name]->get_docs() << io_end;
+    }
+
+    bool TestManager::i_confirm(bool default_option)
+    {
+        // Get what the user typed.
+        std::string buffer;
+        getline(std::cin, buffer);
+
+        // If yes was selected...
+        if(buffer == "y" || buffer == "Y")
+        {
+            return true;
+        }
+        //Otherwise, if no was selected...
+        else if(buffer == "n" || buffer == "N")
+        {
+            return false;
+        }
+        // For anything else, use the default...
+        return default_option;
+    }
+
+    void TestManager::i_load_suite(testsuitename_t suite)
+    {
+        // If no suite was specified (load all)...
+        if(suite == "")
+        {
+            ioc << "Load ALL test suites? (y/N) " << io_send;
+
+            if(i_confirm(false))
+            {
+                load_suite();
+            }
+            return;
+        }
+
+        // Otherwise, if a suite was specified...
+
+        // Ensure the test exists before continuing.
+        if(!validate(suite, true, true))
+        {
+            return;
+        }
+
+        if(!suites[suite]->is_loaded())
+        {
+            ioc << cat_error << ta_bold << fg_red << "ERROR: The suite " << suite
+                << " is not yet loaded. Aborting."
+                << io_end;
+            return;
+        }
+
+        ioc << "Load test suite " << io_send;
+        ioc << ta_bold << suites[suite]->get_title() << io_send;
+        ioc << "[" << suite << "]? (y/N) " << io_send;
+
+        if(i_confirm(false))
+        {
+            load_suite(suite);
+        }
     }
 
     void TestManager::i_run_test(testname_t test)
     {
         // Ensure the test exists before continuing.
-        /* NOTE: If you're getting a segfault in this function, check here!
-         * Attempting to access the functions in an unregistered test causes
-         * Undefined Behavior, typically a segfault. */
         if(!validate(test, true))
         {
             return;
         }
 
         ioc << "Run test " << io_send;
-        ioc << ta_bold << test_info[test].title << io_send;
+        ioc << ta_bold << tests[test]->get_title() << io_send;
         ioc << "[" << test << "]? (y/N) " << io_send;
 
-        std::string buffer;
-
-        // Get what the user typed.
-        getline(std::cin, buffer);
-
-        if(buffer == "y" || buffer == "Y")
+        if(i_confirm(false))
         {
             run_test(test);
+        }
+    }
+
+    void TestManager::i_run_suite(testsuitename_t suite)
+    {
+        // Ensure the test exists before continuing.
+        if(!validate(suite, true, true))
+        {
+            return;
+        }
+
+        if(!suites[suite]->is_loaded())
+        {
+            ioc << cat_error << ta_bold << fg_red << "ERROR: The suite " << suite
+                << " is not yet loaded. Aborting."
+                << io_end;
+            return;
+        }
+
+        ioc << "Run test suite " << io_send;
+        ioc << ta_bold << suites[suite]->get_title() << io_send;
+        ioc << "[" << suite << "]? (y/N) " << io_send;
+
+        if(i_confirm(false))
+        {
+            run_suite(suite);
         }
     }
 
@@ -223,15 +319,10 @@ namespace pawlib
         }
 
         ioc << "Run benchmark " << io_send;
-        ioc << ta_bold << test_info[test].title << io_send;
+        ioc << ta_bold << tests[test]->get_title() << io_send;
         ioc << "[" << test << "] at " << repeat << " repetitions? (y/N) " << io_send;
 
-        std::string buffer;
-
-        // Get what the user typed.
-        getline(std::cin, buffer);
-
-        if(buffer == "y" || buffer == "Y")
+        if(i_confirm(false))
         {
             run_benchmark(test, repeat);
         }
@@ -249,23 +340,123 @@ namespace pawlib
         }
 
         ioc << "Run comparative benchmark between " << io_send;
-        ioc << ta_bold << test_info[test1].title << io_send;
+        ioc << ta_bold << tests[test1]->get_title() << io_send;
         ioc << "[" << test1 << "] and " << io_send;
-        ioc << ta_bold << test_info[test2].title << io_send;
+        ioc << ta_bold << tests[test2]->get_title() << io_send;
         ioc << "[" << test2 << "] at " << repeat << " repetitions? (y/N) " << io_send;
 
-        std::string buffer;
-
-        // Get what the user typed.
-        getline(std::cin, buffer);
-
-        if(buffer == "y" || buffer == "Y")
+        if(i_confirm(false))
         {
             run_compare(test1, test2, repeat, showResults);
         }
     }
 
-    void TestManager::register_test(testname_t test_name, Test* test, testdoc_t title, testdoc_t doc)
+    bool TestManager::load_suite(testsuitename_t suite)
+    {
+        /* ENTRY: Run a suite of tests.*/
+
+        // If no suite is specified, load all available.
+        if(suite == "")
+        {
+            /* Loop through all the indexes in the map `suites`...
+             * SOURCE: http://stackoverflow.com/a/110255/472647
+             */
+            for(std::map<testsuitename_t, testsuiteptr_t>::iterator it = suites.begin(); it != suites.end(); ++it)
+            {
+                // Load each suite that isn't already loaded.
+                if(it->second->is_loaded() == false)
+                {
+                    it->second->load_tests();
+                    it->second->is_loaded(true);
+                    ioc << cat_normal << ta_bold << it->first << ": " << it->second->get_title() << " loaded." << io_end;
+                }
+            }
+            return true;
+        }
+
+        // Otherwise, if we specified a test...
+
+        // Ensure the suite exists before continuing.
+        /* NOTE: If you're getting a segfault in this function, check here!
+         * Attempting to access the functions in an unregistered test causes
+         * Undefined Behavior, typically a segfault. */
+        if(!validate(suite, true, true))
+        {
+            return false;
+        }
+
+        // Ensure the suite isn't already loaded...
+        if(!suites[suite]->is_loaded())
+        {
+            // Load the suite into the testmanager.
+            suites[suite]->load_tests();
+            // Mark the suite as loaded.
+            suites[suite]->is_loaded(true);
+            // Report the good news.
+            ioc << cat_normal << ta_bold << suites[suite]->get_title() << io_end;
+            ioc << cat_normal << ta_bold << bg_green << fg_white
+                << "Suite loaded." << io_endline << io_end;
+            return true;
+        }
+        else
+        {
+            ioc << cat_error << ta_bold << fg_red << "ERROR: The suite " << suite
+                << " is already loaded."
+                << io_end;
+            return false;
+        }
+        return false;
+    }
+
+    bool TestManager::run_suite(testsuitename_t suite)
+    {
+        /* ENTRY: Run a suite of tests.*/
+
+        // Ensure the suite exists before continuing.
+        /* NOTE: If you're getting a segfault in this function, check here!
+         * Attempting to access the functions in an unregistered test causes
+         * Undefined Behavior, typically a segfault. */
+        if(!validate(suite, true, true))
+        {
+            return false;
+        }
+
+        if(!suites[suite]->is_loaded())
+        {
+            ioc << cat_error << ta_bold << fg_red << "ERROR: The suite " << suite
+                << " is not yet loaded. Aborting."
+                << io_end;
+            return false;
+        }
+
+        // Display the suite name in a banner.
+        ioc << "===== [" << suites[suite]->get_title() << "] =====" << io_end;
+
+        // Run the suite, and return whether it succeeded.
+        bool r = suites[suite]->run_tests();
+
+        //If the suite run fails (return false)...
+        if(!r)
+        {
+            ioc << io_endline << cat_error << ta_bold << bg_red << fg_white
+                << "SUITE FAILED" << io_end;
+
+            //End of suite, fail.
+            return false;
+        }
+        //If the suite run succeeds (return true)...
+        else
+        {
+            // Let the user know that all went well.
+            ioc << io_endline << cat_normal << ta_bold << bg_green << fg_white
+                << "SUITE COMPLETE" << io_end;
+
+            //End of suite, success.
+            return true;
+        }
+    }
+
+    void TestManager::register_test(testname_t test_name, Test* test)
     {
         /* ENTRY: Add a new test by name to the test manager. */
 
@@ -281,7 +472,7 @@ namespace pawlib
         /* We generally advise the end-developer to pass `new Test` as
          * the second parameter. Thus, if the allocation fails (or they
          * otherwise pass in a null pointer)...*/
-        if(test == 0)
+        if(test == nullptr)
         {
             //Display an error message.
             ioc << cat_error << "TestManager: Unable to create a new "
@@ -298,16 +489,6 @@ namespace pawlib
          * as insert() would literally NOT work (you can't copy a unique_ptr).*/
         tests.emplace(test_name, testptr_t(test));
 
-        // If we didn't receive a unique title, use the name as the title.
-        if(title == "")
-        {
-            title = test_name;
-        }
-
-        /* Add the new test's title and docs to the TestManager's map (testdocs),
-         * with the name string as the key. */
-        test_info.emplace(test_name, TestInfo(title, doc));
-
         /* WARNING: The end-developer must be sure they aren't trying to
          * retain ownership of the Test instance, as that will cause UB
          * (in my observation, usually a segfault) when the TestManager
@@ -315,7 +496,50 @@ namespace pawlib
          * destroy the instance. It's not pretty.*/
     }
 
-    void TestManager::run_test(testname_t test)
+    void TestManager::register_suite(testsuitename_t suite_name, TestSuite* suite)
+    {
+        /* ENTRY: Add a new test by name to the test manager. */
+
+        // Tell the suite instance which testmanager instance is controlling it.
+        suite->backregister(this);
+
+        // Ensure the suite DOES NOT already exist before continuing.
+        if(validate(suite_name, false, true))
+        {
+            ioc << cat_error << ta_bold << fg_red
+                << "ERROR: A suite by the name of " << suite_name
+                << "is already registered in Golidlocks Test Manager." << io_end;
+            return;
+        }
+
+        /* We generally advise the end-developer to pass `new Test` as
+         * the second parameter. Thus, if the allocation fails (or they
+         * otherwise pass in a null pointer)...*/
+        if(suite == nullptr)
+        {
+            //Display an error message.
+            ioc << cat_error << "TestManager: Unable to create a new "
+                << "instance of the suite \"" << suite_name << "\". Suite not "
+                << "registered." << io_end;
+
+            //Return non-fatally.
+            return;
+        }
+
+        /* Add the new suite to the TestManager's map (suites), with the name
+         * string as the key, and a smart pointer (unique_ptr) to the suite.
+         * emplace() allows us to define the new unique_ptr within the map,
+         * as insert() would literally NOT work (you can't copy a unique_ptr).*/
+        suites.emplace(suite_name, testsuiteptr_t(suite));
+
+        /* WARNING: The end-developer must be sure they aren't trying to
+         * retain ownership of the TestSuite instance, as that will cause UB
+         * (in my observation, usually a segfault) when the TestManager
+         * instance is destroyed - the unique_ptr will not be able to
+         * destroy the instance. It's not pretty.*/
+    }
+
+    bool TestManager::run_test(testname_t test)
     {
         /* ENTRY: Run a single test.*/
 
@@ -325,11 +549,11 @@ namespace pawlib
          * Undefined Behavior, typically a segfault. */
         if(!validate(test, true))
         {
-            return;
+            return false;
         }
 
         // Display the test name in a banner.
-        ioc << "===== [" << test_info[test].title << "] =====" << io_end;
+        ioc << "===== [" << tests[test]->get_title() << "] =====" << io_end;
 
         /* Attempt to run the pretest function, which is intended to set up
          * for multiple runs of the test. If that fails (returns false)...*/
@@ -343,7 +567,7 @@ namespace pawlib
             tests[test]->prefail();
 
             // End of test.
-            return;
+            return false;
         }
 
         // Run the test. If it fails (returned false)...
@@ -357,7 +581,7 @@ namespace pawlib
             tests[test]->postmortem();
 
             //End of test.
-            return;
+            return false;
         }
         //If the test run succeeds (return true)...
         else
@@ -370,7 +594,7 @@ namespace pawlib
             tests[test]->post();
 
             //End of test.
-            return;
+            return true;
         }
     }
 
@@ -421,7 +645,7 @@ namespace pawlib
         benchmark_banner();
 
         // Display the name of the test we're about to benchmark.
-        ioc << "===== [" << test_info[test].title << "] =====" << io_end;
+        ioc << "===== [" << tests[test]->get_title() << "] =====" << io_end;
 
         // Attempt to set up the test (pre). If that fails...
         if(!(tests[test]->pre()))
@@ -588,15 +812,15 @@ namespace pawlib
         // Display the fancy benchmarker banner and disclaimer.
         benchmark_banner();
         // Display the names of the tests we're about to compare.
-        ioc << "===== [" << test_info[test1].title << "] | ["
-            << test_info[test2].title << "] =====" << io_end;
+        ioc << "===== [" << tests[test1]->get_title() << "] | ["
+            << tests[test2]->get_title() << "] =====" << io_end;
 
         // Attempt to run the "pre" function for test 1. If it fails...
         if(!(tests[test1]->pre()))
         {
             // Alert the user with an error message...
             ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test_info[test1].title << "] PRE-TEST FAILED - ABORTING" << io_end;
+                << "[" << tests[test1]->get_title() << "] PRE-TEST FAILED - ABORTING" << io_end;
             // Perform pre-fail cleanup on test 1.
             tests[test1]->prefail();
 
@@ -611,7 +835,7 @@ namespace pawlib
         {
             // Alert the user with an error message...
             ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test_info[test2].title << "] PRE-TEST FAILED - ABORTING" << io_end;
+                << "[" << tests[test2]->get_title() << "] PRE-TEST FAILED - ABORTING" << io_end;
 
             // Perform pre-fail cleanup on test 2.
             tests[test2]->prefail();
@@ -625,14 +849,14 @@ namespace pawlib
         }
 
         // Let the user know what we're doing...
-        ioc << "Ensuring [" << test_info[test1].title << "] succeeds before benchmarking..." << io_end;
+        ioc << "Ensuring [" << tests[test1]->get_title() << "] succeeds before benchmarking..." << io_end;
 
         // Run test1 to make sure it works. If it fails...
         if(!(tests[test1]->run()))
         {
             // Alert the user with an error message.
             ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test_info[test1].title << "] FAILED - ABORTING" << io_end;
+                << "[" << tests[test1]->get_title() << "] FAILED - ABORTING" << io_end;
 
             // Run postmortem cleanup on test1.
             tests[test1]->postmortem();
@@ -649,19 +873,19 @@ namespace pawlib
         {
             // Let the user know the good news...
             ioc << cat_normal << ta_bold << bg_green << fg_white
-                << "[" << test_info[test1].title << "] PASSED" << io_end;
+                << "[" << tests[test1]->get_title() << "] PASSED" << io_end;
             // ...and move on.
         }
 
         // Give the user a status update.
-        ioc << "Ensuring [" << test_info[test2].title << "] succeeds before benchmarking..." << io_end;
+        ioc << "Ensuring [" << tests[test2]->get_title() << "] succeeds before benchmarking..." << io_end;
 
         // Run test2 to make sure it works. If it fails...
         if(!(tests[test2]->run()))
         {
             // Alert the user with an error message.
             ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test_info[test2].title << "] FAILED - ABORTING" << io_end;
+                << "[" << tests[test2]->get_title() << "] FAILED - ABORTING" << io_end;
 
             // Run postmortem cleanup on test2.
             tests[test2]->postmortem();
@@ -678,7 +902,7 @@ namespace pawlib
         {
             // Let the user know the good news about that as well...
             ioc << cat_normal << ta_bold << bg_green << fg_white
-                << "[" << test_info[test2].title << "] PASSED" << io_end;
+                << "[" << tests[test2]->get_title() << "] PASSED" << io_end;
             // ...and let the fun proceed!
         }
 
@@ -916,11 +1140,11 @@ namespace pawlib
             printResult(baseR);
 
             // Display the results for MAMA BEAR, test 1.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << test_info[test1].title << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << tests[test1]->get_title() << "]" << io_end;
             printResult(mama1);
 
             // Display the results for MAMA BEAR, test 2.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << test_info[test2].title << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << tests[test2]->get_title() << "]" << io_end;
             printResult(mama2);
 
             // Display the verdict for MAMA BEAR in BOLD.
@@ -929,11 +1153,11 @@ namespace pawlib
             printVerdict(mama1, mama2, test1, test2);
 
             // Display the results for PAPA BEAR, test 1.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << test_info[test1].title << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << tests[test1]->get_title() << "]" << io_end;
             printResult(papa1);
 
             // Display the results for PAPA BEAR, test 2.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << test_info[test2].title << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << tests[test2]->get_title() << "]" << io_end;
             printResult(papa2);
 
             // Display the verdict for PAPA BEAR in BOLD.
@@ -942,11 +1166,11 @@ namespace pawlib
             printVerdict(papa1, papa2, test1, test2);
 
             // Display the results for BABY BEAR, test 1.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << test_info[test1].title << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << tests[test1]->get_title() << "]" << io_end;
             printResult(baby1);
 
             // Display the results for BABY BEAR, test 2.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << test_info[test2].title << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << tests[test2]->get_title() << "]" << io_end;
             printResult(baby2);
 
             // Display the verdict for BABY BEAR in BOLD.
@@ -1233,13 +1457,13 @@ namespace pawlib
             if(difference < 0)
             {
                 // Declare the first test as faster, and by how much.
-                ioc << "\t     RAW: [" << test_info[test1].title << "] faster by approx. " << (abs(difference)) << " cycles." << io_end_keep;
+                ioc << "\t     RAW: [" << tests[test1]->get_title() << "] faster by approx. " << (abs(difference)) << " cycles." << io_end_keep;
             }
             //Else if the second test won (its non-adjusted mean was smaller)...
             else if(difference > 0)
             {
                 // Declare the second test as faster, and by how much.
-                ioc << "\t     RAW: [" << test_info[test2].title << "] faster by approx. " << (abs(difference)) << " cycles." << io_end_keep;
+                ioc << "\t     RAW: [" << tests[test2]->get_title() << "] faster by approx. " << (abs(difference)) << " cycles." << io_end_keep;
             }
         }
 
@@ -1257,18 +1481,18 @@ namespace pawlib
             if(difference < 0)
             {
                 // Declare the first test as faster, and by how much.
-                ioc << "\tADJUSTED: [" << test_info[test1].title << "] faster by approx. " << (abs(difference_adj) - result1.std_dev_adj) << " cycles." << io_end;
+                ioc << "\tADJUSTED: [" << tests[test1]->get_title() << "] faster by approx. " << (abs(difference_adj) - result1.std_dev_adj) << " cycles." << io_end;
             }
             //Else if the second test won (its adjusted mean was smaller)...
             else if(difference > 0)
             {
                 // Declare the second test as faster, and by how much.
-                ioc << "\tADJUSTED: [" << test_info[test2].title << "] faster by approx. " << (abs(difference_adj) - result2.std_dev_adj) << " cycles." << io_end;
+                ioc << "\tADJUSTED: [" << tests[test2]->get_title() << "] faster by approx. " << (abs(difference_adj) - result2.std_dev_adj) << " cycles." << io_end;
             }
         }
     }
 
-    bool TestManager::validate(testname_t testName, bool yell)
+    bool TestManager::validate(testname_t item_name, bool yell, bool suite)
     {
         /* Use `std::map::find` to test for the key in the map. As long
          * as find does not return the end iterator (std::map::end), which
@@ -1276,15 +1500,94 @@ namespace pawlib
          * somewhere in the map. We don't really care where - just return
          * the boolean stating whether it exists.
          */
-        bool r = (tests.find(testName) != tests.end());
+        bool r = false;
+        if(suite)
+        {
+            r = (suites.find(item_name) != suites.end());
+        }
+        if(!suite)
+        {
+            r = (tests.find(item_name) != tests.end());
+        }
 
         if(yell && !r)
         {
-            ioc << cat_error << ta_bold << fg_red << "ERROR: The test " << testName
+            ioc << cat_error << ta_bold << fg_red << "ERROR: The item " << item_name
                 << " is not registered with Goldilocks Test Manager. Aborting."
                 << io_end;
         }
 
+
         return r;
+    }
+
+    void TestSuite::register_test(testname_t test_name, Test* test, bool will_run)
+    {
+        // If we have a valid testmanager pointer...
+        if(testmanager)
+            {
+            // Register the test with the testmanager.
+            testmanager->register_test(test_name, test);
+            // Store the test name for loading on demand.
+            tests_load.push_back(test_name);
+
+            // If we're supposed to run the test...
+            if(will_run)
+            {
+                tests_run.push_back(test_name);
+            }
+        }
+        else
+        {
+            ioc << cat_error << vrb_normal
+                << "ERROR: TestSuite is lonely and has no one to talk to. :("
+                << io_end;
+            return;
+        }
+
+    }
+
+    bool TestSuite::run_tests()
+    {
+        // If we have a valid testmanager and tests to run...
+        if(testmanager && tests_run.size() > 0)
+        {
+            // Run each test in this suite through the test manager.
+            for(unsigned int i = 0; i < tests_run.size(); ++i)
+            {
+                // If a test fails...
+                if(!testmanager->run_test(tests_run[i]))
+                {
+                    // Don't bother running the rest, just fail.
+                    return false;
+                }
+            }
+            // If we reach this point, all of the tests passed; report success.
+            return true;
+        }
+        // Else if we don't have any tests marked to run...
+        else if(tests_run.size())
+        {
+            ioc << cat_error << vrb_normal
+                << "ERROR: TestSuite has no tests marked to run. Aborting."
+                << io_end;
+            return false;
+        }
+        // Else if we don't have a valid testmamanger...
+        else if(!testmanager)
+        {
+            ioc << cat_error << vrb_normal
+                << "ERROR: TestSuite is lonely and has no one to talk to. :("
+                << io_end;
+            return false;
+        }
+
+        // If we reach this point, something weird was wrong; report failure.
+        return false;
+    }
+
+    void TestSuite::backregister(TestManager* tm)
+    {
+        testmanager = tm;
     }
 }

@@ -67,7 +67,55 @@ namespace pawlib
                 NSAME_LAST_CHAR
             };
 
-            TestString():tType(SAME_NO_UNICODE){}
+            explicit TestString(TestType type):tType(type)
+            {
+                switch(tType)
+                {
+                    case SAME_NO_UNICODE:
+                    {
+                        title = "OneString: Compare, Same No Unicode";
+                        docs = "Compares two identical strings containing no Unicode.";
+                        break;
+                    }
+                    case SAME_SOME_UNICODE:
+                    {
+                        title = "OneString: Compare, Same Some Unicode";
+                        docs = "Compares two identical strings containing some Unicode.";
+                        break;
+                    }
+                    case SAME_ALL_UNICODE:
+                    {
+                        title = "OneString: Compare, Same All Unicode";
+                        docs = "Compares two identical strings containing all Unicode.";
+                        break;
+                    }
+                    case NSAME_FIRST_CHAR:
+                    {
+                        title = "OneString: Compare, Diff First";
+                        docs = "Compares two strings with the first character different.";
+                        break;
+                    }
+                    case NSAME_MIDDLE_CHAR:
+                    {
+                        title = "OneString: Compare, Diff Middle";
+                        docs = "Compares two strings with the middle character different.";
+                        break;
+                    }
+                    case NSAME_LAST_CHAR:
+                    {
+                        title = "OneString: Compare, Diff Last";
+                        docs = "Compares two strings with the last character different.";
+                        break;
+                    }
+                }
+            }
+
+            virtual testdoc_t get_title() = 0;
+
+            testdoc_t get_docs()
+            {
+               return docs;
+            }
 
             bool pre()
             {
@@ -430,16 +478,22 @@ namespace pawlib
             std::string compStr;
             OneString<1024> compPStr;
 
+            testdoc_t title;
+            testdoc_t docs;
     };
 
 
     class TestPawCompare: public TestString
     {
         public:
-            explicit TestPawCompare(TestType type)
+            explicit TestPawCompare(TestType type):TestString(type)
+            {}
+
+            testdoc_t get_title()
             {
-                tType = type;
+                return title + " (onestring)";
             }
+
             bool run()
             {
                 for(int i=0; i < 1000; ++i)
@@ -456,10 +510,14 @@ namespace pawlib
     class TestStdCompare: public TestString
     {
         public:
-            explicit TestStdCompare(TestType type)
+            explicit TestStdCompare(TestType type):TestString(type)
+            {}
+
+            testdoc_t get_title()
             {
-                tType = type;
+                return title + " (std::string)";
             }
+
             bool run()
             {
                 for(int i=0; i < 1000; ++i)
@@ -476,10 +534,16 @@ namespace pawlib
     class TestSuite_Onestring : public TestSuite
     {
         public:
-            static void load_tests(TestManager*);
-        protected:
+            explicit TestSuite_Onestring(){}
 
-        private:
+            void load_tests();
+
+            testdoc_t get_title()
+            {
+                return "PawLIB: Onestring Tests";
+            }
+
+            ~TestSuite_Onestring(){}
     };
 }
 

@@ -3,7 +3,7 @@
   *
   * Common utility functions used by the rest of PawLIB.
   *
-  * Last Updated: 8 February 2016
+  * Last Updated: 5 August 2016
   * Authors: Jason C. McDonald, Scott Taylor
   */
 
@@ -52,8 +52,10 @@
 #include <cstdint>
 #include <limits>
 
-//TODO: Replace with pawlib::string!
+// Needed for stdsplit
 #include <string>
+#include <vector>
+
 //NOTE: Leave this commented out until you are on g++ 5.3 or higher.
 using std::isinf;
 using std::isnan;
@@ -66,6 +68,13 @@ namespace pawlib
     {
         public:
             stdutils();
+
+            /** Efficiently split a std::string by tokens.
+            * \param the string to split
+            * \param the character or string to split by
+            * \param the vector to store the tokens in
+            */
+            static void stdsplit(std::string, std::string, std::vector<std::string>&);
 
             /** Reverse a C-string. Algorithm from
             * http://stackoverflow.com/a/784567/472647

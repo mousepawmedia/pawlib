@@ -76,6 +76,16 @@ namespace pawlib
             // cppcheck-suppress uninitMemberVar
             TestPool_ThriceFillAlloc(){}
 
+            testdoc_t get_title()
+            {
+                return "Pool: Create & Destroy (Allocation)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Allocate and deallocate 1000 Dummy objects the old fashioned way.";
+            }
+
             bool run()
             {
                 for(int r = 0; r < 3; ++r)
@@ -104,6 +114,16 @@ namespace pawlib
         public:
             // cppcheck-suppress uninitMemberVar
             TestPool_ThriceFill(){}
+
+            testdoc_t get_title()
+            {
+                return "Pool: Create & Destroy (Pool)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Create a 1000-object Dummy object pool, then create & destroy 1000 objects in it three times.";
+            }
 
             bool pre()
             {
@@ -165,10 +185,107 @@ namespace pawlib
     class TestPool_Create : public Test
     {
         public:
+            enum TestPoolCreateMode
+            {
+                ASGN_DFLT,
+                CSTR_DFLT,
+                ASGN_COPY,
+                CSTR_COPY,
+                ASGN_DFLT_FAILSAFE,
+                CSTR_DFLT_FAILSAFE,
+                ASGN_COPY_FAILSAFE,
+                CSTR_COPY_FAILSAFE
+            };
+
             // cppcheck-suppress uninitMemberVar
-            TestPool_Create(bool asgn, bool cpy, bool fs)
-            :assignment(asgn), copyconst(cpy), failsafe(fs)
-            {}
+            explicit TestPool_Create(TestPoolCreateMode mode)
+            {
+                switch(mode)
+                {
+                    case ASGN_DFLT:
+                    {
+                        title = "Pool: Create by Assignment, Default";
+                        docs = "Create a new object in a pool using pool_ref assignment and the object's default constructor.";
+                        assignment = true;
+                        copyconst = false;
+                        failsafe = false;
+                        break;
+                    }
+                    case CSTR_DFLT:
+                    {
+                        title = "Pool: Create by Constructor, Default";
+                        docs = "Create a new object in a pool using the pool_ref constructor and the object's default constructor.";
+                        assignment = false;
+                        copyconst = false;
+                        failsafe = false;
+                        break;
+                    }
+                    case ASGN_COPY:
+                    {
+                        title = "Pool: Create by Assignment, Copy";
+                        docs = "Create a new object in a pool using pool_ref assignment and the object's copy constructor.";
+                        assignment = true;
+                        copyconst = true;
+                        failsafe = false;
+                        break;
+                    }
+                    case CSTR_COPY:
+                    {
+                        title = "Pool: Create by Constructor, Copy";
+                        docs = "Create a new object in a pool using the pool_ref constructor and the object's copy constructor.";
+                        assignment = false;
+                        copyconst = true;
+                        failsafe = false;
+                        break;
+                    }
+                    case ASGN_DFLT_FAILSAFE:
+                    {
+                        title = "Pool: Create by Assignment, Default Failsafe";
+                        docs = "Create a new object in a failsafe pool using pool_ref assignment and the object's default constructor.";
+                        assignment = true;
+                        copyconst = false;
+                        failsafe = true;
+                        break;
+                    }
+                    case CSTR_DFLT_FAILSAFE:
+                    {
+                        title = "Pool: Create by Assignment, Copy Failsafe";
+                        docs = "Create a new object in a failsafe pool using pool_ref assignment and the object's copy constructor.";
+                        assignment = false;
+                        copyconst = false;
+                        failsafe = true;
+                        break;
+                    }
+                    case ASGN_COPY_FAILSAFE:
+                    {
+                        title = "Pool: Create by Constructor, Default Failsafe";
+                        docs = "Create a new object in a failsafe pool using the pool_ref constructor and the object's default constructor.";
+                        assignment = true;
+                        copyconst = true;
+                        failsafe = true;
+                        break;
+                    }
+                    case CSTR_COPY_FAILSAFE:
+                    {
+                        title = "Pool: Create by Constructor, Copy Failsafe";
+                        docs = "Create a new object in a failsafe pool using the pool_ref constructor and the object's copy constructor.";
+                        assignment = false;
+                        copyconst = true;
+                        failsafe = true;
+                        break;
+                    }
+                }
+            }
+
+            testdoc_t get_title()
+            {
+                return title;
+            }
+
+            testdoc_t get_docs()
+            {
+                return docs;
+            }
 
             bool pre()
             {
@@ -247,6 +364,9 @@ namespace pawlib
             bool failsafe;
             Pool<DummyClass>* pool;
             pool_ref<DummyClass> poolrf;
+
+            testdoc_t title;
+            testdoc_t docs;
     };
 
     // P-tB163
@@ -255,6 +375,16 @@ namespace pawlib
         public:
             // cppcheck-suppress uninitMemberVar
             TestPool_Access(){}
+
+            testdoc_t get_title()
+            {
+                return "Pool: Access Object";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Access an object inside the pool.";
+            }
 
             bool pre()
             {
@@ -316,6 +446,16 @@ namespace pawlib
         public:
             // cppcheck-suppress uninitMemberVar
             TestPool_Destroy(){}
+
+            testdoc_t get_title()
+            {
+                return "Pool: Destroy Object";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Destroy an object inside the pool.";
+            }
 
             bool pre()
             {
@@ -389,7 +529,70 @@ namespace pawlib
 
             // cppcheck-suppress uninitMemberVar
             explicit TestPool_Exception(FailTestType ex)
-            :type(ex){}
+            :type(ex)
+            {
+                switch(type)
+                {
+                    case POOL_FULL_ASGN:
+                    {
+                        title = "Pool: (Exception) Full Pool Create Assignment w/ Default";
+                        docs = "Throw and Catch e_pool_full from pool_ref assignment using the object's default constructor.";
+                        break;
+                    }
+                    case POOL_FULL_CTOR:
+                    {
+                        title = "Pool: (Exception) Full Pool Create Assignment w/ Copy",
+                        docs = "Throw and Catch e_pool_full from pool_ref assignment using the object's copy constructor.";
+                        break;
+                    }
+                    case POOL_FULL_ASGN_CPY:
+                    {
+                        title = "Pool: (Exception) Full Pool Create Constructor w/ Default";
+                        docs = "Throw and Catch e_pool_full from pool_ref constructor using the object's default constructor.";
+                        break;
+                    }
+                    case POOL_FULL_CTOR_CPY:
+                    {
+                        title = "Pool: (Exception) Full Pool Create Constructor w/ Copy";
+                        docs = "Throw and Catch e_pool_full from pool_ref constructor using the object's copy constructor.";
+                        break;
+                    }
+                    case POOL_ACC_DELETED_REF:
+                    {
+                        title = "Pool: (Exception) Access w/ Deleted Ref";
+                        docs = "Throw and Catch e_pool_invalid_ref from access using deleted reference.";
+                        break;
+                    }
+                    case POOL_ACC_FOREIGN_REF:
+                    {
+                        title = "Pool: (Exception) Access w/ Foreign Ref";
+                        docs = "Throw and Catch e_pool_invalid_ref from access using foreign reference.";
+                        break;
+                    }
+                    case POOL_DES_DELETED_REF:
+                    {
+                        title = "Pool: (Exception) Destroy w/ Deleted Ref";
+                        docs = "Throw and Catch e_pool_invalid_ref from destroy using deleted reference.";
+                        break;
+                    }
+                    case POOL_DES_FOREIGN_REF:
+                    {
+                        title = "Pool: (Exception) Destroy w/ Foreign Ref";
+                        docs = "Throw and Catch e_pool_invalid_ref from destroy using foreign reference.";
+                        break;
+                    }
+                }
+            }
+
+            testdoc_t get_title()
+            {
+                return title;
+            }
+
+            testdoc_t get_docs()
+            {
+                return title;
+            }
 
             bool pre()
             {
@@ -540,15 +743,24 @@ namespace pawlib
 
             Pool<DummyClass>* pool;
             pool_ref<DummyClass> poolrf;
+
+            testdoc_t title;
+            testdoc_t docs;
     };
 
     class TestSuite_Pool : public TestSuite
     {
         public:
-            static void load_tests(TestManager*);
-        protected:
+            explicit TestSuite_Pool(){}
 
-        private:
+            void load_tests();
+
+            testdoc_t get_title()
+            {
+                return "PawLIB: Pool Tests";
+            }
+
+            ~TestSuite_Pool(){}
     };
 }
 

@@ -10,7 +10,7 @@
   * especially for comparing the execution of two
   * tests.
   *
-  * Last Updated: 6 April 2016
+  * Last Updated: 5 August 2016
   * Author: Jason C. McDonald
   */
 
@@ -53,6 +53,7 @@
 #ifndef TESTSUITE_H
 #define TESTSUITE_H
 
+#include <stdexcept>
 //uint64_t and friends
 #include <cstdlib>
 //std::unique_ptr
@@ -64,7 +65,6 @@
 
 //Output
 #include <iochannel.hpp>
-
 //Sorting
 #include <pawsort.hpp>
 
@@ -73,11 +73,33 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
+    class Test;
+    class TestSuite;
+    class TestManager;
+
+    /* The Test smart pointer type shall henceforth be known
+      * as "testptr_t".*/
+    typedef std::unique_ptr<Test> testptr_t;
+    /* The TestSuite smart pointer type shall henceforth be known
+      * as "testsuiteptr_t".*/
+    typedef std::unique_ptr<TestSuite> testsuiteptr_t;
+
+    /* The type we use for storing test names shall henceforth be
+     * known as "testname_t". Basically, I'm doing this so we can swap to
+     * `pawlib::pawstring` later, and back again if necessary.*/
+    typedef std::string testname_t;
+    /* The type we use for storing suite names. Alias of testname_t.*/
+    typedef testname_t testsuitename_t;
+    /* The type we use for storing documentation strings. Alias of testname_t.*/
+    typedef testname_t testdoc_t;
+
     /** All tests are derived from this base
      * class.*/
     class Test
     {
         public:
+
+
             /**A Test generally should not have a constructor.
              * Instead, setup tasks (such as dynamic allocation)
              * should be performed by `pre()`, so `prefail()`, `post()`,
@@ -86,6 +108,14 @@ namespace pawlib
              * In short, THIS SHOULD ALWAYS BE EMPTY!
              */
             Test(){}
+
+            /**Get the human-readable name of the test.
+             * \return a string of the name. */
+            virtual testdoc_t get_title() = 0;
+
+            /**Get the documentation for the test.
+             * \return the test's documentation string. */
+            virtual testdoc_t get_docs() = 0;
 
             /**Set up for the test. Called only once, even if test is
              * repeated multiple times.
@@ -128,10 +158,69 @@ namespace pawlib
      */
     class TestSuite
     {
+        friend class TestManager;
         public:
-            TestSuite(){}
+            TestSuite():testmanager(0),loaded(false)
+            {}
+
+            /** Load all of the tests into the testsystem and suite.
+             */
             virtual void load_tests() = 0;
+
+            virtual testdoc_t get_title() = 0;
+
+            /** Run all of the tests in the suite.
+             * \return true if all the tests run, else false
+             */
+            bool run_tests();
+
+            /** Check if the testsuite was already loaded, or mark it as loaded.
+             * Used directly by Goldilocks.
+             * \param whether to mark the suite as loaded
+             * \return true if loaded, else false */
+            bool is_loaded(bool mark=false)
+            {
+                if(mark)
+                {
+                    loaded = true;
+                }
+                return loaded;
+            }
+
             virtual ~TestSuite(){}
+
+        protected:
+            /** Register a test with both the suite and the testmanager.
+             * This is here purely for end-developer convenience when creating
+             * a derived TestSuite.
+             * \param the name of the test
+             * \param the pointer to the test (declare "new" for this argument)
+             * \param whether to run the test on suite run (default true)
+             */
+            void register_test(testname_t, Test*, bool = true);
+
+            /// The list of tests to load. Mainly here for reference right now.
+            std::vector<testname_t> tests_load;
+
+            /** The list of tests to run. This should always be a subset
+             * of tests_load. */
+            std::vector<testname_t> tests_run;
+
+            /** We store the pointer to the testmanager we're using in
+             * this instance for ease of test registration. */
+            TestManager* testmanager;
+
+            /** Tracks whether we've already loaded this suite, to prevent
+             * loading multiple times into one testmanager. */
+            bool loaded;
+
+        private:
+            /** Completes registration of a suite with the testmanager.
+              * This is only accessible by TestManager: it is even hidden
+              * from the derived classes and end-developer (intentionally).
+              * \param the pointer to the TestManager controlling the suite.
+              */
+            void backregister(TestManager*);
     };
 
     /**TestManager stores and calls tests by names. It exposes functions for
@@ -145,29 +234,25 @@ namespace pawlib
              * owns all test instances it uses, and thus can delete them
              * automatically later.*/
 
-             /* The Test smart pointer type shall henceforth be known
-              * as "testptr_t".*/
-            typedef std::unique_ptr<Test> testptr_t;
-
-            /* The type we use for storing test names shall henceforth be
-             * known as "name". Basically, I'm doing this so we can swap to
-             * `pawlib::pawstring` later, and back again if necessary.*/
-            typedef std::string testname_t;
-
-            /* The type we use for storing documentation strings. Like with
-             * `testname_t`, I'm doing this so we can swap to another string
-             * library, such as `pawlib::pawstring`, later, and back again
-             * if necessary. */
-            typedef std::string testdoc_t;
-
             /**The TestManager doesn't need anything to its constructor,
              * as all of its tests will be added ("registered") after the
              * fact, and it doesn't do any heap allocation besides that.*/
             TestManager(){}
 
             /**List all tests registered with the TestManager.
+             * \param whether to show the titles
              */
-            void list_tests(bool=false);
+            void list_tests(bool=true);
+
+            /**List all suites registered with the TestManager.
+             * \param whether to show the titles
+             */
+            void list_suites(bool=true);
+
+            /** Load the tests in a test suite.
+             * \param the name of the suite to load (load all if unspecified)
+             * \return true if loaded, else false */
+            bool load_suite(testsuitename_t = "");
 
             /**Get the documentation string for a given test.
              * \param the test to return the documentation string for
@@ -181,30 +266,23 @@ namespace pawlib
              * pass the "new Test" as this argument, since TestManager will be
              * taking exclusive ownership of the instance. It will handle
              * NULL automatically, so no error checking is required.*/
-            void register_test(testname_t, Test*, testdoc_t = "", testdoc_t = "");
+            void register_test(testname_t, Test*);
 
-            /**Interactively (confirm before start) run a test by name.
-             * \param the name of the test to run*/
-            void i_run_test(testname_t);
-
-            /**Interactively run a benchmark by name.
-             *
-             * \param the name of the test to benchmark
-             * \param the number of times to run the test */
-            void i_run_benchmark(testname_t, unsigned int=100);
-
-            /**Interactively (confirm before start) run a comparative
-             * benchmark by test name.
-             * \param the name of test A
-             * \param the name of test B
-             * \param the number of times to run each test per pass
-             * \param whether to print all of the output, or just the summaried
-             * verdict */
-            void i_run_compare(testname_t, testname_t, unsigned int=100, bool=true);
+            /**Register a new suite with the TestManager.
+             * \param a string of the suite's name
+             * \param a pointer to the suite. Follows the same rules as
+             * those for `register_test()`.*/
+            void register_suite(testsuitename_t, TestSuite*);
 
             /**Run a test by name.
-             * \param the name of the test to run*/
-            void run_test(testname_t);
+             * \param the name of the test to run
+             * \return true if the test ran successfully, else false */
+            bool run_test(testname_t);
+
+            /**Run a suite by name.
+             * \param the name of the suite to run
+             * \return true if the suite ran successfully, else false */
+            bool run_suite(testsuitename_t);
 
             /**Measure the approximate number of CPU cycles that a particular
              * test takes to run.
@@ -240,19 +318,57 @@ namespace pawlib
              * or 100 => 600 total repetitions.*/
             void run_compare(testname_t, testname_t, unsigned int=100, bool=true);
 
+            // INTERACTIVE SYSTEM
+
+            /**Interactively (confirm before start) load all suites.
+             * \param the suite name to load (or leave empty to load all) */
+            void i_load_suite(testsuitename_t = "");
+
+            /**Interactively (confirm before start) run a test by name.
+             * \param the name of the test to run*/
+            void i_run_test(testname_t);
+
+            /**Interactively (confirm before start) run a suite by name.
+             * \param the name of the suite to run*/
+            void i_run_suite(testsuitename_t);
+
+            /**Interactively run a benchmark by name.
+             *
+             * \param the name of the test to benchmark
+             * \param the number of times to run the test */
+            void i_run_benchmark(testname_t, unsigned int=100);
+
+            /**Interactively (confirm before start) run a comparative
+             * benchmark by test name.
+             * \param the name of test A
+             * \param the name of test B
+             * \param the number of times to run each test per pass
+             * \param whether to print all of the output, or just the summaried
+             * verdict */
+            void i_run_compare(testname_t, testname_t, unsigned int=100, bool=true);
+
+
+
+
             /**We don't need anything in the destructor, as the smart pointers
              * handle deletion automatically.*/
             ~TestManager(){}
         protected:
+            /** Confirm y/N from the user. Used by the interactive functions.
+             * \param the default option (true=yes, false=no)
+             * \return true if confirmed, else false */
+            bool i_confirm(bool=false);
+
             /**Validate that the test (by name) is registered with Golidlocks.
              * this is critical in preventing segfaults from accessing
              * invalid tests.
              *
              * \param the name of the test to check for
              * \param whether to display an error message if there is no match
+             * \param whether we're searching for a suite (default, test)
              * \return true if the test exists, else false
              */
-            bool validate(testname_t, bool=false);
+            bool validate(testname_t, bool=false, bool=false);
 
             /**The BenchmarkResult struct stores all of the statistical data
              * from a single test benchmark. Having this struct makes our
@@ -315,17 +431,6 @@ namespace pawlib
                 uint8_t rsd_adj = 0;
             };
 
-            struct TestInfo
-            {
-                TestInfo(testdoc_t titleIn="", testdoc_t docIn="")
-                    :title(titleIn), doc(docIn)
-                    {}
-                /// The human-readable title for the test.
-                testdoc_t title;
-                /// The documentation string for the test.
-                testdoc_t doc;
-            };
-
             /**Convert a raw array of clock measurements into a complete
              * benchmark result. This does all of our statistical computations.
              * \param the BenchmarkResult instance to write to
@@ -373,9 +478,9 @@ namespace pawlib
 
             /** Stores all of the test pointers for access-by-name-string. */
             std::map<testname_t, testptr_t> tests;
-            /**Stores all of the test info (and docs), accessed by
-              * name string.*/
-            std::map<testname_t, TestInfo> test_info;
+
+            /** Stores all of the testsuite pointers for access-by-name-string. */
+            std::map<testsuitename_t, testsuiteptr_t> suites;
 
             /* We are using std::map intentionally above. Dynamic allocation is
              * more appropriate in this situation, especially since test

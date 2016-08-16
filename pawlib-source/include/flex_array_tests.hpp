@@ -48,6 +48,16 @@ namespace pawlib
         public:
             TestVector_Push(){}
 
+            testdoc_t get_title()
+            {
+                return "FlexArray: Push 1000 Integers (std::vector)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Insert 1000 integers at the back of a vector (push).";
+            }
+
             bool run()
             {
                 std::vector<int> vec;
@@ -66,6 +76,16 @@ namespace pawlib
         public:
             TestFlex_Push(){}
 
+            testdoc_t get_title()
+            {
+                return "FlexArray: Push 1000 Integers (flexarray)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Insert 1000 integers at the back of a flexarray (push).";
+            }
+
             bool run()
             {
                 pawlib::FlexArray<int> flex;
@@ -81,17 +101,25 @@ namespace pawlib
 
             ~TestFlex_Push(){}
     };
- //NOTE: What would happen if we do flex insert at 0 instead of shift at 0?
+
     class TestVector_Shift : public Test
     {
         public:
             TestVector_Shift(){}
 
+            testdoc_t get_title()
+            {
+                return "FlexArray: Insert 1000 Integers At Front (std::vector)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Insert 1000 integers at the front of a vector (shift).";
+            }
+
             bool run()
             {
                 std::vector<int> vec;
-                //vec.push_back(0);
-                //vec.push_back(1);
 
                 for(int i=0; i<1000; ++i)
                 {
@@ -108,11 +136,19 @@ namespace pawlib
         public:
             TestFlex_Shift(){}
 
+            testdoc_t get_title()
+            {
+                return "FlexArray: Insert 1000 Integers At Front (flexarray)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Insert 1000 integers at the front of a flexarray (shift).";
+            }
+
             bool run()
             {
                 pawlib::FlexArray<int> flex;
-                //flex.push(0);
-                //flex.push(1);
 
                 for(int i=0; i<1000; ++i)
                 {
@@ -129,11 +165,21 @@ namespace pawlib
         public:
             TestFlex_ShiftAlt(){}
 
+            testdoc_t get_title()
+            {
+                return "FlexArray: Insert 1000 Integers At Front using \
+insert at 0 (flexarray)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Insert 1000 integers at the front of a flexarray \
+using insert at 0.";
+            }
+
             bool run()
             {
                 pawlib::FlexArray<int> flex;
-                //flex.push(0);
-                //flex.push(1);
 
                 for(int i=0; i<1000; ++i)
                 {
@@ -151,6 +197,17 @@ namespace pawlib
     {
         public:
             TestVector_Insert(){}
+
+            testdoc_t get_title()
+            {
+                return "FlexArray: Insert 1000 Integers At Middle (std::vector)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Insert 1000 integers at the middle of a vector. Middle \
+is calculated as size()/2.";
+            }
 
             bool run()
             {
@@ -177,6 +234,17 @@ namespace pawlib
         public:
             TestFlex_Insert(){}
 
+            testdoc_t get_title()
+            {
+                return "FlexArray: Insert 1000 Integers At Middle (flexarray)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Insert 1000 integers at the middle of a flexarray. \
+Middle is calculated as size()/2.";
+            }
+
             bool run()
             {
                 pawlib::FlexArray<int> flex;
@@ -200,10 +268,16 @@ namespace pawlib
     class TestSuite_FlexArray : public TestSuite
     {
         public:
-            static void load_tests(TestManager*);
-        protected:
+            explicit TestSuite_FlexArray(){}
 
-        private:
+            void load_tests();
+
+            testdoc_t get_title()
+            {
+                return "PawLIB: FlexArray Tests";
+            }
+
+            ~TestSuite_FlexArray(){}
     };
 }
 

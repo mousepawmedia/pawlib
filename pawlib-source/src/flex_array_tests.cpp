@@ -2,44 +2,18 @@
 
 namespace pawlib
 {
-    void TestSuite_FlexArray::load_tests(TestManager* testmanager)
+    void TestSuite_FlexArray::load_tests()
     {
-        if(testmanager == nullptr)
-        {
-            return;
-        }
+        register_test("P-tB1001", new TestFlex_Push);
+        register_test("P-tB1001*", new TestVector_Push, false);
 
-        testmanager->register_test("P-tB101a",
-            new TestVector_Push,
-            "FlexArray: Push 1000 Integers (std::vector)",
-            "Insert 1000 integers at the back of a vector (push).");
-        testmanager->register_test("P-tB101b",
-            new TestFlex_Push,
-            "FlexArray: Push 1000 Integers (flexarray)",
-            "Insert 1000 integers at the back of a flexarray (push).");
+        register_test("P-tB1002", new TestFlex_Shift);
+        register_test("P-tB1002*", new TestVector_Shift, false);
 
-        testmanager->register_test("P-tB102a",
-            new TestVector_Shift,
-            "FlexArray: Insert 1000 Integers At Front (std::vector)",
-            "Insert 1000 integers at the front of a vector (shift).");
-        testmanager->register_test("P-tB102b",
-            new TestFlex_Shift,
-            "FlexArray: Insert 1000 Integers At Front (flexarray)",
-            "Insert 1000 integers at the front of a flexarray (shift).");
-         testmanager->register_test("P-tB102c",
-            new TestFlex_ShiftAlt,// new becuase "unique pointer"
-            "FlexArray: Insert 1000 Integers At Front using insert at 0 (flexarray)",
-            "Insert 1000 integers at the front of a flexarray using isnert at 0.");
-        testmanager->register_test("P-tB103a",
-            new TestVector_Insert,
-            "FlexArray: Insert 1000 Integers At Middle (std::vector)",
-            "Insert 1000 integers at the middle of a vector. Middle is \
-calculated as size()/2.");
-        testmanager->register_test("P-tB103b",
-            new TestFlex_Insert,
-            "FlexArray: Insert 1000 Integers At Middle (flexarray)",
-            "Insert 1000 integers at the middle of a flexarray. Middle is \
-calculated as size()/2.");
+        register_test("P-tB1003", new TestFlex_ShiftAlt);
+
+        register_test("P-tB1004", new TestFlex_Insert);
+        register_test("P-tB1004*", new TestVector_Insert, false);
     }
 
 }

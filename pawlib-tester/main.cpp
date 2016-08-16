@@ -23,33 +23,130 @@ using namespace pawlib;
 using namespace std;
 
 void help();
-void interactive();
-void split(std::string, std::string, std::vector<std::string>&);
+int command(TestSystem* sys, unsigned int argc, char* argv[]);
+void interactive(TestSystem* sys);
 
 void print(std::string msg)
 {
     std::cout << msg;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     //Set up signal handling.
     ioc.signal_all.add(&print);
     ioc.configure_echo(echo_none);
-    ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
 
-    //Custom test code goes here.
+    TestSystem* sys = new TestSystem();
 
-    // Shift control to the interactive console.
-    interactive();
+    // If we got command-line arguments.
+    if(argc > 1)
+    {
+        return command(sys, static_cast<unsigned int>(argc), argv);
+    }
+    else
+    {
+        ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
+
+        //Custom test code goes here.
+
+        // Shift control to the interactive console.
+        interactive(sys);
+    }
 
     return 0;
 }
 
-void interactive()
+int command(TestSystem* sys, unsigned int argc, char* argv[])
 {
-    TestSystem* sys = new TestSystem();
+    int r = 0;
+    bool loaded = false;
 
+    std::vector<std::string> tokens;
+
+    for(unsigned int i = 1; i < argc; ++i)
+    {
+        std::string str = argv[i];
+        if(str == "--load")
+        {
+            loaded = true;
+        }
+        tokens.push_back(str);
+    }
+
+    for(unsigned int i = 0; i < argc-1; ++i)
+    {
+        if(tokens[i] == "--help")
+        {
+            ioc << "Usage: ./pawlib-tester [command] [argument]" << io_endline;
+            ioc << "    --help          | Show this screen. "  << io_endline;
+            ioc << "    --list          | List all tests. "  << io_endline;
+            ioc << "    --listsuites    | List all suites. "  << io_endline;
+            ioc << "    --load [suite]  | Load the suite [suite]. "
+                << "If unspecified, all suites will be loaded." << io_endline;
+            ioc << "    --suite [suite] | Run the suite [suite]. "  << io_endline;
+            ioc << "    --test [test]   | Run the test [test]. "  << io_endline;
+            ioc << io_end;
+        }
+        else if(i <= i+1 && tokens[i] == "--load")
+        {
+            // If load succeeds, set the return code to 0, else 1 (error).
+            r = sys->testmanager->load_suite(tokens[++i]) ? 0 : 1;
+            loaded = true;
+        }
+        else if(tokens[i] == "--list")
+        {
+            if(!loaded)
+            {
+                sys->testmanager->load_suite();
+            }
+
+            // List all loaded tests.
+            sys->testmanager->list_tests(true);
+        }
+        else if(tokens[i] == "--listsuites")
+        {
+            // List all suites.
+            sys->testmanager->list_suites(true);
+        }
+        else if(i <= i+1 && tokens[i] == "--suite")
+        {
+            if(!loaded)
+            {
+                sys->testmanager->load_suite();
+            }
+
+            // If run_suite succeeds, set the return code to 0, else 1 (error).
+            r = sys->testmanager->run_suite(tokens[++i]) ? 0 : 1;
+        }
+        else if(i <= i+1 && tokens[i] == "--test")
+        {
+            if(!loaded)
+            {
+                sys->testmanager->load_suite();
+            }
+
+            // If run_test succeeds, set the return code to 0, else 1 (error).
+            r = sys->testmanager->run_test(tokens[++i]) ? 0 : 1;
+        }
+        else
+        {
+            ioc << "ERROR: Invalid command " << tokens[i] << io_endline;
+            ioc << "See ./pawlib-tester --help" << io_end;
+        }
+        // We will add compare later, as it requires an expected outcome.
+
+        if(r > 0)
+        {
+            break;
+        }
+    }
+
+    return r;
+}
+
+void interactive(TestSystem* sys)
+{
     std::string buffer;
     std::vector<std::string> tokens;
 
@@ -60,7 +157,7 @@ void interactive()
     // Get what the user typed.
     getline(std::cin, buffer);
     // Split the line into space-delimited tokens.
-    split(buffer, " ", tokens);
+    stdutils::stdsplit(buffer, " ", tokens);
 
     //Loop while command is not the pseudocommand "exit"...
     while(tokens[0] != "exit")
@@ -139,6 +236,44 @@ void interactive()
         {
             sys->testmanager->list_tests(true);
         }
+        else if(tokens[0] == "listsuites")
+        {
+            sys->testmanager->list_suites(true);
+        }
+        else if(tokens[0] == "load")
+        {
+            if(tokens.size() < 2)
+            {
+                // If we got no arguments, interactively load all suites.
+                sys->testmanager->i_load_suite();
+            }
+            else if(tokens.size() == 2)
+            {
+                sys->testmanager->load_suite(tokens[1]);
+            }
+            else
+            {
+                ioc << fg_red << ta_bold << cat_error
+                    << "ERROR: Too many arguments." << io_end;
+            }
+        }
+        else if(tokens[0] == "suite")
+        {
+            if(tokens.size() < 2)
+            {
+                ioc << fg_red << ta_bold << cat_error
+                    << "ERROR: Not enough arguments." << io_end;
+            }
+            else if(tokens.size() == 2)
+            {
+                sys->testmanager->i_run_suite(tokens[1]);
+            }
+            else
+            {
+                ioc << fg_red << ta_bold << cat_error
+                    << "ERROR: Too many arguments." << io_end;
+            }
+        }
         else if(tokens[0] == "test")
         {
             if(tokens.size() < 2)
@@ -148,8 +283,7 @@ void interactive()
             }
             else if(tokens.size() == 2)
             {
-                ioc << "Run test \"" << tokens[1] << "\"." << io_end;
-                sys->testmanager->run_test(tokens[1]);
+                sys->testmanager->i_run_test(tokens[1]);
             }
             else
             {
@@ -171,7 +305,7 @@ void interactive()
         // Get the line the user just typed.
         getline(std::cin, buffer);
         // Split the line into space-delimited tokens.
-        split(buffer, " ", tokens);
+        stdutils::stdsplit(buffer, " ", tokens);
     }
     // Once the command (first token) is "exit", we quit.
 }
@@ -202,50 +336,25 @@ void help()
     ioc << "Displays the available tests.\n" << io_end;
     ioc << "----" << io_end;
 
-    /*ioc << ta_bold << ":load [suite]" << io_end;
+    ioc << ta_bold << ":listsuites" << io_end;
+    ioc << "Displays the available suites.\n" << io_end;
+    ioc << "----" << io_end;
+
+    ioc << ta_bold << ":load" << io_end;
+    ioc << "Loads all suites.\n" << io_end;
+    ioc << "----" << io_end;
+
+    ioc << ta_bold << ":load [suite]" << io_end;
     ioc << "Loads the tests from [suite].\n" << io_end;
-    ioc << "----" << io_end;*/
+    ioc << "----" << io_end;
+
+    ioc << ta_bold << ":suite [suite]" << io_end;
+    ioc << "Runs all tests in [suite].\n" << io_end;
+    ioc << "----" << io_end;
 
     ioc << ta_bold << ":test [test]" << io_end;
     ioc << "Runs [test].\n" << io_end;
     ioc << "----" << io_end;
 
     ioc << "Back to you, Bob!\n" << io_end;
-}
-
-void split(std::string str, std::string splitBy, std::vector<std::string>& tokens)
-{
-    /* Store the original string in the array, so we can loop the rest
-     * of the algorithm. */
-    tokens.push_back(str);
-
-    // Store the size of what we're splicing out.
-    size_t splitLen = splitBy.size();
-    // Create a string for temporarily storing the fragment we're processing.
-    std::string frag;
-
-    // Loop infinitely - break is internal.
-    while(true)
-    {
-        // Store the split index in a 'size_t' (unsigned integer) type.
-        size_t splitAt;
-
-        /* Store the last string in the vector, which is the only logical
-         * candidate for processing. */
-        frag = tokens.back();
-        /* The index where the split is. */
-        splitAt = frag.find(splitBy);
-        // If we didn't find a new split point...
-        if(splitAt == string::npos)
-        {
-            // Break the loop and (implicitly) return.
-            break;
-        }
-        /* Put everything from the left side of the split where the string
-         * being processed used to be. */
-        tokens.back() = frag.substr(0, splitAt);
-        /* Push everything from the right side of the split to the next empty
-         * index in the vector. */
-        tokens.push_back(frag.substr(splitAt+splitLen, frag.size()-(splitAt+splitLen)));
-    }
 }

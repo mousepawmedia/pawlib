@@ -3,6 +3,7 @@ Goldilocks
 
 ..  index::
     single: test
+    single: suite
     see: benchmark; test
 
 What is Goldilocks?
@@ -31,6 +32,30 @@ Structure
 
 Every Goldilocks test is derived from the Test abstract class, which has
 six functions that may be overloaded.
+
+..  index::
+    single: test; get_title()
+
+``get_title()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns a string (of type ``pawlib::testdoc_t``) with the title of the test.
+This is a required function for any test.
+
+..  NOTE:: The title is separate from the ID (name) of the test used to
+    register the test with the TestManager. You use the ID (name) to refer
+    to the test; the title is displayed on the screen before running
+    the test.
+
+..  index::
+    single: test; get_docs()
+
+``get_docs()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns a string (of type ``pawlib::testdoc_t``) with the documentation
+string for the test. This should describe what the test does.
+This is a required function for any test.
 
 ..  index::
     single: test; pre()
@@ -62,7 +87,7 @@ successful or not.
 ``run()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This is the only required function for any test. It contains all the code for
+This is a required function for any test. It contains all the code for
 the test run itself. After ``pre()`` is called once (optionally), ``run()``
 must be able to handle any number of consecutive calls to itself.
 
@@ -226,7 +251,208 @@ Once a test is registered with Goldilocks, running it is quite easy.
 
     //Run the test once.
     testmanager.run_test("TestFoo");
+
     //Benchmark TestFoo on 100 repetitions.
     testmanager.run_benchmark("TestFoo", 100);
+
     //Compare TestFoo and TestBar on 100 repetitions.
     testmanager.run_compare("TestFoo", "TestBar", 100);
+
+Setting Up Suites
+=====================================================
+
+A Suite is a collection of tests. In a typical use of Goldilocks, all tests
+are organized into Suites.
+
+In addition to allowing on-demand loading groups of tests, a Suite can be "batch
+run", where all of its tests are run in succession. When one test fails, the
+batch run halts and returns false.
+
+..  index::
+    single: suite; structure
+
+Structure
+-----------------------------------------------------
+
+Every Goldilocks suite is derived from the ``TestSuite`` abstract class. This
+only has two functions to overload, but both are required.
+
+..  index::
+    single: suite; get_title()
+
+``get_title()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns a string (of type ``pawlib::testsuitedoc_t``) with the title of the
+suite. This is the a required function for any test.
+
+..  NOTE:: The title is separate from the ID (name) of the test used to
+    register the test with the TestManager. You use the ID (name) to refer
+    to the test; the title is displayed on the screen before running
+    the test.
+
+``load_tests()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This function specifies which tests belong to the suite.
+
+``TestSuite`` provides a function ``register_test()`` which properly registers
+each test with both the suite and the TestManager itself. For convenience, it
+follows the same format as ``TestManager::register_test()``, with the exception
+of an optional boolean argument for specifying a test which belongs to the
+suite, but should not be part of the Suite's batch run.
+
+One reason to exclude a test from the batch run for the Suite is if the test
+is used only for comparative benchmarking.
+
+Below is an example of a Suite's ``load_tests``.
+
+..  code-block:: c++
+
+    void TestSuite_FlexArray::load_tests()
+    {
+        // Register this test with both the suite and the test manager.
+        register_test("t101", new TestFlex_Push);
+
+        /* This test will be loaded by the suite, but will be excluded
+         * from the batch run. */
+        register_test("t101b", new TestVector_Push, false);
+
+        register_test("t102", new TestFlex_Shift);
+        register_test("t102b", new TestVector_Shift, false);
+
+        register_test("t103", new TestFlex_ShiftAlt);
+
+        register_test("t104", new TestFlex_Insert);
+        register_test("t104b", new TestVector_Insert, false);
+    }
+
+We have registered seven tests with this suite. Upon loading the suite, all
+seven tests will be loaded into the test manager. However, if we were to
+batch run this suite, only four of those tests (t101, t102, t103, and t103)
+would be run. This makes sense, because the other tests are only for
+comparative benchmarking: t101b performs the exact same task as t101, but it
+uses an external library. If we batch run this suite as a part of integration
+testing, it wouldn't matter whether those comparative tests passed - they
+would have no effect on our library's function.
+
+Registering a Suite
+----------------------------------------------------
+
+Registering a suite with Goldilocks is as easy as registering a test. Simply
+use its ``register_suite()`` function. Once a suite class has been defined,
+as above, it is registered with...
+
+..  code-block:: c++
+
+    //Assuming testmanager is our instance of the Goldilocks test manager.
+    testmanager.register_suite("TestSuiteFoo", new TestSuiteFoo());
+
+As with tests, Goldilocks owns the instance of ``TestSuiteFoo``, and
+automatically handles its deletion at the proper time.
+
+..  WARNING:: Goldilocks requires exclusive ownership of each suite
+    object registered to it, the same as it does tests.
+
+Loading a Suite
+---------------------------------------------------------
+
+One of the major advantages of using a suite is that you can load its tests
+on demand. This is especially useful if you have hundreds or thousands of tests.
+
+..  code-block:: c++
+
+    //Load a particular suite.
+    testmanager.load_suite("TestSuiteFoo");
+
+Of course, sometimes you don't want to have to load each suite manually.
+As a shortcut, you can just load all suites currently registered with the
+test manager by calling...
+
+..  code-block:: c++
+
+    //Load a particular suite.
+    testmanager.load_suite();
+
+Running a Suite
+-------------------------------------------------------------
+
+You can start a batch run of all the suite's tests using...
+
+..  code-block:: c++
+
+    //Batch run all tests in a suite.
+    testmanager.run_suite("TestSuiteFoo");
+
+Interactive Mode
+=========================================================
+
+..  WARNING:: This feature is under active development, and is subject
+    to change dramatically.
+
+Goldilocks provides a number of convenience functions to aid in creating an
+interactive command-line interface for the system.
+
+Functions
+-----------------------------------------------------------
+
+``list_suites()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can display the names and titles of all the tests currently registered
+in the test manager using...
+
+..  code-block:: c++
+
+    // List all registered suites with their names and titles.
+    testmanager.list_suites();
+
+    // List all registered suites with their name only (no title).
+    testmanager.list_suites(false);
+
+``list_tests()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can display the names and titles of all the tests currently registered
+(loaded) in the test manager using...
+
+..  code-block:: c++
+
+    // List all registered tests with their names and titles.
+    testmanager.list_tests();
+
+    // List all registered tests with their name only (no title).
+    testmanager.list_tests(false);
+
+If a test is loaded via a suite, it will not appear in this list until its
+suite has actually been loaded during that session.
+
+``i_load_suite()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Identical usage to ``load_suite()``, except it prompts the user for
+confirmation before loading a suite.
+
+``i_run_benchmark()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Identical usage to ``run_benchmark()``, except it prompts the user for
+confirmation before running the benchmark.
+
+``i_run_compare()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Identical usage to ``run_compare()``, except it prompts the user for
+confirmation before running the compare.
+
+``i_run_suite()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Identical usage to ``run_suite()``, except it prompts the user for
+confirmation before running the suite.
+
+``i_run_test()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Identical usage to ``run_test()``, except it prompts the user for
+confirmation before running the test.
