@@ -245,7 +245,7 @@ namespace pawlib
         {
             case io_end:
             {
-                reset_attributes();
+                reset_flags();
                 //Fall through to twin.
             }
             case io_end_keep:
@@ -256,7 +256,7 @@ namespace pawlib
             }
             case io_send:
             {
-                reset_attributes();
+                reset_flags();
                 //Fall through to twin.
             }
             case io_send_keep:
@@ -267,7 +267,7 @@ namespace pawlib
             }
             case io_endline:
             {
-                reset_attributes();
+                reset_flags();
                 //Fall through to twin.
             }
             case io_endline_keep:
@@ -277,7 +277,7 @@ namespace pawlib
             }
             case io_show:
             {
-                reset_attributes();
+                reset_flags();
                 //Fall through to twin.
             }
             case io_show_keep:

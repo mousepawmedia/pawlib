@@ -422,6 +422,24 @@ The following is the safest way to dump the raw memory for a custom object.
 ..  index::
     pair: output; control
 
+Bitset
+----------------------------------------
+
+IOChannel is able to intelligently output the contents of any bitset. It
+temporarily forces use of the ``readsize()`` and ``ptr_memory`` parameters
+in order to ensure proper output.
+
+One may use any of the ``IOFormatMemorySeperator`` parameters to control the
+style of output. By default, ``mem_nosep`` is used.
+
+..  code-block:: c++
+
+    bitset<32> foo = bitset<32>(12345678);
+    ioc << mem_allsep << foo << io_end;
+    /* OUTPUT:
+    4e 61 bc 00
+    */
+
 Stream Control
 ------------------------------------------------
 

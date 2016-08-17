@@ -15,6 +15,9 @@
 
 #include <pool.hpp>
 
+// Temporary only
+#include <bitset>
+
 using pawlib::iochannel;
 
 //Format enumerations.
@@ -49,6 +52,8 @@ int main(int argc, char* argv[])
         ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
 
         //Custom test code goes here.
+        bitset<32> foo = bitset<32>(12345678);
+        ioc << mem_allsep << foo << io_end;
 
         // Shift control to the interactive console.
         interactive(sys);

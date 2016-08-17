@@ -100,6 +100,12 @@
 //Needed for the `intptr_t` type
 #include <cstdint>
 
+//Needed for `ceil()`
+#include <cmath>
+
+//Bitset
+#include <bitset>
+
 //Needed for checking types.
 #include <typeinfo>
 
@@ -527,6 +533,35 @@ namespace pawlib
             iochannel& operator<<(const std::exception& rhs);
 
             //All of these need custom implementations.
+            template<const long unsigned int T>
+            iochannel& operator<<(const std::bitset<T>& rhs)
+            {
+                // Store the old values for the two flags we use.
+                unsigned int old_readsize = readsize;
+                IOFormatPointer old_ptr = ptr;
+
+                /* The readsize (in bytes) is the bitset size (bits) divided
+                 * by 8 and rounded to the nearest integer. */
+                readsize = static_cast<unsigned int>(ceil((T/8)));
+                // We want a memory dump.
+                ptr = ptr_memory;
+
+                // Remove the const-ness from the pointer.
+                std::bitset<T>* rhs_ptr = const_cast<std::bitset<T>*>(&rhs);
+                /* Convert to a void pointer for easier resolution.
+                 * We must store the result as a pointer for returning shortly.
+                 */
+                iochannel* r = &resolve_pointer(static_cast<void*>(rhs_ptr));
+
+                // Restore our prior flag values.
+                ptr = old_ptr;
+                readsize = old_readsize;
+
+                /* Return the value at the pointer, which will be inplicitly
+                 * converted to reference by the function return. */
+                return *r;
+            }
+
             iochannel& operator<<(const IOFormatBase&);
             iochannel& operator<<(const IOFormatBool&);
             iochannel& operator<<(const IOFormatCharValue&);
