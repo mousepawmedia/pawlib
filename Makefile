@@ -1,7 +1,7 @@
 none:
 	@echo "=== PawLIB 1.0 ==="
 	@echo "Select a build target:"
-	@echo "   make ready         Build PawLIB, CPGF, and PDF docs, and bundles them for distribution."
+	@echo "   make ready         Build PawLIB and CPGF, and bundles them for distribution."
 	@echo "   make clean         Clean up PawLIB and Tester."
 	@echo "   make cleanall      Clean up everything."
 	@echo "   make cleandebug    Clean up PawLIB and Tester Debug."
@@ -73,7 +73,7 @@ pawlib_debug: cpgf
 	@echo "PawLIB is in 'pawlib-source/lib/Debug'."
 	@echo "-------------"
 
-ready: docs_pdf pawlib
+ready: pawlib
 	@rm -rf pawlib
 	@echo "Creating file structure..."
 	@mkdir -p pawlib/lib
@@ -83,29 +83,33 @@ ready: docs_pdf pawlib
 	@echo "Copying PawLIB..."
 	@cp -r pawlib-source/include pawlib/
 	@cp pawlib-source/lib/Release/libpawlib.a pawlib/lib/libpawlib.a
-	@echo "Copying PDF Documentation..."
-	@cp docs/build/latex/PawLIB.pdf pawlib/PawLIB.pdf
 	@echo "Copying README and LICENSE..."
 	@cp README.md pawlib/README.md
 	@cp LICENCE.md pawlib/LICENCE.md
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo "The libraries and docs are in 'pawlib'."
+	@echo "The libraries are in 'pawlib'."
 	@echo "-------------"
 
 tester: pawlib
 	$(MAKE) release ARCH=$(ARCH) -C pawlib-tester
+	@rm -f tester
+	@ln -s pawlib-tester/bin/Release/pawlib-tester tester
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
 	@echo "PawLIB Tester is in 'pawlib-tester/bin/Release'."
+	@echo "The link './tester' has been created for convenience."
 	@echo "-------------"
 
 
 tester_debug: pawlib_debug
 	$(MAKE) debug ARCH=$(ARCH) -C pawlib-tester
+	@rm -f tester
+	@ln -s pawlib-tester/bin/Release/pawlib-tester tester_debug
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
 	@echo "PawLIB Tester is in 'pawlib-tester/bin/Debug'."
+	@echo "The link './tester_debug' has been created for convenience."
 	@echo "-------------"
 
 all: docs tester
