@@ -104,8 +104,8 @@ tester: pawlib
 
 tester_debug: pawlib_debug
 	$(MAKE) debug ARCH=$(ARCH) -C pawlib-tester
-	@rm -f tester
-	@ln -s pawlib-tester/bin/Release/pawlib-tester tester_debug
+	@rm -f tester_debug
+	@ln -s pawlib-tester/bin/Debug/pawlib-tester tester_debug
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
 	@echo "PawLIB Tester is in 'pawlib-tester/bin/Debug'."
