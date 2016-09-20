@@ -161,10 +161,13 @@
 		<Unit filename="include/goldilocks.hpp" />
 		<Unit filename="include/iochannel.hpp" />
 		<Unit filename="include/map.hpp" />
+		<Unit filename="include/onechar.hpp" />
 		<Unit filename="include/onestring.hpp" />
 		<Unit filename="include/onestring_tests.hpp" />
+		<Unit filename="include/onestringbase.hpp" />
 		<Unit filename="include/pawsort.hpp" />
 		<Unit filename="include/pawsort_tests.hpp" />
+		<Unit filename="include/quickstring.hpp" />
 		<Unit filename="include/pool.hpp" />
 		<Unit filename="include/pool_tests.hpp" />
 		<Unit filename="include/rigid_stack.hpp" />
@@ -174,9 +177,12 @@
 		<Unit filename="src/flex_array_tests.cpp" />
 		<Unit filename="src/goldilocks.cpp" />
 		<Unit filename="src/iochannel.cpp" />
+		<Unit filename="src/onechar.cpp" />
 		<Unit filename="src/onestring.cpp" />
 		<Unit filename="src/onestring_tests.cpp" />
+		<Unit filename="src/onestringbase.cpp" />
 		<Unit filename="src/pawsort_tests.cpp" />
+		<Unit filename="src/quickstring.cpp" />
 		<Unit filename="src/pool_tests.cpp" />
 		<Unit filename="src/stdutils.cpp" />
 		<Extensions>

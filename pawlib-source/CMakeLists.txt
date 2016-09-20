@@ -49,12 +49,15 @@ add_library(pawlib STATIC
     include/goldilocks.hpp
     include/iochannel.hpp
     include/map.hpp
+    include/onechar.hpp
     include/onestring.hpp
+    include/onestringbase.hpp
     include/onestring_tests.hpp
     include/pawsort.hpp
     include/pawsort_tests.hpp
     include/pool.hpp
     include/pool_tests.hpp
+    include/quickstring.hpp
     include/rigid_stack.hpp
     include/singly_linked_list.hpp
     include/stdutils.hpp
@@ -62,10 +65,13 @@ add_library(pawlib STATIC
     src/flex_array_tests.cpp
     src/goldilocks.cpp
     src/iochannel.cpp
+    src/onechar.cpp
     src/onestring.cpp
+    src/onestringbase.cpp
     src/onestring_tests.cpp
     src/pawsort_tests.cpp
     src/pool_tests.cpp
+    src/quickstring.cpp
     src/stdutils.cpp
 )
 

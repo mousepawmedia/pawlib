@@ -1,0 +1,12 @@
+*.a
+*.o
+*.exe
+*.depend
+*.layout
+**/bin
+**/obj
+**/lib
+**/libs
+pawlib/
+*.depend
+*.layout

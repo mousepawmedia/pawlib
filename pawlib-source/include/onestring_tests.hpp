@@ -73,37 +73,37 @@ namespace pawlib
                 {
                     case SAME_NO_UNICODE:
                     {
-                        title = "OneString: Compare, Same No Unicode";
+                        title = "QuickString: Compare, Same No Unicode";
                         docs = "Compares two identical strings containing no Unicode.";
                         break;
                     }
                     case SAME_SOME_UNICODE:
                     {
-                        title = "OneString: Compare, Same Some Unicode";
+                        title = "QuickString: Compare, Same Some Unicode";
                         docs = "Compares two identical strings containing some Unicode.";
                         break;
                     }
                     case SAME_ALL_UNICODE:
                     {
-                        title = "OneString: Compare, Same All Unicode";
+                        title = "QuickString: Compare, Same All Unicode";
                         docs = "Compares two identical strings containing all Unicode.";
                         break;
                     }
                     case NSAME_FIRST_CHAR:
                     {
-                        title = "OneString: Compare, Diff First";
+                        title = "QuickString: Compare, Diff First";
                         docs = "Compares two strings with the first character different.";
                         break;
                     }
                     case NSAME_MIDDLE_CHAR:
                     {
-                        title = "OneString: Compare, Diff Middle";
+                        title = "QuickString: Compare, Diff Middle";
                         docs = "Compares two strings with the middle character different.";
                         break;
                     }
                     case NSAME_LAST_CHAR:
                     {
-                        title = "OneString: Compare, Diff Last";
+                        title = "QuickString: Compare, Diff Last";
                         docs = "Compares two strings with the last character different.";
                         break;
                     }
@@ -224,13 +224,7 @@ namespace pawlib
                             "☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯"
                             "ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð"
                             "⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷"
-                            "⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗"
-                            "㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦"
-                            "¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶"
-                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦"
-                            "课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课"
-                            "☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠"
-                            "♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♬♬♬♬♬♬♬♬♬";
+                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦";
 
                         mainPStr = "我的名字是斯科特我是蝙蝠我的名字是斯科特我是蝙蝠我的名字我是蝙蝠"
                             "我的名字是斯科特我是蝙蝠我的名字是斯科特我是蝙蝠我的名字我是蝙蝠我是蝙蝠我的名字我是蝙蝠"
@@ -243,13 +237,7 @@ namespace pawlib
                             "☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯"
                             "ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð"
                             "⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷"
-                            "⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗"
-                            "㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦"
-                            "¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶"
-                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦"
-                            "课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课"
-                            "☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠"
-                            "♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♬♬♬♬♬♬♬♬♬";
+                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦";
 
                         compStr = mainStr;
                         compPStr = mainPStr;
@@ -474,9 +462,9 @@ namespace pawlib
         protected:
             TestType tType;
             std::string mainStr;
-            OneString<1024> mainPStr;
+            QuickString<2048> mainPStr;
             std::string compStr;
-            OneString<1024> compPStr;
+            QuickString<2048> compPStr;
 
             testdoc_t title;
             testdoc_t docs;
@@ -491,11 +479,12 @@ namespace pawlib
 
             testdoc_t get_title()
             {
-                return title + " (onestring)";
+                return title + " (QuickString)";
             }
 
             bool run()
             {
+
                 for(int i=0; i < 1000; ++i)
                 {
                     if(mainPStr == compPStr){};
@@ -540,7 +529,7 @@ namespace pawlib
 
             testdoc_t get_title()
             {
-                return "PawLIB: Onestring Tests";
+                return "PawLIB: QuickString Tests";
             }
 
             ~TestSuite_Onestring(){}

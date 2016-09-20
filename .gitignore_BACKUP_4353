@@ -1,0 +1,15 @@
+*.a
+*.o
+*.exe
+*.depend
+*.layout
+**/bin
+**/obj
+**/lib
+**/libs
+pawlib/
+docs/build
+cpgf/build/temp_cache**
+*.depend
+*.layout
+**/build_temp
