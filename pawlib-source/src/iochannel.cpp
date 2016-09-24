@@ -52,6 +52,46 @@ namespace pawlib
         return *this;
     }
 
+    iochannel& iochannel::operator<<(const tril& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+        switch(boolstyle)
+        {
+            case bool_lower:
+            {
+                inject( (~rhs) ? "maybe"
+                : (rhs ? "true" : "false"));
+                break;
+            }
+            case bool_upper:
+            {
+                inject( (~rhs) ? "Maybe"
+                : (rhs ? "True" : "False"));
+                break;
+            }
+            case bool_caps:
+            {
+                inject( (~rhs) ? "MAYBE"
+                : (rhs ? "TRUE" : "FALSE"));
+                break;
+            }
+            case bool_numeral:
+            {
+                inject( (~rhs) ? "2"
+                : (rhs ? "1" : "0"));
+                break;
+            }
+            case bool_scott:
+            {
+                inject( (~rhs) ? "Maybe"
+                : (rhs ? "Yea" : "Nay"));
+                break;
+            }
+        }
+        return *this;
+    }
+
     iochannel& iochannel::operator<<(const char& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.

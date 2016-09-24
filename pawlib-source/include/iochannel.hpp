@@ -126,10 +126,14 @@ These need to be swapped out for pawlib alternatives ASAP.*/
 //We use C's classes often.
 #include <cstdio>
 
+#include <core_types.hpp>
 #include <stdutils.hpp>
 
 namespace pawlib
 {
+    class pure_tril;
+    class tril;
+
     namespace ioformat
     {
         enum IOFormatBase
@@ -493,8 +497,9 @@ namespace pawlib
 
             // Overloaded stream insertion operators for IOChannel.
 
-            //These three need custom implementations.
+            //These need custom implementations.
             iochannel& operator<<(const bool&);
+            iochannel& operator<<(const tril&);
             iochannel& operator<<(const char&);
             iochannel& operator<<(const std::string&);
             //TODO: Add support for PawString.

@@ -43,6 +43,8 @@ add_library(pawlib STATIC
     include/avl_tree.hpp
     include/base_flex_array.hpp
     include/binconv.hpp
+    include/core_types.hpp
+    include/core_types_tests.hpp
     include/flex_array.hpp
     include/flex_queue.hpp
     include/flex_stack.hpp
@@ -62,6 +64,8 @@ add_library(pawlib STATIC
     include/singly_linked_list.hpp
     include/stdutils.hpp
     src/binconv.cpp
+    src/core_types.cpp
+    src/core_types_tests.cpp
     src/flex_array_tests.cpp
     src/goldilocks.cpp
     src/iochannel.cpp

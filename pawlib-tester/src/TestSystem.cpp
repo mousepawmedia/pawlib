@@ -7,6 +7,7 @@ TestSystem::TestSystem()
 
     /* We merely need to register the suites with the system.
      * Loading their tests is now interactively on-demand. */
+    testmanager->register_suite("P-sB01", new TestSuite_CoreTypes());
     testmanager->register_suite("P-sB10", new TestSuite_FlexArray());
     testmanager->register_suite("P-sB16", new TestSuite_Pool());
     testmanager->register_suite("P-sB40", new TestSuite_Onestring());

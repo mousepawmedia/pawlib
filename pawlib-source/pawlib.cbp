@@ -151,9 +151,12 @@
 			<Add option="-std=c++14" />
 			<Add directory="../libs/include" />
 		</Compiler>
+		<Unit filename="CMakeLists.txt" />
 		<Unit filename="include/avl_tree.hpp" />
 		<Unit filename="include/base_flex_array.hpp" />
 		<Unit filename="include/binconv.hpp" />
+		<Unit filename="include/core_types.hpp" />
+		<Unit filename="include/core_types_tests.hpp" />
 		<Unit filename="include/flex_array.hpp" />
 		<Unit filename="include/flex_array_tests.hpp" />
 		<Unit filename="include/flex_queue.hpp" />
@@ -174,6 +177,8 @@
 		<Unit filename="include/singly_linked_list.hpp" />
 		<Unit filename="include/stdutils.hpp" />
 		<Unit filename="src/binconv.cpp" />
+		<Unit filename="src/core_types.cpp" />
+		<Unit filename="src/core_types_tests.cpp" />
 		<Unit filename="src/flex_array_tests.cpp" />
 		<Unit filename="src/goldilocks.cpp" />
 		<Unit filename="src/iochannel.cpp" />

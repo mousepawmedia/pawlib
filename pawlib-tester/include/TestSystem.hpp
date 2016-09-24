@@ -9,6 +9,7 @@
 #include <iochannel.hpp>
 #include <goldilocks.hpp>
 
+#include <core_types_tests.hpp>
 #include <flex_array_tests.hpp>
 #include <pawsort_tests.hpp>
 #include <onestring_tests.hpp>

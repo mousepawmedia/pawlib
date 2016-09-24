@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <core_types.hpp>
 #include <iochannel.hpp>
 #include <onestringbase.hpp>
 #include <onestring.hpp>
@@ -17,9 +18,6 @@
 #include <TestSystem.hpp>
 
 #include <pool.hpp>
-
-// Temporary only
-#include <bitset>
 
 using pawlib::iochannel;
 
@@ -59,17 +57,17 @@ int main(int argc, char* argv[])
     {
         ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
 
-        //Custom test code goes here.
-        bitset<32> foo = bitset<32>(12345678);
-        ioc << mem_allsep << foo << io_end;
+        // Custom test code goes here.
+
+        // Shows that OneString and QuickString do operate correctly
+        // basicStringFunc();
 
         // Shift control to the interactive console.
         interactive(sys);
     }
 
-    // Shows that OneString and QuickString do operate correctly
-    // basicStringFunc();
-
+    delete sys;
+    sys = 0;
 
     return 0;
 }

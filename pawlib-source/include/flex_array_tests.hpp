@@ -40,6 +40,7 @@
 
 #include <flex_array.hpp>
 #include <goldilocks.hpp>
+#include <stdutils.hpp>
 
 namespace pawlib
 {
