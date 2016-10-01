@@ -49,6 +49,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <iochannel.hpp>
+#include <stdexcept>
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;
@@ -92,12 +93,12 @@ namespace pawlib
                 return at(index);
             }
 
-            type at(int index)
+            type at(unsigned int index)
             {
                 if(index > currElements - 1 || index < 0)
                 {
-                    ioc << cat_error << vrb_quiet << "Index out of bounds" << io_end;
-                    return nullptr;
+                   throw std::out_of_range("Index out of bounds.");
+
                 }
                 else
                 {

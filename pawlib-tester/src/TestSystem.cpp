@@ -12,6 +12,10 @@ TestSystem::TestSystem()
     testmanager->register_suite("P-sB16", new TestSuite_Pool());
     testmanager->register_suite("P-sB40", new TestSuite_Onestring());
     testmanager->register_suite("P-sB30", new TestSuite_Pawsort());
+    testmanager->register_suite("P-sB15", new TestSuite_FlexBit());
+
+
+
 }
 
 TestSystem::~TestSystem()

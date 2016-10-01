@@ -63,10 +63,14 @@ add_library(pawlib STATIC
     include/rigid_stack.hpp
     include/singly_linked_list.hpp
     include/stdutils.hpp
+    include/flex_bit_tests.hpp
+    include/flex_bit.hpp
+    
     src/binconv.cpp
     src/core_types.cpp
     src/core_types_tests.cpp
     src/flex_array_tests.cpp
+    src/flex_bit_tests.cpp
     src/goldilocks.cpp
     src/iochannel.cpp
     src/onechar.cpp
@@ -77,6 +81,7 @@ add_library(pawlib STATIC
     src/pool_tests.cpp
     src/quickstring.cpp
     src/stdutils.cpp
+    
 )
 
 target_link_libraries(pawlib ${CMAKE_HOME_DIRECTORY}/../cpgf/lib/libcpgf.a)

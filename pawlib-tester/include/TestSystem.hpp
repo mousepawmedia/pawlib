@@ -14,6 +14,7 @@
 #include <pawsort_tests.hpp>
 #include <onestring_tests.hpp>
 #include <pool_tests.hpp>
+#include <flex_bit_tests.hpp>
 
 using pawlib::iochannel;
 
