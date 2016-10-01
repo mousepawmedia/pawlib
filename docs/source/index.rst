@@ -11,11 +11,11 @@ Contents:
    core/flexmap
    core/flexqueue
    core/flexstack
+   core/trilean
    goldilocks/goldilocks
    iochannel/iochannel
    onestring/onestring
    core/pool
-   puppeteerxml/puppeteerxml
    core/stdutils
 
 

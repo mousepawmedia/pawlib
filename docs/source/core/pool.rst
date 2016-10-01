@@ -29,7 +29,7 @@ Pool can store a maximum of 4,294,967,294 objects. This is because it uses
 32-bit unsigned integers for internal indexing, with the largest value
 reserved as ``INVALID_INDEX``. The limit is calculated as follows.
 
-.. math:: 2^{32} - 2 = 4,294,967,294
+``2^{32} - 2 = 4,294,967,294``
 
 Creating a Pool
 ====================================
@@ -109,6 +109,7 @@ You can check if a reference is invalid by using the ``pool_ref::invalid()``
 function.
 
 ..  code-block:: c++
+
     // This would be an invalid reference, since no object was created.
     pool_ref<Foo> rf;
 

@@ -194,8 +194,8 @@ trilean states:
 
 * Certain true (``if( foo )``)
 * Uncertain true (``if( ~foo && foo.certain() )``)
-* Uncertain false (``if (~foo && !foo.certain() ) `` )
-* Certain false (``if (!foo) ``)
+* Uncertain false (``if (~foo && !foo.certain() )``)
+* Certain false (``if (!foo)``)
 
 Uncertainty Variables
 ----------------------------------
