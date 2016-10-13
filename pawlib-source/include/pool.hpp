@@ -60,6 +60,10 @@
 
 namespace pawlib
 {
+    /** Indicates an invalid pool index, such as when the pool is full.
+      * We actually use the largest unsigned int32 for this. */
+    static const uint32_t INVALID_INDEX = UINT32_MAX;
+
     template<typename T> class pool_ref;
     template<typename T> class pool_obj;
 
@@ -110,10 +114,6 @@ namespace pawlib
             typedef pool_obj<T> poolobj_t;
             typedef cpgf::GCallbackList<void ()> poolobjsignal_t;
 
-            /** Indicates an invalid pool index, such as when the pool is full.
-              * We actually use the largest unsigned int32 for this. */
-            static const uint32_t INVALID_INDEX = UINT32_MAX;
-
             /// The pointer to the beginning of our pool's chunk of memory.
             poolobj_t* pool_root;
             /// The maximum number of objects in the pool.
@@ -149,57 +149,6 @@ namespace pawlib
                     // The pool is full.
                     return INVALID_INDEX;
                 }
-            }
-
-            /** Create a new object in our pool. This version of create is intended
-             * to only be called by the pool reference constructor which accepts
-             * a pool as an argument, for a one-step create.
-             * i.e. `pool_ref<Foo> rf(pool);`
-             * \param the location to initialize at.
-             */
-            //cppcheck-suppress unusedPrivateFunction
-            void create(uint32_t loc)
-            {
-                // If the pool is full...
-                if(loc == INVALID_INDEX)
-                {
-                    // If we're in failsafe mode...
-                    if(failsafe)
-                    {
-                        // The calling reference is already "invalid index". Do nothing.
-                        return;
-                    }
-                    // Otherwise, throw an exception.
-                    throw e_pool_full();
-                }
-                // Initiate that object.
-                pool_root[loc].init();
-            }
-
-            /** Create a new object in our pool using the copy constructor.
-             * This version of create is intended to only be called by the pool
-             * reference constructor which accepts a pool as an argument, for a
-             * one-step create.
-             * i.e. `pool_ref<Foo> rf(pool, Foo(5));`
-             * \param the location to initialize at.
-             */
-             //cppcheck-suppress unusedPrivateFunction
-            void create(uint32_t loc, const T& cpy)
-            {
-                // If the pool is full...
-                if(loc == INVALID_INDEX)
-                {
-                    // If we're in failsafe mode...
-                    if(failsafe)
-                    {
-                        // The calling reference is already "invalid index". Do nothing.
-                        return;
-                    }
-                    // Otherwise, throw an exception.
-                    throw e_pool_full();
-                }
-                // Initiate that object using the copy object.
-                pool_root[loc].init(cpy);
             }
 
             poolobjsignal_t* object_signal(uint32_t loc)
@@ -392,21 +341,13 @@ namespace pawlib
             /** We store the pointer to the pool, first to validate that the
              * reference belongs to a particular Pool, and second to be able
              * to get an object's destroy signal. */
-            const pool_t* pool_ptr;
+            pool_t* pool_ptr;
 
             /** The index of the referenced object in the pool. Although it is
               * possible to access and modify this directly from a friend class
               * (such as Pool), the getIndex() and invalidate() functions should
               * be used instead. */
             uint32_t index;
-
-            /** Create a new invalid pool reference. Intended to only be called
-              * from within the pool class.
-              * \param the pointer to the pool class
-              */
-            explicit pool_ref(pool_t* pool)
-            :pool_ptr(pool), index(pool_t::INVALID_INDEX)
-            {}
 
             /** Create a new pool reference. Intended to only be called from within
               * the pool class.
@@ -420,12 +361,19 @@ namespace pawlib
                 signal->add(this, &pool_ref<T>::invalidate);
             }
 
-            /** Sets the reference's index to INVALID. If this instance is a
-              * cloned reference, it will invalidate the original reference
-              * instead. */
+            /** Sets the reference's index to INVALID. */
             void invalidate()
             {
-                index = pool_t::INVALID_INDEX;
+                disconnect();
+                index = INVALID_INDEX;
+            }
+
+            void disconnect()
+            {
+                if(pool_ptr != nullptr && index != INVALID_INDEX)
+                {
+                    pool_ptr->object_signal(index)->remove(this, &pool_ref<T>::invalidate);
+                }
             }
 
             /** Returns the index for the reference. */
@@ -442,33 +390,15 @@ namespace pawlib
               * will cause Pool to throw a "foreign reference" error.
               * PROPOSED: Should we remove this? */
             pool_ref()
-            :pool_ptr(nullptr), index(pool_t::INVALID_INDEX)
+            :pool_ptr(nullptr), index(INVALID_INDEX)
             {}
 
-            /** Create a new pool reference to a newly initialized object in the
-              * passed Pool. Initializes the object with its default constructor.
-              * \param the pool to initialize the object in
+            /** Create a new invalid pool reference.
+              * \param the pointer to the owning pool class
               */
-            explicit pool_ref(pool_t& pool)
-            :pool_ptr(&pool), index(pool.find_open())
-            {
-                pool.create(index);
-                pool.object_signal(index)->add(this, &pool_ref<T>::invalidate);
-            }
-
-            /** Create a new pool reference to a newly initialized object in the
-              * passed Pool. Uses the passed object to initialize the new object
-              * with its copy constructor, thereby providing access to the object's
-              * non-default constructors.
-              * \param the pool to initialize the object in
-              * \param the object to copy to the new object in the pool
-              */
-            explicit pool_ref(pool_t& pool, const T& cpy)
-            :pool_ptr(&pool), index(pool.find_open())
-            {
-                pool.create(index, cpy);
-                pool.object_signal(index)->add(this, &pool_ref<T>::invalidate);
-            }
+            explicit pool_ref(pool_t* pool)
+            :pool_ptr(pool), index(INVALID_INDEX)
+            {}
 
             /** Copy constructor.
               * \param the reference to copy
@@ -476,9 +406,20 @@ namespace pawlib
             pool_ref(const pool_ref<T>& cpy)
             :pool_ptr(cpy.pool_ptr), index(cpy.index)
             {
-                if(index != pool_t::INVALID_INDEX)
+                if(pool_ptr && index != INVALID_INDEX)
                 {
-                    const_cast<pool_t*>(pool_ptr)->object_signal(index)->add(this, &pool_ref<T>::invalidate);
+                    pool_ptr->object_signal(index)->add(this, &pool_ref<T>::invalidate);
+                }
+            }
+
+            void operator=(const pool_ref<T>& cpy)
+            {
+                disconnect();
+                pool_ptr = cpy.pool_ptr;
+                index = cpy.index;
+                if(index != INVALID_INDEX)
+                {
+                   pool_ptr->object_signal(index)->add(this, &pool_ref<T>::invalidate);
                 }
             }
 
@@ -489,7 +430,7 @@ namespace pawlib
               */
             bool invalid()
             {
-                return (index == pool_t::INVALID_INDEX);
+                return (index == INVALID_INDEX);
             }
 
             ~pool_ref(){}

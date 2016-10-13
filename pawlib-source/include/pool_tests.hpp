@@ -132,11 +132,11 @@ namespace pawlib
                 {
                     return false;
                 }
+
                 return true;
             }
             bool run()
             {
-
                 for(int r = 0; r < 3; ++r)
                 {
                     for(int i = 0; i < 1000; ++i)
@@ -157,6 +157,10 @@ namespace pawlib
                             pool->destroy(refs[j]);
                         }
                         catch(e_pool_invalid_ref)
+                        {
+                            return false;
+                        }
+                        catch(e_pool_foreign_ref)
                         {
                             return false;
                         }
@@ -187,14 +191,10 @@ namespace pawlib
         public:
             enum TestPoolCreateMode
             {
-                ASGN_DFLT,
-                CSTR_DFLT,
-                ASGN_COPY,
-                CSTR_COPY,
-                ASGN_DFLT_FAILSAFE,
-                CSTR_DFLT_FAILSAFE,
-                ASGN_COPY_FAILSAFE,
-                CSTR_COPY_FAILSAFE
+                DFLT,
+                COPY,
+                DFLT_FAILSAFE,
+                COPY_FAILSAFE
             };
 
             // cppcheck-suppress uninitMemberVar
@@ -202,74 +202,34 @@ namespace pawlib
             {
                 switch(mode)
                 {
-                    case ASGN_DFLT:
+                    case DFLT:
                     {
                         title = "Pool: Create by Assignment, Default";
                         docs = "Create a new object in a pool using pool_ref assignment and the object's default constructor.";
-                        assignment = true;
                         copyconst = false;
                         failsafe = false;
                         break;
                     }
-                    case CSTR_DFLT:
-                    {
-                        title = "Pool: Create by Constructor, Default";
-                        docs = "Create a new object in a pool using the pool_ref constructor and the object's default constructor.";
-                        assignment = false;
-                        copyconst = false;
-                        failsafe = false;
-                        break;
-                    }
-                    case ASGN_COPY:
+                    case COPY:
                     {
                         title = "Pool: Create by Assignment, Copy";
                         docs = "Create a new object in a pool using pool_ref assignment and the object's copy constructor.";
-                        assignment = true;
                         copyconst = true;
                         failsafe = false;
                         break;
                     }
-                    case CSTR_COPY:
-                    {
-                        title = "Pool: Create by Constructor, Copy";
-                        docs = "Create a new object in a pool using the pool_ref constructor and the object's copy constructor.";
-                        assignment = false;
-                        copyconst = true;
-                        failsafe = false;
-                        break;
-                    }
-                    case ASGN_DFLT_FAILSAFE:
+                    case DFLT_FAILSAFE:
                     {
                         title = "Pool: Create by Assignment, Default Failsafe";
                         docs = "Create a new object in a failsafe pool using pool_ref assignment and the object's default constructor.";
-                        assignment = true;
                         copyconst = false;
                         failsafe = true;
                         break;
                     }
-                    case CSTR_DFLT_FAILSAFE:
-                    {
-                        title = "Pool: Create by Assignment, Copy Failsafe";
-                        docs = "Create a new object in a failsafe pool using pool_ref assignment and the object's copy constructor.";
-                        assignment = false;
-                        copyconst = false;
-                        failsafe = true;
-                        break;
-                    }
-                    case ASGN_COPY_FAILSAFE:
+                    case COPY_FAILSAFE:
                     {
                         title = "Pool: Create by Constructor, Default Failsafe";
                         docs = "Create a new object in a failsafe pool using the pool_ref constructor and the object's default constructor.";
-                        assignment = true;
-                        copyconst = true;
-                        failsafe = true;
-                        break;
-                    }
-                    case CSTR_COPY_FAILSAFE:
-                    {
-                        title = "Pool: Create by Constructor, Copy Failsafe";
-                        docs = "Create a new object in a failsafe pool using the pool_ref constructor and the object's copy constructor.";
-                        assignment = false;
                         copyconst = true;
                         failsafe = true;
                         break;
@@ -310,24 +270,14 @@ namespace pawlib
             {
                 try
                 {
-                    if(assignment && !copyconst)
-                    {
-                        pool_ref<DummyClass> rf = pool->create();
-                        poolrf = rf;
-                    }
-                    else if(assignment && copyconst)
+                    if(copyconst)
                     {
                         pool_ref<DummyClass> rf = pool->create(DummyClass(5,4,3,2,1));
                         poolrf = rf;
                     }
-                    else if(!assignment && !copyconst)
+                    else
                     {
-                        pool_ref<DummyClass> rf(*pool);
-                        poolrf = rf;
-                    }
-                    else if(!assignment && copyconst)
-                    {
-                        pool_ref<DummyClass> rf(*pool, DummyClass(5,4,3,2,1));
+                        pool_ref<DummyClass> rf = pool->create();
                         poolrf = rf;
                     }
                 }
@@ -359,7 +309,6 @@ namespace pawlib
             ~TestPool_Create(){}
 
         private:
-            bool assignment;
             bool copyconst;
             bool failsafe;
             Pool<DummyClass>* pool;
@@ -518,9 +467,7 @@ namespace pawlib
             enum FailTestType
             {
                 POOL_FULL_ASGN,
-                POOL_FULL_CTOR,
                 POOL_FULL_ASGN_CPY,
-                POOL_FULL_CTOR_CPY,
                 POOL_ACC_DELETED_REF,
                 POOL_ACC_FOREIGN_REF,
                 POOL_DES_DELETED_REF,
@@ -539,22 +486,10 @@ namespace pawlib
                         docs = "Throw and Catch e_pool_full from pool_ref assignment using the object's default constructor.";
                         break;
                     }
-                    case POOL_FULL_CTOR:
-                    {
-                        title = "Pool: (Exception) Full Pool Create Assignment w/ Copy",
-                        docs = "Throw and Catch e_pool_full from pool_ref assignment using the object's copy constructor.";
-                        break;
-                    }
                     case POOL_FULL_ASGN_CPY:
                     {
                         title = "Pool: (Exception) Full Pool Create Constructor w/ Default";
                         docs = "Throw and Catch e_pool_full from pool_ref constructor using the object's default constructor.";
-                        break;
-                    }
-                    case POOL_FULL_CTOR_CPY:
-                    {
-                        title = "Pool: (Exception) Full Pool Create Constructor w/ Copy";
-                        docs = "Throw and Catch e_pool_full from pool_ref constructor using the object's copy constructor.";
                         break;
                     }
                     case POOL_ACC_DELETED_REF:
@@ -602,15 +537,6 @@ namespace pawlib
                     return false;
                 }
 
-                try
-                {
-                    poolrf = pool->create();
-                }
-                catch(e_pool_full)
-                {
-                    return false;
-                }
-
                 return true;
             }
 
@@ -620,6 +546,8 @@ namespace pawlib
                 {
                     case POOL_FULL_ASGN:
                     {
+                        pool_ref<DummyClass> poolrf = pool->create();
+
                         try
                         {
                             pool_ref<DummyClass> rf2 = pool->create();
@@ -630,32 +558,10 @@ namespace pawlib
                         }
                         return false;
                     }
-                    case POOL_FULL_CTOR:
-                    {
-                        try
-                        {
-                            pool_ref<DummyClass> rf2(*pool);
-                        }
-                        catch(e_pool_full)
-                        {
-                            return true;
-                        }
-                        return false;
-                    }
                     case POOL_FULL_ASGN_CPY:
                     {
-                        try
-                        {
-                            pool_ref<DummyClass> rf2 = pool->create(DummyClass(5,4,3,2,1));
-                        }
-                        catch(e_pool_full)
-                        {
-                            return true;
-                        }
-                        return false;
-                    }
-                    case POOL_FULL_CTOR_CPY:
-                    {
+                        pool_ref<DummyClass> poolrf = pool->create();
+
                         try
                         {
                             pool_ref<DummyClass> rf2 = pool->create(DummyClass(5,4,3,2,1));
@@ -668,7 +574,9 @@ namespace pawlib
                     }
                     case POOL_ACC_DELETED_REF:
                     {
+                        pool_ref<DummyClass> poolrf = pool->create();
                         pool->destroy(poolrf);
+
                         try
                         {
                             pool->access(poolrf).alive();
@@ -682,7 +590,8 @@ namespace pawlib
                     case POOL_ACC_FOREIGN_REF:
                     {
                         Pool<DummyClass> pool2(1);
-                        pool_ref<DummyClass> foreignref(pool2);
+
+                        pool_ref<DummyClass> foreignref = pool2.create();
                         try
                         {
                             pool->access(foreignref).alive();
@@ -695,6 +604,7 @@ namespace pawlib
                     }
                     case POOL_DES_DELETED_REF:
                     {
+                        pool_ref<DummyClass> poolrf = pool->create();
                         pool->destroy(poolrf);
                         try
                         {
@@ -709,7 +619,7 @@ namespace pawlib
                     case POOL_DES_FOREIGN_REF:
                     {
                         Pool<DummyClass> pool2(1);
-                        pool_ref<DummyClass> foreignref(pool2);
+                        pool_ref<DummyClass> foreignref = pool2.create();
                         try
                         {
                             pool->destroy(foreignref);
@@ -742,7 +652,6 @@ namespace pawlib
             FailTestType type;
 
             Pool<DummyClass>* pool;
-            pool_ref<DummyClass> poolrf;
 
             testdoc_t title;
             testdoc_t docs;

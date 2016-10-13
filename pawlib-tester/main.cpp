@@ -47,7 +47,6 @@ int main(int argc, char* argv[])
     (void) argc;
     (void) argv;
 
-
     // If we got command-line arguments.
     if(argc > 1)
     {
