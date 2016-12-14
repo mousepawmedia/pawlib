@@ -1,3 +1,9 @@
+/** Tests for FlexArray[PawLIB]
+  * Version: 1.0
+  *
+  * Author(s): Jonathan Theodore
+  */
+
 /* LICENSE
  * Copyright (c) 2016 MousePaw Games.
  * All rights reserved.
@@ -42,129 +48,113 @@
 #include <goldilocks.hpp>
 #include <stdutils.hpp>
 
-/*for debugging and performance reasons
-* there are signed int versions and unsigned int
-* versions of the folowing tests
-*/
-
 namespace pawlib
 {
-    //TestVector_Push Function unsigned version
+    // P-tB1001*
     class TestVector_Push : public Test
     {
         private:
             unsigned int iters;
 
         public:
-            //TestVector_Push constructor with iterators
-            explicit TestVector_Push(unsigned int iterations): iters(iterations){}
+            explicit TestVector_Push(unsigned int iterations)
+                :iters(iterations)
+                {}
 
-            //Test title
             testdoc_t get_title()
             {
                 return "FlexArray: Push " + stdutils::itos(iters, 10) + " Integers (std::vector)";
             }
 
-            //get documentation section
             testdoc_t get_docs()
             {
-                return "Push " + stdutils::itos(iters, 10) + " integers to the back of a vector (push).";
+                return "Insert " + stdutils::itos(iters, 10) + " integers at the back of a vector (push).";
             }
 
-            // Run the test
             bool run()
             {
-                //Create instance of vector, vec
+                //Create instance of vector.
                 std::vector<unsigned int> vec;
 
+                // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
                 {
-                    //iters should equal 1000 in this case
-                    //increment i from 0 until it equals iters
                     vec.push_back(i);
                 }
                 return true;
             }
 
-            //TestVector_Push destructor
             ~TestVector_Push(){}
 
     };
 
-
+    // P-tB1001, P-tS1001
     class TestFArray_Push : public Test
     {
         private:
                 unsigned int iters;
 
-        //FlexArray constructor with iterators
         public:
-            explicit TestFArray_Push(unsigned int iterations): iters(iterations){}
+            explicit TestFArray_Push(unsigned int iterations)
+                :iters(iterations)
+                {}
 
-            //Test title
             testdoc_t get_title()
             {
-                return "FlexArray: Push " + stdutils::itos(iters, 10) + " Integers (std::vector)";
+                return "FlexArray: Push " + stdutils::itos(iters, 10) + " Integers (FlexArray)";
             }
-            //Test documentation
             testdoc_t get_docs()
             {
-                return "Push " + stdutils::itos(iters, 10) + " integers at the back of a flexarray (push).";
+                return "Insert " + stdutils::itos(iters, 10) + " integers at the back of a FlexArray (push).";
             }
-            // Run the test
+
             bool run()
             {
-                //Create instance of flexarray
+                // Create instance of FlexArray.
                 pawlib::FlexArray< unsigned int> flex;
 
-                //iters should equal 1000 in this case
-                //increment i from 0 until it equals iters
+                // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
                 {
-                    //if the index is not out of bounds push iters (1000)
-                    if(flex.push(i) == false)
+                    // Attempt a push. If it fails...
+                    if(!flex.push(i))
                     {
-                    return false;
+                        // Report failure.
+                        return false;
                     }
                 }
+                // Report success.
                 return true;
             }
 
-            // Destructor
             ~TestFArray_Push(){}
 
     };
 
-
+    // P-tB1002*
     class TestVector_Shift : public Test
     {
-        //Testvector_Shift constructor with iterators
         public:
            explicit TestVector_Shift(unsigned int iterations): iters(iterations){}
 
-            //Test title
             testdoc_t get_title()
             {
                 return "FlexArray: Shift " + stdutils::itos(iters, 10) + " Integers to Front (std::vector)";
             }
 
-            //Test documentation
             testdoc_t get_docs()
             {
-                return "Shift " + stdutils::itos(iters, 10) + " integers to the front of a vector (shift).";
+                return "Insert " + stdutils::itos(iters, 10) + " integers at the front of a vector (shift).";
             }
 
-            //Run the test
             bool run()
             {
-                //Create instance of vector, vec
+                // Create instance of vector.
                 std::vector<unsigned int> vec;
 
-                //iters should equal 1000 in this case
-                //increment i from 0 until it equals iters
+                // Insert each required element via a shift.
                 for(unsigned int i=0; i<iters; ++i)
                 {
-                    //insert at front of vector
                     vec.insert(vec.begin(), i);
                 }
                 return true;
@@ -176,39 +166,39 @@ namespace pawlib
                 unsigned int iters;
      };
 
-     class TestFArray_Shift: public Test
-     {
+    // P-tB1002, P-tS1002
+    class TestFArray_Shift: public Test
+    {
         private:
             unsigned int iters;
 
-        //TestFArray_Shift constructor with iterators
         public:
-            explicit TestFArray_Shift(unsigned int iterations): iters(iterations){}
+            explicit TestFArray_Shift(unsigned int iterations)
+                :iters(iterations)
+                {}
 
-            //Test title
             testdoc_t get_title()
             {
-                return "FlexArray: Shift " + stdutils::itos(iters, 10) + " Integers to Front (flexarray)";
+                return "FlexArray: Shift " + stdutils::itos(iters, 10) + " Integers to Front (FlexArray)";
             }
-            //Test description
+
             testdoc_t get_docs()
             {
-                return "Insert " + stdutils::itos(iters, 10) + " integers to the front of a flexarray using insert at 0 (shift).";
+                return "Insert " + stdutils::itos(iters, 10) + " integers at the front of a FlexArray (shift).";
             }
 
-            //Run the test
             bool run()
             {
-                //create instance of Flexarray, flex
+                // Create instance of FlexArray.
                 pawlib::FlexArray<unsigned int> flex;
 
-                //iters should equal 1000 in this case
-                //increment i from 0 until it equals iters
+                // Insert each required element via a shift.
                 for(unsigned int i=0; i<iters; ++i)
                 {
-                    //if there is something at position zero move on
-                    if(!flex.insert(i,0))
+                    // Attempt a shift. If it fails...
+                    if(!flex.shift(i))
                     {
+                        // Report failure.
                         return false;
                     }
                 }
@@ -219,56 +209,16 @@ namespace pawlib
 
     };
 
-    class TestFArray_Insert : public Test
-    {
-        private:
-            unsigned int iters;
-
-        //TestFArray_insert constructor with iterators
-        public:
-            explicit TestFArray_Insert(unsigned int iterations): iters(iterations){}
-            //Test title
-            testdoc_t get_title()
-            {
-                return "FlexArray: Insert " + stdutils::itos(iters, 10) + " Integers At Middle (flexarray)";
-            }
-            // Test description
-            testdoc_t get_docs()
-            {
-                return "Insert " + stdutils::itos(iters, 10) + " integers at the middle of a flexarray. \
-Middle is calculated as size()/2.";
-            }
-
-            bool run()
-            {
-                pawlib::FlexArray<unsigned int> flex;
-
-                /* We initially push two values, to make the
-                 * math calculating the insert index a bit safer.*/
-                flex.push(0);
-                flex.push(1);
-
-                for(unsigned int i=1; i<iters; ++i)
-                {
-                    int j = flex.getSize()/2;
-                    flex.insert(j, i);
-                }
-                return true;
-            }
-
-            ~TestFArray_Insert(){}
-
-    };
-
-
-   // TestVector_Insert Function
+    //P-tB1003*
     class TestVector_Insert : public Test
     {
         private:
             unsigned int iters;
 
         public:
-            explicit TestVector_Insert(unsigned int iterations): iters(iterations){}
+            explicit TestVector_Insert(unsigned int iterations)
+                :iters(iterations)
+                {}
 
             testdoc_t get_title()
             {
@@ -283,6 +233,7 @@ is calculated as size()/2.";
 
             bool run()
             {
+                // Create an instance of vector.
                 std::vector< unsigned int> vec;
 
                 // We initially push two values, to make the
@@ -290,6 +241,7 @@ is calculated as size()/2.";
                 vec.push_back(0);
                 vec.push_back(1);
 
+                // Insert each required element.
                 for(unsigned int i=1; i<1000; ++i)
                 {
                     unsigned int j = vec.size()/2;
@@ -302,31 +254,90 @@ is calculated as size()/2.";
 
     };
 
+    // P-tB1003, P-tS1003
+    class TestFArray_Insert : public Test
+    {
+        private:
+            unsigned int iters;
+
+
+        public:
+            explicit TestFArray_Insert(unsigned int iterations)
+                :iters(iterations)
+                {}
+
+            testdoc_t get_title()
+            {
+                return "FlexArray: Insert " + stdutils::itos(iters, 10) + " Integers At Middle (flexarray)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Insert " + stdutils::itos(iters, 10) + " integers at the middle of a flexarray. \
+Middle is calculated as size()/2.";
+            }
+
+            bool run()
+            {
+                // Create instance of FlexArray.
+                pawlib::FlexArray<unsigned int> flex;
+
+                /* We initially push two values, to make the
+                 * math calculating the insert index a bit safer.*/
+                flex.push(0);
+                flex.push(1);
+
+                // Insert each required element.
+                for(unsigned int i=1; i<iters; ++i)
+                {
+                    int j = flex.getSize()/2;
+                    // Attempt an insert shift. If it fails...
+                    if(!flex.insert(j, i))
+                    {
+                        // Report failure.
+                        return false;
+                    }
+                }
+
+                // Report success.
+                return true;
+            }
+
+            ~TestFArray_Insert(){}
+
+    };
+
+    // P-tB1004*
     class TestVector_Erase : public Test
     {
         private:
-            //left declaration in private class to avoid doing so in both janitor() and run()
             std::vector<unsigned int> vec;
+
             unsigned int iters;
 
-        // Testvector_Pop Constructor with iterators
         public:
-          explicit  TestVector_Erase(unsigned int iterations): iters(iterations){}
+          explicit TestVector_Erase(unsigned int iterations)
+            :iters(iterations)
+            {}
 
-             //Test title
             testdoc_t get_title()
             {
                 return "FlexArray: Erase " + stdutils::itos(iters, 10) + " Integers (std::vector)";
             }
-            //Test documentation
+
             testdoc_t get_docs()
             {
                 return "Erase " + stdutils::itos(iters, 10) + " integers at the front of a Vector (pop).";
             }
 
-            //Clean up between successful runs, in preparation for a repeat
+            bool pre()
+            {
+                return janitor();
+            }
+
             bool janitor()
             {
+                // Fill up the vector.
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     vec.push_back(i);
@@ -334,15 +345,21 @@ is calculated as size()/2.";
                 return true;
             }
 
-            //Run the test
             bool run()
             {
+                // Remove and return each element.
                 for(unsigned int i=0; i<iters; ++i)
                 {
-                    if(vec.front() != i)
+                    // Store the back element.
+                    unsigned int temp = vec.back();
+
+                    if(temp != vec.back())
                     {
+                        // Can't happen. If it does, everything is weird.
                         return false;
                     }
+
+                    // Remove the element.
                     vec.pop_back();
                 }
                 return true;
@@ -351,23 +368,24 @@ is calculated as size()/2.";
             ~TestVector_Erase(){}
     };
 
-    // removes element at any given index as opposed to erase so needs special test...
+    // P-tB1004, P-tS1004
     class TestFArray_Yank : public Test
     {
         private:
-            //left declaration in private class to avoid doing so in both janitor() and run()
             pawlib::FlexArray<unsigned int> flex;
+
             unsigned int iters;
 
-        // Testvector_Pop Constructor with iterators
         public:
-           explicit TestFArray_Yank(unsigned int iterations): iters(iterations){}
-            //Test title
+            explicit TestFArray_Yank(unsigned int iterations)
+                :iters(iterations)
+                {}
+
             testdoc_t get_title()
             {
                 return "FlexArray: Yank " + stdutils::itos(iters, 10) + " Integers (flexarray)";
             }
-            //Test documentation
+
             testdoc_t get_docs()
             {
                 return "Erase " + stdutils::itos(iters, 10) + " integers at any given index (yank).";
@@ -378,23 +396,28 @@ is calculated as size()/2.";
                 return janitor();
             }
 
-            //Clean up between successful runs, in preparation for a repeat
             bool janitor()
             {
+                // Refill the FlexArray.
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     flex.push(i);
                 }
                 return true;
             }
-            //Run the test
+
             bool run()
             {
+                // For each element...
                 for(int i=(iters-1); i>=0; --i)
                 {
+                    // Store the element at i.
                     unsigned int temp = flex.at(i);
+
+                    // If the yanked element isn't what it should be...
                     if(flex.yank(i) != temp)
                     {
+                        // Report failure.
                         return false;
                     }
                 }
@@ -403,19 +426,19 @@ is calculated as size()/2.";
         ~TestFArray_Yank(){}
     };
 
-class TestSuite_FlexArray : public TestSuite
-{
-    public:
-        explicit TestSuite_FlexArray(){}
+    class TestSuite_FlexArray : public TestSuite
+    {
+        public:
+            explicit TestSuite_FlexArray(){}
 
-        void load_tests();
+            void load_tests();
 
-        testdoc_t get_title()
-        {
-            return "PawLIB: FlexArray Tests";
-        }
+            testdoc_t get_title()
+            {
+                return "PawLIB: FlexArray Tests";
+            }
 
-        ~TestSuite_FlexArray(){}
-};
+            ~TestSuite_FlexArray(){}
+    };
 };
 #endif // FLEX_ARRAY_TEST_HPP

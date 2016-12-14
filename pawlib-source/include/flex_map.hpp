@@ -1,9 +1,8 @@
 /** Map [PawLIB]
-  * Version: 1.0
+  * Version: 0.1 (Experimental)
   *
   * A map/dictionary with a low dynamic allocation demand.
   *
-  * Last Updated: 8 March 2016
   * Author: Michael Parkman
   */
 

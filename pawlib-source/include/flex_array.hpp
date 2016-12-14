@@ -1,11 +1,10 @@
-/** Flex Array [PawLIB]
+/** FlexArray [PawLIB]
   * Version: 1.0
   *
   * A dynamic array with a low dynamic allocation demand.
   * Designed to take the place of 'std::vector'.
   *
-  * Last Updated: 22 June, 2016 by Jonathan Theodore
-  * Author: Michael Parkman
+  * Author(s): Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
@@ -46,7 +45,9 @@
 #ifndef FLEX_ARRAY_HPP_INCLUDED
 #define FLEX_ARRAY_HPP_INCLUDED
 
-#include "base_flex_array.hpp"
+#include <stdexcept>
+
+#include <base_flex_array.hpp>
 #include <iochannel.hpp>
 
 using pawlib::iochannel;
@@ -54,170 +55,236 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template<class type>
+    template <typename type>
     class FlexArray : public Base_FlexArr<type>
     {
         public:
-            FlexArray() : Base_FlexArr<type>() { }
+            /** Create a new FlexArray with the default capacity.
+              */
+            FlexArray()
+                :Base_FlexArr<type>()
+                {}
 
-           explicit FlexArray(unsigned int numElements) : Base_FlexArr<type>(numElements) { }
+            /** Create a new FlexArray with the specified minimum capacity.
+              * \param the minimum number of elements that the FlexArray can contain.
+              */
+            explicit FlexArray(unsigned int numElements)
+                :Base_FlexArr<type>(numElements)
+                {}
 
-            //insert an element into the flex_array at a given index. Unsigned to prevent negatives.
+            /** Insert an element into the FlexArray at the given index.
+             * Unsigned to prevent negative indices.
+             * \param the element to insert
+             * \param the index to insert the element at.
+             * \return true if insert successful, else false.
+             */
             bool insert(type newElement, unsigned int index)
             {
-                //if the index is greater than the number of elements in the array currently
+                /* If the index is greater than the number of elements
+                 * in the array currently. */
                 if(index > 0 && index > this-> currElements - 1)
                 {
-                    //throw an index out of bounds exception
-                    //prints current index
+                    // Throw a non-fatal error. Numbers are 0-based.
                     ioc << cat_error << vrb_quiet << "Index " << index
-                       //prints elements minus one.
                        << " out of bounds [0 - " << this->currElements - 1
                        << "]." << io_end;
-                       return false;
+                    // Report failure.
+                    return false;
                 }
-                //otherwise the index is in bounds
+                // Otherwise, the index is in bounds...
                 else
                 {
-                    //if the number of elements is equal to the number of avaiable slots
-                    if(this->currElements == this->max_size)
+                    // If the number of elements is equal to the capacity.
+                    if(this->currElements == this->capacity)
                     {
-                        //double the number of slots
-                        this->double_size(&this->theArray);
+                        // Attempt to double the capacity. If it fails...
+                        if(!this->double_size())
+                        {
+                            // Report failure.
+                            return false;
+                        }
                     }
+
+                    // If there are elements in the FlexArray...
                     if(this->currElements > 0)
-                    { //shift every element to the right of the index, right 1 slot
-                        for(unsigned int i = this->currElements - 1; i > index; i--)
+                    {
+                        /* Every element to the right of the index should
+                         * be shifted right one position. */
+                        for(unsigned int i = this->currElements - 1; i > index; --i)
                         {
                             this->theArray[i] = this->theArray[i - 1];
                         }
-                    //assign the desired index the passed in value
+                        // Place the new element at the specified index.
                         this->theArray[index] = newElement;
                     }
-                    //incrememnt the number of elements
-                    this->currElements++;
+
+                    // Incrememnt the number of elements.
+                    ++(this->currElements);
+
+                    // Report success.
                     return true;
                 }
             }
 
-            //remove the element at the given index
+            /** Remove and return the element at the given index.
+              * \param the index to act on.
+              * \return the element from the given index.
+              */
             type yank(unsigned int index)
             {
-                //if there are no elements in the array
+                // If there are no elements in the array...
                 if(this->currElements == 0)
                 {
-                    //assign temp to be the element at the passed in index
-                    type temp = this->theArray[index];
-                    //throw error and return null
-                    ioc << cat_error << vrb_quiet << "Flex Array is empty" << io_end;
-                    return temp;
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexArray: Cannot yank from empty FlexArray.");
                 }
-                //else if index is out of bounds
-                else if(index > this->max_size)
+                // Else if the given index is out of bounds.
+                else if(index > this->capacity)
                 {
-                    //assign temp to be the element at the passed in index
-                    type temp = this->theArray[index];
-                    //throw error and return null
-                    ioc << cat_error << vrb_quiet << "Index out of bounds" << io_end;
-                    return temp;
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexArray: Cannot yank from out of range index.");
                 }
                 else
                 {
-                    //assign temp to be the element at the passed in index
+                    // Store the element at index, to be returned shortly.
                     type temp = this->theArray[index];
-                    //shift all of the elements to the right of the index, to the left 1
-                    //this effectivly deletes the element from the array
-                    for(unsigned int i = index; i < this->currElements - 1; i++)
+
+                    /* All of the elements to the right of the index should be
+                     * shifted left one position. This effectively deletes the
+                     * element from the array.
+                     */
+                    for(unsigned int i = index; i < this->currElements - 1; ++i)
                     {
-                        this->theArray[i] = this->theArray[i + 1];
+                        this->theArray[i] = this->theArray[i+1];
                     }
-                    //decrement the number of elements
-                    this->currElements--;
-                    //return the deleted element
+                    // Decrement the number of elements.
+                    --(this->currElements);
+
+                    // Return the deleted element.
                     return temp;
                 }
             }
 
-            //insert at the beginning
+            /** Insert an element at the beginning of the FlexArray.
+              * \param the element to insert.
+              * \return true if successful, else false.
+              */
             bool shift(type newElement)
             {
-                //if there are elements currently within the array
+                // If there are elements currently within the array.
                 if(this->currElements > 0)
                 {
-                    //if the array is currently maxed out
-                    if(this->currElements == this->max_size)
+                    // If the array is full...
+                    if(this->currElements == this->capacity)
                     {
-                        //double the size of the array
-                        this->double_size(&this->theArray);
+                        // Attempt to double the array's capacity. If it fails...
+                        if(!this->double_size())
+                        {
+                            // Report failure.
+                            return false;
+                        }
                     }
-                    //shift all the elements to the right 1 index
-                    for(int i = this->currElements - 1; i > 0; i--)
+                    // Shift all the elements to the right one position.
+                    for(int i = this->currElements - 1; i > 0; --i)
                     {
                         this->theArray[i] = this->theArray[i - 1];
                     }
                 }
-                //assign the first element to be the passed in element
+
+                // Store the new element in the first position.
                 this->theArray[0] = newElement;
-                //increment the nubmer of elements
-                this->currElements++;
+
+                // Increment the number of elements.
+                ++(this->currElements);
+
+                // Report success.
                 return true;
             }
 
-            //returns the first value in the array
+            /** Returns the first element in the FlexArray without modifying
+              * the data structure.
+              * \return the first element in the FlexArray.
+              */
             type peek()
             {
                 return this->at(0);
             }
 
-            //deletes the first element in the array
+            /** Returns and removes the first element in the FlexArray.
+              * \return the first element, now removed.
+              */
             type unshift()
             {
-                //if there is at least 1 element in the array
+                // If there is at least one element in the array...
                 if(this->currElements > 0)
                 {
-                    //assign temp to be the first element in the array
+                    // Store the first element, to be returned later.
                     type temp = this->theArray[0];
-                    //shift all elements to the left 1 index. This effectively deletes the first element from the array
-                    for(int i = 0; i < this->currElements - 1; i++)
+
+                    /* Shift all elements to the left one index. This
+                     * effectively deletes the first element from the array. */
+                    for(int i = 0; i < this->currElements - 1; ++i)
                     {
                         this->theArray[i] = this->theArray[i + 1];
                     }
-                    //decrement the number of elements
-                    this->currElements--;
-                    //return the deleted element value
+
+                    // Decrement the number of elements.
+                    --(this->currElements);
+
+                    // Return the element we just deleted.
                     return temp;
                 }
-                //if there are no elements in the array
+                // Else if there are no elements in the array...
                 else
                 {
-                    //throw error and return null
-                    ioc << cat_error << vrb_quiet << "Flex Array is empty" << io_end;
-                    return nullptr;
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexArray: Cannot unshift from empty FlexArray.");
                 }
             }
 
-            //remove the last element in the array
+            /** Return and remove the last element in the FlexArray.
+              * \return the last element, now removed.
+              */
             type pop()
             {
-                //if there are no elements
+                // If there are no elements...
                 if(this->currElements == 0)
                 {
-                    //throw error and return null
-                    //ioc << cat_error << vrb_quiet << "Flex Array is empty" << io_end;
-                    throw std::out_of_range("Flex Array is empty.");
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexArray: Cannot pop from empty FlexArray.");
                 }
-                //if there is at least 1 element
+                // Else if there is at least one element...
                 else
                 {
-                    //return the last element and decrement the number of elements
-                    return this->theArray[--this->currElements];
+                    /* Return the last element and decrement the
+                     * number of elements. */
+                    return this->theArray[--(this->currElements)];
                 }
             }
 
-            //push the passed in element to the back of the array
+            /** Add the specified element to the end of the FlexArray.
+              * \param the element to add.
+              * \return true if successful, else false.
+              */
             bool push(type newElement)
             {
-                return this->push_back(newElement);
+                // If the array is full...
+                if(this->currElements == this->capacity)
+                {
+                    // Attempt to double the array's capacity. If it fails...
+                    if(!this->double_size())
+                    {
+                        // Report failure.
+                        return false;
+                    }
+                }
+
+                /* Store the new element in the last position and
+                 * increment the number of elements. */
+                this->theArray[(this->currElements)++] = newElement;
+
+                // Report success.
+                return true;
             }
     };
 }

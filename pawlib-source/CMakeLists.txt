@@ -47,13 +47,13 @@ add_library(pawlib STATIC
     include/core_types_tests.hpp
     include/flex_array.hpp
     include/flex_array_tests.hpp
+    include/flex_map.hpp
     include/flex_queue.hpp
     include/flex_queue_tests.hpp
     include/flex_stack.hpp
     include/flex_stack_tests.hpp
     include/goldilocks.hpp
     include/iochannel.hpp
-    include/map.hpp
     include/onechar.hpp
     include/onestring.hpp
     include/onestringbase.hpp

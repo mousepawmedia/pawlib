@@ -4,7 +4,6 @@
   * Allows managed, custom output to any console or terminal.
   * See WHAT IS IOCHANNEL? below.
   *
-  * Last Updated: 27 May 2016
   * Author: Jason C. McDonald
   */
 
@@ -42,7 +41,6 @@
  * See http://www.mousepawgames.com/participate/opensource for information
  * on how to contribute to our projects.
  */
-
 
 /* WHAT IS IOCHANNEL?
  * IOChannel is intended both as a replacement and wrapper for `std::iostream` and

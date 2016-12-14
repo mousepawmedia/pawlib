@@ -1,10 +1,9 @@
 /** Binary Converters [PawLIB]
-  * Version: 1.0
+  * Version: 0.1 (Experimental)
   *
   * Data-to-binary and binary-to-data converters.
   *
-  * Last Updated: 10 April 2016
-  * Author: Michael Parkman
+  * Author(s): Michael Parkman
   */
 
 /* LICENSE

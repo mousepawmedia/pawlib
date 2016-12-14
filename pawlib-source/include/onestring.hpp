@@ -8,8 +8,7 @@
   * To handle Unicode, each OneString is made of OneChars,
   * which are enhanced characters.
   *
-  * Last Updated: 10 April 2016
-  * Author: Scott Taylor
+  * Author(s): Scott Taylor
   */
 
 /* LICENSE

@@ -1,12 +1,10 @@
 /** Pawsort [PawLIB]
   * Version: 1.0
   *
-  * A collection of common and original sorting
-  * algorithms, some of which rivals std::sort
-  * in performance.
+  * A collection of common and original sorting algorithms, some of which
+  * rivals std::sort in performance.
   *
-  * Last Updated: 6 April 2016
-  * Author: Jason C. McDonald
+  * Author(s): Jason C. McDonald
   */
 
 /* LICENSE

@@ -1,10 +1,9 @@
 /** Singly Linked List [PawLIB]
-  * Version: 1.0
+  * Version: 0.1 (Experimental)
   *
   * A singly linked list class.
   *
-  * Last Updated: 8 March 2016
-  * Author: Michael Parkman
+  * Author(s): Michael Parkman
   */
 
 /* LICENSE

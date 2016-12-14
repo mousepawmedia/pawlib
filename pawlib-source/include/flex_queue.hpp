@@ -1,10 +1,9 @@
-/** Queue [PawLIB]
+/** FlexQueue [PawLIB]
   * Version: 1.0
   *
-  * A queue with a low dynamic allocation demand.
+  * A Flex-based queue with a low dynamic allocation demand.
   *
-  * Last Updated: 22 June, 2016 by Jonathan Theodore
-  * Author: Michael Parkman
+  * Author(s): Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
@@ -53,48 +52,87 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template <class type>
+    template <typename type>
     class FlexQueue : public Base_FlexArr<type>
     {
         public:
-            FlexQueue() : Base_FlexArr<type>(){ }
+            /** Create a new FlexQueue with the default capacity.
+              */
+            FlexQueue()
+                :Base_FlexArr<type>()
+                {}
 
-            explicit FlexQueue(unsigned int numElements) : Base_FlexArr<type>(numElements){ }
+            /** Create a new FlexQueue with the specified minimum capacity.
+              * \param the minimum number of elements that the FlexQueue can contain.
+              */
+            explicit FlexQueue(unsigned int numElements)
+                :Base_FlexArr<type>(numElements)
+                {}
 
-            //adds the passed in element to the queue
-            void push(type newElement)
+            /** Pushes the specified element to the FlexQueue.
+              * \param the element to push
+              * \return true if successful, else false.
+              */
+            bool push(type newElement)
             {
-                this->push_back(newElement);
+                // If the array is full...
+                if(this->currElements == this->capacity)
+                {
+                    // Attempt to double the array's capacity. If it fails...
+                    if(!this->double_size())
+                    {
+                        // Report failure.
+                        return false;
+                    }
+                }
+
+                /* Store the new element in the last position and
+                 * increment the number of elements. */
+                this->theArray[(this->currElements)++] = newElement;
+
+                // Report success.
+                return true;
             }
 
-            //returns the value in the first index of the queue
+            /** Returns the first element in the FlexQueue without modifying
+              * the data structure.
+              * \return the first element in the FlexQueue.
+              */
             type peek()
             {
                 return this->at(0);
             }
 
-            //removes and returns the first element in the queue
+            /** Return and remove the next element in the FlexQueue.
+              * This is technically an unshift(), NOT a pop().
+              * \return the last element, now removed.
+              */
             type pop()
             {
-                //if there is an element that can be removed
+                // If there is at least one element in the array...
                 if(this->currElements > 0)
                 {
-                    //set temp to be the first element in the queue
+                    // Store the first element, to be returned later.
                     type temp = this->theArray[0];
-                    //shift all elements to the left 1 effectively deleting the element
-                    for( unsigned int i = 0; i < this->currElements - 1; ++i)
+
+                    /* Shift all elements to the left one index. This
+                     * effectively deletes the first element from the array. */
+                    for(unsigned int i = 0; i < this->currElements - 1; ++i)
                     {
                         this->theArray[i] = this->theArray[i + 1];
                     }
-                    //decrement the number of elements
-                    this->currElements--;
-                    //return the deleted element
+
+                    // Decrement the number of elements.
+                    --(this->currElements);
+
+                    // Return the element we just deleted.
                     return temp;
                 }
-                //if the queue is empty
+                // Else if there are no elements in the array...
                 else
                 {
-                   throw std::out_of_range("The FlexQueue is empty.");
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexQueue: Cannot pop from empty FlexQueue.");
                 }
             }
     };

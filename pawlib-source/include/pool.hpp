@@ -5,8 +5,7 @@
   * on-demand initialization, access, and deinitialization of
   * objects with fully front-loaded dynamic allocation.
   *
-  * Last Updated: 27 June 2016
-  * Author: Jason C. McDonald
+  * Author(s): Jason C. McDonald
   */
 
 /* LICENSE

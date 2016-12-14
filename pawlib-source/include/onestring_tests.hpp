@@ -1,3 +1,9 @@
+/** Tests for OneString[PawLIB]
+  * Version: 1.0
+  *
+  * Author(s): Scott Taylor
+  */
+
 /* LICENSE
  * Copyright (c) 2016 MousePaw Games.
  * All rights reserved.

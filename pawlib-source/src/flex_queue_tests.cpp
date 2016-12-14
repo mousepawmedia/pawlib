@@ -3,7 +3,7 @@ namespace pawlib
 {
     const int onethou = 1000;
     const int hunthou = 100000;
-    //const int tenmill = 10,000,000; // for stress testing
+
     void TestSuite_FlexQueue::load_tests()
     {
         register_test("P-tB1201", new TestFQueue_Push(onethou));

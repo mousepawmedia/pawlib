@@ -1,11 +1,9 @@
-/** Stack [PawLIB]
+/** FlexStack [PawLIB]
   * Version: 1.0
   *
-  * A stack with a low dynamic allocation demand.
+  * A Flex-based stack with a low dynamic allocation demand.
   *
-  * Last Updated: 22 June, 2016 by Jonathan Theodore
-  * Author: Michael Parkman
-  *
+  * Author(s): Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE

@@ -3,8 +3,7 @@
   *
   * Common utility functions used by the rest of PawLIB.
   *
-  * Last Updated: 5 August 2016
-  * Authors: Jason C. McDonald, Scott Taylor
+  * Author(s): Jason C. McDonald, Scott Taylor
   */
 
 /* LICENSE
@@ -41,7 +40,6 @@
  * See http://www.mousepawgames.com/participate/opensource for information
  * on how to contribute to our projects.
  */
-
 
 #ifndef STDUTILS_H
 #define STDUTILS_H

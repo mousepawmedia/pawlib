@@ -1,3 +1,9 @@
+/** Tests for PawSort[PawLIB]
+  * Version: 1.0
+  *
+  * Author(s): Jason C. McDonald
+  */
+
 /* LICENSE
  * Copyright (c) 2016 MousePaw Games.
  * All rights reserved.

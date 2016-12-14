@@ -1,11 +1,9 @@
 /** Rigid Stack [PawLIB]
-  * Version: 1.0
+  * Version: 0.1 (Experimental)
   *
-  * A high-performance, fixed-size stack with no inherent
-  * dynamic allocation overhead.
+  * A fixed-size stack with no inherent dynamic allocation overhead.
   *
-  * Last Updated: 28 June 2016
-  * Author: Jason C. McDonald
+  * Author(s): Jason C. McDonald
   */
 
 /* LICENSE

@@ -10,8 +10,7 @@
   * especially for comparing the execution of two
   * tests.
   *
-  * Last Updated: 5 August 2016
-  * Author: Jason C. McDonald
+  * Author(s): Jason C. McDonald
   */
 
 /* LICENSE

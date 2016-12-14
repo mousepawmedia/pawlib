@@ -1,10 +1,10 @@
-/** AVL Tree [PawLIB]
+/** Base FlexArray [PawLIB]
   * Version: 1.0
   *
   * The base class for a dynamic array with a low dynamic allocation demand.
-  * Designed to take the place of 'std::vector'.
+  * FlexArray, FlexQueue, and FlexStack all rely on these.
   *
-  * Author: Michael Parkman, Jonathan Theodore
+  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
   */
 
 /* LICENSE
@@ -55,40 +55,59 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template<class type>
+    template <typename type>
     class Base_FlexArr
     {
         public:
+            /** Create a new base flex array, with the default starting size.
+              */
             Base_FlexArr()
+            :theArray(nullptr), resizable(true), currElements(0), capacity(4)
             {
-                //NOTE: method double size sets the max_size to 8 on initiation
-                max_size = 4;
-                currElements = 0;
-                theArray = nullptr;
-                double_size(&theArray);
-                resizable = true;
+                /* The call to double_size() will sets the capacity to 8
+                 * on initiation. */
+
+                // Allocate the structure.
+                double_size();
             }
 
+            /** Create a new base flex array with room for the specified number
+              * of elements.
+              * \param the minimum number of elements the structure can hold.
+              */
             Base_FlexArr(int numElements)
+            :theArray(nullptr), resizable(true), currElements(0)
             {
-                /*set the size to be the power of 2 just below the entered number.
-                *double_size function will initiate with enough room in array*/
-                max_size = pow(2, floor(log2(numElements)));
-                currElements = 0;
-                double_size(0, theArray);// declaration count:...
-                resizable = false;
+                /* Set the size to be the power of 2 just below the entered
+                 * number. double_size() will initiate with enough
+                 * room in array. */
+                capacity = pow(2, floor(log2(numElements)));
+
+                // Allocate the structure.
+                double_size();
             }
 
+            /** Destructor. */
             ~Base_FlexArr()
             {
-                free(theArray);
+                if(theArray != nullptr)
+                {
+                    delete[] theArray;
+                }
             }
 
+            /** Access an element at a given index using the [] operator.
+              * For example, "theArray[5]".
+              */
             type operator[](unsigned int index)
             {
                 return at(index);
             }
 
+            /** Access an element at the given index.
+              * \param the index to access.
+              * \return the element at the given index.
+              */
             type at(unsigned int index)
             {
                 if(index > currElements - 1 || index < 0)
@@ -101,57 +120,110 @@ namespace pawlib
                 }
             }
 
+            /** Get the current number of elements in the structure.
+              * \return the number of elements
+              */
             int getSize()
             {
                 return currElements;
             }
 
+            /** Get the maximum number of elements the structure can hold
+              * without resizing.
+              * \return the maximum number of elements
+              */
             int getArraySize()
             {
-                return max_size;
+                return capacity;
             }
 
         protected:
+            /// The pointer to the actual structure in memory.
             type* theArray;
-            unsigned int currElements, max_size;
+
+            /// Whether the structure can be resize.
             bool resizable;
 
-            bool double_size(type** daArray)
-            {
-                //double the maximum size
-                max_size *= 2;
-                //create the new array with twice the number of elements, 8
+            /// The current number of elements in the structure.
+            unsigned int currElements;
 
-                type* tempArray = new type[max_size];
+            /** The maximum number of elements (capacity) that can be contained
+              * in the structure without resizing. */
+            unsigned int capacity;
 
-                //if there is an old array (change to NULL?)
-                if(*daArray && tempArray != nullptr)
-                {
-                    //transfer all the elements over
-                    for(unsigned int i = 0; i < currElements; i++)
-                    {
-                        tempArray[i] = (*daArray)[i];
-                    }
-                    delete (*daArray);
-                }
-                *daArray = tempArray;
-                return true;
-            }
-            //add the new element to the back of the array
-            bool push_back(type newElement)
+            /** Double the capacity of the structure.
+              * \return true if it was able to double capacity, else false.
+              */
+            bool double_size()
             {
-                if(currElements > max_size - 2 && resizable)
+                // If we're not allowed to resize...
+                if(!resizable)
                 {
-                    double_size(&theArray);
-                }
-                else if(currElements > max_size - 2 && !resizable)
-                {
-                    /*Out of room and not allowed to resize.
-                      Throw an index out of bounds exception.*/
-                    ioc << cat_error << "Array is full and cannot be resized" << io_end;
+                    // Report failure.
                     return false;
                 }
-                theArray[currElements++] = newElement;
+
+                // Double the maximum size (capacity).
+                capacity *= 2;
+
+                /* Create the new structure with the new capacity.*/
+                type* tempArray = new type[capacity];
+
+                // If there was an error allocating the new array...
+                if(tempArray == nullptr)
+                {
+                    // Report failure.
+                    return false;
+                }
+
+                // If an old array exists...
+                if(this->theArray != nullptr)
+                {
+                    // Transfer all of the elements over.
+                    for(unsigned int i = 0; i < currElements; i++)
+                    {
+                        tempArray[i] = this->theArray[i];
+                    }
+
+                    // Delete the old structure.
+                    delete[] theArray;
+                    this->theArray = nullptr;
+                }
+
+                // Store the new structure.
+                this->theArray = tempArray;
+
+                // Report success.
+                return true;
+            }
+
+            /** Add the given element to the back of the structure.
+              * \param the element to add to the structure.
+              * \return true if successful, else false.
+              */
+            bool push_back(type newElement)
+            {
+                /* If we only have room to push THIS element before running
+                 * out of room in the structure...*/
+                if(currElements > capacity - 1)
+                {
+                    /* Attempt to double the structure's capacity.
+                     * If it fails...*/
+                    if(!double_size())
+                    {
+                        /* Out of room and could not resize.
+                         * Throw a non-fatal error. */
+                        ioc << cat_error << "Data structure is full and cannot be resized." << io_end;
+
+                        // Report the failure status.
+                        return false;
+                    }
+                }
+
+                // Add the new element to the structure.
+                this->theArray[currElements++] = newElement;
+
+                // Report success.
                 return true;
             }
 
