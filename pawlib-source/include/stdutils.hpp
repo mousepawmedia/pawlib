@@ -51,14 +51,17 @@
 #include <cstdio>
 #include <cstdint>
 #include <limits>
+#include <stdexcept>
 
 // Needed for stdsplit
 #include <string>
+//NOTE: Due to a bug, this only works on g++ 5.3 or higher.
+#if __GNUC__ > 5 || (__GNUC__ == 5 && (__GNUC_MINOR__ > 3 || (__GNUC_MINOR__ == 3 && __GNUC_PATCHLEVEL__ > 0)))
 #include <vector>
 
-//NOTE: Leave this commented out until you are on g++ 5.3 or higher.
 using std::isinf;
 using std::isnan;
+#endif // __GNUC__
 namespace pawlib
 {
     ////const double PRECISION = 0.00000000000001;

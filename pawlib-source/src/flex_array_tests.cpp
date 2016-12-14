@@ -2,18 +2,32 @@
 
 namespace pawlib
 {
+    const int onethou = 1000;
+    const int hunthou = 100000;
+    //const int tenmill = 10,000,000; // for stress testing
     void TestSuite_FlexArray::load_tests()
     {
-        register_test("P-tB1001", new TestFlex_Push);
-        register_test("P-tB1001*", new TestVector_Push, false);
+        //Benchmark test section for "Push" function (flexarray vs. vector)
+        //push at end
+        register_test("P-tB1001", new TestFArray_Push(onethou));
+        register_test("P-tS1001", new TestFArray_Push(hunthou), false);
+        register_test("P-tB1001*", new TestVector_Push(onethou), false);
 
-        register_test("P-tB1002", new TestFlex_Shift);
-        register_test("P-tB1002*", new TestVector_Shift, false);
+        //Benchmark test section for "Shift" function (flexarray vs. vector)
+        //push at front
+        register_test("P-tB1002", new TestFArray_Shift(onethou));
+        register_test("P-tS1002", new TestFArray_Shift(hunthou), false);
+        register_test("P-tB1002*", new TestVector_Shift(onethou), false);
 
-        register_test("P-tB1003", new TestFlex_ShiftAlt);
+        //Benchmark test section for "Insert" function (flexarray vs. vector)
+        //insert at middle
+        register_test("P-tB1003", new TestFArray_Insert(onethou));
+        register_test("P-tS1003", new TestFArray_Insert(hunthou), false);
+        register_test("P-tB1003*", new TestVector_Insert(onethou), false);
 
-        register_test("P-tB1004", new TestFlex_Insert);
-        register_test("P-tB1004*", new TestVector_Insert, false);
+        register_test("P-tB1004", new TestFArray_Yank(onethou));
+        register_test("P-tS1004", new TestFArray_Yank(hunthou), false);
+        register_test("P-tB1004*", new TestVector_Erase(onethou), false);
     }
 
 }

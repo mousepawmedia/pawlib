@@ -3,7 +3,7 @@
   *
   * A queue with a low dynamic allocation demand.
   *
-  * Last Updated: 8 March 2016
+  * Last Updated: 22 June, 2016 by Jonathan Theodore
   * Author: Michael Parkman
   */
 
@@ -54,15 +54,15 @@ using namespace pawlib::ioformat;
 namespace pawlib
 {
     template <class type>
-    class flex_queue : public Base_FlexArr<type>
+    class FlexQueue : public Base_FlexArr<type>
     {
         public:
-            flex_queue() : Base_FlexArr<type>(){ }
-            // cppcheck-suppress noExplicitConstructor
-            Queue(int numElements) : Base_FlexArr<type>(numElements){ }
+            FlexQueue() : Base_FlexArr<type>(){ }
+
+            explicit FlexQueue(unsigned int numElements) : Base_FlexArr<type>(numElements){ }
 
             //adds the passed in element to the queue
-            void add(type newElement)
+            void push(type newElement)
             {
                 this->push_back(newElement);
             }
@@ -74,7 +74,7 @@ namespace pawlib
             }
 
             //removes and returns the first element in the queue
-            type poll()
+            type pop()
             {
                 //if there is an element that can be removed
                 if(this->currElements > 0)
@@ -82,7 +82,7 @@ namespace pawlib
                     //set temp to be the first element in the queue
                     type temp = this->theArray[0];
                     //shift all elements to the left 1 effectively deleting the element
-                    for(int i = 0; i < this->currElements - 1; i++)
+                    for( unsigned int i = 0; i < this->currElements - 1; ++i)
                     {
                         this->theArray[i] = this->theArray[i + 1];
                     }
@@ -94,8 +94,7 @@ namespace pawlib
                 //if the queue is empty
                 else
                 {
-                    ioc << cat_error << vrb_quiet << "The queue is empty" << io_end;
-                    return nullptr;
+                   throw std::out_of_range("The FlexQueue is empty.");
                 }
             }
     };

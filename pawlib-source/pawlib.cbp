@@ -162,7 +162,9 @@
 		<Unit filename="include/flex_bit.hpp" />
 		<Unit filename="include/flex_bit_tests.hpp" />
 		<Unit filename="include/flex_queue.hpp" />
+		<Unit filename="include/flex_queue_tests.hpp" />
 		<Unit filename="include/flex_stack.hpp" />
+		<Unit filename="include/flex_stack_tests.hpp" />
 		<Unit filename="include/goldilocks.hpp" />
 		<Unit filename="include/iochannel.hpp" />
 		<Unit filename="include/map.hpp" />
@@ -182,6 +184,8 @@
 		<Unit filename="src/core_types.cpp" />
 		<Unit filename="src/core_types_tests.cpp" />
 		<Unit filename="src/flex_array_tests.cpp" />
+		<Unit filename="src/flex_queue_tests.cpp" />
+		<Unit filename="src/flex_stack_tests.cpp" />
 		<Unit filename="src/flex_bit_tests.cpp" />
 		<Unit filename="src/goldilocks.cpp" />
 		<Unit filename="src/iochannel.cpp" />

@@ -73,7 +73,7 @@ namespace pawlib
     {
         if(base < 2 || base > 36)
         {
-            return -1;
+            throw std::invalid_argument("stdutils::intlen: Invalid base. Must be between 2 and 36.");
         }
         int digits = 0;
         if (number < 0 && count_neg)
@@ -88,7 +88,7 @@ namespace pawlib
         while (number)
         {
             number /= base;
-            digits++;
+            ++digits;
         }
 
         return digits;

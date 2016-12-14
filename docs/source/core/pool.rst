@@ -27,7 +27,7 @@ Technical Limitations
 
 Pool can store a maximum of 4,294,967,294 objects. This is because it uses
 32-bit unsigned integers for internal indexing, with the largest value
-reserved as ``INVALID_INDEX``. The limit is calculated as follows.
+reserved as  ``INVALID_INDEX``. The limit is calculated as follows.
 
 ``2^{32} - 2 = 4,294,967,294``
 

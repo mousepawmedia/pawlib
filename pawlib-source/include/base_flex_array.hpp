@@ -4,8 +4,7 @@
   * The base class for a dynamic array with a low dynamic allocation demand.
   * Designed to take the place of 'std::vector'.
   *
-  * Last Updated: 8 March 2016
-  * Author: Michael Parkman
+  * Author: Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
@@ -62,24 +61,21 @@ namespace pawlib
         public:
             Base_FlexArr()
             {
-                //method double size sets the size to 8 on initiation
-                size = 4;
+                //NOTE: method double size sets the max_size to 8 on initiation
+                max_size = 4;
                 currElements = 0;
-                //NOTE: Replace with NULL?
                 theArray = nullptr;
                 double_size(&theArray);
                 resizable = true;
             }
 
-            // cppcheck-suppress noExplicitConstructor
             Base_FlexArr(int numElements)
             {
                 /*set the size to be the power of 2 just below the entered number.
-                *double_size funtion will initiate with enough room in array*/
-                size = pow(2, floor(log2(numElements)));
+                *double_size function will initiate with enough room in array*/
+                max_size = pow(2, floor(log2(numElements)));
                 currElements = 0;
-                //NOTE: Replace with NULL?
-                double_size(0, theArray);
+                double_size(0, theArray);// declaration count:...
                 resizable = false;
             }
 
@@ -88,7 +84,7 @@ namespace pawlib
                 free(theArray);
             }
 
-            type operator[](int index)
+            type operator[](unsigned int index)
             {
                 return at(index);
             }
@@ -97,8 +93,7 @@ namespace pawlib
             {
                 if(index > currElements - 1 || index < 0)
                 {
-                   throw std::out_of_range("Index out of bounds.");
-
+                    throw std::out_of_range("BaseFlexArray: Index out of range!");
                 }
                 else
                 {
@@ -113,30 +108,31 @@ namespace pawlib
 
             int getArraySize()
             {
-                return size;
+                return max_size;
             }
 
         protected:
             type* theArray;
-            unsigned int currElements, size;
+            unsigned int currElements, max_size;
             bool resizable;
 
             bool double_size(type** daArray)
             {
-                //double the size
-                size *= 2;
-                //create the new array with twice the number of elements
-                // cppcheck-suppress unmatchedSuppression
-                type* tempArray = (type*) malloc(size * sizeof(type));
+                //double the maximum size
+                max_size *= 2;
+                //create the new array with twice the number of elements, 8
+
+                type* tempArray = new type[max_size];
+
                 //if there is an old array (change to NULL?)
-                if(*daArray != nullptr)
+                if(*daArray && tempArray != nullptr)
                 {
                     //transfer all the elements over
                     for(unsigned int i = 0; i < currElements; i++)
                     {
                         tempArray[i] = (*daArray)[i];
                     }
-                    free(*daArray);
+                    delete (*daArray);
                 }
                 *daArray = tempArray;
                 return true;
@@ -144,19 +140,16 @@ namespace pawlib
             //add the new element to the back of the array
             bool push_back(type newElement)
             {
-                if(currElements > size - 2 && resizable)
+                if(currElements > max_size - 2 && resizable)
                 {
                     double_size(&theArray);
                 }
-                else if(currElements > size - 2 && !resizable)
+                else if(currElements > max_size - 2 && !resizable)
                 {
-                    /*Note:Throw Error. Out of room and not allowed to resize
-                     *throw an index out of bounds exception
-                     *print current size*/
-                    ioc << cat_error << vrb_quiet << "Flex Array Size = " << size
-                       //this->currElements - 1 //prints elements minus one
-                       << " Array is full and cannot be resized" << io_end;
-                       return false;
+                    /*Out of room and not allowed to resize.
+                      Throw an index out of bounds exception.*/
+                    ioc << cat_error << "Array is full and cannot be resized" << io_end;
+                    return false;
                 }
                 theArray[currElements++] = newElement;
                 return true;

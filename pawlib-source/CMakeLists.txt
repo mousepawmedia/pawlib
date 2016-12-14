@@ -46,8 +46,11 @@ add_library(pawlib STATIC
     include/core_types.hpp
     include/core_types_tests.hpp
     include/flex_array.hpp
+    include/flex_array_tests.hpp
     include/flex_queue.hpp
+    include/flex_queue_tests.hpp
     include/flex_stack.hpp
+    include/flex_stack_tests.hpp
     include/goldilocks.hpp
     include/iochannel.hpp
     include/map.hpp
@@ -65,11 +68,13 @@ add_library(pawlib STATIC
     include/stdutils.hpp
     include/flex_bit_tests.hpp
     include/flex_bit.hpp
-    
+
     src/binconv.cpp
     src/core_types.cpp
     src/core_types_tests.cpp
     src/flex_array_tests.cpp
+    src/flex_queue_tests.cpp
+    src/flex_stack_tests.cpp
     src/flex_bit_tests.cpp
     src/goldilocks.cpp
     src/iochannel.cpp
@@ -81,7 +86,7 @@ add_library(pawlib STATIC
     src/pool_tests.cpp
     src/quickstring.cpp
     src/stdutils.cpp
-    
+
 )
 
 target_link_libraries(pawlib ${CMAKE_HOME_DIRECTORY}/../cpgf/lib/libcpgf.a)

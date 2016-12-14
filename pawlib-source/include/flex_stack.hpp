@@ -3,8 +3,9 @@
   *
   * A stack with a low dynamic allocation demand.
   *
-  * Last Updated: 8 March 2016
+  * Last Updated: 22 June, 2016 by Jonathan Theodore
   * Author: Michael Parkman
+  *
   */
 
 /* LICENSE
@@ -42,11 +43,12 @@
  * on how to contribute to our projects.
  */
 
-#ifndef STACK_HPP_INCLUDED
-#define STACK_HPP_INCLUDED
+#ifndef FLEX_STACK_HPP_INCLUDED
+#define FLEX_STACK_HPP_INCLUDED
 
 #include "base_flex_array.hpp"
 #include <iochannel.hpp>
+#include <stack>
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;
@@ -58,8 +60,19 @@ namespace pawlib
     {
         public:
             FlexStack() : Base_FlexArr<type>() { }
-            // cppcheck-suppress noExplicitConstructor
-            FlexStack(int numElements) : Base_FlexArr<type>(numElements) { }
+
+            explicit FlexStack(unsigned int numElements) : Base_FlexArr<type>(numElements) { }
+            //adds the passed in element to the back of the stack
+            void push(type newElement)
+            {
+                this->push_back(newElement);
+            }
+
+            //returns the value in the first index of the stack
+            type peek()
+            {
+                return this->at(0);
+            }
 
             //removes the last element in the stack
             type pop()
@@ -67,7 +80,7 @@ namespace pawlib
                 //if the stack is empty
                 if(this->currElements == 0)
                 {
-                    throw std::length_error("The stack is empty");
+                    throw std::out_of_range("The FlexStack is empty.");
                 }
                 else
                 {
@@ -75,15 +88,6 @@ namespace pawlib
                     return this->theArray[--this->currElements];
                 }
             }
-
-            //adds the passed in element to the back of the stack
-            void push(type newElement)
-            {
-                this->push_back(newElement);
-            }
-
-        private:
     };
 }
-
 #endif // STACK_HPP_INCLUDED

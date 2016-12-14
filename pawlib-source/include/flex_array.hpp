@@ -4,7 +4,7 @@
   * A dynamic array with a low dynamic allocation demand.
   * Designed to take the place of 'std::vector'.
   *
-  * Last Updated: 8 March 2016
+  * Last Updated: 22 June, 2016 by Jonathan Theodore
   * Author: Michael Parkman
   */
 
@@ -59,8 +59,8 @@ namespace pawlib
     {
         public:
             FlexArray() : Base_FlexArr<type>() { }
-            // cppcheck-suppress noExplicitConstructor
-            FlexArray(int numElements) : Base_FlexArr<type>(numElements) { }
+
+           explicit FlexArray(unsigned int numElements) : Base_FlexArr<type>(numElements) { }
 
             //insert an element into the flex_array at a given index. Unsigned to prevent negatives.
             bool insert(type newElement, unsigned int index)
@@ -80,7 +80,7 @@ namespace pawlib
                 else
                 {
                     //if the number of elements is equal to the number of avaiable slots
-                    if(this->currElements == this->size)
+                    if(this->currElements == this->max_size)
                     {
                         //double the number of slots
                         this->double_size(&this->theArray);
@@ -101,21 +101,25 @@ namespace pawlib
             }
 
             //remove the element at the given index
-            type yank(int index)
+            type yank(unsigned int index)
             {
                 //if there are no elements in the array
                 if(this->currElements == 0)
                 {
+                    //assign temp to be the element at the passed in index
+                    type temp = this->theArray[index];
                     //throw error and return null
-                    ioc << cat_error << vrb_quiet << "Flex Array is emptry" << io_end;
-                    return nullptr;
+                    ioc << cat_error << vrb_quiet << "Flex Array is empty" << io_end;
+                    return temp;
                 }
                 //else if index is out of bounds
-                else if(index < 0 || index > this->size)
+                else if(index > this->max_size)
                 {
+                    //assign temp to be the element at the passed in index
+                    type temp = this->theArray[index];
                     //throw error and return null
                     ioc << cat_error << vrb_quiet << "Index out of bounds" << io_end;
-                    return nullptr;
+                    return temp;
                 }
                 else
                 {
@@ -123,7 +127,7 @@ namespace pawlib
                     type temp = this->theArray[index];
                     //shift all of the elements to the right of the index, to the left 1
                     //this effectivly deletes the element from the array
-                    for(int i = index; i < this->currElements - 1; i++)
+                    for(unsigned int i = index; i < this->currElements - 1; i++)
                     {
                         this->theArray[i] = this->theArray[i + 1];
                     }
@@ -134,14 +138,14 @@ namespace pawlib
                 }
             }
 
-            //insert in the beginning
+            //insert at the beginning
             bool shift(type newElement)
             {
                 //if there are elements currently within the array
                 if(this->currElements > 0)
                 {
                     //if the array is currently maxed out
-                    if(this->currElements == this->size)
+                    if(this->currElements == this->max_size)
                     {
                         //double the size of the array
                         this->double_size(&this->theArray);
