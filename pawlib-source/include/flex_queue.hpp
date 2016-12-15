@@ -94,18 +94,29 @@ namespace pawlib
                 return true;
             }
 
-            /** Returns the first element in the FlexQueue without modifying
-              * the data structure.
-              * \return the first element in the FlexQueue.
+            /** Returns the next (first) element in the FlexQueue without
+              * modifying the data structure.
+              * \return the next element in the FlexQueue.
               */
             type peek()
             {
-                return this->at(0);
+                // If there is at least one element in the array...
+                if(this->currElements > 0)
+                {
+                    // Return that element.
+                    return this->at(0);
+                }
+                // Otherwise...
+                else
+                {
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
+                }
             }
 
             /** Return and remove the next element in the FlexQueue.
               * This is technically an unshift(), NOT a pop().
-              * \return the last element, now removed.
+              * \return the next (first) element, now removed.
               */
             type pop()
             {

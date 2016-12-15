@@ -234,7 +234,7 @@ is calculated as size()/2.";
             bool run()
             {
                 // Create an instance of vector.
-                std::vector< unsigned int> vec;
+                std::vector<unsigned int> vec;
 
                 // We initially push two values, to make the
                 // math calculating the insert index a bit safer.
@@ -424,6 +424,228 @@ Middle is calculated as size()/2.";
                 return true;
             }
         ~TestFArray_Yank(){}
+    };
+
+    // P-tB1005*
+    class TestVector_Unshift : public Test
+    {
+        private:
+            std::vector<unsigned int> vec;
+            unsigned int iters;
+
+        public:
+            explicit TestVector_Unshift(unsigned int iterations)
+                :iters(iterations)
+                {}
+
+            testdoc_t get_title()
+            {
+                return "FlexArray: Pop " + stdutils::itos(iters, 10) + " Integers (std::vector)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Pop " + stdutils::itos(iters, 10) + " integers from a std::vector.";
+            }
+
+            bool pre()
+            {
+                return janitor();
+            }
+
+            bool janitor()
+            {
+                // Refill the std::queue
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    vec.push_back(i);
+                }
+                return true;
+            }
+
+            bool run()
+            {
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    unsigned int temp = vec.front();
+
+                    // Can't happen, so if it does, things went weird.
+                    if(vec.front() != temp)
+                    {
+                        return false;
+                    }
+
+                    vec.erase(vec.begin());
+                }
+                return true;
+            }
+            ~TestVector_Unshift(){}
+    };
+
+    // P-tB1005, P-tS1005
+    class TestFArray_Unshift : public Test
+    {
+        private:
+            pawlib::FlexArray<unsigned int> flex;
+            unsigned int iters;
+
+        public:
+            explicit TestFArray_Unshift(unsigned int iterations)
+                :iters(iterations)
+                {}
+
+            testdoc_t get_title()
+            {
+                return "FlexArray: Unshift " + stdutils::itos(iters, 10) + " Integers (FlexArray)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Unshift " + stdutils::itos(iters, 10) + " integers from a FlexArray.";
+            }
+
+            bool pre()
+            {
+                return janitor();
+            }
+
+            bool janitor()
+            {
+                // Refill FlexQueue.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    flex.push(i);
+                }
+                return true;
+            }
+
+            bool run()
+            {
+                // Pop each element.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    // If the element does not equal the next expected element...
+                    if(flex.unshift() != i)
+                    {
+                        // Report failure.
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            ~TestFArray_Unshift(){}
+    };
+
+    // P-tB1006*
+    class TestVector_Pop : public Test
+    {
+        private:
+            std::vector<unsigned int> vec;
+            unsigned int iters;
+        public:
+            explicit TestVector_Pop(unsigned int iterations)
+                :iters(iterations)
+                {}
+
+            // Test title
+            testdoc_t get_title()
+            {
+                return"FlexArray: Pop " + stdutils::itos(iters, 10) + " integers from a std::vector.";
+            }
+            // test documentation
+            testdoc_t get_docs()
+            {
+                return "Pop " + stdutils::itos(iters, 10) + " integers from a std::vector.";
+            }
+
+            bool pre()
+            {
+                return janitor();
+            }
+
+            bool janitor()
+            {
+                // Refill the std::vector.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    vec.push_back(i);
+                }
+                return true;
+            }
+
+            bool run()
+            {
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    unsigned int temp = vec.back();
+
+                    // Can't happen, so if it does, things went weird.
+                    if(vec.back() != temp)
+                    {
+                        return false;
+                    }
+
+                    vec.pop_back();
+                }
+                return true;
+            }
+
+            ~TestVector_Pop(){}
+    };
+
+    // P-tB1006, P-tS1006
+    class TestFArray_Pop : public Test
+    {
+        private:
+            pawlib::FlexArray<unsigned int> flex;
+            unsigned int iters;
+
+        public:
+            explicit TestFArray_Pop(unsigned int iterations)
+                :iters(iterations)
+                {}
+
+            testdoc_t get_title()
+            {
+                return"FlexArray: Pop " + stdutils::itos(iters, 10) + " integers from a FlexArray.";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Pop " + stdutils::itos(iters, 10) + " integers from a FlexArray.";
+            }
+
+            bool pre()
+            {
+                return janitor();
+            }
+
+            bool janitor()
+            {
+                // Refill the FlexArray.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    flex.push(i);
+                }
+                return true;
+            }
+            bool run()
+            {
+                // Pop each element.
+                for(unsigned int i=(iters-1); i; --i)
+                {
+                    // If the element does not equal the next expected element...
+                    if(flex.pop() != i)
+                    {
+                        // Report failure.
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            ~TestFArray_Pop(){}
     };
 
     class TestSuite_FlexArray : public TestSuite

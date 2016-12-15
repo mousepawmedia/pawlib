@@ -59,31 +59,72 @@ namespace pawlib
         public:
             FlexStack() : Base_FlexArr<type>() { }
 
-            explicit FlexStack(unsigned int numElements) : Base_FlexArr<type>(numElements) { }
-            //adds the passed in element to the back of the stack
-            void push(type newElement)
+            explicit FlexStack(unsigned int numElements)
+            :Base_FlexArr<type>(numElements)
+            {}
+
+            /** Add the specified element to the FlexStack.
+              * \param the element to add.
+              * \return true if successful, else false.
+              */
+            bool push(type newElement)
             {
-                this->push_back(newElement);
+                // If the array is full...
+                if(this->currElements == this->capacity)
+                {
+                    // Attempt to double the array's capacity. If it fails...
+                    if(!this->double_size())
+                    {
+                        // Report failure.
+                        return false;
+                    }
+                }
+
+                /* Store the new element in the last position and
+                 * increment the number of elements. */
+                this->theArray[(this->currElements)++] = newElement;
+
+                // Report success.
+                return true;
             }
 
-            //returns the value in the first index of the stack
+            /** Returns the next (last) element in the FlexStack without
+              * modifying the data structure.
+              * \return the next element in the FlexStack.
+              */
             type peek()
             {
-                return this->at(0);
-            }
-
-            //removes the last element in the stack
-            type pop()
-            {
-                //if the stack is empty
-                if(this->currElements == 0)
+                // If there is at least one element in the array...
+                if(this->currElements > 0)
                 {
-                    throw std::out_of_range("The FlexStack is empty.");
+                    // Return that element.
+                    return this->at(this->currElements-1);
                 }
+                // Otherwise...
                 else
                 {
-                    //return the last element in the stack and decrement the number of elements in the stack. This effectively deletes the element from the array.
-                    return this->theArray[--this->currElements];
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
+                }
+            }
+
+            /** Return and remove the next element in the FlexStack.
+              * \return the next (last) element, now removed.
+              */
+            type pop()
+            {
+                // If there are no elements...
+                if(this->currElements == 0)
+                {
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexStack: Cannot pop from empty FlexStack.");
+                }
+                // Else if there is at least one element...
+                else
+                {
+                    /* Return the last element and decrement the
+                     * number of elements. */
+                    return this->theArray[--(this->currElements)];
                 }
             }
     };

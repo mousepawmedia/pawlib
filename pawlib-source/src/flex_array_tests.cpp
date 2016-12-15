@@ -28,6 +28,14 @@ namespace pawlib
         register_test("P-tB1004", new TestFArray_Yank(onethou));
         register_test("P-tS1004", new TestFArray_Yank(hunthou), false);
         register_test("P-tB1004*", new TestVector_Erase(onethou), false);
+
+        register_test("P-tB1005", new TestFArray_Unshift(onethou));
+        register_test("P-tS1005", new TestFArray_Unshift(hunthou), false);
+        register_test("P-tB1005*", new TestVector_Unshift(onethou), false);
+
+        register_test("P-tB1006", new TestFArray_Pop(onethou));
+        register_test("P-tS1006", new TestFArray_Pop(hunthou), false);
+        register_test("P-tB1006*", new TestVector_Pop(onethou), false);
     }
 
 }

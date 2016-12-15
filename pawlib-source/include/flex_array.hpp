@@ -207,7 +207,18 @@ namespace pawlib
               */
             type peek()
             {
-                return this->at(0);
+                // If there is at least one element in the array...
+                if(this->currElements > 0)
+                {
+                    // Return that element.
+                    return this->at(0);
+                }
+                // Otherwise...
+                else
+                {
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
+                }
             }
 
             /** Returns and removes the first element in the FlexArray.
@@ -223,7 +234,7 @@ namespace pawlib
 
                     /* Shift all elements to the left one index. This
                      * effectively deletes the first element from the array. */
-                    for(int i = 0; i < this->currElements - 1; ++i)
+                    for(unsigned int i = 0; i < this->currElements - 1; ++i)
                     {
                         this->theArray[i] = this->theArray[i + 1];
                     }

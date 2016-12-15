@@ -143,7 +143,7 @@ namespace pawlib
 
             testdoc_t get_docs()
             {
-                return "FlexQueue: Peek the first out of five integers placed into a FlexQueue";
+                return "Peek the first of five integers placed into a FlexQueue";
             }
 
             //Set up for the test.

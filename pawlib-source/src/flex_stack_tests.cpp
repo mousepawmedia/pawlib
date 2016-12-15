@@ -16,8 +16,10 @@ namespace pawlib
         register_test("P-tS1301", new TestFStack_Push(hunthou), false);
         register_test("P-tB1301*", new TestSStack_Push(onethou), false);
 
-        register_test("P-tB1302", new TestFStack_Pop(onethou));
-        register_test("P-tS1302", new TestFStack_Pop(hunthou), false);
-        register_test("P-tB1302*", new TestSStack_Pop(onethou), false);
+        register_test("P-tB1302", new TestFStack_Peek());
+
+        register_test("P-tB1303", new TestFStack_Pop(onethou));
+        register_test("P-tS1303", new TestFStack_Pop(hunthou), false);
+        register_test("P-tB1303*", new TestSStack_Pop(onethou), false);
     }
 }
