@@ -3,7 +3,7 @@
   *
   * A Flex-based queue with a low dynamic allocation demand.
   *
-  * Author(s): Michael Parkman, Jonathan Theodore
+  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
   */
 
 /* LICENSE

@@ -4,7 +4,7 @@
   * A dynamic array with a low dynamic allocation demand.
   * Designed to take the place of 'std::vector'.
   *
-  * Author(s): Michael Parkman, Jonathan Theodore
+  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
   */
 
 /* LICENSE

@@ -1,7 +1,7 @@
 /** Tests for FlexStack[PawLIB]
   * Version: 1.0
   *
-  * Author(s): Jonathan Theodore
+  * Author(s): Jonathan Theodore, Jason C. McDonald
   */
 
 /* LICENSE
