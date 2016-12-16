@@ -180,10 +180,15 @@ namespace pawlib
                 if(this->theArray != nullptr)
                 {
                     // Transfer all of the elements over.
-                    for(unsigned int i = 0; i < currElements; i++)
+                    /*for(unsigned int i = 0; i < currElements; i++)
                     {
                         tempArray[i] = this->theArray[i];
-                    }
+                    }*/
+                    memmove(
+                        tempArray,
+                        this->theArray,
+                        sizeof(type) * this->currElements
+                    );
 
                     // Delete the old structure.
                     delete[] theArray;
@@ -195,6 +200,32 @@ namespace pawlib
 
                 // Report success.
                 return true;
+            }
+
+            /** Shift all elements from the given position the given direction
+              * and distance. This is intended for internal use only, and does
+              * not check for memory errors.
+              * \param the index to shift elements from
+              * \param the direction and distance to shift the elements in.
+              */
+            void mem_shift(unsigned int fromIndex, int direction)
+            {
+                if(fromIndex + 1 > this->currElements)
+                {
+                    return;
+                }
+
+                memmove(
+                    // Move TO the given index.
+                    this->theArray + (fromIndex + direction),
+                    // Move FROM the given index, plus one.
+                    this->theArray + fromIndex,
+                    /* Total move size is the number of elements to be moved,
+                    * times element size. The number of elements we move
+                    * is calculated from the 1-based total number of elements.
+                    */
+                    sizeof(type) * ((this->currElements) - (fromIndex))
+                );
             }
 
             /** Add the given element to the back of the structure.

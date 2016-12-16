@@ -440,12 +440,12 @@ Middle is calculated as size()/2.";
 
             testdoc_t get_title()
             {
-                return "FlexArray: Pop " + stdutils::itos(iters, 10) + " Integers (std::vector)";
+                return "FlexArray: Unshift " + stdutils::itos(iters, 10) + " Integers (std::vector)";
             }
 
             testdoc_t get_docs()
             {
-                return "Pop " + stdutils::itos(iters, 10) + " integers from a std::vector.";
+                return "Unshift " + stdutils::itos(iters, 10) + " integers from a std::vector.";
             }
 
             bool pre()

@@ -45,6 +45,7 @@
 #ifndef FLEX_ARRAY_HPP_INCLUDED
 #define FLEX_ARRAY_HPP_INCLUDED
 
+#include <stdio.h>
 #include <stdexcept>
 
 #include <base_flex_array.hpp>
@@ -110,10 +111,8 @@ namespace pawlib
                     {
                         /* Every element to the right of the index should
                          * be shifted right one position. */
-                        for(unsigned int i = this->currElements - 1; i > index; --i)
-                        {
-                            this->theArray[i] = this->theArray[i - 1];
-                        }
+                        this->mem_shift(index + 1, 1);
+
                         // Place the new element at the specified index.
                         this->theArray[index] = newElement;
                     }
@@ -151,12 +150,9 @@ namespace pawlib
 
                     /* All of the elements to the right of the index should be
                      * shifted left one position. This effectively deletes the
-                     * element from the array.
-                     */
-                    for(unsigned int i = index; i < this->currElements - 1; ++i)
-                    {
-                        this->theArray[i] = this->theArray[i+1];
-                    }
+                     * element from the array.*/
+                    this->mem_shift(index + 1, -1);
+
                     // Decrement the number of elements.
                     --(this->currElements);
 
@@ -185,10 +181,7 @@ namespace pawlib
                         }
                     }
                     // Shift all the elements to the right one position.
-                    for(int i = this->currElements - 1; i > 0; --i)
-                    {
-                        this->theArray[i] = this->theArray[i - 1];
-                    }
+                    this->mem_shift(0, 1);
                 }
 
                 // Store the new element in the first position.
@@ -232,12 +225,10 @@ namespace pawlib
                     // Store the first element, to be returned later.
                     type temp = this->theArray[0];
 
-                    /* Shift all elements to the left one index. This
-                     * effectively deletes the first element from the array. */
-                    for(unsigned int i = 0; i < this->currElements - 1; ++i)
-                    {
-                        this->theArray[i] = this->theArray[i + 1];
-                    }
+                    /* Move all elements to the left one index. This
+                     * effectively deletes the first element from the array.
+                     * We perform a raw memory move for efficiency. */
+                    this->mem_shift(1, -1);
 
                     // Decrement the number of elements.
                     --(this->currElements);
