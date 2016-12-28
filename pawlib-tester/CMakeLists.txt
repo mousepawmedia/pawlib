@@ -8,23 +8,43 @@ project("PawLIB Tester")
 # Allow GCC 5.x
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "5")
-        message(FATAL_ERROR "GCC is too old (<v5.x) required. Aborting build.")
+        message(FATAL_ERROR "GCC is too old. >= v5.x required. Aborting build.")
     endif()
-    message("GCC 5.x detected. Proceeding...")
+    message("GCC 5.x or later detected. Proceeding...")
 # Allow compilers that simulate GCC 5.x.
 elseif(CMAKE_CXX_SIMULATE_ID STREQUAL "GNU")
     if(CMAKE_CXX_SIMULATE_VERSION VERSION_LESS "5")
         message(FATAL_ERROR "Not simulating GCC 5.x. Aborting build.")
     endif()
-    message("GCC 5.x simulation detected. Proceeding...")
+    message("GCC (5.x or later) simulation detected. Proceeding...")
+# Allow Clang 3.4
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.4")
+        message(FATAL_ERROR "Clang is too old. >= v3.4 required. Aborting build.")
+    endif()
+    message("Clang 3.4 or later detected. Proceeding...")
 else()
-    message(FATAL_ERROR "Not using or simulating GCC. Other compilers are not yet supported. Aborting build.")
+    message(FATAL_ERROR "Not using or simulating a compatible compiler (minimum GCC 5.x, Clang 3.4). Other compilers are not yet supported. Aborting build.")
 endif()
 
 # Target C++14
 set(CMAKE_CXX_STANDARD 14)
 # Disable extensions (turns gnu++14 to c++14)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Target 32-bit or 64-bit, based on ARCH variable.
+if(ARCH EQUAL 32)
+    message("Triggered 32-bit build (-m32).")
+    add_definitions(-m32)
+elseif(ARCH EQUAL 64)
+    message("Triggered 64-bit build (-m64).")
+    add_definitions(-m64)
+# If 32-bit or 64-bit wasn't specified, just use the default.
+elseif(NOT ARCH)
+    message("Building for default architecture.")
+else()
+    message(FATAL_ERROR "Invalid architecture (${ARCH}) specified. Aborting build.")
+endif()
 
 # Our global compiler flags.
 add_definitions(-Wall -Wextra -Werror)
