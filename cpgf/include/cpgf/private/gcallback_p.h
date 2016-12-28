@@ -186,7 +186,10 @@ struct SizeOfCallbackBase {
 };
 
 struct SizeOfCallbackSon : public SizeOfCallbackBase {
-	virtual void a(int) { (void)a(0); }
+    /* MOUSEPAW GAMES: The contents of this function don't actually do anyting, but cause
+     * Clang to complain about infinite recursion. Let's just define an empty function. */
+    ////virtual void a(int) { (void)a(0); }
+    virtual void a(int) { }
 };
 
 class CBAllocator
@@ -509,7 +512,8 @@ private:
 
 
 template <int arity, typename FT>
-class GCallbackFunctionTraits;
+//class GCallbackFunctionTraits;
+struct GCallbackFunctionTraits;
 
 GPP_REPEAT_2(CB_MAX_ARITY, CB_DEF_AGENT_N, GPP_EMPTY)
 
@@ -556,4 +560,3 @@ public:
 
 
 #endif
-

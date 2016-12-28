@@ -44,22 +44,25 @@
 #ifndef STDUTILS_H
 #define STDUTILS_H
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <cstdio>
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
-
+#include <vector>
 // Needed for stdsplit
 #include <string>
-//NOTE: Due to a bug, this only works on g++ 5.3 or higher.
-#if __GNUC__ > 5 || (__GNUC__ == 5 && (__GNUC_MINOR__ > 3 || (__GNUC_MINOR__ == 3 && __GNUC_PATCHLEVEL__ > 0)))
-#include <vector>
 
+/* NOTE: Due to bug 19439, if we're using GCC, this only works on g++ 5.3 or higher.
+ * https://sourceware.org/bugzilla/show_bug.cgi?id=19439
+ */
+#if defined(__clang__) || defined(__INTEL_COMPILER) || __GNUC__ > 5 || (__GNUC__ == 5 && (__GNUC_MINOR__ > 3 || (__GNUC_MINOR__ == 3 && __GNUC_PATCHLEVEL__ > 0)))
 using std::isinf;
 using std::isnan;
 #endif // __GNUC__
+
 namespace pawlib
 {
     ////const double PRECISION = 0.00000000000001;

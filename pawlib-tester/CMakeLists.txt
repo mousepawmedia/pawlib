@@ -47,13 +47,12 @@ else()
 endif()
 
 # Our global compiler flags.
-add_definitions(-Wall -Wextra)
+add_definitions(-Wall -Wextra -Werror)
 
 # If we're on GCC, use the -Werror flag.
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    add_definitions(-Werror)
-endif()
-# We cannot compile yet on Clang with -Werror, partly due to CPGF stuff.
+#if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+#    add_definitions(-Werror)
+#endif()
 
 # Set debug flags. -g is a default.
 #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ")

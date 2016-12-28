@@ -63,7 +63,8 @@ namespace pawlib
         public:
 
             //Default constructor.
-            FlexBit(): startIndex(0), totalSize(10), size(0)
+            FlexBit()
+            :startIndex(0), totalSize(10), size(0)
             {
                 container = new byte[totalSize];
             }

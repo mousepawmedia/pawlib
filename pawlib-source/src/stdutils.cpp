@@ -180,7 +180,8 @@ namespace pawlib
         }
 
         //Reverse the string.
-        char temp[strlen(str)] = {'\0'};
+        char temp[strlen(str)];
+        temp[0] = '\0';
         strcpy(temp, str);
         strcpy(str, strrev(temp));
     }
@@ -308,7 +309,9 @@ namespace pawlib
         *(pos++) = '0';
 
         //Reverse the string.
-        char temp[strlen(str)] = {'\0'};
+        char temp[strlen(str)];
+        temp[0] = '\0';
+
         strcpy(temp, str);
         strcpy(str, strrev(temp));
     }
@@ -363,7 +366,9 @@ namespace pawlib
         }
 
         //Reverse the string.
-        char temp[strlen(str)] = {'\0'};
+        char temp[strlen(str)];
+        temp[0] = '\0';
+
         strcpy(temp, str);
         strcpy(str, strrev(temp));
     }
@@ -517,7 +522,8 @@ namespace pawlib
                 c -= m;
 
                 //Reverse the string.
-                char temp[strlen(c)] = {'\0'};
+                char temp[strlen(c)];
+                temp[0] = '\0';
                 strcpy(temp, c);
                 strcpy(c, strrev(temp));
 
@@ -544,7 +550,14 @@ namespace pawlib
     std::string stdutils::itos(int val, int base, bool use_caps)
     {
         int len = intlen(val, base, true);
-        char cstr[len+1] = {'\0'};
+
+        char cstr[len+1];
+        /* We have to initialize after the fact to keep Clang happy,
+         * but we must fill the array to avoid memory issues.
+         * Thus, we'll use the std::fill_n function to fill the array
+         * with null characters. */
+        std::fill_n(cstr, len+1, '\0');
+
         itoa(cstr, val, base, len, use_caps);
         std::string str = cstr;
         return str;
@@ -552,10 +565,22 @@ namespace pawlib
 
     std::string stdutils::dtos(double val, int precision, int sci)
     {
+        /* Get the estimated maximum number of characters in the float, plus
+         * 1 for the null terminator.
+         */
+        int len = floatlen(val, precision, sci, true) + 1;
+
         /* Declare a new C-string with the size equal to the estimated
          * maximum number of characters in the float, plus 1 for the null
          * terminator.*/
-        char cstr[floatlen(val, precision, sci, true) + 1] = {'\0'};
+        char cstr[len];
+
+        /* We have to initialize after the fact to keep Clang happy,
+         * but we must fill the array to avoid memory issues.
+         * Thus, we'll use the std::fill_n function to fill the array
+         * with null characters. */
+        std::fill_n(cstr, len, '\0');
+
         //Convert the float to a cstring, and dump into cstr.
         ftoa(cstr, val, precision, sci);
         //Convert the cstring into a string.

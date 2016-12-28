@@ -450,7 +450,12 @@ namespace pawlib
         if(!can_parse()){return *this;}
 
         int len = stdutils::intlen(rhs, base, true) + 1;
-        char cstr[len] = {'\0'};
+
+        // We're changing approach below to keep Clang happy.
+        //// char cstr[len] = {'\0'};
+        char cstr[len];
+        cstr[0] = '\0';
+
         stdutils::itoa(cstr, rhs, base, len, numcase);
         inject(cstr);
         return *this;
@@ -472,7 +477,11 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        char cstr[stdutils::floatlen(rhs, precision, sci, true) + 1] = {'\0'};
+        // We're changing approach below to keep Clang happy.
+        ////char cstr[stdutils::floatlen(rhs, precision, sci, true) + 1] = {'\0'};
+        char cstr[stdutils::floatlen(rhs, precision, sci, true) + 1];
+        cstr[0] = '\0';
+
         //Convert the float to a cstring, and dump into cstr.
         stdutils::ftoa(cstr, rhs, precision, sci);
         inject(cstr);
@@ -631,7 +640,11 @@ namespace pawlib
                 }
             }
 
-            char mem[memsize] = {'\0'};
+            // We're changing approach below to keep Clang happy.
+            ////char mem[memsize] = {'\0'};
+            char mem[memsize];
+            mem[0] = '\0';
+
             stdutils::memdump(mem, ptr, len, false, memformat);
             inject(mem);
         }

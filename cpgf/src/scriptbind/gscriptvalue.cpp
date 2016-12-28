@@ -63,7 +63,7 @@ GScriptValue & GScriptValue::operator = (const GScriptValue & other)
 		this->metaItem = other.metaItem;
 		this->flags = other.flags;
 	}
-	
+
 	return *this;
 }
 
@@ -187,7 +187,11 @@ GVariant GScriptValue::toObject(IMetaClass ** outMetaClass, bool * outTransferOw
 		*outMetaClass = NULL;
 	}
 	if(outTransferOwnership != NULL) {
-		*outTransferOwnership = NULL;
+        /* MOUSEPAW GAMES: Clang compiler is complaining about implicit NULL to bool casting.
+         * Until we know why this code is this way, we'll just make that cast explicit
+         * to shut off the warning. */
+        ////*outTransferOwnership = NULL;
+        *outTransferOwnership = (bool)NULL;
 	}
 
 	if(this->isObject()) {
@@ -332,4 +336,3 @@ IMetaTypedItem * getTypedItemFromScriptValue(const GScriptValue & value)
 
 
 } // namespace cpgf
-

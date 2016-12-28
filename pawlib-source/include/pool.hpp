@@ -143,7 +143,7 @@ namespace pawlib
                     return index_available.pop();
                 }
                 // If our stack was empty...
-                catch(std::length_error)
+                catch(std::out_of_range)
                 {
                     // The pool is full.
                     return INVALID_INDEX;

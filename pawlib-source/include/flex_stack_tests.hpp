@@ -297,7 +297,7 @@ namespace pawlib
 
             testdoc_t get_title()
             {
-                return "Pawlib: FlexArray Tests";
+                return "PawLIB: FlexStack Tests";
             }
 
         private:
