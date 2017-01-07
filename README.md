@@ -1,5 +1,4 @@
-PawLIB
-=====================
+# PawLIB
 
 The **PawLIB** static library provides various common utility functions,
 many of which are designed as high-performance, near-drop-in-replacements
@@ -15,10 +14,9 @@ It is used by virtually all of MousePaw Games' core projects.
  - Goldilocks: Testing and benchmarking framework.
  - IOChannel: Feature-rich multi-output text output system. (Alternative to std::cout)
  - OneString: Performance string class with full Unicode support. (Alternative to std::string)
- - PuppeteerXML: OOP-based XML system based on Xerces.
 
-Authors
--------------
+## Authors
+
  - Nate Groggett
  - Jason C. McDonald
  - Michael Parkman
@@ -26,29 +24,29 @@ Authors
  - Scott Taylor
  - Jonathan Theodore
 
-Dependencies
--------------
+## Dependencies
+
 PawLIB depends on CPGF, which is included in this repository.
 
-Building
---------------
+## Building
+
 If you have the full source repository, see BUILDING.md for information
 on how to build PawLIB, PawLIB Tester, CPGF, and the documentation.
 
 The Ready-To-Use version of PawLIB only contains the folders 'include'
 and 'lib'. You can find the full source repository on [Github][5].
 
-Contributions
--------------
-We do not accept pull requests through GitHub.
+## Contributions
+
+We do NOT accept pull requests through GitHub.
 If you would like to contribute code, please read our
 [Contribution Guide][3].
 
 All contributions are licensed to us under the
 [MousePaw Games Terms of Development][4].
 
-License
--------------
+## License
+
 PawLIB is licenced under the BSD-3 License. (See LICENCE.md)
 
 The project is owned and maintained by [MousePaw Games][2].

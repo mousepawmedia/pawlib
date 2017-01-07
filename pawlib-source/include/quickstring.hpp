@@ -1,5 +1,5 @@
 /** QuickString [PawLIB]
-  * Version: 1.0
+  * Version: 0.3
   *
   * QuickString is a multi-sized replacement
   * for std::string. QuickString contains all the

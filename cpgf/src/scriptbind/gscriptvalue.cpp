@@ -187,11 +187,9 @@ GVariant GScriptValue::toObject(IMetaClass ** outMetaClass, bool * outTransferOw
 		*outMetaClass = NULL;
 	}
 	if(outTransferOwnership != NULL) {
-        /* MOUSEPAW GAMES: Clang compiler is complaining about implicit NULL to bool casting.
-         * Until we know why this code is this way, we'll just make that cast explicit
-         * to shut off the warning. */
+        /* MOUSEPAW GAMES: Clang compiler is complaining about implicit NULL to bool casting.*/
         ////*outTransferOwnership = NULL;
-        *outTransferOwnership = (bool)NULL;
+        *outTransferOwnership = false;
 	}
 
 	if(this->isObject()) {

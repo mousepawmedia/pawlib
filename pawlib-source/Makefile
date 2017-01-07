@@ -2,8 +2,6 @@ CMAKE = cmake ../.. -G"Unix Makefiles"
 T_DEBUG = -DCMAKE_BUILD_TYPE=Debug
 T_RELEASE = -DCMAKE_BUILD_TYPE=Release
 
-T_ARCH = -DARCH=
-
 MK_DIR = @cmake -E make_directory
 CH_DIR = @cmake -E chdir
 ECHO = @cmake -E echo

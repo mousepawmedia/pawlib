@@ -48,4 +48,4 @@ release:
 	$(CH_DIR) $(TEMP_DIR)/Release$(ARCH) $(CMAKE) $(T_RELEASE) -DARCH=$(ARCH)
 	$(EXEC_BUILD)/Release$(ARCH) make $(TARGET)
 
-.PHONY: clean cleandebug cleanrelease archswitch
+.PHONY: clean cleandebug cleanrelease

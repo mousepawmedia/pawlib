@@ -1,5 +1,5 @@
 /** OneChar [PawLIB]
-  * Version: 1.0
+  * Version: 0.3
   *
   * OneChar is a base class for the characters that make up
   * OneString and QuickString. OneChar is an abstract class. The two types of
@@ -304,4 +304,3 @@ namespace pawlib
     };
 }
 #endif // ONECHAR_HPP
-

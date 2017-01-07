@@ -1,5 +1,5 @@
 /** Tests for OneString[PawLIB]
-  * Version: 1.0
+  * Version: 0.3
   *
   * Author(s): Scott Taylor
   */

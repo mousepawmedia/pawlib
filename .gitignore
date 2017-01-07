@@ -15,3 +15,5 @@ cpgf/build/temp_cache**
 **/build_temp
 tester
 tester_debug
+*.config
+!default.config

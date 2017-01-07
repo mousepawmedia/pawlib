@@ -1,5 +1,5 @@
 /** OneString [PawLIB]
-  * Version: 1.0
+  * Version: 0.3
   *
   * OneString is a multi-sized, Unicode-compatible replacement
   * for std::string. OneString contains all the
