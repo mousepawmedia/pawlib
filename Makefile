@@ -20,10 +20,6 @@ none:
 	@echo "  ARCH=32	Make x86 build (-m32)"
 	@echo "  ARCH=64	Make x64 build (-m64)"
 	@echo
-	@echo "Use LLVM libc++."
-	@echo "  LLVM=true"
-	@echo "If not turned on explicitly, we'll just be compiling with the system's default C++ standard library."
-	@echo
 	@echo "Use Configuration File"
 	@echo "  CONFIG=foo      Uses the configuration file 'foo.config'"
 	@echo "                  in the root of this repository."
@@ -69,14 +65,14 @@ docs_pdf:
 	@echo "-------------"
 
 pawlib: cpgf
-	$(MAKE) release ARCH=$(ARCH) LLVM=$(LLVM) CONFIG=$(CONFIG) -C pawlib-source
+	$(MAKE) release ARCH=$(ARCH) CONFIG=$(CONFIG) -C pawlib-source
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
 	@echo "PawLIB is in 'pawlib-source/lib/Release'."
 	@echo "-------------"
 
 pawlib_debug: cpgf
-	$(MAKE) debug ARCH=$(ARCH) LLVM=$(LLVM) CONFIG=$(CONFIG) -C pawlib-source
+	$(MAKE) debug ARCH=$(ARCH) CONFIG=$(CONFIG) -C pawlib-source
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
 	@echo "PawLIB is in 'pawlib-source/lib/Debug'."
@@ -101,7 +97,7 @@ ready: pawlib
 	@echo "-------------"
 
 tester: pawlib
-	$(MAKE) release ARCH=$(ARCH) LLVM=$(LLVM) CONFIG=$(CONFIG) -C pawlib-tester
+	$(MAKE) release ARCH=$(ARCH) CONFIG=$(CONFIG) -C pawlib-tester
 	@rm -f tester
 	@ln -s pawlib-tester/bin/Release/pawlib-tester tester
 	@echo "-------------"
@@ -112,7 +108,7 @@ tester: pawlib
 
 
 tester_debug: pawlib_debug
-	$(MAKE) debug ARCH=$(ARCH) LLVM=$(LLVM) CONFIG=$(CONFIG) -C pawlib-tester
+	$(MAKE) debug ARCH=$(ARCH) CONFIG=$(CONFIG) -C pawlib-tester
 	@rm -f tester_debug
 	@ln -s pawlib-tester/bin/Debug/pawlib-tester tester_debug
 	@echo "-------------"

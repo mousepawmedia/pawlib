@@ -2,6 +2,14 @@ CMAKE = cmake ../.. -G"Unix Makefiles"
 T_DEBUG = -DCMAKE_BUILD_TYPE=Debug
 T_RELEASE = -DCMAKE_BUILD_TYPE=Release
 
+P_DEF_CONF = default
+P_CONF = -DCONFIG_FILENAME=
+ifneq ( , $(CONFIG))
+	P_CONF_PATH=$(CONFIG)
+else
+	P_CONF_PATH = $(P_DEF_CONF)
+endif
+
 MK_DIR = @cmake -E make_directory
 CH_DIR = @cmake -E chdir
 ECHO = @cmake -E echo
@@ -24,6 +32,11 @@ none:
 	@echo "Optional Architecture"
 	@echo "  ARCH=32	Make x86 build (-m32)"
 	@echo "  ARCH=64	Make x64 build (-m64)"
+	@echo
+	@echo "Use Configuration File"
+	@echo "  CONFIG=foo      Uses the configuration file 'foo.config'"
+	@echo "                  in the root of this repository."
+	@echo "  When unspecified, default.config will be used."
 
 clean:
 	@cmake -E remove_directory $(BUILD_DIR)
@@ -39,12 +52,12 @@ cleanrelease:
 
 debug:
 	$(MK_DIR) $(TEMP_DIR)/Debug$(ARCH)
-	$(CH_DIR) $(TEMP_DIR)/Debug$(ARCH) $(CMAKE) $(T_DEBUG) -DARCH=$(ARCH)
+	$(CH_DIR) $(TEMP_DIR)/Debug$(ARCH) $(CMAKE) $(T_DEBUG) -DARCH=$(ARCH) $(P_CONF)$(P_CONF_PATH)
 	$(EXEC_BUILD)/Debug$(ARCH) make $(TARGET)
 
 release:
 	$(MK_DIR) $(TEMP_DIR)/Release$(ARCH)
-	$(CH_DIR) $(TEMP_DIR)/Release$(ARCH) $(CMAKE) $(T_RELEASE) -DARCH=$(ARCH)
+	$(CH_DIR) $(TEMP_DIR)/Release$(ARCH) $(CMAKE) $(T_RELEASE) -DARCH=$(ARCH) $(P_CONF)$(P_CONF_PATH)
 	$(EXEC_BUILD)/Release$(ARCH) make $(TARGET)
 
 .PHONY: clean cleandebug cleanrelease

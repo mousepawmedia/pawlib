@@ -1,0 +1,30 @@
+##### PATH CONFIGURATIONS ######
+#
+# Make a copy of this file and save it in the root of the repository
+# with a name ending in ".config". Then modify as necessary.
+#
+# The repository is configured to ignore all .config files, with the
+# exception of default.config (which should never be modified).
+#
+# To use a configuration file with make, specify it in the 'make' command via
+# "make <target> CONFIG=<name>", where '<name>' is the first part of the
+# file name (before the .config). For example, "make library CONFIG=foo"
+# would build the library (release target) using "foo.config".
+#
+# To use a configuration file with CMake directly, specify it by passing the
+# argument "-DCONFIG_FILENAME=<name>", where '<name>' is the first part of the
+# file name (before the .config). For example, passing the argument
+# "-DCONFIG_FILENAME=foo" would build using "foo.config".
+
+
+##### LLVM LIBC++ #####
+#
+# This option asks the Clang compiler to use LLVM's libc++ library.
+# The build system will look for this library in the system paths.
+#
+# If you are not compiling with Clang, this option will be ignored.
+# NOTE: libc++ is already used by default on Mac.
+#
+# Set the option to either `true` or `false` below.
+
+set(LLVM false)
