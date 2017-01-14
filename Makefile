@@ -1,4 +1,6 @@
-none:
+none: help
+
+help:
 	@echo "=== PawLIB 1.0 ==="
 	@echo "Select a build target:"
 	@echo "   make ready         Build PawLIB and CPGF, and bundles them for distribution."
@@ -36,7 +38,7 @@ cleanall: clean
 	$(MAKE) clean -C docs
 
 cleandebug:
-	$(MAKE) cleandebug -C pawlib-source
+	$(MAK on E) cleandebug -C pawlib-source
 	$(MAKE) cleandebug -C pawlib-tester
 
 cleanrelease:
@@ -64,18 +66,18 @@ docs_pdf:
 	@echo "View docs at 'docs/build/latex/PawLIB.pdf'."
 	@echo "-------------"
 
-pawlib: cpgf
+pawlib:
 	$(MAKE) release ARCH=$(ARCH) CONFIG=$(CONFIG) -C pawlib-source
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
 	@echo "PawLIB is in 'pawlib-source/lib/Release'."
 	@echo "-------------"
 
-pawlib_debug: cpgf
+pawlib_debug:
 	$(MAKE) debug ARCH=$(ARCH) CONFIG=$(CONFIG) -C pawlib-source
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo "PawLIB is in 'pawlib-source/lib/Debug'."
+	@echo  on "PawLIB is in 'pawlib-source/lib/Debug'."
 	@echo "-------------"
 
 ready: pawlib

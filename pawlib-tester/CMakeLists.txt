@@ -74,8 +74,6 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/../../bin/$<CONFIG>")
 
-include_directories(../cpgf/include)
-include_directories(../pawlib-source/include)
 include_directories(include)
 
 add_executable(pawlib-tester
@@ -84,5 +82,9 @@ add_executable(pawlib-tester
     src/TestSystem.cpp
 )
 
-target_link_libraries(pawlib-tester ${CMAKE_HOME_DIRECTORY}/../cpgf/lib/libcpgf.a)
+include_directories(../pawlib-source/include)
 target_link_libraries(pawlib-tester ${CMAKE_HOME_DIRECTORY}/../pawlib-source/lib/$<CONFIG>/libpawlib.a)
+
+# Link against third-party dependencies: CPGF
+include_directories(${CPGF_DIR}/include)
+target_link_libraries(pawlib-tester ${CPGF_DIR}/lib/libcpgf.a)

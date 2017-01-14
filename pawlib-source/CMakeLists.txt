@@ -74,7 +74,6 @@ endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/../../lib/$<CONFIG>")
 
-include_directories(../cpgf/include)
 include_directories(include)
 
 add_library(pawlib STATIC
@@ -127,4 +126,6 @@ add_library(pawlib STATIC
 
 )
 
-target_link_libraries(pawlib ${CMAKE_HOME_DIRECTORY}/../cpgf/lib/libcpgf.a)
+# Link against third-party dependencies: CPGF
+include_directories(${CPGF_DIR}/include)
+target_link_libraries(pawlib ${CPGF_DIR}/lib/libcpgf.a)

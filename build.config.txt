@@ -16,6 +16,20 @@
 # file name (before the .config). For example, passing the argument
 # "-DCONFIG_FILENAME=foo" would build using "foo.config".
 
+##### THIRD-PARTY DEPENDENCIES #####
+#
+# This sets the path to CPGF.
+# The build system will look for `lib/` and `include/' at this location.
+#
+# The default for it is '${CMAKE_HOME_DIRECTORY}/../../lib-git/libs', which
+# assumes a copy of the lib-git repository in the same directory as this
+# repository folder.
+#
+# 'make cpgf' or 'make all' would need to be run in lib-git first.
+
+set(CPGF_DIR
+	${CMAKE_HOME_DIRECTORY}/../../lib-git/libs
+)
 
 ##### LLVM LIBC++ #####
 #

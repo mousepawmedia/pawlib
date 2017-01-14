@@ -1,4 +1,4 @@
-LICENSE
+# LICENSE
 
 Copyright (c) 2016 MousePaw Games.
 All rights reserved.
