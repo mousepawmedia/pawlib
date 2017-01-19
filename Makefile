@@ -3,18 +3,16 @@ none: help
 help:
 	@echo "=== PawLIB 1.0 ==="
 	@echo "Select a build target:"
-	@echo "   make ready         Build PawLIB and CPGF, and bundles them for distribution."
+	@echo "   make ready         Build PawLIB and bundles it for distribution."
 	@echo "   make clean         Clean up PawLIB and Tester."
-	@echo "   make cleanall      Clean up everything."
 	@echo "   make cleandebug    Clean up PawLIB and Tester Debug."
 	@echo "   make cleanrelease  Clean up PawLIB and Tester Release."
 	@echo "   make docs          Generate HTML docs."
 	@echo "   make docs_pdf      Generate PDF docs."
-	@echo "   make cpgf          Build CPGF (release) only."
-	@echo "   make pawlib        Build PawLIB (+ CPGF) as release."
-	@echo "   make pawlib_debug  Build PawLIB (+ CPGF) as debug."
-	@echo "   make tester        Build PawLIB Tester (+ CPGF & PawLIB) as release."
-	@echo "   make tester_debug  Build PawLIB Tester (+ CPGF & PawLIB) as debug."
+	@echo "   make pawlib        Build PawLIB as release."
+	@echo "   make pawlib_debug  Build PawLIB as debug."
+	@echo "   make tester        Build PawLIB Tester (+PawLIB) as release."
+	@echo "   make tester_debug  Build PawLIB Tester (+PawLIB) as debug."
 	@echo "   make all           Build everything."
 	@echo "   make allfresh      Clean and rebuild everything."
 	@echo
@@ -34,23 +32,15 @@ clean:
 	$(MAKE) clean -C pawlib-tester
 
 cleanall: clean
-	$(MAKE) clean -C cpgf/build
 	$(MAKE) clean -C docs
 
 cleandebug:
-	$(MAK on E) cleandebug -C pawlib-source
+	$(MAKE) cleandebug -C pawlib-source
 	$(MAKE) cleandebug -C pawlib-tester
 
 cleanrelease:
 	$(MAKE) cleanrelease -C pawlib-source
 	$(MAKE) cleanrelease -C pawlib-tester
-
-cpgf:
-	$(MAKE) linux -C cpgf/build
-	@echo "-------------"
-	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo "CPGF is in 'cpgf/lib'."
-	@echo "-------------"
 
 docs:
 	$(MAKE) html -C docs
@@ -84,15 +74,12 @@ ready: pawlib
 	@rm -rf pawlib
 	@echo "Creating file structure..."
 	@mkdir -p pawlib/lib
-	@echo "Copying CPGF..."
-	@cp -r cpgf/include pawlib/
-	@cp cpgf/lib/libcpgf.a pawlib/lib/libcpgf.a
 	@echo "Copying PawLIB..."
 	@cp -r pawlib-source/include pawlib/
 	@cp pawlib-source/lib/Release/libpawlib.a pawlib/lib/libpawlib.a
 	@echo "Copying README and LICENSE..."
 	@cp README.md pawlib/README.md
-	@cp LICENCE.md pawlib/LICENCE.md
+	@cp LICENSE.md pawlib/LICENSE.md
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
 	@echo "The libraries are in 'pawlib'."
@@ -123,4 +110,4 @@ all: docs tester
 
 allfresh: cleanall all
 
-.PHONY: all allfresh clean cleanall cleandebug cleanrelease cpgf docs docs_pdf pawlib pawlib_debug ready tester tester_debug
+.PHONY: all allfresh clean cleanall cleandebug cleanrelease docs docs_pdf pawlib pawlib_debug ready tester tester_debug
