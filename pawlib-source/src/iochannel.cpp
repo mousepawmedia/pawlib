@@ -52,6 +52,46 @@ namespace pawlib
         return *this;
     }
 
+    iochannel& iochannel::operator<<(const tril& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+        switch(boolstyle)
+        {
+            case bool_lower:
+            {
+                inject( (~rhs) ? "maybe"
+                : (rhs ? "true" : "false"));
+                break;
+            }
+            case bool_upper:
+            {
+                inject( (~rhs) ? "Maybe"
+                : (rhs ? "True" : "False"));
+                break;
+            }
+            case bool_caps:
+            {
+                inject( (~rhs) ? "MAYBE"
+                : (rhs ? "TRUE" : "FALSE"));
+                break;
+            }
+            case bool_numeral:
+            {
+                inject( (~rhs) ? "2"
+                : (rhs ? "1" : "0"));
+                break;
+            }
+            case bool_scott:
+            {
+                inject( (~rhs) ? "Maybe"
+                : (rhs ? "Yea" : "Nay"));
+                break;
+            }
+        }
+        return *this;
+    }
+
     iochannel& iochannel::operator<<(const char& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
@@ -81,7 +121,19 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
+        //Inject the C string form of the string into the iochannel.
         inject(rhs.c_str());
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const std::exception& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        /* Inject the exception message into the iochannel. Assume that
+         * the exception itself has been handled externally. */
+        inject(rhs.what());
         return *this;
     }
 
@@ -227,13 +279,13 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOSpecial& rhs)
+    iochannel& iochannel::operator<<(const IOControl& rhs)
     {
         switch(rhs)
         {
             case io_end:
             {
-                reset_attributes();
+                reset_flags();
                 //Fall through to twin.
             }
             case io_end_keep:
@@ -244,7 +296,7 @@ namespace pawlib
             }
             case io_send:
             {
-                reset_attributes();
+                reset_flags();
                 //Fall through to twin.
             }
             case io_send_keep:
@@ -255,7 +307,7 @@ namespace pawlib
             }
             case io_endline:
             {
-                reset_attributes();
+                reset_flags();
                 //Fall through to twin.
             }
             case io_endline_keep:
@@ -265,7 +317,7 @@ namespace pawlib
             }
             case io_show:
             {
-                reset_attributes();
+                reset_flags();
                 //Fall through to twin.
             }
             case io_show_keep:
@@ -398,7 +450,12 @@ namespace pawlib
         if(!can_parse()){return *this;}
 
         int len = stdutils::intlen(rhs, base, true) + 1;
-        char cstr[len] = {'\0'};
+
+        // We're changing approach below to keep Clang happy.
+        //// char cstr[len] = {'\0'};
+        char cstr[len];
+        cstr[0] = '\0';
+
         stdutils::itoa(cstr, rhs, base, len, numcase);
         inject(cstr);
         return *this;
@@ -420,7 +477,11 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        char cstr[stdutils::floatlen(rhs, precision, sci, true) + 1] = {'\0'};
+        // We're changing approach below to keep Clang happy.
+        ////char cstr[stdutils::floatlen(rhs, precision, sci, true) + 1] = {'\0'};
+        char cstr[stdutils::floatlen(rhs, precision, sci, true) + 1];
+        cstr[0] = '\0';
+
         //Convert the float to a cstring, and dump into cstr.
         stdutils::ftoa(cstr, rhs, precision, sci);
         inject(cstr);
@@ -579,7 +640,11 @@ namespace pawlib
                 }
             }
 
-            char mem[memsize] = {'\0'};
+            // We're changing approach below to keep Clang happy.
+            ////char mem[memsize] = {'\0'};
+            char mem[memsize];
+            mem[0] = '\0';
+
             stdutils::memdump(mem, ptr, len, false, memformat);
             inject(mem);
         }

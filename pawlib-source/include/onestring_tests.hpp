@@ -1,10 +1,51 @@
+/** Tests for OneString[PawLIB]
+  * Version: 0.3
+  *
+  * Author(s): Scott Taylor
+  */
+
+/* LICENSE
+ * Copyright (c) 2016 MousePaw Games.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * CONTRIBUTING
+ * See http://www.mousepawgames.com/participate/opensource for information
+ * on how to contribute to our projects.
+ */
+
 #ifndef PAWSTRING_TESTS_HPP
 #define PAWSTRING_TESTS_HPP
 
 #include <string>
 
 #include <goldilocks.hpp>
-#include <pawstring.hpp>
+#include <onestring.hpp>
 
 namespace pawlib
 {
@@ -32,7 +73,55 @@ namespace pawlib
                 NSAME_LAST_CHAR
             };
 
-            TestString():tType(SAME_NO_UNICODE){}
+            explicit TestString(TestType type):tType(type)
+            {
+                switch(tType)
+                {
+                    case SAME_NO_UNICODE:
+                    {
+                        title = "QuickString: Compare, Same No Unicode";
+                        docs = "Compares two identical strings containing no Unicode.";
+                        break;
+                    }
+                    case SAME_SOME_UNICODE:
+                    {
+                        title = "QuickString: Compare, Same Some Unicode";
+                        docs = "Compares two identical strings containing some Unicode.";
+                        break;
+                    }
+                    case SAME_ALL_UNICODE:
+                    {
+                        title = "QuickString: Compare, Same All Unicode";
+                        docs = "Compares two identical strings containing all Unicode.";
+                        break;
+                    }
+                    case NSAME_FIRST_CHAR:
+                    {
+                        title = "QuickString: Compare, Diff First";
+                        docs = "Compares two strings with the first character different.";
+                        break;
+                    }
+                    case NSAME_MIDDLE_CHAR:
+                    {
+                        title = "QuickString: Compare, Diff Middle";
+                        docs = "Compares two strings with the middle character different.";
+                        break;
+                    }
+                    case NSAME_LAST_CHAR:
+                    {
+                        title = "QuickString: Compare, Diff Last";
+                        docs = "Compares two strings with the last character different.";
+                        break;
+                    }
+                }
+            }
+
+            virtual testdoc_t get_title() = 0;
+
+            testdoc_t get_docs()
+            {
+               return docs;
+            }
 
             bool pre()
             {
@@ -141,13 +230,7 @@ namespace pawlib
                             "☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯"
                             "ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð"
                             "⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷"
-                            "⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗"
-                            "㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦"
-                            "¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶"
-                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦"
-                            "课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课"
-                            "☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠"
-                            "♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♬♬♬♬♬♬♬♬♬";
+                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦";
 
                         mainPStr = "我的名字是斯科特我是蝙蝠我的名字是斯科特我是蝙蝠我的名字我是蝙蝠"
                             "我的名字是斯科特我是蝙蝠我的名字是斯科特我是蝙蝠我的名字我是蝙蝠我是蝙蝠我的名字我是蝙蝠"
@@ -160,13 +243,7 @@ namespace pawlib
                             "☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯"
                             "ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð"
                             "⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷"
-                            "⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗⨗"
-                            "㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦㕦"
-                            "¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶"
-                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦"
-                            "课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课课"
-                            "☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠☠"
-                            "♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♿♬♬♬♬♬♬♬♬♬";
+                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦";
 
                         compStr = mainStr;
                         compPStr = mainPStr;
@@ -391,22 +468,29 @@ namespace pawlib
         protected:
             TestType tType;
             std::string mainStr;
-            PawString<1024> mainPStr;
+            QuickString<2048> mainPStr;
             std::string compStr;
-            PawString<1024> compPStr;
+            QuickString<2048> compPStr;
 
+            testdoc_t title;
+            testdoc_t docs;
     };
 
 
     class TestPawCompare: public TestString
     {
         public:
-            explicit TestPawCompare(TestType type)
+            explicit TestPawCompare(TestType type):TestString(type)
+            {}
+
+            testdoc_t get_title()
             {
-                tType = type;
+                return title + " (QuickString)";
             }
+
             bool run()
             {
+
                 for(int i=0; i < 1000; ++i)
                 {
                     if(mainPStr == compPStr){};
@@ -421,10 +505,14 @@ namespace pawlib
     class TestStdCompare: public TestString
     {
         public:
-            explicit TestStdCompare(TestType type)
+            explicit TestStdCompare(TestType type):TestString(type)
+            {}
+
+            testdoc_t get_title()
             {
-                tType = type;
+                return title + " (std::string)";
             }
+
             bool run()
             {
                 for(int i=0; i < 1000; ++i)
@@ -438,13 +526,19 @@ namespace pawlib
 
     };
 
-    class TestSuite_Pawstring : public TestSuite
+    class TestSuite_Onestring : public TestSuite
     {
         public:
-            static void load_tests(TestManager*);
-        protected:
+            explicit TestSuite_Onestring(){}
 
-        private:
+            void load_tests();
+
+            testdoc_t get_title()
+            {
+                return "PawLIB: QuickString Tests";
+            }
+
+            ~TestSuite_Onestring(){}
     };
 }
 

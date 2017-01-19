@@ -8,5 +8,12 @@
 **/lib
 **/libs
 pawlib/
+docs/build
+cpgf/build/temp_cache**
 *.depend
 *.layout
+**/build_temp
+tester
+tester_debug
+*.config
+!default.config

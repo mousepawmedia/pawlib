@@ -9,9 +9,15 @@
 #include <iochannel.hpp>
 #include <goldilocks.hpp>
 
+#include <core_types_tests.hpp>
 #include <flex_array_tests.hpp>
+//TODO: #include<flex_map_tests.hpp>
+#include <flex_queue_tests.hpp>
+#include <flex_stack_tests.hpp>
 #include <pawsort_tests.hpp>
-#include <pawstring_tests.hpp>
+#include <onestring_tests.hpp>
+#include <pool_tests.hpp>
+#include <flex_bit_tests.hpp>
 
 using pawlib::iochannel;
 

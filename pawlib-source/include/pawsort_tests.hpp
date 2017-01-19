@@ -1,3 +1,44 @@
+/** Tests for PawSort[PawLIB]
+  * Version: 1.0
+  *
+  * Author(s): Jason C. McDonald
+  */
+
+/* LICENSE
+ * Copyright (c) 2016 MousePaw Games.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * CONTRIBUTING
+ * See http://www.mousepawgames.com/participate/opensource for information
+ * on how to contribute to our projects.
+ */
+
 #ifndef PAWSORT_TESTS_HPP
 #define PAWSORT_TESTS_HPP
 
@@ -70,9 +111,134 @@ namespace pawlib
             int start_arr[test_size];
             int test_arr[test_size];
 
+            testdoc_t title;
+            testdoc_t docs;
+
         public:
             // cppcheck-suppress uninitMemberVar
-            TestSort():arrayType(ARRAY_SORTED){}
+            explicit TestSort(TestArrayType type):arrayType(type)
+            {
+                // We'll initialize titles and doc strings in the constructor.
+                switch(arrayType)
+                {
+                    case ARRAY_RANDOM:
+                    {
+                        title = "Pawsort: Random";
+                        docs = "Random array. DO NOT USE.";
+                        break;
+                    }
+                    case ARRAY_SORTED:
+                    {
+                        title = "PawSort: Sorted Array";
+                        docs = "Already sorted array.";
+                        break;
+                    }
+                    case ARRAY_REVERSED:
+                    {
+                        title = "PawSort: Reversed Array";
+                        docs = "Already sorted array in reverse.";
+                        break;
+                    }
+                    case ARRAY_NEARLY_2:
+                    {
+                        title = "PawSort: Nearly, Invert 2";
+                        docs = "Nearly sorted array - the order of every two are inverted.";
+                        break;
+                    }
+                    case ARRAY_NEARLY_5:
+                    {
+                        title = "PawSort: Nearly, Invert 5";
+                        docs = "Nearly sorted array - the order of every five are inverted.";
+                        break;
+                    }
+                    case ARRAY_FEW_UNIQUE:
+                    {
+                        title = "PawSort: Few Unique";
+                        docs = "Few (specifically, five) unique values in the array.";
+                        break;
+                    }
+                    case ARRAY_BLACK_SHEEP:
+                    {
+                        title = "PawSort: Black Sheep";
+                        docs = "Array with only two values out of place.";
+                        break;
+                    }
+                    case ARRAY_DOUBLE_CLIMB:
+                    {
+                        title = "PawSort: Double Climb";
+                        docs = "Array values ascends from 0 to half, twice sequentially.";
+                        break;
+                    }
+                    case ARRAY_DOUBLE_DROP:
+                    {
+                        title = "PawSort: Double Drop";
+                        docs = "Array values descend from half to 0, twice sequentially.";
+                        break;
+                    }
+                    case ARRAY_STAIRS:
+                    {
+                        title = "PawSort: Stairs";
+                        docs = "Array ascends and descends 'stairs', with a jump of 5.";
+                        break;
+                    }
+                    case ARRAY_MOUNTAIN:
+                    {
+                        title = "PawSort: Mountain";
+                        docs = "Array ascends from 0 to half and drops back to 0.";
+                        break;
+                    }
+                    case ARRAY_DOUBLE_MOUNTAIN:
+                    {
+                        title = "PawSort: Double Mountain";
+                        docs = "Array ascends from 0 to half and drops, twice. Uses double-jumps.";
+                        break;
+                    }
+                    case ARRAY_EVEREST:
+                    {
+                        title = "PawSort: Everest";
+                        docs = "Array ascends by huge increments, and then drop back to 0.";
+                        break;
+                    }
+                    case ARRAY_CLIFF:
+                    {
+                        title = "PawSort: Cliff";
+                        docs = "Array ascends by huge increments, and then drops off suddenly.";
+                        break;
+                    }
+                    case ARRAY_SPIKE:
+                    {
+                        title = "PawSort: Spike";
+                        docs = "Array ascends from 0 towards half, spikes suddenly, and then drops \
+back down near half and descends towards 0. Intended to throw off the \
+median-of-three by creating an absurdly high middle value.";
+                        break;
+                    }
+                    case ARRAY_CHICKEN:
+                    {
+                        title = "PawSort: Chicken";
+                        docs = "Array composed of pairs - one starting at 0 and incrementing by \
+one each pair, and one starting at n and decrementing by one each [pair, with \
+the middle pair values both being half of n.";
+                        break;
+                    }
+                    case ARRAY_NIGHTMARE:
+                    {
+                        title = "PawSort: Nightmare";
+                        docs = "Array brutally murders the median-of-three by placing 0 at the \
+first, middle, and last indices, on top of a reversed sorted array with few \
+unique values. Really, this is just evil incarnate.";
+                        break;
+                    }
+                }
+            }
+
+            virtual testdoc_t get_title() = 0;
+
+            testdoc_t get_docs()
+            {
+                return docs;
+            }
+
             bool pre()
             {
                 // Random seed
@@ -358,10 +524,14 @@ namespace pawlib
     class TestStdSort : public TestSort
     {
         public:
-            explicit TestStdSort(TestArrayType type = ARRAY_RANDOM)
+            explicit TestStdSort(TestArrayType type):TestSort(type)
+            {}
+
+            testdoc_t get_title()
             {
-                arrayType = type;
+                return title + " (std::sort)";
             }
+
             bool run()
             {
                 std::sort(std::begin(test_arr), std::end(test_arr));
@@ -374,10 +544,14 @@ namespace pawlib
     class TestPawSort : public TestSort
     {
         public:
-            explicit TestPawSort(TestArrayType type = ARRAY_RANDOM)
+            explicit TestPawSort(TestArrayType type):TestSort(type)
+            {}
+
+            testdoc_t get_title()
             {
-                arrayType = type;
+                return title + " (pawsort)";
             }
+
             bool run()
             {
                 pawsort::introsort(test_arr, test_size);
@@ -389,10 +563,16 @@ namespace pawlib
     class TestSuite_Pawsort : public TestSuite
     {
         public:
-            static void load_tests(TestManager*);
-        protected:
+            explicit TestSuite_Pawsort(){}
 
-        private:
+            void load_tests();
+
+            testdoc_t get_title()
+            {
+                return "PawLIB: Pawsort Tests";
+            }
+
+            ~TestSuite_Pawsort(){}
     };
 }
 

@@ -1,33 +1,41 @@
-/** AVL Tree [PawLIB]
+/** Base FlexArray [PawLIB]
   * Version: 1.0
   *
   * The base class for a dynamic array with a low dynamic allocation demand.
-  * Designed to take the place of 'std::vector'.
+  * FlexArray, FlexQueue, and FlexStack all rely on these.
   *
-  * Last Updated: 8 March 2016
-  * Author: Michael Parkman
+  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
   */
 
 /* LICENSE
- * Copyright (C) 2016 MousePaw Games.
+ * Copyright (c) 2016 MousePaw Games.
+ * All rights reserved.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  *
  * CONTRIBUTING
  * See http://www.mousepawgames.com/participate/opensource for information
@@ -40,54 +48,71 @@
 #include <stdlib.h>
 #include <math.h>
 #include <iochannel.hpp>
+#include <stdexcept>
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template<class type>
+    template <typename type>
     class Base_FlexArr
     {
         public:
+            /** Create a new base flex array, with the default starting size.
+              */
             Base_FlexArr()
+            :theArray(nullptr), resizable(true), currElements(0), capacity(4)
             {
-                //method double size sets the size to 8 on initiation
-                size = 4;
-                currElements = 0;
-                //NOTE: Replace with NULL?
-                theArray = nullptr;
-                double_size(&theArray);
-                resizable = true;
+                /* The call to double_size() will sets the capacity to 8
+                 * on initiation. */
+
+                // Allocate the structure.
+                double_size();
             }
 
-            // cppcheck-suppress noExplicitConstructor
+            /** Create a new base flex array with room for the specified number
+              * of elements.
+              * \param the minimum number of elements the structure can hold.
+              */
             Base_FlexArr(int numElements)
+            :theArray(nullptr), resizable(true), currElements(0)
             {
-                //set the size to be the power of 2 just below the entered number. double_size funtion will initiate with enough room in array
-                size = pow(2, floor(log2(numElements)));
-                currElements = 0;
-                //NOTE: Replace with NULL?
-                double_size(0, theArray);
-                resizable = false;
+                /* Set the size to be the power of 2 just below the entered
+                 * number. double_size() will initiate with enough
+                 * room in array. */
+                capacity = pow(2, floor(log2(numElements)));
+
+                // Allocate the structure.
+                double_size();
             }
 
+            /** Destructor. */
             ~Base_FlexArr()
             {
-                free(theArray);
+                if(theArray != nullptr)
+                {
+                    delete[] theArray;
+                }
             }
 
-            type operator[](int index)
+            /** Access an element at a given index using the [] operator.
+              * For example, "theArray[5]".
+              */
+            type operator[](unsigned int index)
             {
                 return at(index);
             }
 
-            type at(int index)
+            /** Access an element at the given index.
+              * \param the index to access.
+              * \return the element at the given index.
+              */
+            type at(unsigned int index)
             {
                 if(index > currElements - 1 || index < 0)
                 {
-                    ioc << cat_error << vrb_quiet << "Index out of bounds" << io_end;
-                    return nullptr;
+                    throw std::out_of_range("BaseFlexArray: Index out of range!");
                 }
                 else
                 {
@@ -95,53 +120,142 @@ namespace pawlib
                 }
             }
 
+            /** Get the current number of elements in the structure.
+              * \return the number of elements
+              */
             int getSize()
             {
                 return currElements;
             }
 
+            /** Get the maximum number of elements the structure can hold
+              * without resizing.
+              * \return the maximum number of elements
+              */
             int getArraySize()
             {
-                return size;
+                return capacity;
             }
 
         protected:
+            /// The pointer to the actual structure in memory.
             type* theArray;
-            int currElements, size;
+
+            /// Whether the structure can be resize.
             bool resizable;
 
-            void double_size(type** daArray)
+            /// The current number of elements in the structure.
+            unsigned int currElements;
+
+            /** The maximum number of elements (capacity) that can be contained
+              * in the structure without resizing. */
+            unsigned int capacity;
+
+            /** Double the capacity of the structure.
+              * \return true if it was able to double capacity, else false.
+              */
+            bool double_size()
             {
-                //double the size
-                size *= 2;
-                //create the new array with twice the number of elements
-                // cppcheck-suppress unmatchedSuppression
-                type* tempArray = (type*) malloc(size * sizeof(type));
-                //if there is an old array (change to NULL?)
-                if(*daArray != nullptr)
+                // If we're not allowed to resize...
+                if(!resizable)
                 {
-                    //transfer all the elements over
-                    for(int i = 0; i < currElements; i++)
-                    {
-                        tempArray[i] = (*daArray)[i];
-                    }
-                    free(*daArray);
+                    // Report failure.
+                    return false;
                 }
-                *daArray = tempArray;
+
+                // Double the maximum size (capacity).
+                capacity *= 2;
+
+                /* Create the new structure with the new capacity.*/
+                type* tempArray = new type[capacity];
+
+                // If there was an error allocating the new array...
+                if(tempArray == nullptr)
+                {
+                    // Report failure.
+                    return false;
+                }
+
+                // If an old array exists...
+                if(this->theArray != nullptr)
+                {
+                    // Transfer all of the elements over.
+                    /*for(unsigned int i = 0; i < currElements; i++)
+                    {
+                        tempArray[i] = this->theArray[i];
+                    }*/
+                    memmove(
+                        tempArray,
+                        this->theArray,
+                        sizeof(type) * this->currElements
+                    );
+
+                    // Delete the old structure.
+                    delete[] theArray;
+                    this->theArray = nullptr;
+                }
+
+                // Store the new structure.
+                this->theArray = tempArray;
+
+                // Report success.
+                return true;
             }
 
-            //add the new element to the back of the array
-            void push_back(type newElement)
+            /** Shift all elements from the given position the given direction
+              * and distance. This is intended for internal use only, and does
+              * not check for memory errors.
+              * \param the index to shift elements from
+              * \param the direction and distance to shift the elements in.
+              */
+            void mem_shift(unsigned int fromIndex, int direction)
             {
-                if(currElements > size - 2 && resizable)
+                if(fromIndex + 1 > this->currElements)
                 {
-                    double_size(&theArray);
+                    return;
                 }
-                else if(currElements > size - 2 && !resizable)
+
+                memmove(
+                    // Move TO the given index.
+                    this->theArray + (fromIndex + direction),
+                    // Move FROM the given index, plus one.
+                    this->theArray + fromIndex,
+                    /* Total move size is the number of elements to be moved,
+                    * times element size. The number of elements we move
+                    * is calculated from the 1-based total number of elements.
+                    */
+                    sizeof(type) * ((this->currElements) - (fromIndex))
+                );
+            }
+
+            /** Add the given element to the back of the structure.
+              * \param the element to add to the structure.
+              * \return true if successful, else false.
+              */
+            bool push_back(type newElement)
+            {
+                /* If we only have room to push THIS element before running
+                 * out of room in the structure...*/
+                if(currElements > capacity - 1)
                 {
-                    //TODO: Throw Error. Out of room and not allowed to resize
+                    /* Attempt to double the structure's capacity.
+                     * If it fails...*/
+                    if(!double_size())
+                    {
+                        /* Out of room and could not resize.
+                         * Throw a non-fatal error. */
+                        ioc << cat_error << "Data structure is full and cannot be resized." << io_end;
+
+                        // Report the failure status.
+                        return false;
+                    }
                 }
-                theArray[currElements++] = newElement;
+
+                // Add the new element to the structure.
+                this->theArray[currElements++] = newElement;
+
+                // Report success.
+                return true;
             }
 
     };

@@ -4,36 +4,43 @@
   * Allows managed, custom output to any console or terminal.
   * See WHAT IS IOCHANNEL? below.
   *
-  * Last Updated: 6 April 2016
   * Author: Jason C. McDonald
   */
 
 /* LICENSE
- * Copyright (C) 2016 MousePaw Games.
+ * Copyright (c) 2016 MousePaw Games.
+ * All rights reserved.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  *
  * CONTRIBUTING
  * See http://www.mousepawgames.com/participate/opensource for information
  * on how to contribute to our projects.
  */
-
 
 /* WHAT IS IOCHANNEL?
  * IOChannel is intended both as a replacement and wrapper for `std::iostream` and
@@ -91,15 +98,20 @@
 //Needed for the `intptr_t` type
 #include <cstdint>
 
+//Needed for `ceil()`
+#include <cmath>
+
+//Bitset
+#include <bitset>
+
+//Needed for checking types.
 #include <typeinfo>
+
+//Needed for handling passed-in exceptions.
+#include <exception>
 
 //TODO: Swap to pawlib::flexarray
 #include <vector>
-
-//TODO: DROP THIS!
-//Import what we need from sigc++
-/*#include <sigc++/signal.h>
-#include <sigc++/trackable.h>*/
 
 //Signals and callbacks.
 #include "cpgf/gcallbacklist.h"
@@ -112,10 +124,14 @@ These need to be swapped out for pawlib alternatives ASAP.*/
 //We use C's classes often.
 #include <cstdio>
 
+#include <core_types.hpp>
 #include <stdutils.hpp>
 
 namespace pawlib
 {
+    class pure_tril;
+    class tril;
+
     namespace ioformat
     {
         enum IOFormatBase
@@ -347,7 +363,7 @@ namespace pawlib
         };
 
         /**Special structures for iochannel, such as "END".*/
-        enum IOSpecial
+        enum IOControl
         {
             /**Newline, end of message (EoM), remove formatting.*/
             io_end = 0,
@@ -479,8 +495,9 @@ namespace pawlib
 
             // Overloaded stream insertion operators for IOChannel.
 
-            //These three need custom implementations.
+            //These need custom implementations.
             iochannel& operator<<(const bool&);
+            iochannel& operator<<(const tril&);
             iochannel& operator<<(const char&);
             iochannel& operator<<(const std::string&);
             //TODO: Add support for PawString.
@@ -516,7 +533,38 @@ namespace pawlib
             inline iochannel& operator<<(const long double* rhs){return resolve_pointer(rhs);}
             inline iochannel& operator<<(const std::string* rhs){return resolve_pointer(rhs);}
 
+            iochannel& operator<<(const std::exception& rhs);
+
             //All of these need custom implementations.
+            template<const long unsigned int T>
+            iochannel& operator<<(const std::bitset<T>& rhs)
+            {
+                // Store the old values for the two flags we use.
+                unsigned int old_readsize = readsize;
+                IOFormatPointer old_ptr = ptr;
+
+                /* The readsize (in bytes) is the bitset size (bits) divided
+                 * by 8 and rounded to the nearest integer. */
+                readsize = static_cast<unsigned int>(ceil((T/8)));
+                // We want a memory dump.
+                ptr = ptr_memory;
+
+                // Remove the const-ness from the pointer.
+                std::bitset<T>* rhs_ptr = const_cast<std::bitset<T>*>(&rhs);
+                /* Convert to a void pointer for easier resolution.
+                 * We must store the result as a pointer for returning shortly.
+                 */
+                iochannel* r = &resolve_pointer(static_cast<void*>(rhs_ptr));
+
+                // Restore our prior flag values.
+                ptr = old_ptr;
+                readsize = old_readsize;
+
+                /* Return the value at the pointer, which will be inplicitly
+                 * converted to reference by the function return. */
+                return *r;
+            }
+
             iochannel& operator<<(const IOFormatBase&);
             iochannel& operator<<(const IOFormatBool&);
             iochannel& operator<<(const IOFormatCharValue&);
@@ -531,7 +579,7 @@ namespace pawlib
             iochannel& operator<<(const read_size&);
             iochannel& operator<<(const IOFormatVerbosity&);
             iochannel& operator<<(const IOFormatCategory&);
-            iochannel& operator<<(const IOSpecial&);
+            iochannel& operator<<(const IOControl&);
 
             void configure_echo(IOEchoMode, IOFormatVerbosity = vrb_tmi, IOFormatCategory = cat_all);
 

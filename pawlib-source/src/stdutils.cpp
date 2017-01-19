@@ -7,6 +7,43 @@ namespace pawlib
         //ctor
     }
 
+    void stdutils::stdsplit(std::string str, std::string splitBy, std::vector<std::string>& tokens)
+    {
+        /* Store the original string in the array, so we can loop the rest
+         * of the algorithm. */
+        tokens.push_back(str);
+
+        // Store the size of what we're splicing out.
+        size_t splitLen = splitBy.size();
+        // Create a string for temporarily storing the fragment we're processing.
+        std::string frag;
+
+        // Loop infinitely - break is internal.
+        while(true)
+        {
+            // Store the split index in a 'size_t' (unsigned integer) type.
+            size_t splitAt;
+
+            /* Store the last string in the vector, which is the only logical
+             * candidate for processing. */
+            frag = tokens.back();
+            /* The index where the split is. */
+            splitAt = frag.find(splitBy);
+            // If we didn't find a new split point...
+            if(splitAt == std::string::npos)
+            {
+                // Break the loop and (implicitly) return.
+                break;
+            }
+            /* Put everything from the left side of the split where the string
+             * being processed used to be. */
+            tokens.back() = frag.substr(0, splitAt);
+            /* Push everything from the right side of the split to the next empty
+             * index in the vector. */
+            tokens.push_back(frag.substr(splitAt+splitLen, frag.size()-(splitAt+splitLen)));
+        }
+    }
+
     char* stdutils::strrev(char* str)
     {
         if (str != NULL)
@@ -36,7 +73,7 @@ namespace pawlib
     {
         if(base < 2 || base > 36)
         {
-            return -1;
+            throw std::invalid_argument("stdutils::intlen: Invalid base. Must be between 2 and 36.");
         }
         int digits = 0;
         if (number < 0 && count_neg)
@@ -51,7 +88,7 @@ namespace pawlib
         while (number)
         {
             number /= base;
-            digits++;
+            ++digits;
         }
 
         return digits;
@@ -143,7 +180,8 @@ namespace pawlib
         }
 
         //Reverse the string.
-        char temp[strlen(str)] = {'\0'};
+        char temp[strlen(str)];
+        temp[0] = '\0';
         strcpy(temp, str);
         strcpy(str, strrev(temp));
     }
@@ -271,7 +309,9 @@ namespace pawlib
         *(pos++) = '0';
 
         //Reverse the string.
-        char temp[strlen(str)] = {'\0'};
+        char temp[strlen(str)];
+        temp[0] = '\0';
+
         strcpy(temp, str);
         strcpy(str, strrev(temp));
     }
@@ -326,7 +366,9 @@ namespace pawlib
         }
 
         //Reverse the string.
-        char temp[strlen(str)] = {'\0'};
+        char temp[strlen(str)];
+        temp[0] = '\0';
+
         strcpy(temp, str);
         strcpy(str, strrev(temp));
     }
@@ -480,7 +522,8 @@ namespace pawlib
                 c -= m;
 
                 //Reverse the string.
-                char temp[strlen(c)] = {'\0'};
+                char temp[strlen(c)];
+                temp[0] = '\0';
                 strcpy(temp, c);
                 strcpy(c, strrev(temp));
 
@@ -507,7 +550,14 @@ namespace pawlib
     std::string stdutils::itos(int val, int base, bool use_caps)
     {
         int len = intlen(val, base, true);
-        char cstr[len+1] = {'\0'};
+
+        char cstr[len+1];
+        /* We have to initialize after the fact to keep Clang happy,
+         * but we must fill the array to avoid memory issues.
+         * Thus, we'll use the std::fill_n function to fill the array
+         * with null characters. */
+        std::fill_n(cstr, len+1, '\0');
+
         itoa(cstr, val, base, len, use_caps);
         std::string str = cstr;
         return str;
@@ -515,10 +565,22 @@ namespace pawlib
 
     std::string stdutils::dtos(double val, int precision, int sci)
     {
+        /* Get the estimated maximum number of characters in the float, plus
+         * 1 for the null terminator.
+         */
+        int len = floatlen(val, precision, sci, true) + 1;
+
         /* Declare a new C-string with the size equal to the estimated
          * maximum number of characters in the float, plus 1 for the null
          * terminator.*/
-        char cstr[floatlen(val, precision, sci, true) + 1] = {'\0'};
+        char cstr[len];
+
+        /* We have to initialize after the fact to keep Clang happy,
+         * but we must fill the array to avoid memory issues.
+         * Thus, we'll use the std::fill_n function to fill the array
+         * with null characters. */
+        std::fill_n(cstr, len, '\0');
+
         //Convert the float to a cstring, and dump into cstr.
         ftoa(cstr, val, precision, sci);
         //Convert the cstring into a string.
