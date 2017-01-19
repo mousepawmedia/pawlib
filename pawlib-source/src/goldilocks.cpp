@@ -1573,7 +1573,7 @@ namespace pawlib
                 << io_end;
             return false;
         }
-        // Else if we don't have a valid testmamanger...
+        // Else if we don't have a valid testmananger...
         else if(!testmanager)
         {
             ioc << cat_error << vrb_normal
