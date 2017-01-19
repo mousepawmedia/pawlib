@@ -2,22 +2,34 @@
 
 ## Building Basics
 
-CMake is used to build CPGF, PawLIB, and PawLIB Tester. For your convenience,
+CMake is used to build PawLIB and PawLIB Tester. For your convenience,
 we've included Makefiles to automate all common build scenarios on Linux.
 Type "make" in the root of this repository for more information.
 
 At this time, the Makefiles are only designed for Linux. If you are building
 on another system, you can interact with CMake directly.
 
-Currently, PawLIB is only designed to be built by GCC (5.3 or later) or Clang (3.4 or later).
+Currently, PawLIB is only designed to be built by GCC (5.3 or later) or
+Clang (3.4 or later).
+
+## Building and Linking Dependencies
+
+PawLIB relies on CPGF. The default behavior of the build system is
+to look for MousePaw Games' `lib-git/` repository, cloned parallel
+to this repository's main folder. Simply run `make ready` or `make cpgf`
+in that repository before building this one.
+(This is our default for company development environments.)
+
+You can specify custom paths for these libraries by creating a ".config" file
+in the root of this repository. Make a copy of "build.config.txt" and save it
+with the ending ".config". See that file for more information.
 
 ## Ready-To-Use Build
 
 If you just want to build PawLIB to use in your own project, the fastest way
-is to run "make ready". This will build CPGF, PawLIB, and the documentation,
-and place them all in a folder called "pawlib". Simply copy that folder to
-a convenient location, and point your compiler and linker to "pawlib/include"
-and "pawlib/lib" respectively.
+is to run "make ready". This will build PawLIB and place it in a folder called
+`pawlib`, then point your compiler and linker to "pawlib/include"
+and "pawlib/lib" respectively. Our other repositories point to this by default.
 
 ## Building HTML Docs
 

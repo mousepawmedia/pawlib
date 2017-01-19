@@ -10,7 +10,7 @@ resources.
 
 It is used by virtually all of MousePaw Games' core projects.
 
- - Data Structures: High performance alternatives to C++ data structures.
+ - Data Structures: High performance alternatives to C++ data structures, and then some.
  - Goldilocks: Testing and benchmarking framework.
  - IOChannel: Feature-rich multi-output text output system. (Alternative to std::cout)
  - OneString: Performance string class with full Unicode support. (Alternative to std::string)
@@ -26,12 +26,12 @@ It is used by virtually all of MousePaw Games' core projects.
 
 ## Dependencies
 
-PawLIB depends on CPGF, which is included in this repository.
+PawLIB depends on CPGF.
 
 ## Building
 
 If you have the full source repository, see BUILDING.md for information
-on how to build PawLIB, PawLIB Tester, CPGF, and the documentation.
+on how to build PawLIB, PawLIB Tester, and the documentation.
 
 The Ready-To-Use version of PawLIB only contains the folders 'include'
 and 'lib'. You can find the full source repository on [Github][5].
@@ -55,4 +55,4 @@ The project is owned and maintained by [MousePaw Games][2].
 [2]: http://www.mousepawgames.com/opensource
 [3]: http://www.mousepawgames.com/opensource#contribute
 [4]: http://www.mousepawgames.com/termsofdevelopment
-[5]: http://github.com/mousepawgames/pawlib
+[5]: http://github.com/mousepawgames/pawlib-git
