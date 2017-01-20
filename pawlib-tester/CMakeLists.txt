@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 
 #Name your project here
 project("PawLIB Tester")
+set(TARGET_NAME "pawlib-tester")
 
 message("Using ${CONFIG_FILENAME}.config")
 include(${CMAKE_HOME_DIRECTORY}/../${CONFIG_FILENAME}.config)
@@ -76,15 +77,40 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/../../bin/$<CONF
 
 include_directories(include)
 
+# Include headers of dependencies.
+include_directories(${CPGF_DIR}/include)
+include_directories(../pawlib-source/include)
+
 add_executable(pawlib-tester
     main.cpp
     include/TestSystem.hpp
     src/TestSystem.cpp
 )
 
-include_directories(../pawlib-source/include)
-target_link_libraries(pawlib-tester ${CMAKE_HOME_DIRECTORY}/../pawlib-source/lib/$<CONFIG>/libpawlib.a)
+# Link against dependencies.
+target_link_libraries(${TARGET_NAME} ${CPGF_DIR}/lib/libcpgf.a)
+target_link_libraries(${TARGET_NAME} ${CMAKE_HOME_DIRECTORY}/../pawlib-source/lib/$<CONFIG>/libpawlib.a)
 
-# Link against third-party dependencies: CPGF
-include_directories(${CPGF_DIR}/include)
-target_link_libraries(pawlib-tester ${CPGF_DIR}/lib/libcpgf.a)
+if(COMPILERTYPE STREQUAL "clang")
+    if(SAN STREQUAL "address")
+        add_definitions(-O1 -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer)
+        set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=address")
+        message("Compiling with AddressSanitizer.")
+    elseif(SAN STREQUAL "leak")
+        add_definitions(-fsanitize=leak)
+        set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=leak")
+        message("Compiling with LeakSanitizer.")
+    elseif(SAN STREQUAL "memory")
+        add_definitions(-O1 -fsanitize=memory -fno-optimize-sibling-calls -fno-omit-frame-pointer)
+        set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=memory")
+        message("Compiling with MemorySanitizer.")
+    elseif(SAN STREQUAL "thread")
+        add_definitions(-O1 -fsanitize=thread)
+        set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=thread")
+        message("Compiling with ThreadSanitizer.")
+    elseif(SAN STREQUAL "undefined")
+        add_definitions(-fsanitize=undefined)
+        set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=undefined")
+        message("Compiling with UndefiniedBehaviorSanitizer.")
+    endif()
+endif()
