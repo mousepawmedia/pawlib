@@ -55,6 +55,8 @@
 // Needed for stdsplit
 #include <string>
 
+#include <iostream>
+
 /* NOTE: Due to bug 19439, if we're using GCC, this only works on g++ 5.3 or higher.
  * https://sourceware.org/bugzilla/show_bug.cgi?id=19439
  */
@@ -87,6 +89,20 @@ namespace pawlib
             */
             static char* strrev(char*);
             //TODO: Move this to pawlib::string!
+
+            template <typename T>
+            static void arev(T* arr, size_t start, size_t end)
+            {
+                T tmp;
+                while(start < end)
+                {
+                    memcpy(&tmp, (arr + end), sizeof(T));
+                    memcpy((arr+end), (arr+start), sizeof(T));
+                    memcpy((arr+start), &tmp, sizeof(T));
+                    ++start;
+                    --end;
+                }
+            }
 
             /**Count the number of digits/characters in an integer. Does not
              * count the null terminator.

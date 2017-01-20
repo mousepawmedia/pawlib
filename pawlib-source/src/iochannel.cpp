@@ -454,7 +454,7 @@ namespace pawlib
         // We're changing approach below to keep Clang happy.
         //// char cstr[len] = {'\0'};
         char cstr[len];
-        cstr[0] = '\0';
+        std::fill_n(cstr, len, '\0');
 
         stdutils::itoa(cstr, rhs, base, len, numcase);
         inject(cstr);

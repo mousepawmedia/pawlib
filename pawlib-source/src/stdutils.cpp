@@ -129,7 +129,7 @@ namespace pawlib
 
         /* If no length was provided, get the length of the integer,
          * including negative sign.*/
-        len = (len == 0) ? intlen(val, base, true) : len;
+        len = (len == 0) ? intlen(val, base, true) + 1 : len;
 
         char* pos = str;
 
@@ -179,11 +179,8 @@ namespace pawlib
             *(pos++) = '-';
         }
 
-        //Reverse the string.
-        char temp[strlen(str)];
-        temp[0] = '\0';
-        strcpy(temp, str);
-        strcpy(str, strrev(temp));
+        //Reverse the string. Remember to pass the 0-based start/end indices.
+        arev(str, 0, len-2);
     }
 
     template void stdutils::itoa<char>(char*, char, int, int, bool);
@@ -549,14 +546,14 @@ namespace pawlib
 
     std::string stdutils::itos(int val, int base, bool use_caps)
     {
-        int len = intlen(val, base, true);
+        int len = intlen(val, base, true) + 1;
 
-        char cstr[len+1];
+        char cstr[len];
         /* We have to initialize after the fact to keep Clang happy,
          * but we must fill the array to avoid memory issues.
          * Thus, we'll use the std::fill_n function to fill the array
          * with null characters. */
-        std::fill_n(cstr, len+1, '\0');
+        std::fill_n(cstr, len, '\0');
 
         itoa(cstr, val, base, len, use_caps);
         std::string str = cstr;
