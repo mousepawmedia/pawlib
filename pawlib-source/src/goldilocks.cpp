@@ -1446,7 +1446,7 @@ namespace pawlib
         // FOR NON-ADJUSTED (RAW) DATA...
 
         // If the absolute difference is less than either standard deviation...
-        if(abs(difference) <= result1.std_dev || abs(difference) <= result2.std_dev)
+        if(labs(difference) <= result1.std_dev || labs(difference) <= result2.std_dev)
         {
             //Non-adjusted, the tests are roughly identical.
             ioc << "\t     RAW: Both tests are roughly identical. (DIFF <= STD DEV)" << io_end_keep;
@@ -1457,20 +1457,20 @@ namespace pawlib
             if(difference < 0)
             {
                 // Declare the first test as faster, and by how much.
-                ioc << "\t     RAW: [" << tests[test1]->get_title() << "] faster by approx. " << (abs(difference)) << " cycles." << io_end_keep;
+                ioc << "\t     RAW: [" << tests[test1]->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << io_end_keep;
             }
             //Else if the second test won (its non-adjusted mean was smaller)...
             else if(difference > 0)
             {
                 // Declare the second test as faster, and by how much.
-                ioc << "\t     RAW: [" << tests[test2]->get_title() << "] faster by approx. " << (abs(difference)) << " cycles." << io_end_keep;
+                ioc << "\t     RAW: [" << tests[test2]->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << io_end_keep;
             }
         }
 
         // FOR ADJUSTED DATA...
 
         // If the absolute difference is less than either standard deviation...
-        if(abs(difference_adj) <= result1.std_dev_adj || abs(difference_adj) <= result2.std_dev_adj)
+        if(labs(difference_adj) <= result1.std_dev_adj || labs(difference_adj) <= result2.std_dev_adj)
         {
             //Adjusted, the tests are roughly identical.
             ioc << "\tADJUSTED: Both tests are roughly identical. (DIFF <= STD DEV)" << io_end;
@@ -1481,13 +1481,13 @@ namespace pawlib
             if(difference < 0)
             {
                 // Declare the first test as faster, and by how much.
-                ioc << "\tADJUSTED: [" << tests[test1]->get_title() << "] faster by approx. " << (abs(difference_adj) - result1.std_dev_adj) << " cycles." << io_end;
+                ioc << "\tADJUSTED: [" << tests[test1]->get_title() << "] faster by approx. " << (labs(difference_adj) - result1.std_dev_adj) << " cycles." << io_end;
             }
             //Else if the second test won (its adjusted mean was smaller)...
             else if(difference > 0)
             {
                 // Declare the second test as faster, and by how much.
-                ioc << "\tADJUSTED: [" << tests[test2]->get_title() << "] faster by approx. " << (abs(difference_adj) - result2.std_dev_adj) << " cycles." << io_end;
+                ioc << "\tADJUSTED: [" << tests[test2]->get_title() << "] faster by approx. " << (labs(difference_adj) - result2.std_dev_adj) << " cycles." << io_end;
             }
         }
     }
@@ -1573,7 +1573,7 @@ namespace pawlib
                 << io_end;
             return false;
         }
-        // Else if we don't have a valid testmamanger...
+        // Else if we don't have a valid testmananger...
         else if(!testmanager)
         {
             ioc << cat_error << vrb_normal
