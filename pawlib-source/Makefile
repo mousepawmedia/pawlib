@@ -64,7 +64,7 @@ debug:
 
 release:
 	$(MK_DIR) $(TEMP_DIR)/Release$(ARCH)
-	$(CH_DIR) $(TEMP_DIR)/Release$(ARCH) $(CMAKE) $(T_RELEASE) -DARCH=$(ARCH) -DSAN=$(SAN) $(P_CONF)$(P_CONF_PATH)
+	$(CH_DIR) $(TEMP_DIR)/Release$(ARCH) $(CMAKE) $(T_RELEASE) -DARCH=$(ARCH) $(P_CONF)$(P_CONF_PATH)
 	$(EXEC_BUILD)/Release$(ARCH) make $(TARGET)
 
 .PHONY: clean cleandebug cleanrelease
