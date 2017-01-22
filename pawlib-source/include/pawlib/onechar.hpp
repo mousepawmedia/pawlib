@@ -47,8 +47,12 @@
 
 #ifndef ONECHAR_HPP
 #define ONECHAR_HPP
+
+#include <cstring>
+#include <iomanip>
 #include <iostream>
-#include <iochannel.hpp>
+
+#include "pawlib/iochannel.hpp"
 
 // Constants for ASCII and Unicode
 const bool ASCII = 0;

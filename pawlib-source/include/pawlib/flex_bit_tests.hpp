@@ -42,13 +42,14 @@
 #ifndef FLEX_BIT_TESTS_HPP_INCLUDED
 #define FLEX_BIT_TESTS_HPP_INCLUDED
 
-#include <goldilocks.hpp>
-#include <flex_bit.hpp>
-#include <iochannel.hpp>
+#include <bitset>
 #include <iostream>
 #include <limits>
-#include <bitset>
-#include <stdutils.hpp>
+
+#include "pawlib/flex_bit.hpp"
+#include "pawlib/goldilocks.hpp"
+#include "pawlib/iochannel.hpp"
+#include "pawlib/stdutils.hpp"
 
 namespace pawlib
 {

@@ -1,19 +1,4 @@
-/*PawLib Library, version 1.3
-* OneString Class
-* OneString is a dynamic-allocation-free replacement for std::string
-* Last Updated: November 12, 2015
-*
-* Scott Taylor
-* MousePaw Games
-*/
-
-#include "onestringbase.hpp"
-#include "onestring.hpp"
-#include <iostream>
-#include <iomanip>
-#include <cstring>
-#include <iochannel.hpp>
-
+#include "pawlib/onestring.hpp"
 
 namespace pawlib
 {

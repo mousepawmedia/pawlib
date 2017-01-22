@@ -4,20 +4,18 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include <core_types.hpp>
-#include <iochannel.hpp>
-#include <onestringbase.hpp>
-#include <onestring.hpp>
-#include <quickstring.hpp>
-#include <onechar.hpp>
-#include <pawsort.hpp>
-#include <stdutils.hpp>
-#include <goldilocks.hpp>
-#include <stdutils.hpp>
+#include "pawlib/core_types.hpp"
+#include "pawlib/goldilocks.hpp"
+#include "pawlib/iochannel.hpp"
+#include "pawlib/onestringbase.hpp"
+#include "pawlib/onestring.hpp"
+#include "pawlib/pool.hpp"
+#include "pawlib/quickstring.hpp"
+#include "pawlib/onechar.hpp"
+#include "pawlib/pawsort.hpp"
+#include "pawlib/stdutils.hpp"
 
-#include <TestSystem.hpp>
-
-#include <pool.hpp>
+#include "TestSystem.hpp"
 
 using pawlib::iochannel;
 

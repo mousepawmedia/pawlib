@@ -81,42 +81,42 @@ include_directories(include)
 include_directories(${CPGF_DIR}/include)
 
 add_library(${TARGET_NAME} STATIC
-    include/avl_tree.hpp
-    include/base_flex_array.hpp
-    include/binconv.hpp
-    include/core_types.hpp
-    include/core_types_tests.hpp
-    include/flex_array.hpp
-    include/flex_array_tests.hpp
-    include/flex_map.hpp
-    include/flex_queue.hpp
-    include/flex_queue_tests.hpp
-    include/flex_stack.hpp
-    include/flex_stack_tests.hpp
-    include/goldilocks.hpp
-    include/iochannel.hpp
-    include/onechar.hpp
-    include/onestring.hpp
-    include/onestringbase.hpp
-    include/onestring_tests.hpp
-    include/pawsort.hpp
-    include/pawsort_tests.hpp
-    include/pool.hpp
-    include/pool_tests.hpp
-    include/quickstring.hpp
-    include/rigid_stack.hpp
-    include/singly_linked_list.hpp
-    include/stdutils.hpp
-    include/flex_bit_tests.hpp
-    include/flex_bit.hpp
+    include/pawlib/avl_tree.hpp
+    include/pawlib/base_flex_array.hpp
+    include/pawlib/binconv.hpp
+    include/pawlib/core_types.hpp
+    include/pawlib/core_types_tests.hpp
+    include/pawlib/flex_array.hpp
+    include/pawlib/flex_array_tests.hpp
+    include/pawlib/flex_bit_tests.hpp
+    include/pawlib/flex_bit.hpp
+    include/pawlib/flex_map.hpp
+    include/pawlib/flex_queue.hpp
+    include/pawlib/flex_queue_tests.hpp
+    include/pawlib/flex_stack.hpp
+    include/pawlib/flex_stack_tests.hpp
+    include/pawlib/goldilocks.hpp
+    include/pawlib/iochannel.hpp
+    include/pawlib/onechar.hpp
+    include/pawlib/onestring.hpp
+    include/pawlib/onestringbase.hpp
+    include/pawlib/onestring_tests.hpp
+    include/pawlib/pawsort.hpp
+    include/pawlib/pawsort_tests.hpp
+    include/pawlib/pool.hpp
+    include/pawlib/pool_tests.hpp
+    include/pawlib/quickstring.hpp
+    include/pawlib/rigid_stack.hpp
+    include/pawlib/singly_linked_list.hpp
+    include/pawlib/stdutils.hpp
 
     src/binconv.cpp
     src/core_types.cpp
     src/core_types_tests.cpp
     src/flex_array_tests.cpp
+    src/flex_bit_tests.cpp
     src/flex_queue_tests.cpp
     src/flex_stack_tests.cpp
-    src/flex_bit_tests.cpp
     src/goldilocks.cpp
     src/iochannel.cpp
     src/onechar.cpp

@@ -44,9 +44,9 @@
 
 #include <new>
 
-#include <flex_array.hpp>
-#include <goldilocks.hpp>
-#include <pool.hpp>
+#include "pawlib/flex_array.hpp"
+#include "pawlib/goldilocks.hpp"
+#include "pawlib/pool.hpp"
 
 namespace pawlib
 {

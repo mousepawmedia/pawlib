@@ -1,4 +1,4 @@
-#include "goldilocks.hpp"
+#include "pawlib/goldilocks.hpp"
 
 namespace pawlib
 {

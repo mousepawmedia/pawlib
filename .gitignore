@@ -8,6 +8,7 @@
 **/lib
 **/libs
 pawlib/
+!pawlib-source/include/pawlib
 docs/build
 cpgf/build/temp_cache**
 *.depend

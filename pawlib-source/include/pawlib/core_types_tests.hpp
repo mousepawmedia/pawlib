@@ -42,8 +42,8 @@
 #ifndef CORE_TYPES_TESTS_HPP_INCLUDED
 #define CORE_TYPES_TESTS_HPP_INCLUDED
 
-#include <core_types.hpp>
-#include <goldilocks.hpp>
+#include "pawlib/core_types.hpp"
+#include "pawlib/goldilocks.hpp"
 
 namespace pawlib
 {

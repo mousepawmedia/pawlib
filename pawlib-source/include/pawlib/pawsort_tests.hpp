@@ -44,8 +44,8 @@
 
 #include <algorithm>
 
-#include <goldilocks.hpp>
-#include <pawsort.hpp>
+#include "pawlib/goldilocks.hpp"
+#include "pawlib/pawsort.hpp"
 
 namespace pawlib
 {

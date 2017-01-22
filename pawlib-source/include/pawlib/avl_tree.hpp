@@ -44,9 +44,9 @@
 #ifndef AVL_TREE_HPP_INCLUDED
 #define AVL_TREE_HPP_INCLUDED
 
-#include <singly_linked_list.hpp>
-#include <queue.hpp>
-#include <iochannel.hpp>
+#include "pawlib/flex_queue.hpp"
+#include "pawlib/iochannel.hpp"
+#include "pawlib/singly_linked_list.hpp"
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;
@@ -572,8 +572,8 @@ namespace pawlib
                 //if there is something in this tree, copy it into the new tree
                 if(root != nullptr)
                 {
-                    //A queue to store the different nodes for the level order traversal
-                    Queue<Node*> q = new Queue<Node*>();
+                    //A FlexQueue to store the different nodes for the level order traversal
+                    FlexQueue<Node*> q = new FlexQueue<Node*>();
                     //add the root node to the queue
                     q->add(root);
                     //to store the node we are currently looking at

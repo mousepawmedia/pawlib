@@ -1,18 +1,4 @@
-/*PawLib Library, version 1.3
-* OneChar Class
-* OneChar is an abstract class that derives UniChar and AscChar, which are
-* used as the underlying structure of OneString.
-* Last Updated: May 21, 2016
-*
-* Scott Taylor
-* MousePaw Games
-*/
-
-#include <iostream>
-#include <iomanip>
-#include <cstring>
-#include <iochannel.hpp>
-#include "onechar.hpp"
+#include "pawlib/onechar.hpp"
 
 namespace pawlib
 {

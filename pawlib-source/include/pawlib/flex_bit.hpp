@@ -45,11 +45,12 @@
 #ifndef FLEXBIT_HPP_INCLUDED
 #define FLEXBIT_HPP_INCLUDED
 
-#include "base_flex_array.hpp"
-#include "flex_array.hpp"
 #include <bitset>
 #include <stdexcept>
-#include <iochannel.hpp>
+
+#include "pawlib/base_flex_array.hpp"
+#include "pawlib/flex_array.hpp"
+#include "pawlib/iochannel.hpp"
 
 using std::bitset;
 

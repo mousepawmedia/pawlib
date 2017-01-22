@@ -1,4 +1,4 @@
-#include "onestring_tests.hpp"
+#include "pawlib/onestring_tests.hpp"
 
 namespace pawlib
 {
@@ -35,4 +35,3 @@ namespace pawlib
             new TestStdCompare(TestString::NSAME_LAST_CHAR), false);
     }
 }
-

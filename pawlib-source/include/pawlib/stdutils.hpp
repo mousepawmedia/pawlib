@@ -49,13 +49,12 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdint>
+#include <iostream>
 #include <limits>
 #include <stdexcept>
 #include <vector>
 // Needed for stdsplit
 #include <string>
-
-#include <iostream>
 
 /* NOTE: Due to bug 19439, if we're using GCC, this only works on g++ 5.3 or higher.
  * https://sourceware.org/bugzilla/show_bug.cgi?id=19439
