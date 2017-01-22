@@ -6,18 +6,18 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include <iochannel.hpp>
-#include <goldilocks.hpp>
+#include "pawlib/goldilocks.hpp"
+#include "pawlib/iochannel.hpp"
 
-#include <core_types_tests.hpp>
-#include <flex_array_tests.hpp>
-//TODO: #include<flex_map_tests.hpp>
-#include <flex_queue_tests.hpp>
-#include <flex_stack_tests.hpp>
-#include <pawsort_tests.hpp>
-#include <onestring_tests.hpp>
-#include <pool_tests.hpp>
-#include <flex_bit_tests.hpp>
+#include "pawlib/core_types_tests.hpp"
+#include "pawlib/flex_array_tests.hpp"
+#include "pawlib/flex_bit_tests.hpp"
+//TODO: #include "pawlib/flex_map_tests.hpp"
+#include "pawlib/flex_queue_tests.hpp"
+#include "pawlib/flex_stack_tests.hpp"
+#include "pawlib/pawsort_tests.hpp"
+#include "pawlib/onestring_tests.hpp"
+#include "pawlib/pool_tests.hpp"
 
 using pawlib::iochannel;
 

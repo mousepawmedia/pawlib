@@ -52,7 +52,7 @@
 #include <iostream>
 
 //#include <rigid_stack.hpp>
-#include <flex_stack.hpp>
+#include "pawlib/flex_stack.hpp"
 
 //Signals and callbacks.
 #include "cpgf/gcallbacklist.h"

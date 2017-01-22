@@ -1,4 +1,4 @@
-#include "pawsort_tests.hpp"
+#include "pawlib/pawsort_tests.hpp"
 
 namespace pawlib
 {

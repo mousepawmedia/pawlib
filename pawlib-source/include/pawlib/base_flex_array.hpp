@@ -45,10 +45,11 @@
 #ifndef BASE_FLEX_ARRAY_HPP_INCLUDED
 #define BASE_FLEX_ARRAY_HPP_INCLUDED
 
-#include <stdlib.h>
 #include <math.h>
-#include <iochannel.hpp>
 #include <stdexcept>
+#include <stdlib.h>
+
+#include "pawlib/iochannel.hpp"
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;

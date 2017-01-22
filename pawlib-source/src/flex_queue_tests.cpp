@@ -1,4 +1,5 @@
-#include "flex_queue_tests.hpp"
+#include "pawlib/flex_queue_tests.hpp"
+
 namespace pawlib
 {
     const int onethou = 1000;

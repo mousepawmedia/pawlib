@@ -1,12 +1,12 @@
-/** QuickString [PawLIB]
+/** OneString [PawLIB]
   * Version: 0.3
   *
-  * QuickString is a multi-sized replacement
-  * for std::string. QuickString contains all the
+  * OneString is a multi-sized, Unicode-compatible replacement
+  * for std::string. OneString contains all the
   * basic functions found in std::string all while
   * avoiding dynamic allocation whenever possible.
-  * Each QuickString is made of AscChars,
-  * which are simple ASCII characters.
+  * To handle Unicode, each OneString is made of OneChars,
+  * which are enhanced characters.
   *
   * Author(s): Scott Taylor
   */
@@ -46,87 +46,92 @@
  * on how to contribute to our projects.
  */
 
-#ifndef QUICKSTRING_HPP
-#define QUICKSTRING_HPP
+#ifndef ONESTRING_HPP
+#define ONESTRING_HPP
 
+#include <cstring>
+#include <iomanip>
 #include <iostream>
-#include <iochannel.hpp>
-#include <onechar.hpp>
-#include <onestringbase.hpp>
-#include <onestring.hpp>
+
+#include "pawlib/iochannel.hpp"
+#include "pawlib/onechar.hpp"
+#include "pawlib/quickstring.hpp"
+#include "pawlib/onestringbase.hpp"
 
 namespace pawlib
 {
-    // Forward declare OneString
+    // Forward declare QuickString
     template <const int oneSize>
-    class OneString;
+    class QuickString;
 
-    /* The purpose of QuickString is to provide the functionality of std::string
-     * but with limited dynamic allocation and with a greater efficiency than
-     * std::string. As a templated class, the possible types of QuickString are:
-     * QuickString<8>, QuickString<16>, QuickString<32>, QuickString<64>, QuickString<128>,
+    /* The purpose of OneString is to provide the functionality of std::string
+     * but without dynamic allocation and with increased support for Unicode
+     * Characters. As a templated class, the possible types of OneString are:
+     * OneString<8>, OneString<16>, OneString<32>, OneString<64>, OneString<128>,
      * and any other future forward declarations. The difference between each of these
-     * QuickString types is the MAX_SIZE of each. QuickString<8> can hold a maximum of 8 OneChars
-     * while QuickString<32> can hold up to 32 OneChars. Each QuickString
+     * OneString types is the MAX_SIZE of each. OneString<8> can hold a maximum of 8 OneChars
+     * while OneString<32> can hold up to 32 OneChars. Each OneString
      * class contains a master array that is an array of OneChars. The size of
      * the master array is determined by the MAX_SIZE for the class.
      * When expanding the possible OneString sizes, one must add the forward declaration
-     * to the end of QuickString.cpp and the corresponding declarations/implementation for
+     * to the end of OneString.cpp and the corresponding declarations/implementation for
      * the copy constructor, equals(), append(), insert(), swap(), and operator=().*/
-    template <const int quickSize>
-    class QuickString: public OneStringBase
+    template <const int oneSize>
+    class OneString: public OneStringBase
 	{
 		public:
-			explicit QuickString();
+			explicit OneString();
 
-			 /**Create a QuickString from const char*
+			 /**Create a OneString from const char*
              * Note: Double quotes default to const char*
-             * \param the const char* to be converted to QuickString
-             * \return a QuickString representation of str.*/
+             * \param the const char* to be converted to OneString
+             * \return a OneString representation of str.
+             *         All Unicode will be parsed appropriately. */
             // cppcheck-suppress noExplicitConstructor
-            QuickString(const char* str);
+            OneString(const char* str);
 
-			/**Create a QuickString from std::string
-             * \param the string to be converted to QuickString
-             * \return a QuickString representation of str.*/
+			/**Create a OneString from std::string
+             * \param the string to be converted to OneString
+             * \return a OneString representation of str.
+             *         All Unicode will be parsed appropriately. */
             // cppcheck-suppress noExplicitConstructor
-            QuickString(std::string str);
+            OneString(std::string str);
 
-            /**Create a QuickString from a single char
-             * \param the char to be converted to QuickString
-             * \return a QuickString representation of ch. */
+            /**Create a OneString from a single char
+             * \param the char to be converted to OneString
+             * \return a OneString representation of ch. */
             // cppcheck-suppress noExplicitConstructor
-            QuickString(char ch);
+            OneString(char ch);
 
-            /**Create a QuickString from a OneChar
-             * \param the OneChar to be converted to QuickString
-             * \return a QuickString representation of ch */
+            /**Create a OneString from a OneChar
+             * \param the OneChar to be converted to OneString
+             * \return a OneString representation of ch */
             // cppcheck-suppress noExplicitConstructor
-            QuickString(OneChar& ch);
+            OneString(OneChar& ch);
 
             /* Constructors do not handle the abstract base well. Therefore,
              it is necessary to create a constructor for each OneString and
              QuickString size. Luckily this can be accomplished in only 3 functions */
 
-            /**Copy constructor for QuickString<quickSize>
-             * NOTE: This constructor is for a QuickString that has the same
-             *      template size as the current QuickString.
-             * \param the QuickString<oneSize> to be copied
-             * \return a new QuickString that is a deep copy of the other */
-            QuickString(const QuickString& ostr):OneStringBase(ostr, quickSize, QUICK_TYPE){};
+            /**Copy constructor for OneString<oneSize>
+             * NOTE: This constructor is for a OneString that has the same
+             *      template size as the current OneString.
+             * \param the OneString<oneSize> to be copied
+             * \return a new OneString that is a deep copy of the other */
+            OneString(const OneString& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){};
 
-            /**Copy Constructor for all other QuickString sizes
-             * \param the QuickString<N> to be copied (N != quickSize)
-             * \return a new QuickString that is a deep copy of ostr */
+            /**Copy Constructor for all other OneString sizes
+             * \param the OneString<N> to be copied (N != oneSize)
+             * \return a new OneString that is a deep copy of ostr */
             template <const int N>
-            QuickString(const QuickString<N>& ostr):OneStringBase(ostr, quickSize, QUICK_TYPE){};
+            OneString(const OneString<N>& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){};
 
-            /**Copy Constructor for all OneString sizes
-             * \param the OneString<N> to be copied (N is any of the specified sizes)
-             * \return a new QuickString that is a deep copy of ostr */
+            /**Copy Constructor for all QuickString sizes
+             * \param the QuickString<N> to be copied (N is any of the specified sizes)
+             * \return a new OneString that is a deep copy of ostr */
             template <const int N>
             // cppcheck-suppress noExplicitConstructor
-            QuickString(const OneString<N>& ostr):OneStringBase(ostr, quickSize, QUICK_TYPE){};
+            OneString(const QuickString<N>& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){};
 
             /**Tests for equality with a const char*
              * \param a const char* to be tested for equality
@@ -143,7 +148,14 @@ namespace pawlib
             // Include all declarations in base class
             using OneStringBase::append;
 
-            /**Inserts a char* into the master array at a specific position
+             /**Parses char* into OneString based on size
+             * Used primarily for Unicode Characters within OneString(const char*)
+             * \param the const char* to be parsed
+             * \param an int to represent the index to parse the char* at
+             * \param an int to represent the number of bytes in the char* */
+            void parseChar(const char* str, int index, int bytes);
+
+             /**Inserts a char* into the master array at a specific position
              * \param an int that indicates the position to insert at
              * \param the const char* to be inserted */
             void insert(int pos, const char* ostr);
@@ -155,15 +167,14 @@ namespace pawlib
              * \param an int that corresponds to the start of the substring
              * \param an int for the size of the substring. Defaults to -1 to
              * indicate that the substring goes to the end of the master array
-             * \return a QuickString that is a substring of the master array*/
+             * \return a OneString that is a substring of the master array*/
             OneStringBase& substr(int pos, int sublen = -1);
-
 
             /**Exchanges the master array for the contents of str while
               * Note: must be the same MAX_SIZE
               * the contents of str become that of the master array
-              * \param the reference to the QuickString to be swapped with */
-            void swap(QuickString& str);
+              * \param the reference to the OneString to be swapped with */
+             void swap(OneString& str);
 
             /**Helper function for operator= that must be declared in derived
              * classes.
@@ -191,10 +202,10 @@ namespace pawlib
             ********************************************************************/
 
             // Define Macro to associate code to each operator+ function
-            #define QADDOP_FUNCT \
+            #define ADDOP_FUNCT \
             { \
                 /* We don't want to alter the left-hand side, so we create a copy*/\
-                QuickString cpyStr = lhs;\
+                OneString cpyStr = lhs;\
                 /* Append the right-hand side */\
                 cpyStr.append(rhs);\
                 return cpyStr;\
@@ -203,54 +214,54 @@ namespace pawlib
             /**Appends the right hand operator onto the left hand operator
              * What makes this different from += is that + may be used
              * multiple times per line of code
-             * The rhs param can be either a QuickString, char, const char*,
+             * The rhs param can be either a OneString, char, const char*,
              * OneChar, or std::string.
-             * \param the left-hand QuickString to be added to
+             * \param the left-hand OneString to be added to
              * \param the right-hand argument to be appended
-             * \return the QuickString result of joining the lhs and rhs*/
+             * \return the OneString result of joining the lhs and rhs*/
             template <class R>
-            friend QuickString operator+(const QuickString& lhs, R rhs)
+            friend OneString operator+(const OneString& lhs, R rhs)
             {
-                QADDOP_FUNCT;
+                ADDOP_FUNCT;
             };
 
-            /**Appends a QuickString to a char*
+            /**Appends a OneString to a char*
              * \param the left-hand char* to be added to
-             * \param the right-hand QuickString to be appended
-             * \return the QuickString result of joining the lhs and rhs*/
-            friend QuickString operator+(const char* lhs,  QuickString rhs)
+             * \param the right-hand OneString to be appended
+             * \return the OneString result of joining the lhs and rhs*/
+            friend OneString operator+(const char* lhs,  OneString rhs)
             {
-                QADDOP_FUNCT;
+                ADDOP_FUNCT;
             };
 
-            /**Appends a QuickString to a char
+            /**Appends a OneString to a char
              * \param the left-hand char to be added to
-             * \param the right-hand QuickString to be appended
-             * \return the QuickString result of joining the lhs and rhs*/
-            friend QuickString operator+(char lhs,  QuickString rhs)
+             * \param the right-hand OneString to be appended
+             * \return the OneString result of joining the lhs and rhs*/
+            friend OneString operator+(char lhs,  OneString rhs)
             {
-                QADDOP_FUNCT;
+                ADDOP_FUNCT;
             };
 
-            /**Appends a QuickString to a std::string
+            /**Appends a OneString to a std::string
              * \param the left-hand std::string to be added to
              * \param the right-hand OneString to be appended
-             * \return the QuickString result of joining the lhs and rhs*/
-            friend QuickString operator+(std::string lhs,  QuickString rhs)
+             * \return the OneString result of joining the lhs and rhs*/
+            friend OneString operator+(std::string lhs,  OneString rhs)
             {
-                QADDOP_FUNCT;
+                ADDOP_FUNCT;
             };
 
-            /**Appends a QuickString to a OneChar
+            /**Appends a OneString to a OneChar
              * \param the left-hand OneChar to be added to
-             * \param the right-hand QuickString to be appended
-             * \return the QuickString result of joining the lhs and rhs*/
-            friend QuickString operator+(OneChar* lhs, QuickString rhs)
+             * \param the right-hand OneString to be appended
+             * \return the OneString result of joining the lhs and rhs*/
+            friend OneString operator+(OneChar* lhs, OneString rhs)
             {
-                QADDOP_FUNCT;
+                ADDOP_FUNCT;
             };
 
 	};
 
 }
-#endif // QUICKSTRING_HPP
+#endif // ONESTRING_HPP

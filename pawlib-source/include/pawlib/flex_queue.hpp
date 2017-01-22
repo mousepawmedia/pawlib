@@ -1,7 +1,7 @@
-/** FlexStack [PawLIB]
+/** FlexQueue [PawLIB]
   * Version: 1.0
   *
-  * A Flex-based stack with a low dynamic allocation demand.
+  * A Flex-based queue with a low dynamic allocation demand.
   *
   * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
   */
@@ -41,30 +41,36 @@
  * on how to contribute to our projects.
  */
 
-#ifndef FLEX_STACK_HPP_INCLUDED
-#define FLEX_STACK_HPP_INCLUDED
+#ifndef FLEX_QUEUE_HPP_INCLUDED
+#define FLEX_QUEUE_HPP_INCLUDED
 
-#include "base_flex_array.hpp"
-#include <iochannel.hpp>
-#include <stack>
+#include "pawlib/base_flex_array.hpp"
+#include "pawlib/iochannel.hpp"
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template <class type>
-    class FlexStack : public Base_FlexArr<type>
+    template <typename type>
+    class FlexQueue : public Base_FlexArr<type>
     {
         public:
-            FlexStack() : Base_FlexArr<type>() { }
+            /** Create a new FlexQueue with the default capacity.
+              */
+            FlexQueue()
+                :Base_FlexArr<type>()
+                {}
 
-            explicit FlexStack(unsigned int numElements)
-            :Base_FlexArr<type>(numElements)
-            {}
+            /** Create a new FlexQueue with the specified minimum capacity.
+              * \param the minimum number of elements that the FlexQueue can contain.
+              */
+            explicit FlexQueue(unsigned int numElements)
+                :Base_FlexArr<type>(numElements)
+                {}
 
-            /** Add the specified element to the FlexStack.
-              * \param the element to add.
+            /** Pushes the specified element to the FlexQueue.
+              * \param the element to push
               * \return true if successful, else false.
               */
             bool push(type newElement)
@@ -88,9 +94,9 @@ namespace pawlib
                 return true;
             }
 
-            /** Returns the next (last) element in the FlexStack without
+            /** Returns the next (first) element in the FlexQueue without
               * modifying the data structure.
-              * \return the next element in the FlexStack.
+              * \return the next element in the FlexQueue.
               */
             type peek()
             {
@@ -98,7 +104,7 @@ namespace pawlib
                 if(this->currElements > 0)
                 {
                     // Return that element.
-                    return this->at(this->currElements-1);
+                    return this->at(0);
                 }
                 // Otherwise...
                 else
@@ -108,25 +114,36 @@ namespace pawlib
                 }
             }
 
-            /** Return and remove the next element in the FlexStack.
-              * \return the next (last) element, now removed.
+            /** Return and remove the next element in the FlexQueue.
+              * This is technically an unshift(), NOT a pop().
+              * \return the next (first) element, now removed.
               */
             type pop()
             {
-                // If there are no elements...
-                if(this->currElements == 0)
+                // If there is at least one element in the array...
+                if(this->currElements > 0)
                 {
-                    // Throw a fatal error.
-                    throw std::out_of_range("FlexStack: Cannot pop from empty FlexStack.");
+                    // Store the first element, to be returned later.
+                    type temp = this->theArray[0];
+
+                    /* Shift all elements to the left one index. This
+                     * effectively deletes the first element from the array. */
+                    this->mem_shift(1, -1);
+
+                    // Decrement the number of elements.
+                    --(this->currElements);
+
+                    // Return the element we just deleted.
+                    return temp;
                 }
-                // Else if there is at least one element...
+                // Else if there are no elements in the array...
                 else
                 {
-                    /* Return the last element and decrement the
-                     * number of elements. */
-                    return this->theArray[--(this->currElements)];
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexQueue: Cannot pop from empty FlexQueue.");
                 }
             }
     };
 }
-#endif // STACK_HPP_INCLUDED
+
+#endif // QUEUE_HPP_INCLUDED

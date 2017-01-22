@@ -1,4 +1,4 @@
-#include "flex_bit_tests.hpp"
+#include "pawlib/flex_bit_tests.hpp"
 
 namespace pawlib
 {

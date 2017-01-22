@@ -48,8 +48,8 @@
 #include <stdio.h>
 #include <stdexcept>
 
-#include <base_flex_array.hpp>
-#include <iochannel.hpp>
+#include "pawlib/base_flex_array.hpp"
+#include "pawlib/iochannel.hpp"
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;

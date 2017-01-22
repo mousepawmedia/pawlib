@@ -7,13 +7,7 @@
 * MousePaw Games
 */
 
-#include "onestringbase.hpp"
-#include "quickstring.hpp"
-#include <iostream>
-#include <iomanip>
-#include <cstring>
-#include <iochannel.hpp>
-
+#include "pawlib/quickstring.hpp"
 
 namespace pawlib
 {

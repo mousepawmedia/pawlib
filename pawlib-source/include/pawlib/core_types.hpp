@@ -45,7 +45,7 @@
 #define CORE_TYPES_HPP_INCLUDED
 
 #include <iostream>
-#include <iochannel.hpp>
+#include "pawlib/iochannel.hpp"
 
 namespace pawlib
 {

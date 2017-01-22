@@ -1,4 +1,4 @@
-#include "flex_array_tests.hpp"
+#include "pawlib/flex_array_tests.hpp"
 
 namespace pawlib
 {

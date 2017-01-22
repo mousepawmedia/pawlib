@@ -1,4 +1,4 @@
-#include "flex_stack_tests.hpp"
+#include "pawlib/flex_stack_tests.hpp"
 /*general layout for creating tests in the cpp file
     line 1: testmanager->register_test ("unique test name",
     line 2: new "function that is being tested",

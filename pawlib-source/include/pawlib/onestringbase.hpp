@@ -49,9 +49,13 @@
 
 #ifndef ONESTRINGBASE_HPP
 #define ONESTRINGBASE_HPP
+
+#include <cstring>
+#include <iomanip>
 #include <iostream>
-#include <iochannel.hpp>
-#include <onechar.hpp>
+
+#include "pawlib/iochannel.hpp"
+#include "pawlib/onechar.hpp"
 
 
 // Type constants
