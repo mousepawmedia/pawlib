@@ -245,6 +245,15 @@ namespace pawlib
             }
 
             /** Return and remove the last element in the FlexArray.
+              * Just an alias for pop()
+              * \return the last element, now removed.
+              */
+            type pop_back()
+            {
+                return pop();
+            }
+
+            /** Return and remove the last element in the FlexArray.
               * \return the last element, now removed.
               */
             type pop()
@@ -262,6 +271,16 @@ namespace pawlib
                      * number of elements. */
                     return this->theArray[--(this->currElements)];
                 }
+            }
+
+            /** Add the specified element to the end of the FlexArray.
+              * Just an alias for push()
+              * \param the element to add.
+              * \return true if successful, else false.
+              */
+            bool push_back(type newElement)
+            {
+                push(newElement);
             }
 
             /** Add the specified element to the end of the FlexArray.

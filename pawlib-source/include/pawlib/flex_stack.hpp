@@ -65,6 +65,16 @@ namespace pawlib
             {}
 
             /** Add the specified element to the FlexStack.
+              * This is just an alias for push()
+              * \param the element to add.
+              * \return true if successful, else false.
+              */
+            bool push_back(type newElement)
+            {
+                return push(newElement);
+            }
+
+            /** Add the specified element to the FlexStack.
               * \param the element to add.
               * \return true if successful, else false.
               */
@@ -107,6 +117,15 @@ namespace pawlib
                     // Throw a fatal error.
                     throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
                 }
+            }
+
+            /** Return and remove the next element in the FlexStack.
+              * This is just an alias for pop()
+              * \return the next (last) element, now removed.
+              */
+            type pop_back()
+            {
+                return pop();
             }
 
             /** Return and remove the next element in the FlexStack.

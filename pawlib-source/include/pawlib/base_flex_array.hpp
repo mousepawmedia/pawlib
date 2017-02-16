@@ -121,6 +121,52 @@ namespace pawlib
                 }
             }
 
+            /** Check if the data structure is empty.
+              * \return true if empty, else false
+              */
+            bool empty()
+            {
+                return (currElements = 0);
+            }
+
+            /** Erase the elements in the specified range.
+              * \param the first index in the range to remove
+              * \param the last index in the range to remove
+              */
+            bool erase(unsigned int first, unsigned int last=0)
+            {
+                /* If no last index was specified, prepare to delete only
+                 * the element 'first'. */
+                if(last == 0)
+                {
+                    last = first;
+                }
+
+                // If the range [first-last] is valid...
+                if(last >= first && last < currElements)
+                {
+                    int removeCount = (last+1) - first;
+
+                    //...and if we'll have leftovers after `last`
+                    if(last < currElements - 1)
+                    {
+                        // Shift the leftovers backwards into place.
+                        mem_shift(last+1, -removeCount);
+                    }
+                    // Recalculate the elements we have.
+                    currElements -= removeCount;
+                    return true;
+                }
+                else
+                {
+                    // Throw non-fatal error.
+                    ioc << cat_error << "BaseFlexArray Erase: Invalid range ("
+                        << first << " - " << last << "). Took no action."
+                        << io_end;
+                    return false;
+                }
+            }
+
             /** Get the current number of elements in the structure.
               * \return the number of elements
               */

@@ -69,11 +69,31 @@ namespace pawlib
                 :Base_FlexArr<type>(numElements)
                 {}
 
-            /** Pushes the specified element to the FlexQueue.
-              * \param the element to push
+            /** Adds the specified element to the FlexQueue.
+             * This is just an alias for enqueue()
+              * \param the element to enqueue
+              * \return true if successful, else false.
+             */
+            bool push(type newElement)
+            {
+                return enqueue(newElement);
+            }
+
+            /** Adds the specified element to the FlexQueue.
+             * This is just an alias for enqueue()
+              * \param the element to enqueue
+              * \return true if successful, else false.
+             */
+            bool push_back(type newElement)
+            {
+                return enqueue(newElement);
+            }
+
+            /** Adds the specified element to the FlexQueue.
+              * \param the element to enqueue
               * \return true if successful, else false.
               */
-            bool push(type newElement)
+            bool enqueue(type newElement)
             {
                 // If the array is full...
                 if(this->currElements == this->capacity)
@@ -114,11 +134,28 @@ namespace pawlib
                 }
             }
 
+            /**Return and remove the next element in the FlexStack.
+             * This is just an alias for dequeue()
+             * \return the next (first) element, now removed.
+             */
+            type pop()
+            {
+                return dequeue();
+            }
+
+            /**Return and remove the next element in the FlexStack.
+             * This is just an alias for dequeue()
+             * \return the next (first) element, now removed.
+             */
+            type pop_front()
+            {
+                return dequeue();
+            }
+
             /** Return and remove the next element in the FlexQueue.
-              * This is technically an unshift(), NOT a pop().
               * \return the next (first) element, now removed.
               */
-            type pop()
+            type dequeue()
             {
                 // If there is at least one element in the array...
                 if(this->currElements > 0)

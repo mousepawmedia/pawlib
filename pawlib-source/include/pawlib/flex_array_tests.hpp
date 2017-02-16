@@ -308,7 +308,7 @@ Middle is calculated as size()/2.";
     };
 
     // P-tB1004*
-    class TestVector_Erase : public Test
+    class TestVector_Yank : public Test
     {
         private:
             std::vector<unsigned int> vec;
@@ -316,18 +316,18 @@ Middle is calculated as size()/2.";
             unsigned int iters;
 
         public:
-          explicit TestVector_Erase(unsigned int iterations)
+          explicit TestVector_Yank(unsigned int iterations)
             :iters(iterations)
             {}
 
             testdoc_t get_title()
             {
-                return "FlexArray: Erase " + stdutils::itos(iters, 10) + " Integers (std::vector)";
+                return "FlexArray: Erase " + stdutils::itos(iters, 10) + " Integers Individually (std::vector)";
             }
 
             testdoc_t get_docs()
             {
-                return "Erase " + stdutils::itos(iters, 10) + " integers at the front of a Vector (pop).";
+                return "Erase " + stdutils::itos(iters, 10) + " integers individually at the front of a Vector (pop).";
             }
 
             bool pre()
@@ -365,7 +365,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            ~TestVector_Erase(){}
+            ~TestVector_Yank(){}
     };
 
     // P-tB1004, P-tS1004
@@ -646,6 +646,104 @@ Middle is calculated as size()/2.";
             }
 
             ~TestFArray_Pop(){}
+    };
+
+    // P-tB1007, P-tS1007
+    class TestFArray_Erase : public Test
+    {
+        private:
+            pawlib::FlexArray<unsigned int> flex;
+            unsigned int iters;
+
+        public:
+            explicit TestFArray_Erase(unsigned int iterations)
+                :iters(iterations)
+                {}
+
+            testdoc_t get_title()
+            {
+                return"FlexArray: Erase half of " + stdutils::itos(iters, 10) + " integers from a FlexArray.";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Erase the center half of elements in a " + stdutils::itos(iters, 10) + " integer-wide FlexArray.";
+            }
+
+            bool pre()
+            {
+                return janitor();
+            }
+
+            bool janitor()
+            {
+                // Refill the FlexArray.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    flex.push(i);
+                }
+                return true;
+            }
+            bool run()
+            {
+                // Calcuate erase size as the center half of the elements.
+                int first = iters/4;
+                int last = first * 3;
+                // Erase in one step.
+                return flex.erase(first, last);
+            }
+
+            ~TestFArray_Erase(){}
+    };
+
+    // P-tB1007*
+    class TestVector_Erase : public Test
+    {
+        private:
+            std::vector<unsigned int> vec;
+            unsigned int iters;
+
+        public:
+            explicit TestVector_Erase(unsigned int iterations)
+                :iters(iterations)
+                {}
+
+            testdoc_t get_title()
+            {
+                return"FlexArray: Erase half of " + stdutils::itos(iters, 10) + " integers from a std::vector.";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Erase the center half of elements in a " + stdutils::itos(iters, 10) + " integer-wide std::vector.";
+            }
+
+            bool pre()
+            {
+                return janitor();
+            }
+
+            bool janitor()
+            {
+                // Refill the FlexArray.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    vec.push_back(i);
+                }
+                return true;
+            }
+            bool run()
+            {
+                // Calcuate erase size as the center half of the elements.
+                int first = iters/4;
+                int last = first * 3;
+                // Erase in one step.
+                std::vector<unsigned int>::iterator result = vec.erase(vec.begin() + first, vec.begin() + last);
+                // If the iterator points to the vector end, there was a problem.
+                return (result != vec.end());
+            }
+
+            ~TestVector_Erase(){}
     };
 
     class TestSuite_FlexArray : public TestSuite
