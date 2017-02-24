@@ -15,7 +15,7 @@ Clang (3.4 or later).
 ## Building and Linking Dependencies
 
 PawLIB relies on CPGF. The default behavior of the build system is
-to look for MousePaw Games' `lib-git/` repository, cloned parallel
+to look for MousePaw Games' `libdeps/` repository, cloned parallel
 to this repository's main folder. Simply run `make ready` or `make cpgf`
 in that repository before building this one.
 (This is our default for company development environments.)
@@ -52,8 +52,6 @@ repository are pre-configured to build directly in the repository.
 
 ## Source Directories
 
-- The '/cpgf' folder contains the source code for the CPGF library, which
-PawLIB uses.
 - The '/docs' folder contains the Sphinx documentation for PawLIB.
 - The '/pawlib-source' folder contains the source code for the PawLIB
   library.
