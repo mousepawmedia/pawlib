@@ -1,5 +1,5 @@
 /** Tests for FlexBit[PawLIB]
-  * Version: 1.0
+  * Version: 0.1
   *
   * Author(s): Sergio Ramirez
   */
