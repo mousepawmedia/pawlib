@@ -1,5 +1,5 @@
 /** FlexBit [PawLIB]
-  * Version: 1.0
+  * Version: 0.1
   *
   * A dynamic data structure for binary data.
   * Designed to take the place of 'std::vector<bool>'.
