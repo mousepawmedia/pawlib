@@ -1,6 +1,6 @@
 # LICENSE
 
-Copyright (c) 2016 MousePaw Games.
+Copyright (C) 2016 MousePaw Media.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

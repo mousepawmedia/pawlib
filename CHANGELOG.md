@@ -10,8 +10,6 @@
     * NEW trilean atomic data type.
 * FlexArray 1.0
     * NEW high-performance vector-like data structure.
-* FlexBit 1.0
-    * NEW adaptive, optimized byte-based stack data structure.
 * FlexQueue 1.0
     * NEW high-performance queue (FIFO) data structure.
 * FlexStack 1.0
@@ -42,6 +40,8 @@
 
 * BinConf 0.1 [Experimental]
     * Utilities for converting between various data types and their binary equivalents.
+* FlexBit 0.1 [Experimental]
+    * NEW adaptive, optimized byte-based stack data structure.
 * FlexMap 0.1 [Experimental]
     * NEW high-performance map data structure, based on the same
     algorithm as the other Flex data structures.
