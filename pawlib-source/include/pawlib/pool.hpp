@@ -43,7 +43,6 @@
  * on how to contribute to our projects.
  */
 
-
 #ifndef POOL_HPP_INCLUDED
 #define POOL_HPP_INCLUDED
 
@@ -51,7 +50,7 @@
 #include <exception>
 #include <iostream>
 
-//#include <rigid_stack.hpp>
+#include "pawlib/constants.hpp"
 #include "pawlib/flex_stack.hpp"
 
 //Signals and callbacks.
@@ -59,9 +58,8 @@
 
 namespace pawlib
 {
-    /** Indicates an invalid pool index, such as when the pool is full.
-      * We actually use the largest unsigned int32 for this. */
-    static const uint32_t INVALID_INDEX = UINT32_MAX;
+    /** INVALID_INDEX (from pawlib/constants.hpp) indicates an invalid pool
+      * index, such as when the pool is full. */
 
     template<typename T> class pool_ref;
     template<typename T> class pool_obj;

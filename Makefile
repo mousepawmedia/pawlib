@@ -32,7 +32,7 @@ help:
 	@echo "                  in the root of this repository."
 	@echo "  When unspecified, default.config will be used."
 	@echo
-	@echo "For other build options, see the 'make' command in 'docs/', 'pawlib-source/', 'pawlib-tester/', and 'cpgf/build/'."
+	@echo "For other build options, see the 'make' command in 'docs/', 'pawlib-source/', and 'pawlib-tester/'."
 
 clean:
 	$(MAKE) clean -C pawlib-source

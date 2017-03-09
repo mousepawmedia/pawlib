@@ -49,6 +49,7 @@
 #include <stdexcept>
 
 #include "pawlib/base_flex_array.hpp"
+#include "pawlib/constants.hpp"
 #include "pawlib/iochannel.hpp"
 
 using pawlib::iochannel;
@@ -69,7 +70,8 @@ namespace pawlib
             /** Create a new FlexArray with the specified minimum capacity.
               * \param the minimum number of elements that the FlexArray can contain.
               */
-            explicit FlexArray(unsigned int numElements)
+            // cppcheck-suppress noExplicitConstructor
+            FlexArray(uint32_t numElements)
                 :Base_FlexArr<type>(numElements)
                 {}
 
@@ -79,7 +81,7 @@ namespace pawlib
              * \param the index to insert the element at.
              * \return true if insert successful, else false.
              */
-            bool insert(type newElement, unsigned int index)
+            bool insert(type newElement, uint32_t index)
             {
                 /* If the index is greater than the number of elements
                  * in the array currently. */
@@ -129,7 +131,7 @@ namespace pawlib
               * \param the index to act on.
               * \return the element from the given index.
               */
-            type yank(unsigned int index)
+            type yank(uint32_t index)
             {
                 // If there are no elements in the array...
                 if(this->currElements == 0)
@@ -159,6 +161,16 @@ namespace pawlib
                     // Return the deleted element.
                     return temp;
                 }
+            }
+
+            /** Insert an element at the beginning of the FlexArray.
+              * Just an alias for shift()
+              * \param the element to insert.
+              * \return true if successful, else false.
+              */
+            bool push_front(type newElement)
+            {
+                push(newElement);
             }
 
             /** Insert an element at the beginning of the FlexArray.

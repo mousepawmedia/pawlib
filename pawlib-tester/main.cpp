@@ -5,6 +5,7 @@
 #include <time.h>
 
 #include "pawlib/core_types.hpp"
+#include "pawlib/flex_array.hpp"
 #include "pawlib/goldilocks.hpp"
 #include "pawlib/iochannel.hpp"
 #include "pawlib/onestringbase.hpp"
@@ -26,6 +27,7 @@ using namespace std;
 
 void help();
 void basicStringFunc();
+void randomTest();
 int command(TestSystem* sys, unsigned int argc, char* argv[]);
 void interactive(TestSystem* sys);
 
@@ -58,6 +60,7 @@ int main(int argc, char* argv[])
 
         // Shows that OneString and QuickString do operate correctly
         // basicStringFunc();
+        randomTest();
 
         // Shift control to the interactive console.
         interactive(sys);
@@ -67,6 +70,24 @@ int main(int argc, char* argv[])
     sys = 0;
 
     return 0;
+}
+
+void randomTest()
+{
+    FlexArray<int> temps;
+
+    // We'll push a couple of values for our example.
+    temps.push(45);
+    temps.push(48);
+
+    //Insert the value "37" at index 1.
+    temps.insert(37, 1);
+    //Insert the value "35" at index 2.
+    temps.insert(35, 2);
+
+    // The FlexArray is now [48, 35, 37, 45]
+    ioc << temps[0] << " " << temps[1] << " "
+        << temps[2] << " " << temps[3] << io_end;
 }
 
 void basicStringFunc()

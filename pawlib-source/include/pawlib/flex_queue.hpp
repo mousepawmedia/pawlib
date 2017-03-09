@@ -65,7 +65,8 @@ namespace pawlib
             /** Create a new FlexQueue with the specified minimum capacity.
               * \param the minimum number of elements that the FlexQueue can contain.
               */
-            explicit FlexQueue(unsigned int numElements)
+            // cppcheck-suppress noExplicitConstructor
+            FlexQueue(uint32_t numElements)
                 :Base_FlexArr<type>(numElements)
                 {}
 

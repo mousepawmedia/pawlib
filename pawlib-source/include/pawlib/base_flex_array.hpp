@@ -45,6 +45,7 @@
 #ifndef BASE_FLEX_ARRAY_HPP_INCLUDED
 #define BASE_FLEX_ARRAY_HPP_INCLUDED
 
+#include <cstdint>
 #include <math.h>
 #include <stdexcept>
 #include <stdlib.h>
@@ -76,7 +77,8 @@ namespace pawlib
               * of elements.
               * \param the minimum number of elements the structure can hold.
               */
-            Base_FlexArr(int numElements)
+            // cppcheck-suppress noExplicitConstructor
+            Base_FlexArr(uint32_t numElements)
             :theArray(nullptr), resizable(true), currElements(0)
             {
                 /* Set the size to be the power of 2 just below the entered
@@ -100,7 +102,7 @@ namespace pawlib
             /** Access an element at a given index using the [] operator.
               * For example, "theArray[5]".
               */
-            type operator[](unsigned int index)
+            type operator[](uint32_t index)
             {
                 return at(index);
             }
@@ -109,9 +111,9 @@ namespace pawlib
               * \param the index to access.
               * \return the element at the given index.
               */
-            type at(unsigned int index)
+            type at(uint32_t index)
             {
-                if(index > currElements - 1 || index < 0)
+                if(index > currElements - 1)
                 {
                     throw std::out_of_range("BaseFlexArray: Index out of range!");
                 }
@@ -133,7 +135,7 @@ namespace pawlib
               * \param the first index in the range to remove
               * \param the last index in the range to remove
               */
-            bool erase(unsigned int first, unsigned int last=0)
+            bool erase(uint32_t first, uint32_t last=0)
             {
                 /* If no last index was specified, prepare to delete only
                  * the element 'first'. */
@@ -145,7 +147,7 @@ namespace pawlib
                 // If the range [first-last] is valid...
                 if(last >= first && last < currElements)
                 {
-                    int removeCount = (last+1) - first;
+                    uint32_t removeCount = (last+1) - first;
 
                     //...and if we'll have leftovers after `last`
                     if(last < currElements - 1)
@@ -170,7 +172,7 @@ namespace pawlib
             /** Get the current number of elements in the structure.
               * \return the number of elements
               */
-            int getSize()
+            uint32_t getSize()
             {
                 return currElements;
             }
@@ -179,7 +181,7 @@ namespace pawlib
               * without resizing.
               * \return the maximum number of elements
               */
-            int getArraySize()
+            uint32_t getArraySize()
             {
                 return capacity;
             }
@@ -192,11 +194,11 @@ namespace pawlib
             bool resizable;
 
             /// The current number of elements in the structure.
-            unsigned int currElements;
+            uint32_t currElements;
 
             /** The maximum number of elements (capacity) that can be contained
               * in the structure without resizing. */
-            unsigned int capacity;
+            uint32_t capacity;
 
             /** Double the capacity of the structure.
               * \return true if it was able to double capacity, else false.
@@ -227,7 +229,7 @@ namespace pawlib
                 if(this->theArray != nullptr)
                 {
                     // Transfer all of the elements over.
-                    /*for(unsigned int i = 0; i < currElements; i++)
+                    /*for(uint32_t i = 0; i < currElements; i++)
                     {
                         tempArray[i] = this->theArray[i];
                     }*/
@@ -255,7 +257,7 @@ namespace pawlib
               * \param the index to shift elements from
               * \param the direction and distance to shift the elements in.
               */
-            void mem_shift(unsigned int fromIndex, int direction)
+            void mem_shift(uint32_t fromIndex, int8_t direction)
             {
                 if(fromIndex + 1 > this->currElements)
                 {

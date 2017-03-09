@@ -60,7 +60,8 @@ namespace pawlib
         public:
             FlexStack() : Base_FlexArr<type>() { }
 
-            explicit FlexStack(unsigned int numElements)
+            // cppcheck-suppress noExplicitConstructor
+            FlexStack(uint32_t numElements)
             :Base_FlexArr<type>(numElements)
             {}
 

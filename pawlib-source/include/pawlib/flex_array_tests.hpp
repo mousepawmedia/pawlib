@@ -111,7 +111,7 @@ namespace pawlib
             bool run()
             {
                 // Create instance of FlexArray.
-                pawlib::FlexArray< unsigned int> flex;
+                pawlib::FlexArray<unsigned int> flex;
 
                 // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
