@@ -1494,20 +1494,18 @@ namespace pawlib
 
     bool TestManager::validate(testname_t item_name, bool yell, bool suite)
     {
-        /* Use `std::map::find` to test for the key in the map. As long
-         * as find does not return the end iterator (std::map::end), which
-         * indicates that the key was not found, we know that the key is
-         * somewhere in the map. We don't really care where - just return
-         * the boolean stating whether it exists.
+        /* Use `std::map::count` to test for the key in the map.
+         * Using `std::map::find` in this way has some memory issues,
+         * according to Clang.
          */
         bool r = false;
         if(suite)
         {
-            r = (suites.find(item_name) != suites.end());
+            r = (suites.count(item_name) == 0);
         }
         if(!suite)
         {
-            r = (tests.find(item_name) != tests.end());
+            r = (tests.count(item_name) == 0);
         }
 
         if(yell && !r)

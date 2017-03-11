@@ -236,7 +236,9 @@ namespace pawlib
             /**The TestManager doesn't need anything to its constructor,
              * as all of its tests will be added ("registered") after the
              * fact, and it doesn't do any heap allocation besides that.*/
-            TestManager(){}
+            TestManager()
+            :tests(), suites()
+            {}
 
             /**List all tests registered with the TestManager.
              * \param whether to show the titles
