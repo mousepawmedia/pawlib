@@ -292,7 +292,7 @@ namespace pawlib
               */
             bool push_back(type newElement)
             {
-                push(newElement);
+                return push(newElement);
             }
 
             /** Add the specified element to the end of the FlexArray.
