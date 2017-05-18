@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## PawLIB 1.0 [2016-01-05]
+## PawLIB 1.0 [2017-06-17]
 
 ### Stable Features
 

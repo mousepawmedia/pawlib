@@ -52,8 +52,8 @@ PawLIB is licensed under the BSD-3 License. (See LICENSE.md)
 
 The project is owned and maintained by [MousePaw Media][2].
 
-[1]: http://www.mousepawgames.com/pawlib
-[2]: http://www.mousepawgames.com/opensource
-[3]: http://www.mousepawgames.com/opensource#contribute
-[4]: http://www.mousepawgames.com/termsofdevelopment
-[5]: http://github.com/mousepawmedia/pawlib
+[1]: https://www.mousepawmedia.com/pawlib
+[2]: https://www.mousepawmedia.com/developers
+[3]: https://www.mousepawmedia.com/developers/contribution
+[4]: https://www.mousepawmedia.com/termsofdevelopment
+[5]: https://github.com/mousepawmedia/pawlib
