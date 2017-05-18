@@ -461,8 +461,10 @@ namespace pawlib
         /* ENTRY: Add a new test by name to the test manager. */
 
         // Ensure the test DOES NOT already exists before continuing.
-        if(!validate(test_name, false))
+        // If it DOES...
+        if(validate(test_name, false))
         {
+            // Throw an error.
             ioc << cat_error << ta_bold << fg_red
                 << "ERROR: A test by the name of " << test_name
                 << "is already registered in Golidlocks Test Manager." << io_end;
@@ -504,8 +506,10 @@ namespace pawlib
         suite->backregister(this);
 
         // Ensure the suite DOES NOT already exist before continuing.
-        if(!validate(suite_name, false, true))
+        // If it does...
+        if(validate(suite_name, false, true))
         {
+            // Throw an error.
             ioc << cat_error << ta_bold << fg_red
                 << "ERROR: A suite by the name of " << suite_name
                 << " is already registered in Golidlocks Test Manager." << io_end;
@@ -1501,11 +1505,11 @@ namespace pawlib
         bool r = false;
         if(suite)
         {
-            r = (suites.count(item_name) == 0);
+            r = (suites.count(item_name) != 0);
         }
         if(!suite)
         {
-            r = (tests.count(item_name) == 0);
+            r = (tests.count(item_name) != 0);
         }
 
         if(yell && !r)
