@@ -163,8 +163,8 @@ namespace pawlib
                 }
             }
 
-            /** Insert an element at the beginning of the FlexArray.
-              * Just an alias for shift()
+            /** Insert an element at the end of the FlexArray.
+              * Just an alias for push()
               * \param the element to insert.
               * \return true if successful, else false.
               */
