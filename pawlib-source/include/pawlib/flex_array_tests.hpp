@@ -748,6 +748,53 @@ Middle is calculated as size()/2.";
             ~TestVector_Erase(){}
     };
 
+    // P-tB1008
+    class TestFArray_Peek : public Test
+    {
+            TestFArray_Peek(){}
+
+            testdoc_t get_title()
+            {
+                return "FlexArray: Peek (flexarray)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Ensure the last element is being peeked correctly.";
+            }
+
+            bool run()
+            {
+                // Create instance of FlexArray.
+                pawlib::FlexArray<unsigned int> flex;
+
+                unsigned int expected = 42;
+                unsigned int other = 9;
+
+                /* We initially push three values, to make the
+                 * math calculating the insert index a bit safer.*/
+                flex.push(other);
+                flex.push(other);
+                flex.push(other);
+                flex.push(expected);
+
+                unsigned int peeked = flex.peek();
+                if(peeked == expected)
+                {
+                    // Report success.
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+
+            ~TestFArray_Peek(){}
+
+    };
+
     class TestSuite_FlexArray : public TestSuite
     {
         public:

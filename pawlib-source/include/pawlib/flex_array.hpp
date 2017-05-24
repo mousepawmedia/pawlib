@@ -208,14 +208,14 @@ namespace pawlib
 
             /** Returns the last element in the FlexArray without modifying
               * the data structure.
-              * \return the first element in the FlexArray.
+              * \return the last element in the FlexArray.
               */
             type peek()
             {
                 // If there is at least one element in the array...
                 if(!this->empty())
                 {
-                    // Return that element.
+                    // Return the last element.
                     return this->at(this->currElements - 1);
                 }
                 // Otherwise...
@@ -225,13 +225,14 @@ namespace pawlib
                     throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
                 }
             }
-            /** Returns the last element in Flex Array without modifying
+            /** Returns the last element in FlexArray without modifying
               * the data structure
-              * \Just an alias for peekBack
+              * Just an alias for peek.
+              * \return the first element in the FlexArray.
               */
-            type peekBack()
+            type peek_back()
             {
-              return this->peek();
+              return peek();
             }
 
             /** Returns and removes the first element in the FlexArray.
