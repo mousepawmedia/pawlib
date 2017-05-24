@@ -206,7 +206,7 @@ namespace pawlib
                 return true;
             }
 
-            /** Returns the first element in the FlexArray without modifying
+            /** Returns the last element in the FlexArray without modifying
               * the data structure.
               * \return the first element in the FlexArray.
               */
