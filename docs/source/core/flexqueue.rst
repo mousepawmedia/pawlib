@@ -1,5 +1,5 @@
 FlexQueue
-###################################
+##################################################
 
 What is FlexQueue?
 ===================================
@@ -30,3 +30,9 @@ Based on FlexArray
 
 
 ..  TODO: Write this documentation.
+
+
+What is FlexQueue?
+==================================================
+
+FlexQueue is a unique Queue based upon a flexible array structure.
