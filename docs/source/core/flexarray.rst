@@ -64,11 +64,7 @@ When the FlexArray is first created, you must specify the type of its elements.
     // Both of these methods are valid...
     FlexArray<int> temps_high;
 
-    FlexArray<int>* temps_low;
-    temps_low = new FlexArray<int>;
-
-    // Declaring in one line is invalid
-    FlexArray<int>* temps_low; = new FlexArray<int>;
+    FlexArray<int>* temps_low = new FlexArray<int>;
 
 Adding Elements
 ------------------------------------------
@@ -137,21 +133,22 @@ Accessing Elements
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``peek()`` allows you to access the first element in the array without modifying the
-data structure.
+data structure. The alias ``peek_back()`` is also provided for convenience.
 
 ..  code-block:: c++
 
-   FlexArray<int> apples;
+    FlexArray<int> apples;
 
-   // We'll push some values for our example
-   apples.push(2);
-   apples.push(1);
-   apples.push(3);
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
 
-   cout << apples.peek();
+    apples.peek();
+    // This outputs 36.
+    // The array remains [23, 42, 36]
 
-   // This output yields 2
-   // The array remains [2, 1, 3]
+If you want to "peek" the first element, use ``at(0)``.
 
 ``at()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -160,46 +157,26 @@ data structure.
 
 ..  code-block:: c++
 
-   FlexArray<int> apples;
+    FlexArray<int> apples;
 
-   // We'll push some values for our example
-   apples.push(2);
-   apples.push(1);
-   apples.push(3);
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
 
-   cout << apples.at(1);
+    apples.at(1);
 
-   // The array is [2, 1, 3]
-   // This output yields 1
+    // This output yields 42
 
 Alternatively, you can use the ``[]`` operator to access a value.
 
 ..  code-block:: c++
 
-  // Using the array from above...
+    // Using the array from above...
+    apples[2];
 
-  cout << apples[2];
-
-  // The array is [2, 1, 3]
-  // This output yields 3
-
-``getSize()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-``getSize()`` allows you to check how many elements are currently in an array.
-
-..  code-block:: c++
-
-   FlexArray<int> apples;
-
-   // We'll push some values for our example
-   apples.push(2);
-   apples.push(1);
-   apples.push(3);
-
-   apples.getsize();
-   // The function will return 3
-
+    // The array is [23, 42, 36]
+    // This output yields 36
 
 Removing Elements
 -------------------------------------------
@@ -212,18 +189,18 @@ that removed are shifted left to fill in the empty slot.
 
 ..  code-block:: c++
 
-   FlexArray<int> apples;
+    FlexArray<int> apples;
 
-   // We'll push some values for our example
-   apples.push(2);
-   apples.push(1);
-   apples.push(3);
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
 
-   // The array is currently [2, 1, 3]
+    // The array is currently [23, 42, 36]
 
-   apples.yank(1);
-
-   // The array is now [2, 3]
+    apples.yank(1);
+    // Returns 42.
+    // The array is now [23, 36]
 
 ``unshift()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -232,18 +209,18 @@ values are shifted one slot to the left.
 
 ..  code-block:: c++
 
-   FlexArray<int> apples;
+    FlexArray<int> apples;
 
-   // We'll push some values for our example
-   apples.push(2);
-   apples.push(1);
-   apples.push(3);
+    // We'll push some values for our example
+    apples.push(2);
+    apples.push(1);
+    apples.push(3);
 
-   // The array is currently [2, 1, 3]
+    // The array is currently [23, 42, 36]
 
-   apples.unshift();
-
-   // Returns 2. The array is now [1, 3]
+    apples.unshift();
+    // Returns 23.
+    // The array is now [42, 36]
 
 ``erase()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -253,49 +230,19 @@ the top limit of the range will be shifted left to fill in empty indexes.
 
 ..  code-block:: c++
 
-   FlexArray<int> apples;
+    FlexArray<int> apples;
 
-   // We'll push some values for our example
-   apples.push(2);
-   apples.push(1);
-   apples.push(3);
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
 
-   // The array is currently [2, 1, 3]
+    // The array is currently [23, 42, 36]
 
-   apples.erase(0,1);
-   // The first number in the fuction call is the lower bound
-   // The second number is the upper bound.
-   // The array is now simply [3]
-
-``empty()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-``empty()`` is a boolean that returns true if the array is empty, and false if it
-contains values.
-
-..  code-block:: c++
-
-   FlexArray<int> apples;
-
-   // We'll push some values for our example
-   apples.push(2);
-   apples.push(1);
-   apples.push(3);
-
-   apples.empty();
-   // The function will return false
-
-or
-
-..  code-block:: c++
-
-   FlexArray<int> apples;
-
-   apples.empty();
-   // The function will return true
-   // No values have been added to 'apples'
-
-
+    apples.erase(0,1);
+    // The first number in the fuction call is the lower bound
+    // The second number is the upper bound.
+    // The array is now simply [36]
 
 ``pop()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -305,14 +252,55 @@ The alias ``pop_back()`` is also provided.
 
 ..  code-block:: c++
 
-   FlexArray<int> apples;
+    FlexArray<int> apples;
 
-   // We'll push some values for our example
-   apples.push(2);
-   apples.push(1);
-   apples.push(3);
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
 
-   // The array is currently [2, 1, 3]
+    // The array is currently [23, 42, 36]
 
-   apples.pop(0,1);
-   // Returns 3. The array is now [2, 1]
+    apples.pop(0,1);
+    // Returns 3. The array is now [23, 42]
+
+Other Functions
+-----------------------------
+
+``empty()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``empty()`` is a boolean that returns true if the array is empty, and false if it
+contains values.
+
+..  code-block:: c++
+
+    FlexArray<int> apples;
+
+    apples.empty();
+    // The function will return true
+
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
+
+    apples.empty();
+    // The function will return false
+
+``getSize()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``getSize()`` allows you to check how many elements are currently in an array.
+
+..  code-block:: c++
+
+    FlexArray<int> apples;
+
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
+
+    apples.getsize();
+    // The function will return 3

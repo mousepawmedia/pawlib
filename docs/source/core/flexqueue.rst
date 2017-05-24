@@ -151,5 +151,6 @@ contains values.
     apples.empty();
     // The function will now return false
 
+
 ``getSize()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
