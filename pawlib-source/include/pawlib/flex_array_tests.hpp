@@ -751,6 +751,7 @@ Middle is calculated as size()/2.";
     // P-tB1008
     class TestFArray_Peek : public Test
     {
+        public:
             TestFArray_Peek(){}
 
             testdoc_t get_title()
