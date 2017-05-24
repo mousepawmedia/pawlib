@@ -52,9 +52,6 @@
 
 #include "pawlib/iochannel.hpp"
 
-#define UNIT32_MAX (0xffffffff) //this is a temporary fix to allow for capacity check
-
-
 using pawlib::iochannel;
 using namespace pawlib::ioformat;
 
@@ -216,7 +213,7 @@ namespace pawlib
                 }
 
                 //check to see if maximum size is being approached
-                if(cpacity > UINT32_MAX/2)
+                if(capacity >= UINT32_MAX/2)
                 {
                   //set it to limit defined by UINT32_MAX
                   capacity = UINT32_MAX;
