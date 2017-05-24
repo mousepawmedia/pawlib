@@ -98,7 +98,7 @@ namespace pawlib
                 else
                 {
                     // If the number of elements is equal to the capacity.
-                    if(this->currElements == this->capacity)
+                    if(this->full())
                     {
                         // Attempt to double the capacity. If it fails...
                         if(!this->double_size())
@@ -109,7 +109,7 @@ namespace pawlib
                     }
 
                     // If there are elements in the FlexArray...
-                    if(this->currElements > 0)
+                    if(!this->empty())
                     {
                         /* Every element to the right of the index should
                          * be shifted right one position. */
@@ -134,7 +134,7 @@ namespace pawlib
             type yank(uint32_t index)
             {
                 // If there are no elements in the array...
-                if(this->currElements == 0)
+                if(this->empty())
                 {
                     // Throw a fatal error.
                     throw std::out_of_range("FlexArray: Cannot yank from empty FlexArray.");
@@ -180,10 +180,10 @@ namespace pawlib
             bool shift(type newElement)
             {
                 // If there are elements currently within the array.
-                if(this->currElements > 0)
+                if(!this->empty())
                 {
                     // If the array is full...
-                    if(this->currElements == this->capacity)
+                    if(this->full())
                     {
                         // Attempt to double the array's capacity. If it fails...
                         if(!this->double_size())
@@ -206,17 +206,17 @@ namespace pawlib
                 return true;
             }
 
-            /** Returns the first element in the FlexArray without modifying
+            /** Returns the last element in the FlexArray without modifying
               * the data structure.
               * \return the first element in the FlexArray.
               */
             type peek()
             {
                 // If there is at least one element in the array...
-                if(this->currElements > 0)
+                if(!this->empty())
                 {
                     // Return that element.
-                    return this->at(0);
+                    return this->at(this->currElements - 1);
                 }
                 // Otherwise...
                 else
@@ -225,6 +225,14 @@ namespace pawlib
                     throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
                 }
             }
+            /** Returns the last element in Flex Array without modifying
+              * the data structure
+              * \Just an alias for peekBack
+              */
+            type peekBack()
+            {
+              return this->peek();
+            }
 
             /** Returns and removes the first element in the FlexArray.
               * \return the first element, now removed.
@@ -232,7 +240,7 @@ namespace pawlib
             type unshift()
             {
                 // If there is at least one element in the array...
-                if(this->currElements > 0)
+                if(!this->empty())
                 {
                     // Store the first element, to be returned later.
                     type temp = this->theArray[0];
@@ -271,7 +279,7 @@ namespace pawlib
             type pop()
             {
                 // If there are no elements...
-                if(this->currElements == 0)
+                if(this->empty())
                 {
                     // Throw a fatal error.
                     throw std::out_of_range("FlexArray: Cannot pop from empty FlexArray.");
@@ -302,7 +310,7 @@ namespace pawlib
             bool push(type newElement)
             {
                 // If the array is full...
-                if(this->currElements == this->capacity)
+                if(this->full())
                 {
                     // Attempt to double the array's capacity. If it fails...
                     if(!this->double_size())

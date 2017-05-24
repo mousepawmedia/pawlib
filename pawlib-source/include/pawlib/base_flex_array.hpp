@@ -129,7 +129,15 @@ namespace pawlib
               */
             bool empty()
             {
-                return (currElements = 0);
+                return (currElements == 0);
+            }
+
+            /** Check to see if the data structure is full.
+              * \return true is full, else false
+              */
+            bool full()
+            {
+                  return (capacity == currElements);
             }
 
             /** Erase the elements in the specified range.
