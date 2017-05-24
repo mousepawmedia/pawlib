@@ -122,19 +122,185 @@ It is possible to insert an element anywhere in the array using ``insert()``.
     temps.insert(37, 1);
     //Insert the value "35" at index 2.
     temps.insert(35, 2);
-    
+
     // The FlexArray is now [48, 35, 37, 45]
 
-Accessing and Removing Elements
+Accessing Elements
 -------------------------------------------
 
-yank
-peek
-unshift
-pop/pop_back
-at
-erase
+``peek()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Peek allows you to access the first element in the array without modifying the
+data structure.
+
+..  code-block:: c++
+
+   FlexArray<int> apples;
+
+   //We'll push some values for our example
+   apples.push(2);
+   apples.push(1);
+   apples.push(3);
+
+   cout << apples.peek();
+
+   //This output yields 2
+   //The array remains [2, 1, 3]
+
+``at()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+At allows you to access the value at a given array index.
+
+..  code-block:: c++
+
+   FlexArray<int> apples;
+
+   //We'll push some values for our example
+   apples.push(2);
+   apples.push(1);
+   apples.push(3);
+
+   cout << apples.at(1);
+
+   //The array is [2, 1, 3]
+   //This output yields 1
+
+Alternatively, you can use the ``[]`` operator to access a value.
+
+..  code-block:: c++
+
+  //using the array from above...
+
+  cout << apples[2];
+
+  //The array is [2, 1, 3]
+  //This output yields 3
+
+``getSize()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Get size allows you to check how many elements are currently in an array.
+
+..  code-block:: c++
+
+   FlexArray<int> apples;
+
+   //We'll push some values for our example
+   apples.push(2);
+   apples.push(1);
+   apples.push(3);
+
+   apples.getsize();
+   //The function will return 3
 
 
-Examples
-=========================================
+Removing Elements
+-------------------------------------------
+
+``yank()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Yank removes a value at a given index. Remaining values at indexes greater than
+that removed are shifted left to fill in the empty slot.
+
+..  code-block:: c++
+
+   FlexArray<int> apples;
+
+   //We'll push some values for our example
+   apples.push(2);
+   apples.push(1);
+   apples.push(3);
+
+   //The array is currently [2, 1, 3]
+
+   apples.yank(1);
+
+   //The array is now [2, 3]
+
+``unshift()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Unshift will return the first element in the array, and remove it. All remaining
+values are shifted one slot to the left.
+
+..  code-block:: c++
+
+   FlexArray<int> apples;
+
+   //We'll push some values for our example
+   apples.push(2);
+   apples.push(1);
+   apples.push(3);
+
+   //The array is currently [2, 1, 3]
+
+   apples.unshift();
+
+   //The array is now [1, 3]
+
+``erase()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Erase allows you to delete elements in an array in a given range. Values above
+the top limit of the range will be shifted left to fill in empty indexes.
+
+..  code-block:: c++
+
+   FlexArray<int> apples;
+
+   //We'll push some values for our example
+   apples.push(2);
+   apples.push(1);
+   apples.push(3);
+
+   //The array is currently [2, 1, 3]
+
+   apples.erase(0,1);
+   //The first number in the fuction call is the lower bound
+   //The second number is the upper bound.
+   //The array is now simply [3]
+
+``empty()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Empty is a boolean that returns true if the array is empty, and false if it
+contains values.
+
+..  code-block:: c++
+
+   FlexArray<int> apples;
+
+   //We'll push some values for our example
+   apples.push(2);
+   apples.push(1);
+   apples.push(3);
+
+   apples.empty();
+   //The function will return false
+
+or
+
+..  code-block:: c++
+
+   FlexArray<int> apples;
+
+   apples.empty();
+   //The function will return true
+   //No values have been added to 'apples'
+
+
+
+``pop()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Pop returns the last value in an array, and then removes it from the data set.
+The alias ``pop_back()`` is also provided.
+
+..  code-block:: c++
+
+   FlexArray<int> apples;
+
+   //We'll push some values for our example
+   apples.push(2);
+   apples.push(1);
+   apples.push(3);
+
+   //The array is currently [2, 1, 3]
+
+   apples.pop(0,1);
+   //The array is now [2, 1]
