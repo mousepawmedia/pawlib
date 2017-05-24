@@ -4,7 +4,8 @@ FlexQueue
 What is FlexQueue?
 ===================================
 
-FlexQueue is a flexibly sized array similar to ``std::queue``, utilizing the
+FlexQueue is a unique Queue based upon a flexible array structure,
+ similar to ``std::queue``, utilizing the
 FIFO (first in, first out) data structure. It is based on ``FlexArray``
 and shares similar high-performance characteristics.
 
@@ -19,20 +20,136 @@ its own dynamic allocation for storing its elements.
 When the FlexQueue is first created, you must specify the type of its elements.
 
 ..  code-block:: c++
-  //
+    // Both of these methods are valid...
+    FlexQueue<int> dmvLine;
+
+    FlexQueue<int>* dmvLine;
+    anotherQueue = new FlexQueue<int>;
+
+Accessing Elements
+---------------------------------
+
+``at()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``at()`` allows you to access the value at a given index.
+
+..  code-block:: c++
+
+    FlexQueue<int> apples;
+
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(12);
+    apples.push(31);
+
+    apples.at(1);
+
+    // The array is [23, 12, 31]
+    // This output yields 12
+
+Alternatively, you can use the ``[]`` operator to access a value.
+
+..  code-block:: c++
+
+    // Using the array from above...
+
+    apples[2];
+
+    // The array is [23, 12, 31]
+    // This output yields 31
+
+``peek()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``peek()`` allows you to access the first element in the array without modifying
+the data structure.
+
+..  code-block:: c++
+
+    FlexQueue<int> apples;
+
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(12);
+    apples.push(31);
+
+    cout << apples.peek();
+
+    // This output yields 23
+    // The array remains [23, 12, 31]
+
+Adding Elements
+----------------------------------
+
+``enqueue()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``enqueue()`` adds a value to the end of the queue. Aliases ``push()`` and
+``push_back()`` are also provided.
+
+..  code-block:: c++
+
+    FlexQueue<int> apples;
+
+    // We'll add some values
+    // using the three aliases
+    apples.enqueue(23);
+    apples.push(12);
+    apples.push_back(31);
+
+    // The queue is now [23, 12, 31]
+
+Removing Elements
+----------------------------------
+
+``dequeue()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``dequeue()`` will remove and return the first element in the queue. Aliases ``pop()`` and
+``pop_front()`` are also provided.
+
+FlexQueue<int> apples;
+
+    // We'll push some values
+    apples.push(23);
+    apples.push(12);
+    apples.push(31);
+    apples.push(40);
+
+    //The queue is now [23, 12, 31, 40]
+
+    //We'll now remove three elements
+    //with the three provided aliases
+    apples.dequeue();
+    apples.pop();
+    apples.pop_front();
+
+    //The queue is now simply [40]
 
 
-Based on FlexArray
-  Shares base_flex_array functions
+``erase()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Other Fuctions
+----------------------------------
 
+``empty()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``empty()`` is a boolean that returns true if the array is empty, and false if it
+contains values.
 
+..  code-block:: c++
 
+    FlexQueue<int> apples;
 
-..  TODO: Write this documentation.
+    apples.empty();
+    // The function will return true
+    // No values have been added to 'apples'
 
+    // Now we'll push some values...
+    apples.push(23);
+    apples.push(12);
+    apples.push(31);
 
-What is FlexQueue?
-==================================================
+    apples.empty();
+    // The function will now return false
 
-FlexQueue is a unique Queue based upon a flexible array structure.
+``getSize()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

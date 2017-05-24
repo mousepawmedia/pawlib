@@ -55,10 +55,32 @@ int main(int argc, char* argv[])
         ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
 
         // Custom test code goes here.
+       FlexQueue<int> apples;
+
+    // We'll push some values
+    apples.push(23);
+    apples.push(12);
+    apples.push(31);
+    apples.push(40);
+
+    //The queue is now [23, 12, 31, 40]
+
+    //We'll now remove three elements
+    //with the three provided aliases
+    apples.dequeue();
+    apples.pop();
+    apples.pop_front();
+
+    cout << apples[0];
+
+    //The queue is now simply [40]
+
+
+
 
 
         // Shift control to the interactive console.
-        interactive(sys);
+        //interactive(sys);
     }
 
     delete sys;
