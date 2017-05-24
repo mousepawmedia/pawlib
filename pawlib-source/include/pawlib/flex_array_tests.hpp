@@ -241,6 +241,8 @@ is calculated as size()/2.";
                 vec.push_back(0);
                 vec.push_back(1);
 
+
+
                 // Insert each required element.
                 for(unsigned int i=1; i<1000; ++i)
                 {

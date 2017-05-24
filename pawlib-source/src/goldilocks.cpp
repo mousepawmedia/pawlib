@@ -1503,11 +1503,11 @@ namespace pawlib
          * according to Clang.
          */
         bool r = false;
-        if(suite && !suites.empty())
+        if(suite)
         {
             r = (suites.count(item_name) != 0);
         }
-        if(!suite && !tests.empty())
+        if(!suite)
         {
             r = (tests.count(item_name) != 0);
         }

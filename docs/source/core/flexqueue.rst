@@ -35,4 +35,4 @@ Based on FlexArray
 What is FlexQueue?
 ==================================================
 
-FlexQueue is a unique Queue based upon a flexible array structure.
+FlexQueue is a unique Queue based upon a flexible array structure. 
