@@ -56,18 +56,9 @@ int main(int argc, char* argv[])
 
         // Custom test code goes here.
 
-        FlexArray<int> apples;
-
-   //We'll push some values for our example
-
-   cout << apples.empty();
-
-   //This output yields 2
-   //The array remains [2, 1, 3]
-
 
         // Shift control to the interactive console.
-        //interactive(sys);
+        interactive(sys);
     }
 
     delete sys;

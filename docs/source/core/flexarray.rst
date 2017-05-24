@@ -63,7 +63,12 @@ When the FlexArray is first created, you must specify the type of its elements.
 
     // Both of these methods are valid...
     FlexArray<int> temps_high;
-    FlexArray<int>* temps_low = new FlexArray<int>;
+
+    FlexArray<int>* temps_low;
+    temps_low = new FlexArray<int>;
+
+    //Declaring in one line is invalid
+    FlexArray<int>* temps_low; = new FlexArray<int>;
 
 Adding Elements
 ------------------------------------------
