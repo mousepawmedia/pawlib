@@ -52,8 +52,6 @@
 
 #include "pawlib/iochannel.hpp"
 
-//#define UNIT32_MAX (0xffffffff) //this is a temporary fix to allow for capacity check
-
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;
