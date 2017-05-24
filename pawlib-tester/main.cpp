@@ -55,7 +55,8 @@ int main(int argc, char* argv[])
         ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
 
         // Custom test code goes here.
-        
+
+
 
         // Shift control to the interactive console.
         interactive(sys);
@@ -178,15 +179,7 @@ void interactive(TestSystem* sys)
         }
         else if(tokens[0] == "about")
         {
-            if(tokens.size() < 2)
-            {
-                ioc << fg_red << ta_bold << cat_error
-                    << "ERROR: Not enough arguments." << io_end;
-            }
-            else
-            {
-                sys->testmanager->show_docs(tokens[1]);
-            }
+            sys->testmanager->show_docs(tokens[1]);
         }
         else if(tokens[0] == "benchmark")
         {
