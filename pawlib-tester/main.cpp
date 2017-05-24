@@ -178,7 +178,15 @@ void interactive(TestSystem* sys)
         }
         else if(tokens[0] == "about")
         {
-            sys->testmanager->show_docs(tokens[1]);
+            if(tokens.size() < 2)
+            {
+                ioc << fg_red << ta_bold << cat_error
+                    << "ERROR: Not enough arguments." << io_end;
+            }
+            else
+            {
+                sys->testmanager->show_docs(tokens[1]);
+            }
         }
         else if(tokens[0] == "benchmark")
         {
