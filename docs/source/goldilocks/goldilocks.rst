@@ -174,44 +174,55 @@ demonstrate their behavior.
 
     class TestFoo : public Test
     {
-      public:
-          TestFoo(){}
-          bool pre()
-          {
-              ioc << cat_testing << "Do Pre Stuff" << io_end;
-              return true;
-          }
-          bool prefail()
-          {
-              ioc << cat_testing << "Do Prefail Stuff" << io_end;
-              return true;
-          }
-          bool run()
-          {
-              ioc << cat_testing << "Do Test Stuff" << io_end;
-              char str[5000] = {'\0'};
-              for(int a=0;a<5000;a++)
-              {
-                  str[a] = 'A';
-              }
-              return true;
-          }
-          bool janitor()
-          {
-              ioc << cat_testing << "Do Janitorial Stuff" << io_end;
-              return true;
-          }
-          bool postmortem()
-          {
-              ioc << cat_testing << "Do Postmortem Stuff" << io_end;
-              return true;
-          }
-          bool post()
-          {
-              ioc << cat_testing << "Do Post Stuff" << io_end;
-              return true;
-          }
-          ~TestFoo(){}
+    public:
+        TestFoo(){}
+
+        testdoc_t get_title()
+        {
+            return "Example Test";
+        }
+
+        testdoc_t get_docs()
+        {
+            return "This is the docstring for our example test."
+        }
+
+        bool pre()
+        {
+            ioc << cat_testing << "Do Pre Stuff" << io_end;
+            return true;
+        }
+        bool prefail()
+        {
+            ioc << cat_testing << "Do Prefail Stuff" << io_end;
+            return true;
+        }
+        bool run()
+        {
+            ioc << cat_testing << "Do Test Stuff" << io_end;
+            char str[5000] = {'\0'};
+            for(int a=0;a<5000;a++)
+            {
+                str[a] = 'A';
+            }
+            return true;
+        }
+        bool janitor()
+        {
+            ioc << cat_testing << "Do Janitorial Stuff" << io_end;
+            return true;
+        }
+        bool postmortem()
+        {
+            ioc << cat_testing << "Do Postmortem Stuff" << io_end;
+            return true;
+        }
+        bool post()
+        {
+            ioc << cat_testing << "Do Post Stuff" << io_end;
+            return true;
+        }
+        ~TestFoo(){}
     };
 
 ..  index::
