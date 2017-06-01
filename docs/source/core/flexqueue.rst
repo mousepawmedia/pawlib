@@ -4,8 +4,8 @@ FlexQueue
 What is FlexQueue?
 ===================================
 
-FlexQueue is a unique Queue based upon a flexible array structure,
- similar to ``std::queue``, utilizing the
+FlexQueue is a unique queue based upon a flexible array structure,
+similar to ``std::queue``, utilizing the
 FIFO (first in, first out) data structure. It is based on ``FlexArray``
 and shares similar high-performance characteristics.
 
@@ -20,10 +20,11 @@ its own dynamic allocation for storing its elements.
 When the FlexQueue is first created, you must specify the type of its elements.
 
 ..  code-block:: c++
+
     // Both of these methods are valid...
+
     FlexQueue<int> dmvLine;
 
-    FlexQueue<int>* dmvLine;
     anotherQueue = new FlexQueue<int>;
 
 Accessing Elements
@@ -44,18 +45,18 @@ Accessing Elements
 
     apples.at(1);
 
-    // The array is [23, 12, 31]
+    // The queue is [23, 12, 31]
     // This output yields 12
 
 Alternatively, you can use the ``[]`` operator to access a value.
 
 ..  code-block:: c++
 
-    // Using the array from above...
+    // Using the queue from above...
 
     apples[2];
 
-    // The array is [23, 12, 31]
+    // The queue is [23, 12, 31]
     // This output yields 31
 
 ``peek()``
@@ -75,7 +76,7 @@ the data structure.
     cout << apples.peek();
 
     // This output yields 23
-    // The array remains [23, 12, 31]
+    // The queue remains [23, 12, 31]
 
 Adding Elements
 ----------------------------------
@@ -105,27 +106,51 @@ Removing Elements
 ``dequeue()`` will remove and return the first element in the queue. Aliases ``pop()`` and
 ``pop_front()`` are also provided.
 
-FlexQueue<int> apples;
+..  code-block:: c++
 
-    // We'll push some values
-    apples.push(23);
-    apples.push(12);
-    apples.push(31);
-    apples.push(40);
+  FlexQueue<int> apples;
 
-    //The queue is now [23, 12, 31, 40]
+  // We'll push some values
+  apples.push(23);
+  apples.push(12);
+  apples.push(31);
+  apples.push(40);
 
-    //We'll now remove three elements
-    //with the three provided aliases
-    apples.dequeue();
-    apples.pop();
-    apples.pop_front();
+  // The queue is now [23, 12, 31, 40]
 
-    //The queue is now simply [40]
+  // We'll now remove three elements
+  // with the three provided aliases
+  apples.dequeue();
+  apples.pop();
+  apples.pop_front();
+
+  // The queue is now simply [40]
 
 
 ``erase()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``erase()`` removes elements from the queue in a given range.
+
+..  code-block:: c++
+
+  FlexQueue<int> apples;
+
+  // We'll push some values
+  apples.push(23);
+  apples.push(12);
+  apples.push(31);
+  apples.push(40);
+  apples.push(42);
+
+  // The queue is now [23, 12, 31, 40, 42]
+
+  apples.erase(1,3)
+  // The first number refers to the lower bound
+  // The second number refers to the upper bound
+
+  // The queue is now [23, 42]
+
+
 
 Other Fuctions
 ----------------------------------
@@ -154,3 +179,20 @@ contains values.
 
 ``getSize()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``getSize()`` returns the number of elements currently in the queue.
+
+..  code-block:: c++
+
+  FlexQueue<int> apples;
+
+  // We'll push some values
+  apples.push(23);
+  apples.push(12);
+  apples.push(31);
+  apples.push(40);
+
+  // The queue is now [23, 12, 31, 40]
+
+  apples.getSize();
+
+  // The function will return 4
