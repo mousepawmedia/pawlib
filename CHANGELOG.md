@@ -44,7 +44,7 @@
     * An efficient, fixed-size stack.
 * OneString 0.3 [Experimental]
     * Template-sized, Unicode-friendly string.
-* Pawsort 0.1
+* Pawsort 0.1 [Experimental]
     * NEW dual-pivot introsort (unstable sorting algorithm).
     * Added implementation of Knuth shell sort.
     * Added implementation of heap sort.
