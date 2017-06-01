@@ -231,8 +231,8 @@ namespace pawlib
                 }
                 else
                 {
-                  // Double the maximum size (capacity).
-                  capacity *= 2;
+                    // Double the maximum size (capacity).
+                    capacity *= 2;
                 }
                 /* Create the new structure with the new capacity.*/
                 type* tempArray = new type[capacity];

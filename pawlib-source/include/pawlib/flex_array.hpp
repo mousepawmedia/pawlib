@@ -108,19 +108,19 @@ namespace pawlib
                         }
                     }
 
+                    // Increment the number of elements.
+                    ++(this->currElements);
+
                     // If there are elements in the FlexArray...
                     if(!this->empty())
                     {
                         /* Every element to the right of the index should
                          * be shifted right one position. */
-                        this->mem_shift(index + 1, 1);
+                        this->mem_shift(index, 1);
 
                         // Place the new element at the specified index.
                         this->theArray[index] = newElement;
                     }
-
-                    // Incrememnt the number of elements.
-                    ++(this->currElements);
 
                     // Report success.
                     return true;
