@@ -14,7 +14,6 @@ It is used by virtually all of MousePaw Media' core projects.
  - Goldilocks: Testing and benchmarking framework.
  - IOChannel: Feature-rich multi-output text output system. (Alternative to ``std::cout``)
  - OneString: Performance string class with full Unicode support. (Alternative to ``std::string``)
- - PawSort: High-performance sorting algorithms.
 
 ## Authors
 

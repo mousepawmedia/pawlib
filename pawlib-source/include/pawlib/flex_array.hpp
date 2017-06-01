@@ -170,7 +170,7 @@ namespace pawlib
               */
             bool push_front(type newElement)
             {
-                push(newElement);
+                return push(newElement);
             }
 
             /** Insert an element at the beginning of the FlexArray.

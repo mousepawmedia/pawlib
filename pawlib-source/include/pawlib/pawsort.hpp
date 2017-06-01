@@ -1,5 +1,5 @@
 /** Pawsort [PawLIB]
-  * Version: 1.0
+  * Version: 0.1
   *
   * A collection of common and original sorting algorithms, some of which
   * rivals std::sort in performance.
