@@ -4,13 +4,57 @@ FlexQueue
 What is FlexQueue?
 ===================================
 
-FlexQueue is a unique queue based upon a flexible array structure,
-similar to ``std::queue``, utilizing the
-FIFO (first in, first out) data structure. It is based on ``FlexArray``
-and shares similar high-performance characteristics.
+FlexQueue is a flexibly-sized stack similar to ``std::queue``. We created this
+implementation to be able to experiment with various optimizations and
+algorithms, with the goal of creating a higher-performance data structure.
+
+Performance
+------------------------------------
+
+Initial benchmark comparisons show that FlexStack is always at least as fast
+as ``std::queue``, and often faster. We believe the main reasons for this
+may be:
+
+(1) The underlying structure *doubles* in size every time an operation will
+    exceed the capacity of the queue. While this greatly reduces the
+    frequency of dynamic allocations (and thus improves performance), it may
+    have negative impacts on memory usage for higher capacities. We will be
+    experimenting with other resizing algorithms in future versions.
+
+(2) The code base is structured to be less prone to instruction cache misses.
+
+We will be exploring further optimizations and algorithm improvements in future
+verisons.
+
+Comparison to ``std::queue``
+-------------------------------------
+
+FlexQueue offers largely the same functionality as ``std::queue``. However,
+it is not intended to feature-identical. Some functionality hasn't been
+implemented yet, and we may not include some other features to leave room
+for future optimization and experimentation.
+
+* Internally, this is the same as FlexArray. It will be given queue-specific
+  optimizations later.
+* FlexQueue does not offer iterators. This *may* be added in the future.
+* You cannot change the underlying data structure. Our base class is where
+  most of the heavy lifting occurs.
+* Some advanced modifiers haven't been implemented yet.
+
+Technical Limitations
+--------------------------------------
+
+FlexStack can store a maximum of 4,294,967,294 objects. This is because it uses
+32-bit unsigned integers for internal indexing, with the largest value
+reserved as  ``INVALID_INDEX``. The limit is calculated as follows.
+
+``2^{32} - 2 = 4,294,967,294``
 
 Using FlexQueue
 ===================================
+
+Queues are "First-In-First-Out"; you insert to the end (or "back"), and remove
+from the front.
 
 Creating a FlexQueue
 -----------------------------------
@@ -100,6 +144,10 @@ Adding Elements
 
 Removing Elements
 ----------------------------------
+
+In a queue, we typically remove and return elements from the beginning, or "front" of
+the stack. Imagine a line at a grocery store - you enter in the back and exit
+in the front.
 
 ``dequeue()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
