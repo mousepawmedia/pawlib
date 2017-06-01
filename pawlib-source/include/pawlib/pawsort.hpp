@@ -243,13 +243,6 @@ namespace pawlib
               * http://permalink.gmane.org/gmane.comp.java.openjdk.core-libs.devel/2628
               * https://dzone.com/articles/algorithm-week-quicksort-three
               *
-              * You can acquire a copy of the original and reformatted
-              * whitepapers from MousePaw Games' website.
-              * - Introspective Sorting and Selection Algorithms, Musser
-              * - Dual-Pivot Quicksort, Yaroslavskiy (rev 22 Sep 2009)
-              * - Dual-Pivot Quicksort, Yaroslavisky (rev by Jason C. McDonald)
-              * TODO: Put link here.
-              *
               * \param the array to sort
               * \param the leftmost index of the range to sort
               * \param the rightmost index of the range to sort
@@ -278,7 +271,7 @@ namespace pawlib
                         /* If the current value is greater than the
                          * previous value...
                          */
-                        if(arr[i] > arr[i-1])
+                        if(arr[i] < arr[i-1])
                         {
                             //The array is NOT sorted. Break loop.
                             break;
@@ -302,7 +295,7 @@ namespace pawlib
                 // Define a variable for temporary storage during swaps.
                 T tmp;
 
-                //If size is less than threshold, use insertion sort.
+                //If size is less than threshold, use shell sort.
                 if(len <= TINY_SIZE)
                 {
                     shell_sort(arr, left, right);
