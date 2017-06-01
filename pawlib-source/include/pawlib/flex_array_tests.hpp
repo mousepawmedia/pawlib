@@ -80,6 +80,10 @@ namespace pawlib
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     vec.push_back(i);
+                    if(vec.back() != i)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -122,6 +126,12 @@ namespace pawlib
                         // Report failure.
                         return false;
                     }
+                    // if the value pushed isn't found at the end...
+                    if(flex.peek() != i)
+                    {
+                        // Report failure.
+                        return false;
+                    }
                 }
                 // Report success.
                 return true;
@@ -156,6 +166,10 @@ namespace pawlib
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     vec.insert(vec.begin(), i);
+                    if(vec[0] != i || (i > 0 && vec[1] != i-1))
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -201,6 +215,12 @@ namespace pawlib
                         // Report failure.
                         return false;
                     }
+                    // If things didn't shift correctly...
+                    if(flex[0] != i || (i > 0 && flex[1] != i-1))
+                    {
+                        // Report failure
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -244,10 +264,14 @@ is calculated as size()/2.";
 
 
                 // Insert each required element.
-                for(unsigned int i=1; i<1000; ++i)
+                for(unsigned int val=1; val<1000; ++val)
                 {
-                    unsigned int j = vec.size()/2;
-                    vec.insert(vec.begin()+j, i);
+                    unsigned int at = vec.size()/2;
+                    vec.insert(vec.begin()+at, val);
+                    if(vec[at] != val || vec.back() != 1)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -290,11 +314,17 @@ Middle is calculated as size()/2.";
                 flex.push(1);
 
                 // Insert each required element.
-                for(unsigned int i=1; i<iters; ++i)
+                for(unsigned int val=1; val<iters; ++val)
                 {
-                    int j = flex.getSize()/2;
+                    int at = flex.getSize()/2;
                     // Attempt an insert shift. If it fails...
-                    if(!flex.insert(j, i))
+                    if(!flex.insert(val, at))
+                    {
+                        // Report failure.
+                        return false;
+                    }
+                    // If values did not shift/insert correctly.
+                    if(flex[at] != val || flex.peek() != 1)
                     {
                         // Report failure.
                         return false;

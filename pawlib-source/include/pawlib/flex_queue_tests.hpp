@@ -71,12 +71,16 @@ namespace pawlib
             bool run()
             {
                 // Create instance of queue.
-                std::queue<int> sq;
+                std::queue<unsigned int> sq;
 
                 // Push each required element to the queue.
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     sq.push(i);
+                    if(sq.back() != i)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -109,7 +113,7 @@ namespace pawlib
             bool run()
             {
                 // Create an instance of FlexQueue.
-                pawlib::FlexQueue<int> fq;
+                pawlib::FlexQueue<unsigned int> fq;
 
                 // Push each required element.
                 for(unsigned int i=0; i<iters; ++i)
@@ -119,6 +123,11 @@ namespace pawlib
                     {
                         // Report failure.
                         return false;
+                    }
+                    // If last value is not what was pushed...
+                    if(fq.peek() != i)
+                    {
+                        // Report failure.
                     }
                 }
                 return true;

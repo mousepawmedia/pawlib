@@ -84,6 +84,10 @@ namespace pawlib
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     stk.push(i);
+                    if(stk.top() != i)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -126,6 +130,11 @@ namespace pawlib
                     {
                         // Report failure.
                         return false;
+                    }
+                    // If last value is not what was pushed...
+                    if(fstk.peek() != i)
+                    {
+                        // Report failure.
                     }
                 }
                 // Report success.

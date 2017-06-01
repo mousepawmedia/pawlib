@@ -34,24 +34,6 @@ void print(std::string msg)
     std::cout << msg;
 }
 
-void randomTest()
-{
-    FlexArray<int> temps;
-
-    // We'll push a couple of values for our example.
-    temps.push(45);
-    temps.push(48);
-
-    //Insert the value "37" at index 1.
-    temps.insert(37, 1);
-    //Insert the value "35" at index 2.
-    temps.insert(35, 2);
-
-    // The FlexArray is now [45, 37, 35, 48]
-    ioc << temps[0] << " " << temps[1] << " "
-        << temps[2] << " " << temps[3] << io_end;
-}
-
 int main(int argc, char* argv[])
 {
     //Set up signal handling.
@@ -73,7 +55,6 @@ int main(int argc, char* argv[])
         ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
 
         // Custom test code goes here.
-        randomTest();
 
         // Shift control to the interactive console.
         interactive(sys);
