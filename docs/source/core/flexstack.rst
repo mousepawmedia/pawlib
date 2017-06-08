@@ -53,6 +53,15 @@ reserved as  ``INVALID_INDEX``. The limit is calculated as follows.
 Using FlexStack
 =========================================
 
+Including FlexStack
+---------------------------------------
+
+To include FlexStack, use the following:
+
+..  code-block:: c++
+
+    #include "pawlib/flex_stack.hpp"
+
 Creating a FlexStack
 ------------------------------------------
 

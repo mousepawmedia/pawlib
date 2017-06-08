@@ -51,6 +51,15 @@ reserved as  ``INVALID_INDEX``. The limit is calculated as follows.
 Using FlexArray
 =========================================
 
+Including FlexArray
+---------------------------------------
+
+To include FlexArray, use the following:
+
+..  code-block:: c++
+
+    #include "pawlib/flex_array.hpp"
+
 Creating a FlexArray
 ------------------------------------------
 

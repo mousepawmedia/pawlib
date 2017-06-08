@@ -499,18 +499,18 @@ namespace pawlib
         {
             //TODO: We will need to switch formats. For now, just ANSI.
             format = "\033[";
-            format.append(stdutils::itos(ta));
+            format.append(stdutils::itos(static_cast<int>(ta)));
 
             if(bg > 0)
             {
                 format.append(";");
-                format.append(stdutils::itos(bg));
+                format.append(stdutils::itos(static_cast<int>(bg)));
             }
 
             if(fg > 0)
             {
                 format.append(";");
-                format.append(stdutils::itos(fg));
+                format.append(stdutils::itos(static_cast<int>(fg)));
             }
 
             format.append("m");

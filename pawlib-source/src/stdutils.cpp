@@ -196,7 +196,7 @@ namespace pawlib
 
 
     template <typename T>
-    int stdutils::floatlen(T val, int precision, int sci, bool count_sym)
+    int stdutils::floatlen(T val, int significand, int sci, bool count_sym)
     {
         int len = 0;
 
@@ -221,9 +221,8 @@ namespace pawlib
             (sci == 2)
         );
 
-        /* The maximum number of digits is usually the significand, which is our
-         * 'precision' variable.*/
-        len += precision;
+        /* The maximum number of digits is usually the significand.*/
+        len += significand;
 
         /* Sometimes, the whole part goes past the size of the significand,
          * so add the intlen of the whole part of the float.*/
@@ -315,7 +314,7 @@ namespace pawlib
 
     void stdutils::btoa(char* str, unsigned int val, int len, bool use_caps)
     {
-        len = (len == 0) ? intlen(val, 16) : len;
+        len = (len == 0) ? intlen(val, 16, false) : len;
 
         char* pos = str;
 
@@ -371,7 +370,7 @@ namespace pawlib
     }
 
     template <typename T>
-    void stdutils::ftoa(char* str, T val, int precision, int sci)
+    void stdutils::ftoa(char* str, T val, int significand, int sci)
     {
         //If the value is not a number...
         if (isnan(val))
@@ -399,8 +398,8 @@ namespace pawlib
             int m1;
             char* c = str;
 
-            //Convert "precision" (actually significand) to precision decimal.
-            T p = 1 / pow(10, precision);
+            //Convert "significand" to significand decimal.
+            T p = 1 / pow(10, significand);
 
             //Determine whether the number is negative.
             bool neg = (val < 0);
@@ -454,7 +453,7 @@ namespace pawlib
             }
 
             //Convert the number.
-            /* While the value is greater than our precision and magnitude is
+            /* While the value is greater than our significand and magnitude is
              * not negative.*/
             while (val > p || m >= 0)
             {
@@ -544,7 +543,8 @@ namespace pawlib
     template void stdutils::ftoa<double>(char*, double, int, int);
     template void stdutils::ftoa<long double>(char*, long double, int, int);
 
-    std::string stdutils::itos(int val, int base, bool use_caps)
+    template <typename T>
+    std::string stdutils::itos(T val, int base, bool use_caps)
     {
         int len = intlen(val, base, true) + 1;
 
@@ -559,13 +559,24 @@ namespace pawlib
         std::string str = cstr;
         return str;
     }
+    template std::string stdutils::itos<char>(char, int, bool);
+    template std::string stdutils::itos<unsigned char>(unsigned char, int, bool);
+    template std::string stdutils::itos<int>(int, int, bool);
+    template std::string stdutils::itos<unsigned int>(unsigned int, int, bool);
+    template std::string stdutils::itos<short int>(short int, int, bool);
+    template std::string stdutils::itos<unsigned short int>(unsigned short int, int, bool);
+    template std::string stdutils::itos<long int>(long int, int, bool);
+    template std::string stdutils::itos<unsigned long int>(unsigned long int, int, bool);
+    template std::string stdutils::itos<long long int>(long long int, int, bool);
+    template std::string stdutils::itos<unsigned long long int>(unsigned long long int, int, bool);
 
-    std::string stdutils::dtos(double val, int precision, int sci)
+    template <typename T>
+    std::string stdutils::ftos(T val, int significand, int sci)
     {
         /* Get the estimated maximum number of characters in the float, plus
          * 1 for the null terminator.
          */
-        int len = floatlen(val, precision, sci, true) + 1;
+        int len = floatlen(val, significand, sci, true) + 1;
 
         /* Declare a new C-string with the size equal to the estimated
          * maximum number of characters in the float, plus 1 for the null
@@ -579,12 +590,15 @@ namespace pawlib
         std::fill_n(cstr, len, '\0');
 
         //Convert the float to a cstring, and dump into cstr.
-        ftoa(cstr, val, precision, sci);
+        ftoa(cstr, val, significand, sci);
         //Convert the cstring into a string.
         std::string str = cstr;
         //Return the string.
         return str;
     }
+    template std::string stdutils::ftos<float>(float, int, int);
+    template std::string stdutils::ftos<double>(double, int, int);
+    template std::string stdutils::ftos<long double>(long double, int, int);
 
     std::string stdutils::ptrtos(uintptr_t val, bool use_caps)
     {

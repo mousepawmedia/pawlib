@@ -21,6 +21,15 @@ a custom interface. A major advantage of this system is that benchmarks
 may be performed on many systems without the need for additional
 software.
 
+Including Goldilocks
+---------------------------------------
+
+To include Goldilocks, use the following:
+
+..  code-block:: c++
+
+    #include "pawlib/goldilocks.hpp"
+
 Setting Up Tests
 ==================================================
 

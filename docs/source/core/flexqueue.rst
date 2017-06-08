@@ -56,6 +56,15 @@ Using FlexQueue
 Queues are "First-In-First-Out"; you insert to the end (or "back"), and remove
 from the front.
 
+Including FlexQueue
+---------------------------------------
+
+To include FlexQueue, use the following:
+
+..  code-block:: c++
+
+    #include "pawlib/flex_queue.hpp"
+
 Creating a FlexQueue
 -----------------------------------
 A ``FlexQueue`` object is created by whatever means is convenient. It handles

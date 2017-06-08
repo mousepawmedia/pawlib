@@ -31,6 +31,15 @@ reserved as  ``INVALID_INDEX``. The limit is calculated as follows.
 
 ``2^{32} - 2 = 4,294,967,294``
 
+Including Pool
+---------------------------------------
+
+To include Pool, use the following:
+
+..  code-block:: c++
+
+    #include "pawlib/pool.hpp"
+
 Creating a Pool
 ====================================
 
