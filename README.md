@@ -13,7 +13,9 @@ It is used by virtually all of MousePaw Media' core projects.
  - Flex Data Structures: High performance alternatives to C++ data structures, and then some.
  - Goldilocks: Testing and benchmarking framework.
  - IOChannel: Feature-rich multi-output text output system. (Alternative to ``std::cout``)
- - OneString: Performance string class with full Unicode support. (Alternative to ``std::string``)
+ - Trilean: A new atomic data type with three unique states: true, false, and maybe.
+ - Pool: A general-purpose implementation of the object pool design pattern.
+ - OneString: Performance string class with full Unicode support. (Alternative to ``std::string``) [Experimental]
 
 ## Authors
 
@@ -23,6 +25,8 @@ It is used by virtually all of MousePaw Media' core projects.
  - Sergio Ramirez
  - Scott Taylor
  - Jonathan Theodore
+ - Jarek Thomas
+ - Bowen Volwiler
 
 ## Dependencies
 

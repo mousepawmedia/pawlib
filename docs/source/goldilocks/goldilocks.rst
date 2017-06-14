@@ -10,7 +10,7 @@ What is Goldilocks?
 ==================================================
 
 Goldilocks is a complete testing and runtime-benchmark framework,
-based on MousePaw Games' :abbr:`LIT (Live-In Testing)` Standard. Although
+based on MousePaw Media' :abbr:`LIT (Live-In Testing)` Standard. Although
 :abbr:`LIT (Live-In Testing)` is inherently different from "unit testing" and
 :abbr:`TDD (test-driven development)`, Goldilocks may be used for either
 approach. It may also be used in conjunction with other testing systems.

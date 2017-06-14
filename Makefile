@@ -50,6 +50,7 @@ cleanrelease:
 	$(MAKE) cleanrelease -C pawlib-tester
 
 docs:
+	@rm -rf docs/build/html
 	$(MAKE) html -C docs
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
