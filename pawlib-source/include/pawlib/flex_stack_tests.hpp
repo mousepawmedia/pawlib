@@ -35,7 +35,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  * CONTRIBUTING
- * See http://www.mousepawgames.com/participate/opensource for information
+ * See https://www.mousepawmedia.com/developers for information
  * on how to contribute to our projects.
  */
 
@@ -84,6 +84,10 @@ namespace pawlib
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     stk.push(i);
+                    if(stk.top() != i)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -126,6 +130,11 @@ namespace pawlib
                     {
                         // Report failure.
                         return false;
+                    }
+                    // If last value is not what was pushed...
+                    if(fstk.peek() != i)
+                    {
+                        // Report failure.
                     }
                 }
                 // Report success.

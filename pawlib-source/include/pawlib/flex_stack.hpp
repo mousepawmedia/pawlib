@@ -37,7 +37,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  * CONTRIBUTING
- * See http://www.mousepawgames.com/participate/opensource for information
+ * See https://www.mousepawmedia.com/developers for information
  * on how to contribute to our projects.
  */
 
@@ -60,9 +60,20 @@ namespace pawlib
         public:
             FlexStack() : Base_FlexArr<type>() { }
 
-            explicit FlexStack(unsigned int numElements)
+            // cppcheck-suppress noExplicitConstructor
+            FlexStack(uint32_t numElements)
             :Base_FlexArr<type>(numElements)
             {}
+
+            /** Add the specified element to the FlexStack.
+              * This is just an alias for push()
+              * \param the element to add.
+              * \return true if successful, else false.
+              */
+            bool push_back(type newElement)
+            {
+                return push(newElement);
+            }
 
             /** Add the specified element to the FlexStack.
               * \param the element to add.
@@ -107,6 +118,15 @@ namespace pawlib
                     // Throw a fatal error.
                     throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
                 }
+            }
+
+            /** Return and remove the next element in the FlexStack.
+              * This is just an alias for pop()
+              * \return the next (last) element, now removed.
+              */
+            type pop_back()
+            {
+                return pop();
             }
 
             /** Return and remove the next element in the FlexStack.

@@ -1,5 +1,5 @@
 /** Tests for PawSort[PawLIB]
-  * Version: 1.0
+  * Version: 0.1
   *
   * Author(s): Jason C. McDonald
   */
@@ -35,7 +35,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  * CONTRIBUTING
- * See http://www.mousepawgames.com/participate/opensource for information
+ * See https://www.mousepawmedia.com/developers for information
  * on how to contribute to our projects.
  */
 

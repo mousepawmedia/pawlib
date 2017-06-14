@@ -19,10 +19,17 @@ features.
 Setting up IOChannel
 =====================================
 
+Including IOChannel
+---------------------------------------
+
+To include IOChannel, use the following:
+
+..  code-block:: c++
+
+    #include "pawlib/iochannel.hpp"
+
 IOChannel Instance
 -------------------------------------
-
-Use of IOChannel requires ``#include <iochannel.hpp>``.
 
 For convenience, a single static global instance of IOChannel, ``ioc``,
 exists in that header. It is suitable for most purposes, though a custom

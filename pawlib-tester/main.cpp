@@ -5,6 +5,7 @@
 #include <time.h>
 
 #include "pawlib/core_types.hpp"
+#include "pawlib/flex_array.hpp"
 #include "pawlib/goldilocks.hpp"
 #include "pawlib/iochannel.hpp"
 #include "pawlib/onestringbase.hpp"
@@ -25,7 +26,6 @@ using namespace pawlib;
 using namespace std;
 
 void help();
-void basicStringFunc();
 int command(TestSystem* sys, unsigned int argc, char* argv[]);
 void interactive(TestSystem* sys);
 
@@ -56,9 +56,6 @@ int main(int argc, char* argv[])
 
         // Custom test code goes here.
 
-        // Shows that OneString and QuickString do operate correctly
-        // basicStringFunc();
-
         // Shift control to the interactive console.
         interactive(sys);
     }
@@ -67,210 +64,6 @@ int main(int argc, char* argv[])
     sys = 0;
 
     return 0;
-}
-
-void basicStringFunc()
-{
-    AscChar thing;
-    thing = "h";
-    UniChar thing1;
-    thing1 = "¿";
-    std::cout << thing1 <<std::endl;
-
-    // Constructors and == (operator== calls equals())
-    OneString<8> attempt("eight88");
-    OneString<16> attempt1(attempt);
-    std::cout<< "The two strings are equal: " << (attempt == attempt1) <<std::endl;
-    attempt.append("¿");
-    std::cout << attempt <<std::endl;
-    std::cout << attempt[7] <<std::endl;
-    std::cout << attempt.at(7) <<std::endl;
-    std::cout<< "The two strings are equal: " << (attempt == attempt1) <<std::endl;
-    std::cout << attempt.size() <<std::endl;
-    std::cout<< attempt[4] <<std::endl;
-
-    // Append functions
-    OneString<16> appendIt;
-    appendIt.append('h');
-    appendIt.append("¿");
-    appendIt.append('h');
-    appendIt.append(thing1);
-    appendIt.append(thing);
-    appendIt.append(attempt);
-
-//    attempt1.equals(attempt);
-    //std::cout << attempt[5] <<std::endl;
-    std::cout<< appendIt <<std::endl;
-
-    // Insert functions
-    OneString<16> insertStr("beti");
-    std::cout<< insertStr <<std::endl;
-    insertStr.insert(2, "au");
-    std::cout<< insertStr <<std::endl;
-    insertStr.insert(6, 'f');
-    std::cout<< insertStr <<std::endl;
-    OneString<8> insert2("ul");
-    insertStr.insert(insertStr.size(), insert2);
-    std::cout<< insertStr <<std::endl;
-
-    /* NOTE: MUST ADD CODE TO LOOK FOR ASSIGNING LARGE STRING TO SMALLER */
-    // Assignment
-    OneString<32> assign1 = "⚡ ⛐  ⛳  ♫ ☯ ☭";
-    std::cout<< assign1 <<std::endl;
-    OneString<64> assign2 = assign1;
-    std::cout<< assign2 <<std::endl;
-    std::cout<< assign2.at(2) <<std::endl;
-
-    // Input test
-    OneString<8> input;
-    std::cin >> input;
-    std::cout<< input <<std::endl;
-
-    //OneString<8> overFlow = "ThisIsTooLong";
-    // Substring test
-    OneString<32> subTest = "Let's Pick Words";
-    std::cout<< subTest.substr(6) <<std::endl;
-    std::cout<< subTest.substr(6, 2) <<std::endl;
-
-    // Overflow test
-    OneString<32> bigNum = "123456789101112";
-    OneString<8> overFlow = bigNum;
-    std::cout<< overFlow <<std::endl;
-    std::cout<< overFlow.size() <<std::endl;
-
-    // Operator+ test
-    OneString<64> add1 = '!';
-    AscChar space;
-    space = ' ';
-    OneString<64> add2 = "At Th";
-    OneString<16> add3 = " Dis";
-    OneString<8> add4 = "co";
-    UniChar music;
-    music = "♫";
-    OneString<32> finalAdd = "Panic" + add1 +  space + add2 + 'e' + add3 + add4 + music;
-    std::cout<< finalAdd <<std::endl;
-    std::cout<< "String size is: " << finalAdd.size() <<std::endl;
-
-    // Pop_back
-    finalAdd.pop_back();
-    finalAdd.pop_back();
-    std::cout<< finalAdd <<std::endl;
-    std::cout<< "String size is: " << finalAdd.size() <<std::endl;
-
-    // Push_back
-    finalAdd.push_back('a');
-    std::cout<< finalAdd <<std::endl;
-    std::cout<< "String size is: " << finalAdd.size() <<std::endl;
-    finalAdd.pop_back();
-    UniChar accent;
-    accent = "ó";
-    finalAdd.push_back(accent);
-    std::cout<< finalAdd <<std::endl;
-    std::cout<< "String size is: " << finalAdd.size() <<std::endl;
-    finalAdd.pop_back();
-    AscChar anotherVowel;
-    anotherVowel = 'o';
-    finalAdd.push_back(anotherVowel);
-    std::cout<< finalAdd <<std::endl;
-    std::cout<< "String size is: " << finalAdd.size() <<std::endl;
-
-
-    // Swap
-    OneString<32> swapStr = "Fallout Boy";
-    swapStr.swap(finalAdd);
-    std::cout<< finalAdd <<std::endl;
-    std::cout<< "String size is: " << finalAdd.size() <<std::endl;
-     std::cout<< swapStr <<std::endl;
-    std::cout<< "String size is: " << swapStr.size() <<std::endl;
-    std::cout<< "SwapStr is Fallout Boy: "<< (swapStr == "Fallout Boy") <<std::endl;
-    std::cout<< "SwapStr is Panic! At The Disco: " << (swapStr == "Panic! At The Disco") <<std::endl;
-    swapStr.append("♫");
-    std::cout<< "SwapStr is Panic! At The Disco♫: "<< (swapStr == "Panic! At The Disco♫")<<std::endl;
-
-    // Sizes
-    OneString<512> largeSpace = "This OneString has a lot of space in it";
-    std::cout<< largeSpace <<std::endl;
-    std::cout<< "It's size, or number of characters, is : " << largeSpace.size() <<std::endl;
-    std::cout<< "It's length, or number of bytes, is : " << largeSpace.length() <<std::endl;
-    std::cout<< "It's maximum size is : " << largeSpace.max_size() <<std::endl;
-
-    // Empty and Clear
-    OneString<16> emptyStr = "This isn't empty";
-    std::cout<< emptyStr << std::endl;
-    std::cout<< "Is this string empty? " << emptyStr.empty() <<std::endl;
-    std::cout<< "Size :"<< emptyStr.size() <<std::endl;
-    emptyStr.clear();
-    std::cout<< "What about after we clear it?" <<std::endl;
-    std::cout<<  emptyStr << std::endl;
-    std::cout<< "Is this string empty? " << emptyStr.empty() <<std::endl;
-    std::cout<< "Size : " << emptyStr.size() <<std::endl;
-
-    // Comparisons
-    OneString<8> compStr("abc123");
-    std::cout<< "Is abc123 smaller than abc124? " << (compStr < "abc124") <<std::endl;
-    std::cout<< "Is abc123 greater than abc123? " << (compStr > "abc123") <<std::endl;
-    std::cout<< "Is abc123 greater than OR EQUAL to abc123? " << (compStr >= "abc123") <<std::endl;
-    std::cout<< "Is abc123 smaller than abc1234? " << (compStr < "abc1234") <<std::endl;
-    std::cout<< "Is abc123 smaller than OR EQUAL to  abc12? " << (compStr <= "abc12") <<std::endl;
-
-    // Repeat with OneStrings
-    std::cout<< "Repeat with OneStrings" <<std::endl;
-    OneString<8> comp1 = "abc124";
-    OneString<16> comp2 = compStr;
-    OneString<64> comp3 = comp2;
-    OneString<128> comp4 = "abc1234";
-    OneString<256> comp5 = "abc12";
-    std::cout<< "Is abc123 smaller than abc124? " << (compStr < comp1) <<std::endl;
-    std::cout<< "Is abc123 greater than abc123? " << (compStr > comp2) <<std::endl;
-    std::cout<< "Is abc123 greater than OR EQUAL to abc123? " << (compStr >= comp3) <<std::endl;
-    std::cout<< "Is abc123 smaller than abc1234? " << (compStr < comp4) <<std::endl;
-    std::cout<< "Is abc123 smaller than OR EQUAL to  abc12? " << (compStr <= comp5) <<std::endl;
-
-    // Plus equal
-    UniChar key;
-    key = "\xF0\x9F\x90\xAD";
-    OneString<8> plusEq = "Paw";
-    OneString<16> plusFinal = "Mouse";
-    plusFinal += plusEq;
-    plusFinal += " Gam";
-    AscChar theE;
-    theE = 'e';
-    plusFinal += theE;
-    plusFinal += 's';
-    plusFinal += key;
-    plusFinal += "\xF0\x9F\x90\xBE";
-    plusFinal += 'C';
-    std::cout<< plusFinal <<std::endl;
-    //OneString<8> plusEq =
-//    OneString<32> addit = "Sc";
-//    OneString<32> addit1 = addit + "ott";
-
-    // QuickString
-    QuickString<16> firstQuick = "Hello World";
-    std::cout << firstQuick <<std::endl;
-    std::cout << firstQuick[3] <<std::endl;
-    std::cout << firstQuick.size() <<std::endl;
-
-    // Swap
-    QuickString<32> swap1 = "Paramore";
-    QuickString<32> swap2 = "All Time Low";
-    swap1.swap(swap2);
-    std::cout << swap1 <<std::endl;
-    std::cout << swap2 <<std::endl;
-
-    // Equals, pop_back, insert, append
-    QuickString<32> newBand = swap2;
-    std::cout << "The two strings are 'Paramore': " << (swap2 == newBand) <<std::endl;
-    swap2.insert(4, "LES");
-    swap2.pop_back();
-    swap2.pop_back();
-    swap2.pop_back();
-    swap2.pop_back();
-    swap2 += 'S';
-    std::cout << swap2 <<std::endl;
-    std::cout << newBand <<std::endl;
-    std::cout << "The two strings are 'Paramore': " << (swap2 == newBand) <<std::endl;
-
 }
 
 int command(TestSystem* sys, unsigned int argc, char* argv[])

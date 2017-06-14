@@ -461,8 +461,10 @@ namespace pawlib
         /* ENTRY: Add a new test by name to the test manager. */
 
         // Ensure the test DOES NOT already exists before continuing.
+        // If it DOES...
         if(validate(test_name, false))
         {
+            // Throw an error.
             ioc << cat_error << ta_bold << fg_red
                 << "ERROR: A test by the name of " << test_name
                 << "is already registered in Golidlocks Test Manager." << io_end;
@@ -504,11 +506,13 @@ namespace pawlib
         suite->backregister(this);
 
         // Ensure the suite DOES NOT already exist before continuing.
+        // If it does...
         if(validate(suite_name, false, true))
         {
+            // Throw an error.
             ioc << cat_error << ta_bold << fg_red
                 << "ERROR: A suite by the name of " << suite_name
-                << "is already registered in Golidlocks Test Manager." << io_end;
+                << " is already registered in Golidlocks Test Manager." << io_end;
             return;
         }
 
@@ -1494,20 +1498,18 @@ namespace pawlib
 
     bool TestManager::validate(testname_t item_name, bool yell, bool suite)
     {
-        /* Use `std::map::find` to test for the key in the map. As long
-         * as find does not return the end iterator (std::map::end), which
-         * indicates that the key was not found, we know that the key is
-         * somewhere in the map. We don't really care where - just return
-         * the boolean stating whether it exists.
+        /* Use `std::map::count` to test for the key in the map.
+         * Using `std::map::find` in this way has some memory issues,
+         * according to Clang.
          */
         bool r = false;
         if(suite)
         {
-            r = (suites.find(item_name) != suites.end());
+            r = (suites.count(item_name) != 0);
         }
         if(!suite)
         {
-            r = (tests.find(item_name) != tests.end());
+            r = (tests.count(item_name) != 0);
         }
 
         if(yell && !r)

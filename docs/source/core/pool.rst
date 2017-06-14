@@ -18,7 +18,7 @@ is in providing safer dynamic memory access.
 
 It is possible that Pool may offer better performance in environments where
 dynamic allocation is extremely expensive. Running a comparative benchmark
-between Goldilocks tests ``P-tB161a`` and ``P-tB161b`` will indicate whether
+between Goldilocks tests ``P-tB1601`` and ``P-tB1601*`` will indicate whether
 there exist any mid-execution performance gains from using Pool in your
 particular environment.
 
@@ -30,6 +30,15 @@ Pool can store a maximum of 4,294,967,294 objects. This is because it uses
 reserved as  ``INVALID_INDEX``. The limit is calculated as follows.
 
 ``2^{32} - 2 = 4,294,967,294``
+
+Including Pool
+---------------------------------------
+
+To include Pool, use the following:
+
+..  code-block:: c++
+
+    #include "pawlib/pool.hpp"
 
 Creating a Pool
 ====================================

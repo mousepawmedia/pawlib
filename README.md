@@ -13,8 +13,9 @@ It is used by virtually all of MousePaw Media' core projects.
  - Flex Data Structures: High performance alternatives to C++ data structures, and then some.
  - Goldilocks: Testing and benchmarking framework.
  - IOChannel: Feature-rich multi-output text output system. (Alternative to ``std::cout``)
- - OneString: Performance string class with full Unicode support. (Alternative to ``std::string``)
- - PawSort: High-performance sorting algorithms.
+ - Trilean: A new atomic data type with three unique states: true, false, and maybe.
+ - Pool: A general-purpose implementation of the object pool design pattern.
+ - OneString: Performance string class with full Unicode support. (Alternative to ``std::string``) [Experimental]
 
 ## Authors
 
@@ -24,6 +25,8 @@ It is used by virtually all of MousePaw Media' core projects.
  - Sergio Ramirez
  - Scott Taylor
  - Jonathan Theodore
+ - Jarek Thomas
+ - Bowen Volwiler
 
 ## Dependencies
 
@@ -52,8 +55,8 @@ PawLIB is licensed under the BSD-3 License. (See LICENSE.md)
 
 The project is owned and maintained by [MousePaw Media][2].
 
-[1]: http://www.mousepawgames.com/pawlib
-[2]: http://www.mousepawgames.com/opensource
-[3]: http://www.mousepawgames.com/opensource#contribute
-[4]: http://www.mousepawgames.com/termsofdevelopment
-[5]: http://github.com/mousepawmedia/pawlib
+[1]: https://www.mousepawmedia.com/pawlib
+[2]: https://www.mousepawmedia.com/developers
+[3]: https://www.mousepawmedia.com/developers/contribution
+[4]: https://www.mousepawmedia.com/termsofdevelopment
+[5]: https://github.com/mousepawmedia/pawlib

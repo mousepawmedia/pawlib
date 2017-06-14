@@ -38,7 +38,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  * CONTRIBUTING
- * See http://www.mousepawgames.com/participate/opensource for information
+ * See https://www.mousepawmedia.com/developers for information
  * on how to contribute to our projects.
  */
 
@@ -49,6 +49,7 @@
 #include <stdexcept>
 
 #include "pawlib/base_flex_array.hpp"
+#include "pawlib/constants.hpp"
 #include "pawlib/iochannel.hpp"
 
 using pawlib::iochannel;
@@ -69,7 +70,8 @@ namespace pawlib
             /** Create a new FlexArray with the specified minimum capacity.
               * \param the minimum number of elements that the FlexArray can contain.
               */
-            explicit FlexArray(unsigned int numElements)
+            // cppcheck-suppress noExplicitConstructor
+            FlexArray(uint32_t numElements)
                 :Base_FlexArr<type>(numElements)
                 {}
 
@@ -79,7 +81,7 @@ namespace pawlib
              * \param the index to insert the element at.
              * \return true if insert successful, else false.
              */
-            bool insert(type newElement, unsigned int index)
+            bool insert(type newElement, uint32_t index)
             {
                 /* If the index is greater than the number of elements
                  * in the array currently. */
@@ -96,7 +98,7 @@ namespace pawlib
                 else
                 {
                     // If the number of elements is equal to the capacity.
-                    if(this->currElements == this->capacity)
+                    if(this->full())
                     {
                         // Attempt to double the capacity. If it fails...
                         if(!this->double_size())
@@ -107,17 +109,17 @@ namespace pawlib
                     }
 
                     // If there are elements in the FlexArray...
-                    if(this->currElements > 0)
+                    if(!this->empty())
                     {
-                        /* Every element to the right of the index should
+                        /* Every element to from the index to the right should
                          * be shifted right one position. */
-                        this->mem_shift(index + 1, 1);
+                        this->mem_shift(index, 1);
 
                         // Place the new element at the specified index.
                         this->theArray[index] = newElement;
                     }
 
-                    // Incrememnt the number of elements.
+                    // Increment the number of elements.
                     ++(this->currElements);
 
                     // Report success.
@@ -129,10 +131,10 @@ namespace pawlib
               * \param the index to act on.
               * \return the element from the given index.
               */
-            type yank(unsigned int index)
+            type yank(uint32_t index)
             {
                 // If there are no elements in the array...
-                if(this->currElements == 0)
+                if(this->empty())
                 {
                     // Throw a fatal error.
                     throw std::out_of_range("FlexArray: Cannot yank from empty FlexArray.");
@@ -161,6 +163,16 @@ namespace pawlib
                 }
             }
 
+            /** Insert an element at the end of the FlexArray.
+              * Just an alias for push()
+              * \param the element to insert.
+              * \return true if successful, else false.
+              */
+            bool push_front(type newElement)
+            {
+                return push(newElement);
+            }
+
             /** Insert an element at the beginning of the FlexArray.
               * \param the element to insert.
               * \return true if successful, else false.
@@ -168,10 +180,10 @@ namespace pawlib
             bool shift(type newElement)
             {
                 // If there are elements currently within the array.
-                if(this->currElements > 0)
+                if(!this->empty())
                 {
                     // If the array is full...
-                    if(this->currElements == this->capacity)
+                    if(this->full())
                     {
                         // Attempt to double the array's capacity. If it fails...
                         if(!this->double_size())
@@ -194,17 +206,17 @@ namespace pawlib
                 return true;
             }
 
-            /** Returns the first element in the FlexArray without modifying
+            /** Returns the last element in the FlexArray without modifying
               * the data structure.
-              * \return the first element in the FlexArray.
+              * \return the last element in the FlexArray.
               */
             type peek()
             {
                 // If there is at least one element in the array...
-                if(this->currElements > 0)
+                if(!this->empty())
                 {
-                    // Return that element.
-                    return this->at(0);
+                    // Return the last element.
+                    return this->at(this->currElements - 1);
                 }
                 // Otherwise...
                 else
@@ -213,6 +225,15 @@ namespace pawlib
                     throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
                 }
             }
+            /** Returns the last element in FlexArray without modifying
+              * the data structure
+              * Just an alias for peek.
+              * \return the first element in the FlexArray.
+              */
+            type peek_back()
+            {
+              return peek();
+            }
 
             /** Returns and removes the first element in the FlexArray.
               * \return the first element, now removed.
@@ -220,7 +241,7 @@ namespace pawlib
             type unshift()
             {
                 // If there is at least one element in the array...
-                if(this->currElements > 0)
+                if(!this->empty())
                 {
                     // Store the first element, to be returned later.
                     type temp = this->theArray[0];
@@ -245,12 +266,21 @@ namespace pawlib
             }
 
             /** Return and remove the last element in the FlexArray.
+              * Just an alias for pop()
+              * \return the last element, now removed.
+              */
+            type pop_back()
+            {
+                return pop();
+            }
+
+            /** Return and remove the last element in the FlexArray.
               * \return the last element, now removed.
               */
             type pop()
             {
                 // If there are no elements...
-                if(this->currElements == 0)
+                if(this->empty())
                 {
                     // Throw a fatal error.
                     throw std::out_of_range("FlexArray: Cannot pop from empty FlexArray.");
@@ -265,13 +295,23 @@ namespace pawlib
             }
 
             /** Add the specified element to the end of the FlexArray.
+              * Just an alias for push()
+              * \param the element to add.
+              * \return true if successful, else false.
+              */
+            bool push_back(type newElement)
+            {
+                return push(newElement);
+            }
+
+            /** Add the specified element to the end of the FlexArray.
               * \param the element to add.
               * \return true if successful, else false.
               */
             bool push(type newElement)
             {
                 // If the array is full...
-                if(this->currElements == this->capacity)
+                if(this->full())
                 {
                     // Attempt to double the array's capacity. If it fails...
                     if(!this->double_size())

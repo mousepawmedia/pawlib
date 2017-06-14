@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## PawLIB 1.0 [2016-01-05]
+## PawLIB 1.0 [2017-06-17]
 
 ### Stable Features
 
@@ -25,11 +25,6 @@
     * Text formatting flags.
     * Message prioritization and categorization.
     * Print memory addresses and output raw binary dumps with pointers.
-* Pawsort 1.0
-    * NEW dual-pivot introsort (unstable sorting algorithm).
-    * Added implementation of Knuth shell sort.
-    * Added implementation of heap sort.
-    * Added implementation of insertion sort.
 * Pool 1.0
     * NEW general-purpose implementation of the object pool design pattern.
 * Standard Utilities 1.0
@@ -49,6 +44,11 @@
     * An efficient, fixed-size stack.
 * OneString 0.3 [Experimental]
     * Template-sized, Unicode-friendly string.
+* Pawsort 0.1 [Experimental]
+    * NEW dual-pivot introsort (unstable sorting algorithm).
+    * Added implementation of Knuth shell sort.
+    * Added implementation of heap sort.
+    * Added implementation of insertion sort.
 * QuickString 0.3 [Experimental]
     * Template-sized, high-performance string.
 * SinglyLinkedList 0.1 [Experimental]

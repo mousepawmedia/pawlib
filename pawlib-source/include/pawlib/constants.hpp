@@ -1,11 +1,13 @@
-/** TestSystem [PawLIB Tester]
-  * Version: 0.1 (Experimental)
+/** Constants [PawLIB]
+  * Version: 1.0
+  *
+  * All globally-used constants.
   *
   * Author(s): Jason C. McDonald
   */
 
 /* LICENSE
- * Copyright (c) 2016 MousePaw Media.
+ * Copyright (c) 2017 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,43 +41,17 @@
  * on how to contribute to our projects.
  */
 
+#ifndef CONSTANTS_HPP_INCLUDED
+#define CONSTANTS_HPP_INCLUDED
 
-#ifndef TESTSYSTEM_HPP
-#define TESTSYSTEM_HPP
+#include <cstdint>
 
-#include <iostream>
-#include <algorithm>
-#include <stdlib.h>
-#include <time.h>
-
-#include "pawlib/goldilocks.hpp"
-#include "pawlib/iochannel.hpp"
-
-#include "pawlib/core_types_tests.hpp"
-#include "pawlib/flex_array_tests.hpp"
-#include "pawlib/flex_bit_tests.hpp"
-//TODO: #include "pawlib/flex_map_tests.hpp"
-#include "pawlib/flex_queue_tests.hpp"
-#include "pawlib/flex_stack_tests.hpp"
-#include "pawlib/pawsort_tests.hpp"
-#include "pawlib/onestring_tests.hpp"
-#include "pawlib/pool_tests.hpp"
-
-using pawlib::iochannel;
-
-//Format enumerations.
-using namespace pawlib::ioformat;
-using namespace pawlib;
-
-class TestSystem
+namespace pawlib
 {
-    public:
-        TestSystem();
-        ~TestSystem();
+    /** Indicates an invalid index. We actually use the largest
+      * unsigned int32 for this. */
+    static const uint32_t INVALID_INDEX = UINT32_MAX;
 
-        TestManager* testmanager;
-    protected:
-    private:
-};
+}
 
-#endif // TESTSYSTEM_HPP
+#endif // CONSTANTS_HPP_INCLUDED

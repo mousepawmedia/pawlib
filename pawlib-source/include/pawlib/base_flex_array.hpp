@@ -38,18 +38,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  * CONTRIBUTING
- * See http://www.mousepawgames.com/participate/opensource for information
+ * See https://www.mousepawmedia.com/developers for information
  * on how to contribute to our projects.
  */
 
 #ifndef BASE_FLEX_ARRAY_HPP_INCLUDED
 #define BASE_FLEX_ARRAY_HPP_INCLUDED
 
+#include <cstdint>
 #include <math.h>
 #include <stdexcept>
 #include <stdlib.h>
 
 #include "pawlib/iochannel.hpp"
+
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;
@@ -76,7 +78,8 @@ namespace pawlib
               * of elements.
               * \param the minimum number of elements the structure can hold.
               */
-            Base_FlexArr(int numElements)
+            // cppcheck-suppress noExplicitConstructor
+            Base_FlexArr(uint32_t numElements)
             :theArray(nullptr), resizable(true), currElements(0)
             {
                 /* Set the size to be the power of 2 just below the entered
@@ -100,7 +103,7 @@ namespace pawlib
             /** Access an element at a given index using the [] operator.
               * For example, "theArray[5]".
               */
-            type operator[](unsigned int index)
+            type operator[](uint32_t index)
             {
                 return at(index);
             }
@@ -109,9 +112,9 @@ namespace pawlib
               * \param the index to access.
               * \return the element at the given index.
               */
-            type at(unsigned int index)
+            type at(uint32_t index)
             {
-                if(index > currElements - 1 || index < 0)
+                if(index > currElements - 1)
                 {
                     throw std::out_of_range("BaseFlexArray: Index out of range!");
                 }
@@ -121,10 +124,64 @@ namespace pawlib
                 }
             }
 
+            /** Check if the data structure is empty.
+              * \return true if empty, else false
+              */
+            bool empty()
+            {
+                return (currElements == 0);
+            }
+
+            /** Check to see if the data structure is full.
+              * \return true is full, else false
+              */
+            bool full()
+            {
+                  return (capacity == currElements);
+            }
+
+            /** Erase the elements in the specified range.
+              * \param the first index in the range to remove
+              * \param the last index in the range to remove
+              */
+            bool erase(uint32_t first, uint32_t last=0)
+            {
+                /* If no last index was specified, prepare to delete only
+                 * the element 'first'. */
+                if(last == 0)
+                {
+                    last = first;
+                }
+
+                // If the range [first-last] is valid...
+                if(last >= first && last < currElements)
+                {
+                    uint32_t removeCount = (last+1) - first;
+
+                    //...and if we'll have leftovers after `last`
+                    if(last < currElements - 1)
+                    {
+                        // Shift the leftovers backwards into place.
+                        mem_shift(last+1, -removeCount);
+                    }
+                    // Recalculate the elements we have.
+                    currElements -= removeCount;
+                    return true;
+                }
+                else
+                {
+                    // Throw non-fatal error.
+                    ioc << cat_error << "BaseFlexArray Erase: Invalid range ("
+                        << first << " - " << last << "). Took no action."
+                        << io_end;
+                    return false;
+                }
+            }
+
             /** Get the current number of elements in the structure.
               * \return the number of elements
               */
-            int getSize()
+            uint32_t getSize()
             {
                 return currElements;
             }
@@ -133,7 +190,7 @@ namespace pawlib
               * without resizing.
               * \return the maximum number of elements
               */
-            int getArraySize()
+            uint32_t getArraySize()
             {
                 return capacity;
             }
@@ -146,11 +203,11 @@ namespace pawlib
             bool resizable;
 
             /// The current number of elements in the structure.
-            unsigned int currElements;
+            uint32_t currElements;
 
             /** The maximum number of elements (capacity) that can be contained
               * in the structure without resizing. */
-            unsigned int capacity;
+            uint32_t capacity;
 
             /** Double the capacity of the structure.
               * \return true if it was able to double capacity, else false.
@@ -164,9 +221,19 @@ namespace pawlib
                     return false;
                 }
 
-                // Double the maximum size (capacity).
-                capacity *= 2;
-
+                //check to see if maximum size is being approached
+                if(capacity >= UINT32_MAX/2)
+                {
+                  //set it to limit defined by UINT32_MAX
+                  capacity = UINT32_MAX;
+                  //set it so that array can no longer be doubled in size
+                  resizable = false;
+                }
+                else
+                {
+                    // Double the maximum size (capacity).
+                    capacity *= 2;
+                }
                 /* Create the new structure with the new capacity.*/
                 type* tempArray = new type[capacity];
 
@@ -181,7 +248,7 @@ namespace pawlib
                 if(this->theArray != nullptr)
                 {
                     // Transfer all of the elements over.
-                    /*for(unsigned int i = 0; i < currElements; i++)
+                    /*for(uint32_t i = 0; i < currElements; i++)
                     {
                         tempArray[i] = this->theArray[i];
                     }*/
@@ -209,7 +276,7 @@ namespace pawlib
               * \param the index to shift elements from
               * \param the direction and distance to shift the elements in.
               */
-            void mem_shift(unsigned int fromIndex, int direction)
+            void mem_shift(uint32_t fromIndex, int8_t direction)
             {
                 if(fromIndex + 1 > this->currElements)
                 {

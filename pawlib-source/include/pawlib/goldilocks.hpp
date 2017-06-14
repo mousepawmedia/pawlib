@@ -44,7 +44,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  * CONTRIBUTING
- * See http://www.mousepawgames.com/participate/opensource for information
+ * See https://www.mousepawmedia.com/developers for information
  * on how to contribute to our projects.
  */
 
@@ -236,7 +236,9 @@ namespace pawlib
             /**The TestManager doesn't need anything to its constructor,
              * as all of its tests will be added ("registered") after the
              * fact, and it doesn't do any heap allocation besides that.*/
-            TestManager(){}
+            TestManager()
+            :tests(), suites()
+            {}
 
             /**List all tests registered with the TestManager.
              * \param whether to show the titles

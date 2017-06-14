@@ -35,7 +35,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  * CONTRIBUTING
- * See http://www.mousepawgames.com/participate/opensource for information
+ * See https://www.mousepawmedia.com/developers for information
  * on how to contribute to our projects.
  */
 
@@ -80,6 +80,10 @@ namespace pawlib
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     vec.push_back(i);
+                    if(vec.back() != i)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -110,13 +114,19 @@ namespace pawlib
             bool run()
             {
                 // Create instance of FlexArray.
-                pawlib::FlexArray< unsigned int> flex;
+                pawlib::FlexArray<unsigned int> flex;
 
                 // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     // Attempt a push. If it fails...
                     if(!flex.push(i))
+                    {
+                        // Report failure.
+                        return false;
+                    }
+                    // if the value pushed isn't found at the end...
+                    if(flex.peek() != i)
                     {
                         // Report failure.
                         return false;
@@ -155,6 +165,10 @@ namespace pawlib
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     vec.insert(vec.begin(), i);
+                    if(vec[0] != i || (i > 0 && vec[1] != i-1))
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -200,6 +214,12 @@ namespace pawlib
                         // Report failure.
                         return false;
                     }
+                    // If things didn't shift correctly...
+                    if(flex[0] != i || (i > 0 && flex[1] != i-1))
+                    {
+                        // Report failure
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -240,11 +260,17 @@ is calculated as size()/2.";
                 vec.push_back(0);
                 vec.push_back(1);
 
+
+
                 // Insert each required element.
-                for(unsigned int i=1; i<1000; ++i)
+                for(unsigned int val=1; val<1000; ++val)
                 {
-                    unsigned int j = vec.size()/2;
-                    vec.insert(vec.begin()+j, i);
+                    unsigned int at = vec.size()/2;
+                    vec.insert(vec.begin()+at, val);
+                    if(vec[at] != val || vec.back() != 1)
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -286,11 +312,17 @@ Middle is calculated as size()/2.";
                 flex.push(1);
 
                 // Insert each required element.
-                for(unsigned int i=1; i<iters; ++i)
+                for(unsigned int val=1; val<iters; ++val)
                 {
-                    int j = flex.getSize()/2;
+                    int at = flex.getSize()/2;
                     // Attempt an insert shift. If it fails...
-                    if(!flex.insert(j, i))
+                    if(!flex.insert(val, at))
+                    {
+                        // Report failure.
+                        return false;
+                    }
+                    // If values did not shift/insert correctly.
+                    if(flex[at] != val || flex.peek() != 1)
                     {
                         // Report failure.
                         return false;
@@ -306,7 +338,7 @@ Middle is calculated as size()/2.";
     };
 
     // P-tB1004*
-    class TestVector_Erase : public Test
+    class TestVector_Yank : public Test
     {
         private:
             std::vector<unsigned int> vec;
@@ -314,18 +346,18 @@ Middle is calculated as size()/2.";
             unsigned int iters;
 
         public:
-          explicit TestVector_Erase(unsigned int iterations)
+          explicit TestVector_Yank(unsigned int iterations)
             :iters(iterations)
             {}
 
             testdoc_t get_title()
             {
-                return "FlexArray: Erase " + stdutils::itos(iters, 10) + " Integers (std::vector)";
+                return "FlexArray: Erase " + stdutils::itos(iters, 10) + " Integers Individually (std::vector)";
             }
 
             testdoc_t get_docs()
             {
-                return "Erase " + stdutils::itos(iters, 10) + " integers at the front of a Vector (pop).";
+                return "Erase " + stdutils::itos(iters, 10) + " integers individually at the front of a Vector (pop).";
             }
 
             bool pre()
@@ -363,7 +395,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            ~TestVector_Erase(){}
+            ~TestVector_Yank(){}
     };
 
     // P-tB1004, P-tS1004
@@ -644,6 +676,152 @@ Middle is calculated as size()/2.";
             }
 
             ~TestFArray_Pop(){}
+    };
+
+    // P-tB1007, P-tS1007
+    class TestFArray_Erase : public Test
+    {
+        private:
+            pawlib::FlexArray<unsigned int> flex;
+            unsigned int iters;
+
+        public:
+            explicit TestFArray_Erase(unsigned int iterations)
+                :iters(iterations)
+                {}
+
+            testdoc_t get_title()
+            {
+                return"FlexArray: Erase half of " + stdutils::itos(iters, 10) + " integers from a FlexArray.";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Erase the center half of elements in a " + stdutils::itos(iters, 10) + " integer-wide FlexArray.";
+            }
+
+            bool pre()
+            {
+                return janitor();
+            }
+
+            bool janitor()
+            {
+                // Refill the FlexArray.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    flex.push(i);
+                }
+                return true;
+            }
+            bool run()
+            {
+                // Calcuate erase size as the center half of the elements.
+                int first = iters/4;
+                int last = first * 3;
+                // Erase in one step.
+                return flex.erase(first, last);
+            }
+
+            ~TestFArray_Erase(){}
+    };
+
+    // P-tB1007*
+    class TestVector_Erase : public Test
+    {
+        private:
+            std::vector<unsigned int> vec;
+            unsigned int iters;
+
+        public:
+            explicit TestVector_Erase(unsigned int iterations)
+                :iters(iterations)
+                {}
+
+            testdoc_t get_title()
+            {
+                return"FlexArray: Erase half of " + stdutils::itos(iters, 10) + " integers from a std::vector.";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Erase the center half of elements in a " + stdutils::itos(iters, 10) + " integer-wide std::vector.";
+            }
+
+            bool pre()
+            {
+                return janitor();
+            }
+
+            bool janitor()
+            {
+                // Refill the FlexArray.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    vec.push_back(i);
+                }
+                return true;
+            }
+            bool run()
+            {
+                // Calcuate erase size as the center half of the elements.
+                int first = iters/4;
+                int last = first * 3;
+                // Erase in one step.
+                std::vector<unsigned int>::iterator result = vec.erase(vec.begin() + first, vec.begin() + last);
+                // If the iterator points to the vector end, there was a problem.
+                return (result != vec.end());
+            }
+
+            ~TestVector_Erase(){}
+    };
+
+    // P-tB1008
+    class TestFArray_Peek : public Test
+    {
+        public:
+            TestFArray_Peek(){}
+
+            testdoc_t get_title()
+            {
+                return "FlexArray: Peek (flexarray)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Ensure the last element is being peeked correctly.";
+            }
+
+            bool run()
+            {
+                // Create instance of FlexArray.
+                pawlib::FlexArray<unsigned int> flex;
+
+                unsigned int expected = 42;
+                unsigned int other = 9;
+
+                /* We initially push three values, to make the
+                 * math calculating the insert index a bit safer.*/
+                flex.push(other);
+                flex.push(other);
+                flex.push(other);
+                flex.push(expected);
+
+                unsigned int peeked = flex.peek();
+                if(peeked == expected)
+                {
+                    // Report success.
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+
+            ~TestFArray_Peek(){}
+
     };
 
     class TestSuite_FlexArray : public TestSuite

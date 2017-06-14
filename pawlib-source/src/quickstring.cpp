@@ -4,7 +4,7 @@
 * Last Updated: November 12, 2015
 *
 * Scott Taylor
-* MousePaw Games
+* MousePaw Media
 */
 
 #include "pawlib/quickstring.hpp"

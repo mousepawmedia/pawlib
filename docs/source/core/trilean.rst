@@ -27,6 +27,15 @@ distinct advantages:
 Using Trilean
 ==================================
 
+Including Trilean
+---------------------------------------
+
+To include Trilean, use the following:
+
+..  code-block:: c++
+
+    #include "pawlib/core_types.hpp"
+
 "Maybe" Contant
 ----------------------------------
 
