@@ -535,7 +535,7 @@ namespace pawlib
 
             testdoc_t get_title()
             {
-                return "PawLIB: QuickString Tests";
+                return "PawLIB: OneString Tests";
             }
 
             ~TestSuite_Onestring(){}
