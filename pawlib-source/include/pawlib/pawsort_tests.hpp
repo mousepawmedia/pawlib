@@ -535,6 +535,18 @@ unique values. Really, this is just evil incarnate.";
             bool run()
             {
                 std::sort(std::begin(test_arr), std::end(test_arr));
+
+                // Verify sorting.
+                for(int i = 1; i < test_size; ++i)
+                {
+                    // If the item is less than the previous item.
+                    if(test_arr[i] < test_arr[i-1])
+                    {
+                        // Out of order. Fail.
+                        return false;
+                    }
+                }
+                // If we make it this far, validation passed.
                 return true;
             }
             ~TestStdSort(){}
@@ -555,8 +567,21 @@ unique values. Really, this is just evil incarnate.";
             bool run()
             {
                 pawsort::introsort(test_arr, test_size);
+
+                // Verify sorting.
+                for(int i = 1; i < test_size; ++i)
+                {
+                    // If the item is less than the previous item.
+                    if(test_arr[i] < test_arr[i-1])
+                    {
+                        // Out of order. Fail.
+                        return false;
+                    }
+                }
+                // If we make it this far, validation passed.
                 return true;
             }
+
             ~TestPawSort(){}
     };
 
