@@ -299,25 +299,25 @@ lowercase or uppercase (default).
 Float and Double
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Float and Double can only be output in base 10 directly. (Hexadecimal output
-is only possible through a pointer memory dump. See that section.) However,
-the precision and use of scientific notation can be modified. By default,
-precision is 14, and use of scientific notation is automatic for very large
-and small numbers.
+Float and Double can only be output in base 10 directly. (Hexadecimal output is
+only possible through a pointer memory dump. See that section.) However, the
+significands (the number of digits after the decimal point) and use of
+scientific notation can be modified. By default, significands is 14, and use of
+scientific notation is automatic for very large and small numbers.
 
-Precision can be modified using the ``set_precision(#)`` function. Scientific
+Significands can be modified using the ``set_significands(#)`` function. Scientific
 notation can be turned on with ``sci_on``, and off using ``sci_none``. It can
 also be reset to automatic with ``sci_auto``.
 
 ..  code-block:: c++
 
     float foo = 12345.12345678912345;
-    ioc << "Precision 5, no sci: " << set_precision(5) << foo << io_end;
-    ioc << "Precision 10, sci: " << set_precision(10) << sci_on << foo << io_end;
+    ioc << "Significands 5, no sci: " << set_significands(5) << foo << io_end;
+    ioc << "Significands 10, sci: " << set_significands(10) << sci_on << foo << io_end;
 
     /*OUTPUT:
-    Precision 5, no sci: 12345.12304
-    Precision 10, sci: 1.2345123046e+4
+    Significands 5, no sci: 12345.12304
+    Significands 10, sci: 1.2345123046e+4
     */
 
 Both types work the same.
@@ -835,12 +835,12 @@ Pointer (``IOFormatPointer``)
 +-----------------+-------------------------------------------------------------------+
 
 ..  index::
-    pair: precision; format
+    pair: significands; format
 
-Precision(``set_precision``)
+Significands(``set_significands``)
 --------------------------------------------------------
 
-``set_precision(n)`` where ``n`` is the precision, as an integer representing
+``set_significands(n)`` where ``n`` is the significands, as an integer representing
 the number of significands.
 
 ..  index::
@@ -873,7 +873,7 @@ Scientific Notation (``IOFormatSciNotation``)
 +-----------------+---------------------------------------+
 
 ..  WARNING:: ``sci_none`` has been known to cause truncation in very large and
-    very small values, regardless of precision.
+    very small values, regardless of significands.
 
 ..  index::
     pair: text attributes; format

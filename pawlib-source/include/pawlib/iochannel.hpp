@@ -110,9 +110,6 @@
 //Needed for handling passed-in exceptions.
 #include <exception>
 
-//TODO: Swap to pawlib::flexarray
-#include <vector>
-
 //Signals and callbacks.
 #include "cpgf/gcallbacklist.h"
 
@@ -198,12 +195,15 @@ namespace pawlib
             bool_scott = 4
         };
 
-        //PRECISION
-        struct set_precision
+        //SIGNIFICANDS
+        struct set_significands
         {
-            explicit set_precision(unsigned int p):precision(p){}
-            int precision = 14;
+            explicit set_significands(unsigned int s):significands(s){}
+            int significands = 14;
         };
+
+        [[deprecated("Replaced by set_significands()")]]
+        typedef set_significands set_precision;
 
         enum IOFormatSciNotation
         {
@@ -500,7 +500,7 @@ namespace pawlib
             iochannel& operator<<(const tril&);
             iochannel& operator<<(const char&);
             iochannel& operator<<(const std::string&);
-            //TODO: Add support for PawString.
+            //TODO: Add support for OneString.
 
             inline iochannel& operator<<(const unsigned char& rhs){return resolve_integer(rhs);}
             inline iochannel& operator<<(const int& rhs){return resolve_integer(rhs);}
@@ -515,6 +515,9 @@ namespace pawlib
             inline iochannel& operator<<(const float& rhs){return resolve_float(rhs);}
             inline iochannel& operator<<(const double& rhs){return resolve_float(rhs);}
             inline iochannel& operator<<(const long double& rhs){return resolve_float(rhs);}
+
+            template <typename T>
+            inline iochannel& operator<<(const T* rhs){return resolve_pointer_smart(rhs);}
 
             inline iochannel& operator<<(const void* rhs){return resolve_pointer(rhs);}
             inline iochannel& operator<<(const bool* rhs){return resolve_pointer(rhs);}
@@ -568,7 +571,7 @@ namespace pawlib
             iochannel& operator<<(const IOFormatBase&);
             iochannel& operator<<(const IOFormatBool&);
             iochannel& operator<<(const IOFormatCharValue&);
-            iochannel& operator<<(const set_precision&);
+            iochannel& operator<<(const set_significands&);
             iochannel& operator<<(const IOFormatSciNotation&);
             iochannel& operator<<(const IOFormatNumeralCase&);
             iochannel& operator<<(const IOFormatPointer&);
@@ -613,7 +616,7 @@ namespace pawlib
 
             ~iochannel();
         protected:
-            // TODO: Swap for pawlib::string(?)
+            // TODO: Swap to OneString
             std::string msg;
 
             // The bitfield storing which categories are permitted.
@@ -643,9 +646,8 @@ namespace pawlib
             IOFormatBool boolstyle = bool_lower;
             /* What data type to interpret char values as. */
             IOFormatCharValue charval = char_char;
-            /* The precision to use in displaying floating point values. */
-            int precision = 14;
-            // NOTE: Is `precision` a lie?
+            /* The significants to display in floating point values. */
+            int significands = 14;
             /* Whether to display in scientific notation or not. */
             IOFormatSciNotation sci = sci_auto;
             /* Whether to display digits > 9 [radix > 10] as uppercase
@@ -670,6 +672,40 @@ namespace pawlib
             IOFormatVerbosity vrb = vrb_normal;
             /* Message category. */
             IOFormatCategory cat = cat_normal;
+            /* Message parsable */
+            tril parse = maybe;
+
+            template <typename T>
+            iochannel& resolve_pointer_smart(const T* rhs)
+            {
+                //If we cannot parse because of `shutup()` settings, abort.
+                if(!can_parse()){return *this;}
+
+                switch(ptr)
+                {
+                    //If we are to print as value...
+                    case ptr_value:
+                    {
+                        *this << "[iochannel cannot interpret value at pointer of this type.]";
+                        break;
+                    }
+                    //If we are to print as address...
+                    case ptr_address:
+                    {
+                        //Inject raw address, overriding with byte read size 1.
+                        inject(rhs, 1, false);
+                        break;
+                    }
+                    //If we are to print the raw memory...
+                    case ptr_memory:
+                    {
+                        //Inject raw address with the object size as read_size.
+                        inject(rhs, sizeof(T), true);
+                        break;
+                    }
+                }
+                return *this;
+            }
 
             /** Resolves any common pointer. This can handle
               * all atomic and numeric C and C++ types.
@@ -704,7 +740,7 @@ namespace pawlib
 
             //The string containing the format.
             std::string format = "";
-            //TODO: Swap for pawlib::string
+            //TODO: Swap to OneString
 
             /**Flush the standard output.*/
             void flush();
@@ -752,7 +788,7 @@ namespace pawlib
             /**Reset all attributes.*/
             void reset_attributes();
 
-            /**Reset all flags and attributes.*/
+            /**Reset all flags.*/
             void reset_flags();
 
     };

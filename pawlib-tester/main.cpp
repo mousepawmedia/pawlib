@@ -37,8 +37,8 @@ void print(std::string msg)
 int main(int argc, char* argv[])
 {
     //Set up signal handling.
-    ioc.signal_all.add(&print);
-    ioc.configure_echo(echo_none);
+    //ioc.signal_all.add(&print);
+    ioc.configure_echo(echo_cout);
 
     TestSystem* sys = new TestSystem();
     (void) sys;

@@ -1326,7 +1326,7 @@ namespace pawlib
         ioc << "\tOUTLIERS: " << result.low_out_major+result.low_out_minor << " LOW, "
             << result.upp_out_major+result.upp_out_minor << " HIGH" << io_end_keep;
 
-        ioc << "\tSD (σ): " << set_precision(2) << result.std_dev << " / " << result.std_dev_adj << "" << io_end_keep;
+        ioc << "\tSD (σ): " << set_significands(2) << result.std_dev << " / " << result.std_dev_adj << "" << io_end_keep;
 
         ioc << "\t" << (result.rsd_adj > rsd_threshold ? bg_red : bg_none)
             << "RSD: " << result.rsd << "% / " << result.rsd_adj << "%" << io_end;

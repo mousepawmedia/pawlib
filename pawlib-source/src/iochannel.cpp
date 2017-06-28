@@ -166,12 +166,12 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const set_precision& rhs)
+    iochannel& iochannel::operator<<(const set_significands& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        precision = rhs.precision;
+        significands = rhs.significands;
         return *this;
     }
 
@@ -269,6 +269,8 @@ namespace pawlib
     {
         //Set the verbosity.
         vrb = rhs;
+        //Revalidate parsing.
+        parse = maybe;
         return *this;
     }
 
@@ -276,38 +278,47 @@ namespace pawlib
     {
         //Set the category.
         cat = rhs;
+        //Revalidate parsing.
+        parse = maybe;
         return *this;
     }
 
     iochannel& iochannel::operator<<(const IOControl& rhs)
     {
+        /* We'll need to track whether we're supposed to ask the transmission
+         * to clear the flags. Doing it ourselves in this function
+         * was the cause of T1081. */
+        bool keep = true;
+
         switch(rhs)
         {
             case io_end:
             {
-                reset_flags();
+                reset_attributes();
+                keep = false;
                 //Fall through to twin.
             }
             case io_end_keep:
             {
                 (can_parse()) ? inject("\n") : inject("");
-                transmit(true);
+                transmit(keep);
                 break;
             }
             case io_send:
             {
-                reset_flags();
+                reset_attributes();
+                keep = false;
                 //Fall through to twin.
             }
             case io_send_keep:
             {
                 inject("");
-                transmit(true);
+                transmit(keep);
                 break;
             }
             case io_endline:
             {
-                reset_flags();
+                reset_attributes();
                 //Fall through to twin.
             }
             case io_endline_keep:
@@ -317,7 +328,7 @@ namespace pawlib
             }
             case io_show:
             {
-                reset_flags();
+                reset_attributes();
                 //Fall through to twin.
             }
             case io_show_keep:
@@ -422,7 +433,7 @@ namespace pawlib
             case ptr_memory:
             {
                 //Inject address for memory dump.
-                inject(rhs, sizeof(*rhs), true);
+                inject(rhs, sizeof(typeid(*rhs)), true);
                 break;
             }
         }
@@ -478,12 +489,12 @@ namespace pawlib
         if(!can_parse()){return *this;}
 
         // We're changing approach below to keep Clang happy.
-        ////char cstr[stdutils::floatlen(rhs, precision, sci, true) + 1] = {'\0'};
-        char cstr[stdutils::floatlen(rhs, precision, sci, true) + 1];
+        ////char cstr[stdutils::floatlen(rhs, significands, sci, true) + 1] = {'\0'};
+        char cstr[stdutils::floatlen(rhs, significands, sci, true) + 1];
         cstr[0] = '\0';
 
         //Convert the float to a cstring, and dump into cstr.
-        stdutils::ftoa(cstr, rhs, precision, sci);
+        stdutils::ftoa(cstr, rhs, significands, sci);
         inject(cstr);
         return *this;
     }
@@ -524,18 +535,18 @@ namespace pawlib
 
     bool iochannel::can_parse()
     {
-        /* If the verbosity is in range or the category is
-         * set to parse, then return false. Otherwise,
-         * return true.*/
-        return ((vrb <= process_v) && (process_c & cat)) ? true : false;
+        /* If we aren't sure about the parsing condition... */
+        if(~parse)
+        {
+            /* If the verbosity is in range or the category is set to parse,
+             * then set false. Otherwise, set true. */
+            parse = ((vrb <= process_v) && (process_c & cat)) ? true : false;
+        }
+        return parse;
     }
 
     void iochannel::clear_msg()
     {
-        /*TODO: This function may need to be either expanded once we stop using
-        std::vector, or just dropped in favor of `msg.clear()`
-        */
-
         msg.clear();
         msg = "";
     }
@@ -581,7 +592,7 @@ namespace pawlib
         }
 
         msg.push_back(ch);
-        //TODO: Swap for pawlib::string
+        //TODO: Swap for OneString
     }
 
     void iochannel::inject(const char* str, bool recursive)
@@ -594,7 +605,7 @@ namespace pawlib
 
         //Append to the message.
         msg.append(str);
-        //TODO: Swap for pawlib::string
+        //TODO: Swap for OneString
 
         ////apply_attributes() ? printf("%s", format) : 0;
         ////printf("%s", str);
@@ -657,24 +668,32 @@ namespace pawlib
         {
             printf("WARNING: All message categories have been turned off!\n");
         }
+        //Revalidate parsing.
+        parse = maybe;
     }
 
     void iochannel::shutup(IOFormatVerbosity vrb)
     {
         //Set the processing verbosity.
         process_v = vrb;
+        //Revalidate parsing.
+        parse = maybe;
     }
 
     void iochannel::speakup()
     {
         process_v = vrb_tmi;
         process_c = cat_all;
+        //Revalidate parsing.
+        parse = maybe;
     }
 
     void iochannel::speakup(IOFormatCategory cat)
     {
         //Allow the category through by turning on its bit.
         process_c = process_c | cat;
+        //Revalidate parsing.
+        parse = maybe;
     }
 
     void iochannel::speakup(IOFormatVerbosity vrb)
@@ -684,6 +703,8 @@ namespace pawlib
         {
             process_v = vrb;
         }
+        //Revalidate parsing.
+        parse = maybe;
     }
 
     void iochannel::reset_attributes()
@@ -704,13 +725,11 @@ namespace pawlib
 
     void iochannel::reset_flags()
     {
-        reset_attributes();
-
-        //Reset the base.
+        //Reset all the flags.
         base = base_dec;
         boolstyle = bool_lower;
         charval = char_char;
-        precision = 14;
+        significands = 14;
         sci = sci_auto;
         numcase = num_lower;
         ptr = ptr_value;
