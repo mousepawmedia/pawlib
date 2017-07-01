@@ -47,6 +47,7 @@
 #include "pawlib/flex_array.hpp"
 #include "pawlib/goldilocks.hpp"
 #include "pawlib/pool.hpp"
+#include "pawlib/stdutils.hpp"
 
 namespace pawlib
 {
@@ -75,7 +76,7 @@ namespace pawlib
             ~DummyClass(){}
     };
 
-    // P-tB161a
+    // P-tB1601*
     class TestPool_ThriceFillAlloc : public Test
     {
         public:
@@ -89,18 +90,18 @@ namespace pawlib
 
             testdoc_t get_docs()
             {
-                return "Allocate and deallocate 1000 Dummy objects the old fashioned way.";
+                return "Allocate and deallocate " + stdutils::itos(iters) + " Dummy objects the old fashioned way.";
             }
 
             bool run()
             {
                 for(int r = 0; r < 3; ++r)
                 {
-                    for(int i = 0; i < 1000; ++i)
+                    for(int i = 0; i < iters; ++i)
                     {
                         refs[i] = new DummyClass();
                     }
-                    for(int j = 0; j < 1000; ++j)
+                    for(int j = 0; j < iters; ++j)
                     {
                         delete refs[j];
                         refs[j] = 0;
@@ -111,10 +112,11 @@ namespace pawlib
 
             ~TestPool_ThriceFillAlloc(){}
         private:
-            DummyClass* refs[1000];
+            static const int iters = 10;
+            DummyClass* refs[iters];
     };
 
-    // P-tB161b
+    // P-tB1601
     class TestPool_ThriceFill : public Test
     {
         public:
@@ -128,12 +130,13 @@ namespace pawlib
 
             testdoc_t get_docs()
             {
-                return "Create a 1000-object Dummy object pool, then create & destroy 1000 objects in it three times.";
+                return "Create a " + stdutils::itos(iters) + "-object Dummy object pool, then create & destroy " + stdutils::itos(iters) + " objects in it three times.";
             }
 
             bool pre()
             {
-                pool = new Pool<DummyClass>(1000);
+                refs = new pool_ref<DummyClass>[iters];
+                pool = new Pool<DummyClass>(iters);
                 if(pool == nullptr)
                 {
                     return false;
@@ -145,7 +148,7 @@ namespace pawlib
             {
                 for(int r = 0; r < 3; ++r)
                 {
-                    for(int i = 0; i < 1000; ++i)
+                    for(int i = 0; i < iters; ++i)
                     {
                         try
                         {
@@ -156,7 +159,7 @@ namespace pawlib
                             return false;
                         }
                     }
-                    for(int j = 0; j < 1000; ++j)
+                    for(int j = 0; j < iters; ++j)
                     {
                         try
                         {
@@ -177,6 +180,7 @@ namespace pawlib
             bool post()
             {
                 delete pool;
+                delete[] refs;
                 pool = 0;
                 return true;
             }
@@ -187,11 +191,13 @@ namespace pawlib
 
             ~TestPool_ThriceFill(){}
         private:
+            static const int iters = 10;
+
             Pool<DummyClass>* pool;
-            pool_ref<DummyClass> refs[1000];
+            pool_ref<DummyClass>* refs;
     };
 
-    // P-tB162[a-h]
+    // P-tB1602 - P-tB1605
     class TestPool_Create : public Test
     {
         public:
@@ -324,7 +330,7 @@ namespace pawlib
             testdoc_t docs;
     };
 
-    // P-tB163
+    // P-tB1606
     class TestPool_Access : public Test
     {
         public:
@@ -395,7 +401,7 @@ namespace pawlib
             pool_ref<DummyClass> poolrf;
     };
 
-    // P-tB164
+    // P-tB1607
     class TestPool_Destroy : public Test
     {
         public:
@@ -466,7 +472,7 @@ namespace pawlib
             pool_ref<DummyClass> poolrf;
     };
 
-    // P-tB165a-h
+    // P-tB1608 - P-tB160D
     class TestPool_Exception : public Test
     {
         public:

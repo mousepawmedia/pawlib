@@ -365,6 +365,9 @@ namespace pawlib
                 index = INVALID_INDEX;
             }
 
+            /** Disconnect this reference from its object.
+              * WARNING: Watch for segfaults originating from this.
+              * We already had one on T1086.*/
             void disconnect()
             {
                 if(pool_ptr != nullptr && index != INVALID_INDEX)
@@ -455,7 +458,8 @@ namespace pawlib
             /// The object itself.
             T object;
 
-            /** Initialize the object using its default constructor.*/
+            /** Initialize the object using its default constructor.
+              * (Yes, this IS used, despite what the linters think.) */
             //cppcheck-suppress unusedPrivateFunction
             void init()
             {
@@ -503,6 +507,23 @@ namespace pawlib
 
                 // Mark the object as uninitialized (not live).
                 live = false;
+
+                /* Remove all the object's callbacks. This is a backup in
+                 * case a disconnect() from a reference doesn't work right.
+                 * BUG T1086: In some situations, references were not
+                 * disconnecting themselves from the object. Thus, if the
+                 * object was recycled, sometimes old signals would persist.
+                 * To get around this, we just have the object remove its
+                 * own signals.
+                 * This code was adapted from cpgf/samples/callback/tutorial_callback.h
+                 */
+                poolobjsignal_t::DirectListType & internalList = signal_deinit.getDirectList();
+                for(poolobjsignal_t::IteratorType it = internalList.begin(); it != internalList.end(); ++it)
+                {
+                    poolobjsignal_t::ConnectionType & connection = *it;
+                    signal_deinit.remove(connection);
+                }
+
             }
 
         public:

@@ -15,4 +15,5 @@ docs/build
 tester
 tester_debug
 *.config
+*.kdev4
 !default.config
