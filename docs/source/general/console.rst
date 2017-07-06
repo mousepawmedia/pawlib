@@ -86,9 +86,10 @@ we may see::
 
 We can see the documentation for a test with ``about <test>``.
 
-We can run a single test using the ``test <test>`` command. To run the
-"FlexArray: Insert 100 Integers At Middle" test, you would enter ``test
-P-tB1003``.
+We can run a single test using the ``test <test> [count]`` command.
+To run the "FlexArray: Insert 1000 Integers At Middle" test, you would enter
+``test P-tB1003``. If you wanted to run it 10 times, enter
+``test P-tB1003 10``.
 
 Confirm :kbd:`y` and press :kbd:`ENTER` to run the test. It will respond with
 either ``TEST COMPLETE`` or ``TEST FAILED``.
@@ -104,16 +105,17 @@ extensive statistics for validating the results.
     be repurposing this command in a later version.
 
 We've provided comparative tests in our suites, to facilitate performance
-comparisons of PawLIB against the standard alternatives. Each test pair
-shares the same name, but the standard comparative test is marked with
-an asterisk (``*``).
-
-You can run a comparative benchmark using the command
-``compare <test1> <test2> [repetitions]``. The optional last argument allows
+comparisons of PawLIB against the standard alternatives. These can
+be run via ``benchmark <test> [repetitions]`` - the comparative test
+will automatically be run. The optional last argument allows
 you to specify how many times to run each test per pass, between 10 and 10,000
 inclusively. The more repetitions, the more accurate the results, but the
 longer it will take to run. If you're not sure, you should just go with
-the default (1000 repetitions).
+the default (100 repetitions).
+
+You can also run a comparative benchmark between any two tests
+``compare <test1> <test2> [repetitions]``. If no number of repetitions is
+specified, the default (100 repetitions) will be used.
 
 For example, to see how FlexArray performs against ``std::vector``
 in inserting values at the beginning of the data structure (shifting), you

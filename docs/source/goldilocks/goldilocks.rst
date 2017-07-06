@@ -259,6 +259,14 @@ handle its deletion at the proper time.
 
 The test can now be called by name using Goldilocks' various functions. (See below.)
 
+You can also optionally register a comparative test for benchmarking, which
+will be run against the main test in the benchmarker.
+
+.. code-block:: c++
+
+    //Assuming testmanager is our instance of the Goldilocks test manager.
+    testmanager.register_test("TestFoo", new TestFoo, new TestBar);
+
 ..  index::
     single: test; running
 
@@ -323,38 +331,35 @@ of an optional boolean argument for specifying a test which belongs to the
 suite, but should not be part of the Suite's batch run.
 
 One reason to exclude a test from the batch run for the Suite is if the test
-is used only for comparative benchmarking.
+is a stress test that takes a long time to run.
+
+We can also register the comparative tests as an optional fourth argument.
 
 Below is an example of a Suite's ``load_tests``.
 
 ..  code-block:: c++
 
-    void TestSuite_FlexArray::load_tests()
+    void TestSuite_MagicThing::load_tests()
     {
-        // Register this test with both the suite and the test manager.
-        register_test("t101", new TestFlex_Push);
+        /* Register this test with both the suite and the test manager.
+         * Also register the comparative form. */
+        register_test("t101", new MagicThing_Poof(), true, new OtherThing_Poof());
+
+        register_test("t102", new MagicThing_Vanish());
+
+        register_test("t103", new MagicThing_Levitate());
+
+        register_test("t104", new MagicThing_Telepathy());
 
         /* This test will be loaded by the suite, but will be excluded
          * from the batch run. */
-        register_test("t101b", new TestVector_Push, false);
-
-        register_test("t102", new TestFlex_Shift);
-        register_test("t102b", new TestVector_Shift, false);
-
-        register_test("t103", new TestFlex_ShiftAlt);
-
-        register_test("t104", new TestFlex_Insert);
-        register_test("t104b", new TestVector_Insert, false);
+        register_test("t105", new MagicThing_SawInHalf(), true);
     }
 
-We have registered seven tests with this suite. Upon loading the suite, all
-seven tests will be loaded into the test manager. However, if we were to
-batch run this suite, only four of those tests (t101, t102, t103, and t103)
-would be run. This makes sense, because the other tests are only for
-comparative benchmarking: t101b performs the exact same task as t101, but it
-uses an external library. If we batch run this suite as a part of integration
-testing, it wouldn't matter whether those comparative tests passed - they
-would have no effect on our library's function.
+We have registered five tests with this suite, not counting the comparative form
+of the one. Upon loading the suite, all five tests will be loaded into the test
+manager. However, if we were to batch run this suite, only four of those tests
+(t101, t102, t103, and t104) would be run.
 
 Registering a Suite
 ----------------------------------------------------

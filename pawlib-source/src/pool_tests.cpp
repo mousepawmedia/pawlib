@@ -5,9 +5,7 @@ namespace pawlib
     void TestSuite_Pool::load_tests()
     {
         register_test("P-tB1601",
-            new TestPool_ThriceFill());
-        register_test("P-tB1601*",
-            new TestPool_ThriceFillAlloc(), false);
+            new TestPool_ThriceFill(), true, new TestPool_ThriceFillAlloc());
 
         register_test("P-tB1602",
             new TestPool_Create(TestPool_Create::DFLT));

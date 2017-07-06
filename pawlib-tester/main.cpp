@@ -294,6 +294,20 @@ void interactive(TestSystem* sys)
             {
                 sys->testmanager->i_run_test(tokens[1]);
             }
+            else if(tokens.size() == 3)
+            {
+                try
+                {
+                    sys->testmanager->i_run_test(tokens[1], std::stoi(tokens[2]));
+                }
+                catch(std::invalid_argument)
+                {
+                    ioc << fg_red << ta_bold << cat_error
+                    << "ERROR: " << tokens[2] << " is not a valid integer. "
+                    << "Please specify a valid number of reptitions for "
+                    << "the test." << io_end;
+                }
+            }
             else
             {
                 ioc << fg_red << ta_bold << cat_error
@@ -361,8 +375,8 @@ void help()
     ioc << "Runs all tests in [suite].\n" << io_end;
     ioc << "----" << io_end;
 
-    ioc << ta_bold << ":test [test]" << io_end;
-    ioc << "Runs [test].\n" << io_end;
+    ioc << ta_bold << ":test [test] (number)" << io_end;
+    ioc << "Runs [test] with (number) repetitions.\n" << io_end;
     ioc << "----" << io_end;
 
     ioc << "Back to you, Bob!\n" << io_end;

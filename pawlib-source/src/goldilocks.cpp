@@ -194,7 +194,7 @@ namespace pawlib
     void TestManager::show_docs(testname_t test_name)
     {
         // Ensure the test DOES NOT already exist before continuing.
-        if(!validate(test_name, true))
+        if(!validate(test_name, true, GolidlocksItemType::test))
         {
             return;
         }
@@ -240,7 +240,7 @@ namespace pawlib
         // Otherwise, if a suite was specified...
 
         // Ensure the test exists before continuing.
-        if(!validate(suite, true, true))
+        if(!validate(suite, true, GolidlocksItemType::suite))
         {
             return;
         }
@@ -263,28 +263,33 @@ namespace pawlib
         }
     }
 
-    void TestManager::i_run_test(testname_t test)
+    void TestManager::i_run_test(testname_t test, unsigned int repeat)
     {
         // Ensure the test exists before continuing.
-        if(!validate(test, true))
+        if(!validate(test, true, GolidlocksItemType::test))
         {
             return;
         }
 
         ioc << "Run test " << io_send;
         ioc << ta_bold << tests[test]->get_title() << io_send;
-        ioc << "[" << test << "]? (y/N) " << io_send;
+        ioc << "[" << test << "]" << io_send;
+        if(repeat > 1)
+        {
+            ioc << " " << stdutils::itos(repeat) << " times" << io_send;
+        }
+        ioc << "? (y/N) " << io_send;
 
         if(i_confirm(false))
         {
-            run_test(test);
+            run_test(test, repeat);
         }
     }
 
     void TestManager::i_run_suite(testsuitename_t suite)
     {
         // Ensure the test exists before continuing.
-        if(!validate(suite, true, true))
+        if(!validate(suite, true, GolidlocksItemType::suite))
         {
             return;
         }
@@ -313,14 +318,16 @@ namespace pawlib
         /* NOTE: If you're getting a segfault in this function, check here!
          * Attempting to access the functions in an unregistered test causes
          * Undefined Behavior, typically a segfault. */
-        if(!validate(test, true))
+        if(!validate(test, true, GolidlocksItemType::test) || !validate(test, true, GolidlocksItemType::comparative))
         {
             return;
         }
 
-        ioc << "Run benchmark " << io_send;
+        ioc << "Run comparative benchmark between " << io_send;
         ioc << ta_bold << tests[test]->get_title() << io_send;
-        ioc << "[" << test << "] at " << repeat << " repetitions? (y/N) " << io_send;
+        ioc << "[" << test << "] and " << io_send;
+        ioc << ta_bold << comparatives[test]->get_title() << io_send;
+        ioc << " at " << repeat << " repetitions? (y/N) " << io_send;
 
         if(i_confirm(false))
         {
@@ -334,7 +341,7 @@ namespace pawlib
         /* NOTE: If you're getting a segfault in this function, check here!
          * Attempting to access the functions in an unregistered test causes
          * Undefined Behavior, typically a segfault. */
-        if(!validate(test1, true) || !validate(test2, true))
+        if(!validate(test1, true, GolidlocksItemType::test) || !validate(test2, true, GolidlocksItemType::test))
         {
             return;
         }
@@ -380,7 +387,7 @@ namespace pawlib
         /* NOTE: If you're getting a segfault in this function, check here!
          * Attempting to access the functions in an unregistered test causes
          * Undefined Behavior, typically a segfault. */
-        if(!validate(suite, true, true))
+        if(!validate(suite, true, GolidlocksItemType::suite))
         {
             return false;
         }
@@ -416,7 +423,7 @@ namespace pawlib
         /* NOTE: If you're getting a segfault in this function, check here!
          * Attempting to access the functions in an unregistered test causes
          * Undefined Behavior, typically a segfault. */
-        if(!validate(suite, true, true))
+        if(!validate(suite, true, GolidlocksItemType::suite))
         {
             return false;
         }
@@ -456,13 +463,13 @@ namespace pawlib
         }
     }
 
-    void TestManager::register_test(testname_t test_name, Test* test)
+    void TestManager::register_test(testname_t test_name, Test* test, Test* compare)
     {
         /* ENTRY: Add a new test by name to the test manager. */
 
         // Ensure the test DOES NOT already exists before continuing.
         // If it DOES...
-        if(validate(test_name, false))
+        if(validate(test_name, false, GolidlocksItemType::test))
         {
             // Throw an error.
             ioc << cat_error << ta_bold << fg_red
@@ -491,6 +498,15 @@ namespace pawlib
          * as insert() would literally NOT work (you can't copy a unique_ptr).*/
         tests.emplace(test_name, testptr_t(test));
 
+        /* If a comparative test was included... */
+        if(compare != nullptr)
+        {
+            /** Add the comparative test to the comparatives map using the
+              * test name as the key.
+              */
+            comparatives.emplace(test_name, testptr_t(compare));
+        }
+
         /* WARNING: The end-developer must be sure they aren't trying to
          * retain ownership of the Test instance, as that will cause UB
          * (in my observation, usually a segfault) when the TestManager
@@ -507,7 +523,7 @@ namespace pawlib
 
         // Ensure the suite DOES NOT already exist before continuing.
         // If it does...
-        if(validate(suite_name, false, true))
+        if(validate(suite_name, false, GolidlocksItemType::suite))
         {
             // Throw an error.
             ioc << cat_error << ta_bold << fg_red
@@ -543,7 +559,7 @@ namespace pawlib
          * destroy the instance. It's not pretty.*/
     }
 
-    bool TestManager::run_test(testname_t test)
+    bool TestManager::run_test(testname_t test, unsigned int repeat)
     {
         /* ENTRY: Run a single test.*/
 
@@ -551,8 +567,19 @@ namespace pawlib
         /* NOTE: If you're getting a segfault in this function, check here!
          * Attempting to access the functions in an unregistered test causes
          * Undefined Behavior, typically a segfault. */
-        if(!validate(test, true))
+        if(!validate(test, true, GolidlocksItemType::test))
         {
+            return false;
+        }
+
+        /* We should only allow repeating between 1 and 10,000 times,
+         * inclusively. If the user asked for more than that...*/
+        if(repeat < 1 || repeat > 10000)
+        {
+            // Display an error.
+            ioc << cat_error << "Test repeat value must be between 1 and 10000 inclusively." << io_end;
+
+            // Abort the test.
             return false;
         }
 
@@ -574,8 +601,22 @@ namespace pawlib
             return false;
         }
 
-        // Run the test. If it fails (returned false)...
-        if(!(tests[test]->run()))
+        bool status = true;
+
+        for(unsigned int i = 0; i < repeat; ++i)
+        {
+            ioc << cat_normal << "Pass " << stdutils::itos(i+1)
+                << " of " << stdutils::itos(repeat) << io_end;
+
+            // Run the test. If it fails (returned false)...
+            if(!(tests[test]->run()))
+            {
+                status = false;
+                break;
+            }
+        }
+        // If the test failed...
+        if(!status)
         {
             // Alert the user with an error message.
             ioc << cat_error << ta_bold << bg_red << fg_white
@@ -617,189 +658,40 @@ namespace pawlib
             << io_end;
     }
 
-    void TestManager::run_benchmark(testname_t test, unsigned int repeat)
+    void TestManager::run_benchmark(testname_t test, unsigned int repeat, bool showStats)
     {
-        /* ENTRY: Run a benchmark.
-         * run_compare() is largely based off of this, with
-         * some adjustments for the three types of comparisons.
-         */
-
-        // Ensure the test exists before continuing.
+        // Ensure both tests exist before continuing.
         /* NOTE: If you're getting a segfault in this function, check here!
          * Attempting to access the functions in an unregistered test causes
          * Undefined Behavior, typically a segfault. */
-        if(!validate(test, true))
+        if(!validate(test, true, GolidlocksItemType::test) || !validate(test, true, GolidlocksItemType::comparative))
         {
             return;
         }
 
-        /* We should only allow repeating between 10 and 10,000 times,
-         * inclusively. If the user asked for more than that...*/
-        if(repeat < 10 || repeat > 10000)
-        {
-            // Display an error.
-            ioc << cat_error << "Benchmark requires a repeat value "
-                << "between 10-10000 (inclusively)." << io_end;
-
-            // Abort the benchmark.
-            return;
-        }
-
-        // Display the fancy benchmarker banner and disclaimer.
-        benchmark_banner();
-
-        // Display the name of the test we're about to benchmark.
-        ioc << "===== [" << tests[test]->get_title() << "] =====" << io_end;
-
-        // Attempt to set up the test (pre). If that fails...
-        if(!(tests[test]->pre()))
-        {
-            // Alert the user with an error message..
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test << "] PRE-TEST FAILED - ABORTING" << io_end;
-            // Run the test's pre-fail cleanup function.
-            tests[test]->prefail();
-
-            // Abort the benchmark.
-            return;
-        }
-
-        // Let the user know what we're doing.
-        ioc << "Ensuring [" << test << "] succeeds before benchmarking..." << io_end;
-
-        /* Run the test to make sure it is successful before benchmarking.
-         * If it fails...*/
-        if(!(tests[test]->run()))
-        {
-            // Alert the user with an error message.
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test << "] FAILED - ABORTING" << io_end;
-            // Run the test's fail-cleanup function.
-            tests[test]->postmortem();
-
-            //Abort the benchmark.
-            return;
-        }
-        // Else if the test succeeds...
-        else
-        {
-            // Give the user the good news.
-            ioc << cat_normal << ta_bold << bg_green << fg_white
-                << "[" << test << "] PASSED" << io_end;
-
-            //Continue with the benchmarker!
-        }
-
-        // Display notice that we're starting to measure now.
-        ioc << cat_normal << bg_cyan << fg_black << "STARTING BENCHMARK" << io_end;
-
-        /* Shut off all testing messages; they aren't useful after the initial
-         * test run has finished. We don't want to clog up or clutter output.*/
-        ioc.shutup(cat_testing);
-
-        /* The average execution time of the measurement functions, represented
-         * as a 64-bit unsigned integer.*/
-        uint64_t base;
-        /* Instances of BenchmarkResult for storing the statistical data from
-         * our base and test benchmarks.*/
-        BenchmarkResult benchmark, baseR;
-
-        // Dynamically allocate the array for storing clock measurements.
-        uint64_t* results = new uint64_t[repeat];
-
-        /* Ensure we were able to allocate the array.
-         * If it failed (NULL pointer)...*/
-        if(results == 0)
-        {
-            // Alert the user with an error message.
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "Cannot allocate results array. Aborting." << io_end;
-            // Abort the benchmark.
-            return;
-        }
-
-        // Calibrate our measurement functions. (See that function's comments.)
-        calibrate();
-
-        // Get <repeat> measurements of the measurement function.
-        for(unsigned int i=0; i<repeat; ++i)
-        {
-            float fltRepeat = repeat;
-            /* Display our ongoing progress to the user. We are using `io_show`
-             * so we keep it all on the same line.*/
-            ioc << cat_normal << "CALIBRATING: " << (((i+1)/fltRepeat)*100) << "%" << io_show;
-            // Record each measurement to the array.
-            results[i] = clock();
-        }
-
-        // Calculate the statistical data for the base measurements.
-        resultFromArray(baseR, results, repeat);
-        /* Store the average base. We'll offset all other measurements
-         * with this, so we're only measuring the TEST.*/
-        base = baseR.mean;
-
-        // Get <repeat> measurements of the test.
-        for(unsigned int i=0; i<repeat; ++i)
-        {
-            /* Display our ongoing progress to the user. We are using `io_show_keep`
-             * so we keep it all on the same line and retain formatting.*/
-            ioc << cat_normal << "Pass " << (i+1) << " of " << repeat << "." << io_show_keep;
-            // Run pre-repeat cleanup on test.
-            tests[test]->janitor();
-            // Record each measurement to the array, overwriting the old data.
-            results[i] = clock(tests[test].get()) - base;
-        }
-
-        // Calculate the statistical data for the base measurements.
-        resultFromArray(benchmark, results, repeat);
-
-        // Turn on testing messages again.
-        ioc.speakup(cat_testing);
-
-        // Flush the output so we can start working on a newline.
-        ioc << io_endline_keep << io_flush << io_send;
-
-        // Run post-test function.
-        tests[test]->post();
-
-        // Tell the user that we're done with benchmarking.
-        ioc << ta_bold << bg_green << fg_white
-                << "BENCHMARKER COMPLETE" << io_end;
-
-        // Display results information.
-        ioc << "RESULTS" << io_end;
-        ioc << "\tMany numbers are displayed as VALUE/ADJUSTED" << io_endline_keep
-            << "\t(The adjusted value excludes outlier values.)" << io_endline << io_end;
-
-        // Output the baseline measurements for reference.
-        ioc << cat_normal << "\n" << bg_cyan << fg_black << "BASELINE MEASUREMENTS" << io_end;
-        printResult(baseR);
-
-        // Output the test measurements.
-        ioc << cat_normal << "\n" << bg_cyan << fg_black << "[" << test << "] MEASUREMENTS" << io_end;
-        printResult(benchmark);
-
-        // Clean up: delete our results array.
-        delete [] results;
-        // Null out the pointer to the results array (by habit).
-        results = 0;
+        run_compare(tests[test].get(), comparatives[test].get(), repeat, showStats);
     }
 
     void TestManager::run_compare(testname_t test1, testname_t test2, unsigned int repeat, bool showStats)
+    {
+        // Ensure both tests exist before continuing.
+        /* NOTE: If you're getting a segfault in this function, check here!
+         * Attempting to access the functions in an unregistered test causes
+         * Undefined Behavior, typically a segfault. */
+        if(!validate(test1, true, GolidlocksItemType::test) || !validate(test2, true, GolidlocksItemType::test))
+        {
+            return;
+        }
+
+        run_compare(tests[test1].get(), tests[test2].get(), repeat, showStats);
+    }
+
+    void TestManager::run_compare(Test* test1, Test* test2, unsigned int repeat, bool showStats)
     {
         /* ENTRY: Compare two function benchmarks.
          * Largely based on run_benchmark, with several
          * additions for the different comparison types.
          */
-
-        // Ensure both tests exist before continuing.
-        /* NOTE: If you're getting a segfault in this function, check here!
-         * Attempting to access the functions in an unregistered test causes
-         * Undefined Behavior, typically a segfault. */
-        if(!validate(test1, true) || !validate(test2, true))
-        {
-            return;
-        }
 
         /* We should only allow repeating between 10 and 10,000 times,
          * inclusively. If the user asked for more than that...*/
@@ -816,17 +708,17 @@ namespace pawlib
         // Display the fancy benchmarker banner and disclaimer.
         benchmark_banner();
         // Display the names of the tests we're about to compare.
-        ioc << "===== [" << tests[test1]->get_title() << "] | ["
-            << tests[test2]->get_title() << "] =====" << io_end;
+        ioc << "===== [" << test1->get_title() << "] | ["
+            << test2->get_title() << "] =====" << io_end;
 
         // Attempt to run the "pre" function for test 1. If it fails...
-        if(!(tests[test1]->pre()))
+        if(!(test1->pre()))
         {
             // Alert the user with an error message...
             ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << tests[test1]->get_title() << "] PRE-TEST FAILED - ABORTING" << io_end;
+                << "[" << test1->get_title() << "] PRE-TEST FAILED - ABORTING" << io_end;
             // Perform pre-fail cleanup on test 1.
-            tests[test1]->prefail();
+            test1->prefail();
 
             // Don't worry about test 2 - it hasn't been set up yet.
 
@@ -835,39 +727,39 @@ namespace pawlib
         }
 
         // Attempt to run the "pre" function for test 2. If it fails...
-        if(!(tests[test2]->pre()))
+        if(!(test2->pre()))
         {
             // Alert the user with an error message...
             ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << tests[test2]->get_title() << "] PRE-TEST FAILED - ABORTING" << io_end;
+                << "[" << test2->get_title() << "] PRE-TEST FAILED - ABORTING" << io_end;
 
             // Perform pre-fail cleanup on test 2.
-            tests[test2]->prefail();
+            test2->prefail();
 
             /* Perform standard cleanup (post) on test 1. Otherwise, we can
              * potentially wind up with memory leaks and other issues.*/
-            tests[test1]->post();
+            test1->post();
 
             //Abort the benchmarker.
             return;
         }
 
         // Let the user know what we're doing...
-        ioc << "Ensuring [" << tests[test1]->get_title() << "] succeeds before benchmarking..." << io_end;
+        ioc << "Ensuring [" << test1->get_title() << "] succeeds before benchmarking..." << io_end;
 
         // Run test1 to make sure it works. If it fails...
-        if(!(tests[test1]->run()))
+        if(!(test1->run()))
         {
             // Alert the user with an error message.
             ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << tests[test1]->get_title() << "] FAILED - ABORTING" << io_end;
+                << "[" << test1->get_title() << "] FAILED - ABORTING" << io_end;
 
             // Run postmortem cleanup on test1.
-            tests[test1]->postmortem();
+            test1->postmortem();
 
             /* Perform standard cleanup (post) on test 2. Otherwise, we can
              * potentially wind up with memory leaks and other issues.*/
-            tests[test2]->post();
+            test2->post();
 
             //Abort the benchmarker.
             return;
@@ -877,26 +769,26 @@ namespace pawlib
         {
             // Let the user know the good news...
             ioc << cat_normal << ta_bold << bg_green << fg_white
-                << "[" << tests[test1]->get_title() << "] PASSED" << io_end;
+                << "[" << test1->get_title() << "] PASSED" << io_end;
             // ...and move on.
         }
 
         // Give the user a status update.
-        ioc << "Ensuring [" << tests[test2]->get_title() << "] succeeds before benchmarking..." << io_end;
+        ioc << "Ensuring [" << test2->get_title() << "] succeeds before benchmarking..." << io_end;
 
         // Run test2 to make sure it works. If it fails...
-        if(!(tests[test2]->run()))
+        if(!(test2->run()))
         {
             // Alert the user with an error message.
             ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << tests[test2]->get_title() << "] FAILED - ABORTING" << io_end;
+                << "[" << test2->get_title() << "] FAILED - ABORTING" << io_end;
 
             // Run postmortem cleanup on test2.
-            tests[test2]->postmortem();
+            test2->postmortem();
 
             /* Perform standard cleanup (post) on test 1. Otherwise, we can
              * potentially wind up with memory leaks and other issues.*/
-            tests[test1]->post();
+            test1->post();
 
             // Abort the benchmarker.
             return;
@@ -906,7 +798,7 @@ namespace pawlib
         {
             // Let the user know the good news about that as well...
             ioc << cat_normal << ta_bold << bg_green << fg_white
-                << "[" << tests[test2]->get_title() << "] PASSED" << io_end;
+                << "[" << test2->get_title() << "] PASSED" << io_end;
             // ...and let the fun proceed!
         }
 
@@ -986,16 +878,16 @@ namespace pawlib
             // Display progress (overwrite line.)
             ioc << cat_normal << "(MAMA BEAR) Pass " << (i+1) << "-A of " << repeat << ".  " << io_show;
             // Run pre-repeat cleanup on test1.
-            tests[test1]->janitor();
+            test1->janitor();
             // Record test 1 measurement, offset by baseline.
-            results1[i] = clock(tests[test1].get()) - base;
+            results1[i] = clock(test1) - base;
 
             // Display progress (overwrite line.)
             ioc << cat_normal << "(MAMA BEAR) Pass " << (i+1) << "-B of " << repeat << ".  " << io_show;
             // Run pre-repeat cleanup on test2.
-            tests[test2]->janitor();
+            test2->janitor();
             // Record test 2 measurement, offset by baseline.
-            results2[i] = clock(tests[test2].get()) - base;
+            results2[i] = clock(test2) - base;
         }
 
         // Move to a new line for output.
@@ -1019,9 +911,9 @@ namespace pawlib
             // Display progress (overwrite line).
             ioc << cat_normal << "(PAPA BEAR) Pass " << (i+1) << "-A of " << repeat << ".  " << io_show;
             // Run pre-repeat cleanup on test1.
-            tests[test1]->janitor();
+            test1->janitor();
             // Record test 1 measurement, offset by baseline.
-            results1[i] = clock(tests[test1].get()) - base;
+            results1[i] = clock(test1) - base;
         }
 
         // Take <repeat> measurements of test B.
@@ -1030,9 +922,9 @@ namespace pawlib
             // Display progress (overwrite line).
             ioc << cat_normal << "(PAPA BEAR) Pass " << (i+1) << "-B of " << repeat << ".  " << io_show;
             // Run pre-repeat cleanup on test2.
-            tests[test2]->janitor();
+            test2->janitor();
             // Record test 2 measurement, offset by baseline.
-            results2[i] = clock(tests[test2].get()) - base;
+            results2[i] = clock(test2) - base;
         }
 
         // Move to a new line for output.
@@ -1073,9 +965,9 @@ namespace pawlib
                 // Display progress (overwrite line.)
                 ioc << cat_normal << "(BABY BEAR) Pass " << ((o+1)*(i1+1)) << "-A of " << repeat << ".  " << io_show;
                 // Run pre-repeat cleanup on test1.
-                tests[test1]->janitor();
+                test1->janitor();
                 // Record test 1 measurement, offset by baseline.
-                results1[i1] = clock(tests[test1].get()) - base;
+                results1[i1] = clock(test1) - base;
             }
 
             // Run test 2 eight consecutive times for this set...
@@ -1084,9 +976,9 @@ namespace pawlib
                 // Display progress (overwrite line.)
                 ioc << cat_normal << "(BABY BEAR) Pass " << ((o+1)*(i2+1)) << "-B of " << repeat << ".  " << io_show;
                 // Run pre-repeat cleanup on test2.
-                tests[test2]->janitor();
+                test2->janitor();
                 // Record test 2 measurement, offset by baseline.
-                results2[i2] = clock(tests[test2].get()) - base;
+                results2[i2] = clock(test2) - base;
             }
         }
 
@@ -1096,9 +988,9 @@ namespace pawlib
             // Display progress (overwrite line.)
             ioc << cat_normal << "(BABY BEAR) Pass " << ((outer*inner)+(r1+1)) << "-A of " << repeat << ".  " << io_show;
             // Run pre-repeat cleanup on test1.
-            tests[test1]->janitor();
+            test1->janitor();
             // Record test 1 measurement, offset by baseline.
-            results1[r1] = clock(tests[test1].get()) - base;
+            results1[r1] = clock(test1) - base;
         }
 
         // Run test 2 the remaining number of times consecutively...
@@ -1107,9 +999,9 @@ namespace pawlib
             // Display progress (overwrite line.)
             ioc << cat_normal << "(BABY BEAR) Pass " << ((outer*inner)+(r2+1)) << "-B of " << repeat << "." << io_show_keep;
             // Run pre-repeat cleanup on test2.
-            tests[test2]->janitor();
+            test2->janitor();
             // Record test 2 measurement, offset by baseline.
-            results2[r2] = clock(tests[test2].get()) - base;
+            results2[r2] = clock(test2) - base;
         }
 
         // Move to a new line for output.
@@ -1129,8 +1021,8 @@ namespace pawlib
 
 
         // Cleanup test 1 and 2 using their post functions.
-        tests[test1]->post();
-        tests[test2]->post();
+        test1->post();
+        test2->post();
 
         // Display information about results.
         if(showStats)
@@ -1144,11 +1036,11 @@ namespace pawlib
             printResult(baseR);
 
             // Display the results for MAMA BEAR, test 1.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << tests[test1]->get_title() << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << test1->get_title() << "]" << io_end;
             printResult(mama1);
 
             // Display the results for MAMA BEAR, test 2.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << tests[test2]->get_title() << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << test2->get_title() << "]" << io_end;
             printResult(mama2);
 
             // Display the verdict for MAMA BEAR in BOLD.
@@ -1157,11 +1049,11 @@ namespace pawlib
             printVerdict(mama1, mama2, test1, test2);
 
             // Display the results for PAPA BEAR, test 1.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << tests[test1]->get_title() << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << test1->get_title() << "]" << io_end;
             printResult(papa1);
 
             // Display the results for PAPA BEAR, test 2.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << tests[test2]->get_title() << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << test2->get_title() << "]" << io_end;
             printResult(papa2);
 
             // Display the verdict for PAPA BEAR in BOLD.
@@ -1170,11 +1062,11 @@ namespace pawlib
             printVerdict(papa1, papa2, test1, test2);
 
             // Display the results for BABY BEAR, test 1.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << tests[test1]->get_title() << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << test1->get_title() << "]" << io_end;
             printResult(baby1);
 
             // Display the results for BABY BEAR, test 2.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << tests[test2]->get_title() << "]" << io_end;
+            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << test2->get_title() << "]" << io_end;
             printResult(baby2);
 
             // Display the verdict for BABY BEAR in BOLD.
@@ -1440,7 +1332,7 @@ namespace pawlib
             << "RSD: " << result.rsd << "% / " << result.rsd_adj << "%" << io_end;
     }
 
-    void TestManager::printVerdict(BenchmarkResult& result1, BenchmarkResult& result2, testname_t test1, testname_t test2)
+    void TestManager::printVerdict(BenchmarkResult& result1, BenchmarkResult& result2, Test* test1, Test* test2)
     {
         // Calculate difference between the non-adjusted mean averages.
         int64_t difference = result1.mean-result2.mean;
@@ -1461,13 +1353,13 @@ namespace pawlib
             if(difference < 0)
             {
                 // Declare the first test as faster, and by how much.
-                ioc << "\t     RAW: [" << tests[test1]->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << io_end_keep;
+                ioc << "\t     RAW: [" << test1->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << io_end_keep;
             }
             //Else if the second test won (its non-adjusted mean was smaller)...
             else if(difference > 0)
             {
                 // Declare the second test as faster, and by how much.
-                ioc << "\t     RAW: [" << tests[test2]->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << io_end_keep;
+                ioc << "\t     RAW: [" << test2->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << io_end_keep;
             }
         }
 
@@ -1485,31 +1377,35 @@ namespace pawlib
             if(difference < 0)
             {
                 // Declare the first test as faster, and by how much.
-                ioc << "\tADJUSTED: [" << tests[test1]->get_title() << "] faster by approx. " << (labs(difference_adj) - result1.std_dev_adj) << " cycles." << io_end;
+                ioc << "\tADJUSTED: [" << test1->get_title() << "] faster by approx. " << (labs(difference_adj) - result1.std_dev_adj) << " cycles." << io_end;
             }
             //Else if the second test won (its adjusted mean was smaller)...
             else if(difference > 0)
             {
                 // Declare the second test as faster, and by how much.
-                ioc << "\tADJUSTED: [" << tests[test2]->get_title() << "] faster by approx. " << (labs(difference_adj) - result2.std_dev_adj) << " cycles." << io_end;
+                ioc << "\tADJUSTED: [" << test2->get_title() << "] faster by approx. " << (labs(difference_adj) - result2.std_dev_adj) << " cycles." << io_end;
             }
         }
     }
 
-    bool TestManager::validate(testname_t item_name, bool yell, bool suite)
+    bool TestManager::validate(testname_t item_name, bool yell, GolidlocksItemType type)
     {
         /* Use `std::map::count` to test for the key in the map.
          * Using `std::map::find` in this way has some memory issues,
          * according to Clang.
          */
         bool r = false;
-        if(suite)
+        switch(type)
         {
-            r = (suites.count(item_name) != 0);
-        }
-        if(!suite)
-        {
-            r = (tests.count(item_name) != 0);
+            case test:
+                r = (tests.count(item_name) != 0);
+                break;
+            case comparative:
+                r = (comparatives.count(item_name) != 0);
+                break;
+            case suite:
+                r = (suites.count(item_name) != 0);
+                break;
         }
 
         if(yell && !r)
@@ -1523,13 +1419,13 @@ namespace pawlib
         return r;
     }
 
-    void TestSuite::register_test(testname_t test_name, Test* test, bool will_run)
+    void TestSuite::register_test(testname_t test_name, Test* test, bool will_run, Test* compare)
     {
         // If we have a valid testmanager pointer...
         if(testmanager)
-            {
+        {
             // Register the test with the testmanager.
-            testmanager->register_test(test_name, test);
+            testmanager->register_test(test_name, test, compare);
             // Store the test name for loading on demand.
             tests_load.push_back(test_name);
 

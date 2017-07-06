@@ -92,13 +92,18 @@ namespace pawlib
     /* The type we use for storing documentation strings. Alias of testname_t.*/
     typedef testname_t testdoc_t;
 
+    enum GolidlocksItemType
+    {
+        test,
+        comparative,
+        suite
+    };
+
     /** All tests are derived from this base
      * class.*/
     class Test
     {
         public:
-
-
             /**A Test generally should not have a constructor.
              * Instead, setup tasks (such as dynamic allocation)
              * should be performed by `pre()`, so `prefail()`, `post()`,
@@ -196,7 +201,7 @@ namespace pawlib
              * \param the pointer to the test (declare "new" for this argument)
              * \param whether to run the test on suite run (default true)
              */
-            void register_test(testname_t, Test*, bool = true);
+            void register_test(testname_t, Test*, bool = true, Test* = 0);
 
             /// The list of tests to load. Mainly here for reference right now.
             std::vector<testname_t> tests_load;
@@ -237,7 +242,7 @@ namespace pawlib
              * as all of its tests will be added ("registered") after the
              * fact, and it doesn't do any heap allocation besides that.*/
             TestManager()
-            :tests(), suites()
+            :tests(), suites(), comparatives()
             {}
 
             /**List all tests registered with the TestManager.
@@ -266,8 +271,9 @@ namespace pawlib
              * \param a pointer to the test. The safest way to use this is to
              * pass the "new Test" as this argument, since TestManager will be
              * taking exclusive ownership of the instance. It will handle
-             * NULL automatically, so no error checking is required.*/
-            void register_test(testname_t, Test*);
+             * NULL automatically, so no error checking is required.
+             * \param a pointer to the comparative test. See above.*/
+            void register_test(testname_t, Test*, Test* = 0);
 
             /**Register a new suite with the TestManager.
              * \param a string of the suite's name
@@ -278,7 +284,7 @@ namespace pawlib
             /**Run a test by name.
              * \param the name of the test to run
              * \return true if the test ran successfully, else false */
-            bool run_test(testname_t);
+            bool run_test(testname_t, unsigned int=1);
 
             /**Run a suite by name.
              * \param the name of the suite to run
@@ -292,10 +298,12 @@ namespace pawlib
              * profiler. See the documentation for more information.
              * \param the name of the test to benchmark
              * \param the number of times to run the test
+             * \param whether to print all of the output, or just the summaried
+             * verdict.
              * (10 - 10,000, default 100). The more repetitions we have,
              * the more accurate the benchmark will be - but bear execution
              * time in mind, as some tests can take a while.*/
-            void run_benchmark(testname_t, unsigned int=100);
+            void run_benchmark(testname_t, unsigned int=100, bool=true);
 
             /**Benchmark and compare two tests using a three-pass system.
              * The three passes - MAMA BEAR, PAPA BEAR, and BABY BEAR -
@@ -327,7 +335,7 @@ namespace pawlib
 
             /**Interactively (confirm before start) run a test by name.
              * \param the name of the test to run*/
-            void i_run_test(testname_t);
+            void i_run_test(testname_t, unsigned int=1);
 
             /**Interactively (confirm before start) run a suite by name.
              * \param the name of the suite to run*/
@@ -369,7 +377,29 @@ namespace pawlib
              * \param whether we're searching for a suite (default, test)
              * \return true if the test exists, else false
              */
-            bool validate(testname_t, bool=false, bool=false);
+            bool validate(testname_t, bool=false, GolidlocksItemType=test);
+
+            /**Benchmark and compare two tests using a three-pass system.
+             * The three passes - MAMA BEAR, PAPA BEAR, and BABY BEAR -
+             * handle test execution sequence differently to account for
+             * cache warming factors.
+             *
+             * The tests should be designed to perform the exact same logical
+             * task by two different methods.
+             *
+             * WARNING: This tool is not a replacement for a proper code
+             * profiler. See the documentation for more information.
+             * \param the name of test A
+             * \param the name of test B
+             * \param the number of times to run each test per pass
+             * \param whether to print all of the output, or just the summaried
+             * verdict.
+             * (10 - 10,000, default 100). The more repetitions we have,
+             * the more accurate the benchmark will be - but bear execution
+             * time in mind, as some tests can take a while.
+             * In short, we have 100 repetitions each * 2 tests * 3 passes,
+             * or 100 => 600 total repetitions.*/
+            void run_compare(Test*, Test*, unsigned int=100, bool=true);
 
             /**The BenchmarkResult struct stores all of the statistical data
              * from a single test benchmark. Having this struct makes our
@@ -457,7 +487,7 @@ namespace pawlib
              * \param the BenchmarkResult from test B
              * \param the name of test A (optional)
              * \param the name of test B (optional)*/
-            void printVerdict(BenchmarkResult&, BenchmarkResult&, testname_t = "TEST A", testname_t = "TEST B");
+            void printVerdict(BenchmarkResult&, BenchmarkResult&, Test*, Test*);
 
             /** Calibrate the CPU clocking functionality by serializing the
              * assembly instruction cache, per Intel's documentation on RDTSC.*/
@@ -482,6 +512,9 @@ namespace pawlib
 
             /** Stores all of the testsuite pointers for access-by-name-string. */
             std::map<testsuitename_t, testsuiteptr_t> suites;
+
+            /** Stores all of the comparative test pointers for access-by-name-string. */
+            std::map<testname_t, testptr_t> comparatives;
 
             /* We are using std::map intentionally above. Dynamic allocation is
              * more appropriate in this situation, especially since test
