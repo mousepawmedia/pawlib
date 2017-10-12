@@ -156,16 +156,18 @@ namespace pawlib
             template <typename T>
             static void insertion_sort(T arr[], int left, int right)
             {
+                T tmp;
+
                 /* Ensure the left index is less than the right index. */
-                if(right < left)
+                if(arr[right] < arr[left])
                 {
-                    int t = left;
-                    left = right;
-                    right = t;
+                    tmp = arr[left];
+                    arr[left] = arr[right];
+                    arr[right] = tmp;
                 }
 
-                T tmp;
-                for(int i = left+1, j=i; i < right; ++i)
+                int i, j;
+                for(i = left+1, j=i; i < right; ++i)
                 {
                     j = i;
                     while(j > 0 && arr[j - 1] > arr[j])
@@ -201,9 +203,11 @@ namespace pawlib
             template <typename T>
             static void shell_sort(T arr[], int left, int right)
             {
-                /* Ensure the left index is less than the right index. */
+                /* If the right index is smaller than the left, the user has
+                 * provided an invalid (non-sensical) range. Exit.*/
                 if(right < left)
                 {
+                    /* TODO: Revisit this behavior. */
                     int t = left;
                     left = right;
                     right = t;
@@ -251,12 +255,12 @@ namespace pawlib
             template <typename T>
             static void introsort(T arr[], int left, int right, int maxdepth=-1)
             {
-                /* Ensure the left index is less than the right index. */
-                if(right < left)
+                /* If the right index is smaller than the left, the user has
+                 * provided an invalid (non-sensical) range. Exit.*/
+                if(right <= left)
                 {
-                    int t = left;
-                    left = right;
-                    right = t;
+                    /* TODO: Revisit this behavior. */
+                    return;
                 }
 
                 const int TINY_SIZE = 17;
@@ -286,8 +290,7 @@ namespace pawlib
                     }
 
                     /* If we have no specified maximum depth, calculate it. */
-                    // cppcheck-suppress unpreciseMathCall
-                    maxdepth = (log(right-left+1)) * 2;
+                    maxdepth = (log1p(right-left+1)) * 2;
                     /* NOTE: Multiplying by 2 is arbitrary. We may be able
                      * to improve performance by adjusting that number. */
                 }
@@ -298,18 +301,19 @@ namespace pawlib
                 //If size is less than threshold, use shell sort.
                 if(len <= TINY_SIZE)
                 {
-                    shell_sort(arr, left, right);
+                    //shell_sort(arr, left, right);
+                    //return;
+                    insertion_sort(arr, left, right);
                     return;
-                    //insertion_sort(arr, left, right);
                 }
                 /* Otherwise, if we are supposed to stop recursively
                  * quicksorting partitions, stop and use heapsort. */
-                else if(maxdepth == 0)
+                /*else if(maxdepth == 0)
                 {
-                    //TODO: This is where performance is getting tanked...?
+                    //TODO: Still broken atm
                     heap_sort(arr, left, right);
                     return;
-                }
+                }*/
 
                 /* This will be our loop iterator, but we're also using it
                  * for ensuring pivot1 and pivot2 are different. Thus, we'll
@@ -342,13 +346,13 @@ namespace pawlib
                  * the 1/3 and 2/3 indices - a strategy which fails under a
                  * number of common scenarios.
                  */
-                T a=arr[left],
+                /*T a=arr[left],
                     b=arr[len/2],
                     c=arr[right],
-                    tmp_i;
+                    tmp_i;*/
 
                 /* Put three values in correct order. */
-                if(a > b)
+                /*if(a > b)
                 {
                     // Swap
                     tmp_i = a;
@@ -368,15 +372,27 @@ namespace pawlib
                     tmp_i = b;
                     b = c;
                     c = tmp_i;
+                }*/
+
+                /* Swap values at left and right indices to ensure pivots are selected properly */
+                if(arr[right] < arr[left])
+                {
+                    tmp = arr[right];
+                    arr[right] = arr[left];
+                    arr[left] = tmp;
                 }
+
+                /* NOTE: I do a very simple pivot selection here to ensure the
+                algorithm works in a simple case.*/
 
                 /* Calculate the first pivot value as the median between
                  * the first and second sampled values. */
-                T pivot1 = ((b - a) / 2) + a;
+                //T pivot1 = ((b - a) / 2) + a;
+                T pivot1 = arr[left];
                 /* Calculate the second pivot value as the median between
                  * the second and third samples valued. */
-                T pivot2 = ((c - b) / 2) + b;
-
+                //T pivot2 = ((c - b) / 2) + b;
+                T pivot2 = arr[right];
                 /* Because we ordered a, b, and c, we can assume that the
                  * pivot values are already in proper order. */
 
@@ -420,7 +436,7 @@ namespace pawlib
                     {
                         /* Before we continue, let's make sure we're not sitting on
                          * any values that belong in partition II. */
-                        while(arr[upper] > pivot2)
+                        while(i < upper && arr[upper] > pivot2)
                         {
                             upper--;
                         }
@@ -430,6 +446,14 @@ namespace pawlib
                         tmp = arr[i];
                         arr[i] = arr[upper];
                         arr[upper--] = tmp;
+
+                        /* If newly swapped value is less than pivot1, swap again into 1st partition */
+                        /*if (arr[i] < pivot1)
+                        {
+                            tmp = arr[i];
+                            arr[i] = arr[lower];
+                            arr[lower++] = tmp;
+                        }*/
                     }
                     /* If the value is equal to or between the two pivots,
                      * just leave it where it is. If it is currently in the wrong
@@ -452,10 +476,10 @@ namespace pawlib
 
                 /* Recursively sort partition I, passing in one less than
                  * the maxdepth. */
-                introsort(arr, left, lower-1, maxdepth-1);
+                introsort(arr, left, lower-2, maxdepth-1);
                 /* Recursively sort partition II, passing in one less than
                  * the maxdepth. */
-                introsort(arr, right, upper+1, maxdepth-1);
+                introsort(arr, upper+2, right, maxdepth-1);
                 /* Recursively sort partition III, passing in one less than
                  * the maxdepth. */
                 introsort(arr, lower, upper, maxdepth-1);
