@@ -60,11 +60,11 @@ cleanrelease:
 debug:
 	$(MK_DIR) $(TEMP_DIR)/Debug$(ARCH)
 	$(CH_DIR) $(TEMP_DIR)/Debug$(ARCH) $(CMAKE) $(T_DEBUG) -DARCH=$(ARCH) -DSAN=$(SAN) $(P_CONF)$(P_CONF_PATH)
-	$(EXEC_BUILD)/Debug$(ARCH) make $(TARGET)
+	$(EXEC_BUILD)/Debug$(ARCH) make $(TARGET) VERBOSE=1
 
 release:
 	$(MK_DIR) $(TEMP_DIR)/Release$(ARCH)
 	$(CH_DIR) $(TEMP_DIR)/Release$(ARCH) $(CMAKE) $(T_RELEASE) -DARCH=$(ARCH) $(P_CONF)$(P_CONF_PATH)
-	$(EXEC_BUILD)/Release$(ARCH) make $(TARGET)
+	$(EXEC_BUILD)/Release$(ARCH) make $(TARGET) VERBOSE=1
 
 .PHONY: clean cleandebug cleanrelease

@@ -1,4 +1,4 @@
-# Specify the verison being used as well as the language.
+# Specify the verison being used.
 cmake_minimum_required(VERSION 3.1)
 
 #Name your project here
@@ -73,6 +73,11 @@ elseif(COMPILERTYPE STREQUAL "clang")
     #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ")
 endif()
 
+if(LD)
+    message("Using ${LD} linker...")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=${LD}")
+endif()
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/../../lib/$<CONFIG>")
 
 include_directories(include)
@@ -143,9 +148,13 @@ if(COMPILERTYPE STREQUAL "clang")
         set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=leak")
         message("Compiling with LeakSanitizer.")
     elseif(SAN STREQUAL "memory")
-        add_definitions(-O1 -fsanitize=memory -fno-optimize-sibling-calls -fno-omit-frame-pointer -fsanitize-memory-track-origins)
-        set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=memory")
-        message("Compiling with MemorySanitizer.")
+        if(LLVM)
+            add_definitions(-O1 -fsanitize=memory -fno-optimize-sibling-calls -fno-omit-frame-pointer -fsanitize-memory-track-origins)
+            set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=memory")
+            message("Compiling with MemorySanitizer.")
+        else()
+            message("Skipping MemorySanitizer: requires libc++")
+        endif()
     elseif(SAN STREQUAL "thread")
         add_definitions(-O1 -fsanitize=thread)
         set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -fsanitize=thread")

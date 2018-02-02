@@ -42,3 +42,21 @@ set(CPGF_DIR
 # Set the option to either `true` or `false` below.
 
 set(LLVM false)
+
+
+##### LINKER (LD) #####
+#
+# This option asks the compiler to use the specified linker instead of the
+# default for your system. This assumes that the requested linker is
+# installed on your system.
+#
+# Valid options:
+#   -> "bfd" for the BFD linker
+#   -> "gold" for Gold linker
+#   -> "lld" for LLVM linker (only works on Clang)
+#
+# Uncomment the desired line below, or leave all commented to use default.
+
+# set(LLD "bfd")
+# set(LLD "gold")
+# set(LLD "lld")
