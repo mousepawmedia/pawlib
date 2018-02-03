@@ -39,8 +39,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef PAWSTRING_TESTS_HPP
-#define PAWSTRING_TESTS_HPP
+#ifndef PAWLIB_ONESTRING_TESTS_HPP
+#define PAWLIB_ONESTRING_TESTS_HPP
 
 #include <string>
 
@@ -542,4 +542,4 @@ namespace pawlib
     };
 }
 
-#endif // PAWSTRING_TESTS_HPP
+#endif // PAWLIB_ONESTRING_TESTS_HPP

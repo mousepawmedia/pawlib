@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef RIGID_STACK_HPP_INCLUDED
-#define RIGID_STACK_HPP_INCLUDED
+#ifndef PAWLIB_RIGIDSTACK_HPP
+#define PAWLIB_RIGIDSTACK_HPP
 
 #include <cstdint>
 #include <stdexcept>
@@ -156,4 +156,4 @@ namespace pawlib
     };
 }
 
-#endif // RIGID_STACK_HPP_INCLUDED
+#endif // PAWLIB_RIGIDSTACK_HPP

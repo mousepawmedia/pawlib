@@ -39,8 +39,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef CORE_TYPES_TESTS_HPP_INCLUDED
-#define CORE_TYPES_TESTS_HPP_INCLUDED
+#ifndef PAWLIB_CORETYPES_TESTS_HPP
+#define PAWLIB_CORETYPES_TESTS_HPP
 
 #include "pawlib/core_types.hpp"
 #include "pawlib/goldilocks.hpp"
@@ -733,4 +733,4 @@ namespace pawlib
     };
 }
 
-#endif // CORE_TYPES_TESTS_HPP_INCLUDED
+#endif // PAWLIB_CORETYPES_TESTS_HPP

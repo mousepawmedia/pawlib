@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef AVL_TREE_HPP_INCLUDED
-#define AVL_TREE_HPP_INCLUDED
+#ifndef PAWLIB_AVLTREE_HPP
+#define PAWLIB_AVLTREE_HPP
 
 #include "pawlib/flex_queue.hpp"
 #include "pawlib/iochannel.hpp"
@@ -606,4 +606,4 @@ namespace pawlib
     };
 }
 
-#endif // AVL_TREE_HPP_INCLUDED
+#endif // PAWLIB_AVLTREE_HPP

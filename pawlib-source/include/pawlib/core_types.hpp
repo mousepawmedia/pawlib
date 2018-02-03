@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef CORE_TYPES_HPP_INCLUDED
-#define CORE_TYPES_HPP_INCLUDED
+#ifndef PAWLIB_CORETYPES_HPP
+#define PAWLIB_CORETYPES_HPP
 
 #include <iostream>
 
@@ -190,4 +190,4 @@ namespace pawlib
     const uncertainty maybe = uncertainty();
 }
 
-#endif // CORE_TYPES_HPP_INCLUDED
+#endif // PAWLIB_CORETYPES_HPP

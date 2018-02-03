@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef FLEX_STACK_HPP_INCLUDED
-#define FLEX_STACK_HPP_INCLUDED
+#ifndef PAWLIB_FLEXSTACK_HPP
+#define PAWLIB_FLEXSTACK_HPP
 
 #include <stack>
 

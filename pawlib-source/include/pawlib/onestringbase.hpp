@@ -47,8 +47,8 @@
  */
 
 
-#ifndef ONESTRINGBASE_HPP
-#define ONESTRINGBASE_HPP
+#ifndef PAWLIB_ONESTRINGBASE_HPP
+#define PAWLIB_ONESTRINGBASE_HPP
 
 #include <cstring>
 #include <iomanip>
@@ -443,4 +443,4 @@ namespace pawlib
     //#include "../src/OneString.cpp"
 
 }
-#endif // ONESTRINGBASE_HPP
+#endif // PAWLIB_ONESTRINGBASE_HPP

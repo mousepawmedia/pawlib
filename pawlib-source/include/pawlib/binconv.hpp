@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef BINCONV_HPP_INCLUDED
-#define BINCONV_HPP_INCLUDED
+#ifndef PAWLIB_BINCONV_HPP
+#define PAWLIB_BINCONV_HPP
 
 #include <math.h>
 #include <sstream>
@@ -98,4 +98,4 @@ namespace pawlib
             }
     };
 }
-#endif // BINCONV_HPP_INCLUDED
+#endif // PAWLIB_BINCONV_HPP

@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef SINGLYLINKEDLIST_HPP_INCLUDED
-#define SINGLYLINKEDLIST_HPP_INCLUDED
+#ifndef PAWLIB_SINGLYLINKEDLIST_HPP
+#define PAWLIB_SINGLYLINKEDLIST_HPP
 
 #include <stdlib.h>
 
@@ -231,4 +231,4 @@ namespace pawlib
 
     };
 }
-#endif // SINGLYLINKEDLIST_HPP_INCLUDED
+#endif // PAWLIB_SINGLYLINKEDLIST_HPP

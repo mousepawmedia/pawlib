@@ -39,8 +39,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef FLEX_ARRAY_TEST_HPP
-#define FLEX_ARRAY_TEST_HPP
+#ifndef PAWLIB_FLEXARRAY_TESTS_HPP
+#define PAWLIB_FLEXARRAY_TESTS_HPP
 
 #include <vector>
 
@@ -841,4 +841,4 @@ Middle is calculated as size()/2.";
             ~TestSuite_FlexArray(){}
     };
 };
-#endif // FLEX_ARRAY_TEST_HPP
+#endif // PAWLIB_FLEXARRAY_TESTS_HPP

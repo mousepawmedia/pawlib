@@ -88,8 +88,8 @@
  * via the same interface.
  */
 
-#ifndef PAWLIB_IOCHANNEL_H
-#define PAWLIB_IOCHANNEL_H
+#ifndef PAWLIB_IOCHANNEL_HPP
+#define PAWLIB_IOCHANNEL_HPP
 
 //Needed for output sources.
 #include <stdio.h>

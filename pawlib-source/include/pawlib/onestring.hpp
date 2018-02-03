@@ -46,8 +46,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef ONESTRING_HPP
-#define ONESTRING_HPP
+#ifndef PAWLIB_ONESTRING_HPP
+#define PAWLIB_ONESTRING_HPP
 
 #include <cstring>
 #include <iomanip>
@@ -264,4 +264,4 @@ namespace pawlib
 	};
 
 }
-#endif // ONESTRING_HPP
+#endif // PAWLIB_ONESTRING_HPP

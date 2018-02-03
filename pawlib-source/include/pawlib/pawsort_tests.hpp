@@ -39,8 +39,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef PAWSORT_TESTS_HPP
-#define PAWSORT_TESTS_HPP
+#ifndef PAWLIB_PAWSORT_TESTS_HPP
+#define PAWLIB_PAWSORT_TESTS_HPP
 
 #include <algorithm>
 
@@ -601,4 +601,4 @@ unique values. Really, this is just evil incarnate.";
     };
 }
 
-#endif // PAWSORT_TESTS_HPP
+#endif // PAWLIB_PAWSORT_TESTS_HPP

@@ -43,8 +43,8 @@
  */
 
 
-#ifndef PAWSORT_HPP_INCLUDED
-#define PAWSORT_HPP_INCLUDED
+#ifndef PAWLIB_PAWSORT_HPP
+#define PAWLIB_PAWSORT_HPP
 
 #include <cmath>
 
@@ -554,4 +554,4 @@ namespace pawlib
     };
 }
 
-#endif // PAWSORT_HPP_INCLUDED
+#endif // PAWLIB_PAWSORT_HPP

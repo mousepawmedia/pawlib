@@ -15,7 +15,7 @@
         {
             "label": "Rebuild Debug",
             "type": "shell",
-            "command": "make clean_debug; make tester_debug",
+            "command": "make cleandebug; make tester_debug",
             "group": "build",
         },
         {
@@ -27,7 +27,7 @@
         {
             "label": "Rebuild Release",
             "type": "shell",
-            "command": "make clean_release, make tester",
+            "command": "make cleanrelease, make tester",
             "group": "build",
         },
         {

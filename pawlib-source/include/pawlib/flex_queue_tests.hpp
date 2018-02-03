@@ -39,8 +39,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef FLEX_QUEUE_TESTS_HPP
-#define FLEX_QUEUE_TESTS_HPP
+#ifndef PAWLIB_FLEXQUEUE_TESTS_HPP
+#define PAWLIB_FLEXQUEUE_TESTS_HPP
 
 #include <queue>
 
@@ -306,4 +306,4 @@ namespace pawlib
     };
 
 };
-#endif // FLEX_QUEUE_TESTS_HPP_H
+#endif // PAWLIB_FLEXQUEUE_TESTS_HPP_H

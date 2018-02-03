@@ -43,8 +43,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef POOL_HPP_INCLUDED
-#define POOL_HPP_INCLUDED
+#ifndef PAWLIB_POOL_HPP
+#define PAWLIB_POOL_HPP
 
 #include <cstdint>
 #include <exception>
@@ -535,4 +535,4 @@ namespace pawlib
     };
 }
 
-#endif // POOL_HPP_INCLUDED
+#endif // PAWLIB_POOL_HPP

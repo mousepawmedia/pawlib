@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef FLEX_QUEUE_HPP_INCLUDED
-#define FLEX_QUEUE_HPP_INCLUDED
+#ifndef PAWLIB_FLEXQUEUE_HPP
+#define PAWLIB_FLEXQUEUE_HPP
 
 #include "pawlib/base_flex_array.hpp"
 #include "pawlib/iochannel.hpp"

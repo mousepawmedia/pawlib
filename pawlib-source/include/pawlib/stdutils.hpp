@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef STDUTILS_H
-#define STDUTILS_H
+#ifndef PAWLIB_STDUTILS_HPP
+#define PAWLIB_STDUTILS_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -196,4 +196,4 @@ namespace pawlib
     };
 }
 
-#endif // STDUTILS_H
+#endif // PAWLIB_STDUTILS_HPP

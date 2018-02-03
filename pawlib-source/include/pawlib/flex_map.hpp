@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef MAP_HPP_INCLUDED
-#define MAP_HPP_INCLUDED
+#ifndef PAWLIB_FLEXMAP_HPP
+#define PAWLIB_FLEXMAP_HPP
 
 #include <iosfwd>
 #include <ostream>
@@ -153,4 +153,4 @@ namespace pawlib
     };
 }
 
-#endif // MAP_HPP_INCLUDED
+#endif // PAWLIB_FLEXMAP_HPP

@@ -42,8 +42,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef FLEXBIT_HPP_INCLUDED
-#define FLEXBIT_HPP_INCLUDED
+#ifndef PAWLIB_FLEXBIT_HPP
+#define PAWLIB_FLEXBIT_HPP
 
 #include <bitset>
 #include <stdexcept>
@@ -258,4 +258,4 @@ namespace pawlib
 
 
 
-#endif // FLEXBIT_HPP_INCLUDED
+#endif // PAWLIB_FLEXBIT_HPP

@@ -39,8 +39,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef POOL_TESTS_HPP_INCLUDED
-#define POOL_TESTS_HPP_INCLUDED
+#ifndef PAWLIB_POOL_TESTS_HPP
+#define PAWLIB_POOL_TESTS_HPP
 
 #include <new>
 
@@ -685,4 +685,4 @@ namespace pawlib
     };
 }
 
-#endif // POOL_TESTS_HPP_INCLUDED
+#endif // PAWLIB_POOL_TESTS_HPP

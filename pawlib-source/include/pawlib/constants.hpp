@@ -41,8 +41,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef CONSTANTS_HPP_INCLUDED
-#define CONSTANTS_HPP_INCLUDED
+#ifndef PAWLIB_CONSTANTS_HPP
+#define PAWLIB_CONSTANTS_HPP
 
 #include <cstdint>
 
@@ -54,4 +54,4 @@ namespace pawlib
 
 }
 
-#endif // CONSTANTS_HPP_INCLUDED
+#endif // PAWLIB_CONSTANTS_HPP

@@ -42,8 +42,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef BASE_FLEX_ARRAY_HPP_INCLUDED
-#define BASE_FLEX_ARRAY_HPP_INCLUDED
+#ifndef PAWLIB_BASEFLEXARRAY_HPP
+#define PAWLIB_BASEFLEXARRAY_HPP
 
 #include <cstdint>
 #include <math.h>
@@ -329,4 +329,4 @@ namespace pawlib
     };
 }
 
-#endif // BASE_FLEX_ARRAY_HPP_INCLUDED
+#endif // PAWLIB_BASEFLEXARRAY_HPP

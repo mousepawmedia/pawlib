@@ -45,8 +45,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef ONECHAR_HPP
-#define ONECHAR_HPP
+#ifndef PAWLIB_ONECHAR_HPP
+#define PAWLIB_ONECHAR_HPP
 
 #include <cstring>
 #include <iomanip>
@@ -307,4 +307,4 @@ namespace pawlib
 			char masterChar;
     };
 }
-#endif // ONECHAR_HPP
+#endif // PAWLIB_ONECHAR_HPP

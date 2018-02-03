@@ -46,8 +46,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef QUICKSTRING_HPP
-#define QUICKSTRING_HPP
+#ifndef PAWLIB_QUICKSTRING_HPP
+#define PAWLIB_QUICKSTRING_HPP
 
 #include <cstring>
 #include <iomanip>
@@ -256,4 +256,4 @@ namespace pawlib
 	};
 
 }
-#endif // QUICKSTRING_HPP
+#endif // PAWLIB_QUICKSTRING_HPP

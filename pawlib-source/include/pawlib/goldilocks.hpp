@@ -49,8 +49,8 @@
  */
 
 
-#ifndef TESTSUITE_H
-#define TESTSUITE_H
+#ifndef PAWLIB_GOLDILOCKS_HPP
+#define PAWLIB_GOLDILOCKS_HPP
 
 #include <stdexcept>
 //uint64_t and friends
@@ -523,4 +523,4 @@ namespace pawlib
 }
 
 
-#endif // TESTSUITE_H
+#endif // PAWLIB_GOLDILOCKS_HPP

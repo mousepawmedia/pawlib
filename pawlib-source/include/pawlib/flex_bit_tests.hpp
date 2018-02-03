@@ -39,8 +39,8 @@
  * on how to contribute to our projects.
  */
 
-#ifndef FLEX_BIT_TESTS_HPP_INCLUDED
-#define FLEX_BIT_TESTS_HPP_INCLUDED
+#ifndef PAWLIB_FLEXBIT_TESTS_HPP
+#define PAWLIB_FLEXBIT_TESTS_HPP
 
 #include <bitset>
 #include <iostream>
@@ -426,4 +426,4 @@ namespace pawlib
 }
 
 
-#endif // FLEX_BIT_TESTS_HPP_INCLUDED
+#endif // PAWLIB_FLEXBIT_TESTS_HPP
