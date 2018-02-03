@@ -44,8 +44,8 @@
 
 #include <string>
 
-#include "pawlib/goldilocks.hpp"
-#include "pawlib/onestring.hpp"
+#include "goldilocks.hpp"
+#include "onestring.hpp"
 
 namespace pawlib
 {

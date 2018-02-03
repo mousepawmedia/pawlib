@@ -5,8 +5,9 @@
             "includePath": [
                 "/usr/include",
                 "/usr/local/include",
-                "../libdeps/libs/include",
+                "${workspaceRoot}/../libdeps/libs/include",
                 "${workspaceRoot}/pawlib-source/include",
+                "${workspaceRoot}/pawlib-source/include/pawlib",
                 "${workspaceRoot}/pawlib-tester/include"
             ],
             "defines": [],
@@ -15,7 +16,7 @@
                 "path": [
                     "/usr/include",
                     "/usr/local/include",
-                    "../libdeps/libs/include",
+                    "${workspaceRoot}/../libdeps/libs/include",
                     "${workspaceRoot}"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
@@ -37,8 +38,9 @@
                 "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed",
                 "/usr/include/x86_64-linux-gnu",
                 "/usr/include",
-                "../libdeps/libs/include",
+                "${workspaceRoot}/../libdeps/libs/include",
                 "${workspaceRoot}/pawlib-source/include",
+                "${workspaceRoot}/pawlib-source/include/pawlib",
                 "${workspaceRoot}/pawlib-tester/include"
             ],
             "defines": [],
@@ -53,7 +55,7 @@
                     "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed",
                     "/usr/include/x86_64-linux-gnu",
                     "/usr/include",
-                    "../libdeps/libs/include",
+                    "${workspaceRoot}../libdeps/libs/include",
                     "${workspaceRoot}"
                 ],
                 "limitSymbolsToIncludedHeaders": true,

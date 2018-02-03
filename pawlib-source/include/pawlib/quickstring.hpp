@@ -53,10 +53,10 @@
 #include <iomanip>
 #include <iostream>
 
-#include "pawlib/iochannel.hpp"
-#include "pawlib/onechar.hpp"
-#include "pawlib/onestringbase.hpp"
-#include "pawlib/onestring.hpp"
+#include "iochannel.hpp"
+#include "onechar.hpp"
+#include "onestringbase.hpp"
+#include "onestring.hpp"
 
 namespace pawlib
 {

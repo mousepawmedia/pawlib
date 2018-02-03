@@ -44,9 +44,9 @@
 
 #include <vector>
 
-#include "pawlib/flex_array.hpp"
-#include "pawlib/goldilocks.hpp"
-#include "pawlib/stdutils.hpp"
+#include "flex_array.hpp"
+#include "goldilocks.hpp"
+#include "stdutils.hpp"
 
 namespace pawlib
 {

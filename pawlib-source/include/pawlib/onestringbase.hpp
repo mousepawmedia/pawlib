@@ -54,8 +54,8 @@
 #include <iomanip>
 #include <iostream>
 
-#include "pawlib/iochannel.hpp"
-#include "pawlib/onechar.hpp"
+#include "iochannel.hpp"
+#include "onechar.hpp"
 
 
 // Type constants

@@ -3,6 +3,6 @@
     "telemetry.enableTelemetry": false,
 
     "c-cpp-flylint.cppcheck.force": true,
-    "c-cpp-flylint.cppcheck.includePaths": ["./", "../libdeps"],
+    "c-cpp-flylint.cppcheck.includePaths": ["./", "../libdeps/libs/include"],
     "c-cpp-flylint.standard": ["c11", "c++11"],
 }

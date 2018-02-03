@@ -52,7 +52,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "pawlib/iochannel.hpp"
+#include "iochannel.hpp"
 
 // Constants for ASCII and Unicode
 const bool ASCII = 0;

@@ -47,7 +47,7 @@
 #include <iosfwd>
 #include <ostream>
 
-#include "pawlib/avl_tree.hpp"
+#include "avl_tree.hpp"
 
 using std::ostream;
 

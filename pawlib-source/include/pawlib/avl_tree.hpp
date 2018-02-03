@@ -44,9 +44,9 @@
 #ifndef PAWLIB_AVLTREE_HPP
 #define PAWLIB_AVLTREE_HPP
 
-#include "pawlib/flex_queue.hpp"
-#include "pawlib/iochannel.hpp"
-#include "pawlib/singly_linked_list.hpp"
+#include "flex_queue.hpp"
+#include "iochannel.hpp"
+#include "singly_linked_list.hpp"
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;

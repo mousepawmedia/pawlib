@@ -63,9 +63,9 @@
 #include <vector>
 
 //Output
-#include "pawlib/iochannel.hpp"
+#include "iochannel.hpp"
 //Sorting
-#include "pawlib/pawsort.hpp"
+#include "pawsort.hpp"
 
 using namespace pawlib;
 using namespace pawlib::ioformat;

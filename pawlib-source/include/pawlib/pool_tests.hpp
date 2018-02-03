@@ -44,10 +44,10 @@
 
 #include <new>
 
-#include "pawlib/flex_array.hpp"
-#include "pawlib/goldilocks.hpp"
-#include "pawlib/pool.hpp"
-#include "pawlib/stdutils.hpp"
+#include "flex_array.hpp"
+#include "goldilocks.hpp"
+#include "pool.hpp"
+#include "stdutils.hpp"
 
 namespace pawlib
 {

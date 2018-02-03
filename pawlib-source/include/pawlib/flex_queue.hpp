@@ -44,8 +44,8 @@
 #ifndef PAWLIB_FLEXQUEUE_HPP
 #define PAWLIB_FLEXQUEUE_HPP
 
-#include "pawlib/base_flex_array.hpp"
-#include "pawlib/iochannel.hpp"
+#include "base_flex_array.hpp"
+#include "iochannel.hpp"
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;

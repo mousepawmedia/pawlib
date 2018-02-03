@@ -44,8 +44,8 @@
 
 #include <stack>
 
-#include "pawlib/flex_stack.hpp"
-#include "pawlib/goldilocks.hpp"
+#include "flex_stack.hpp"
+#include "goldilocks.hpp"
 
 //SStack classes test the standard library version of Stack
 //FStack classes test the pawlib versions of FlexStack

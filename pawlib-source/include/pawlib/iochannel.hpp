@@ -121,8 +121,8 @@ These need to be swapped out for pawlib alternatives ASAP.*/
 //We use C's classes often.
 #include <cstdio>
 
-#include "pawlib/core_types.hpp"
-#include "pawlib/stdutils.hpp"
+#include "core_types.hpp"
+#include "stdutils.hpp"
 
 namespace pawlib
 {

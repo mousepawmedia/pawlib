@@ -48,9 +48,9 @@
 #include <bitset>
 #include <stdexcept>
 
-#include "pawlib/base_flex_array.hpp"
-#include "pawlib/flex_array.hpp"
-#include "pawlib/iochannel.hpp"
+#include "base_flex_array.hpp"
+#include "flex_array.hpp"
+#include "iochannel.hpp"
 
 using std::bitset;
 
