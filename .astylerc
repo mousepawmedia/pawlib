@@ -1,0 +1,20 @@
+// http://astyle.sourceforge.net/astyle.html
+style=allman
+indent=space=4
+attach-closing-while
+indent-classes
+indent-switches
+indent-cases
+indent-namespaces
+pad-oper
+pad-header
+align-pointer=type
+align-reference=type
+break-one-line-headers
+add-braces
+attach-return-type
+keep-one-line-blocks
+keep-one-line-statements
+convert-tabs
+max-code-length=80
+break-after-logical=80
