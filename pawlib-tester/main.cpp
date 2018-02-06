@@ -66,6 +66,7 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+/*
 int command(TestSystem* sys, unsigned int argc, char* argv[])
 {
     int r = 0;
@@ -381,3 +382,4 @@ void help()
 
     ioc << "Back to you, Bob!\n" << io_end;
 }
+*/

@@ -1,4 +1,3 @@
-// http://astyle.sourceforge.net/astyle.html
 style=allman
 indent=space=4
 attach-closing-while

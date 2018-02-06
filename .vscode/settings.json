@@ -4,5 +4,13 @@
 
     "c-cpp-flylint.cppcheck.force": true,
     "c-cpp-flylint.cppcheck.includePaths": ["./", "../libdeps/libs/include"],
-    "c-cpp-flylint.standard": ["c11", "c++11"],
+    "c-cpp-flylint.standard": [
+        "c11",
+        "c++11"
+    ],
+    "files.associations": {
+        "array": "cpp"
+    },
+
+    "restructuredtext.builtDocumentationPath": "${workspaceRoot}/docs/build/html",
 }

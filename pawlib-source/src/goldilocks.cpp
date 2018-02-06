@@ -137,14 +137,14 @@ namespace pawlib
      * offer dummies instead. We will NOT be supporting MSVC under ANY
      * circumstances!*/
     #else
-    uint64_t TestManager::calibrate()
+    void TestManager::calibrate()
     {
-        return 0;
+        return;
     }
 
-    uint64_t TestManager::clock(Test* test)
+    inline uint64_t TestManager::clock(Test* test)
     {
-        return 0;
+        return;
     }
 
     #endif
