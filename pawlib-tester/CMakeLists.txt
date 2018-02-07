@@ -82,13 +82,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/../../bin/$<CONF
 include_directories(include)
 
 # Include headers of dependencies.
-include_directories(${CPGF_DIR}/include)
 include_directories(../pawlib-source/include)
+include_directories(${CPGF_DIR}/include)
 
 add_executable(pawlib-tester
     main.cpp
-    include/TestSystem.hpp
-    src/TestSystem.cpp
 )
 
 # Link against dependencies.

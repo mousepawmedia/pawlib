@@ -3,14 +3,30 @@
     "telemetry.enableTelemetry": false,
 
     "c-cpp-flylint.cppcheck.force": true,
-    "c-cpp-flylint.cppcheck.includePaths": ["./", "../libdeps/libs/include"],
+    "c-cpp-flylint.cppcheck.includePaths": ["./pawlib-source/include", "./pawlib-tester/include", "../libdeps/libs/include"],
     "c-cpp-flylint.standard": [
         "c11",
         "c++11"
     ],
-    "files.associations": {
-        "array": "cpp"
+
+    "[c]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
     },
+
+    "[cpp]": {
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+    },
+
+    "files.associations": {
+        "array": "cpp",
+        "type_traits": "cpp"
+    },
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
 
     "restructuredtext.builtDocumentationPath": "${workspaceRoot}/docs/build/html",
 }

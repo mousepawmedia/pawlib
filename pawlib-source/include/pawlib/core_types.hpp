@@ -44,6 +44,7 @@
 #ifndef PAWLIB_CORETYPES_HPP
 #define PAWLIB_CORETYPES_HPP
 
+#include <cstdint>
 #include <iostream>
 
 namespace pawlib
@@ -140,7 +141,6 @@ namespace pawlib
 
             /** Construct a new trilean with an uncertainty variable.
              * \param the uncertainty to copy */
-            // cppcheck-suppress noExplicitConstructor
             tril(const uncertainty& in)
             :data(0)
             {
