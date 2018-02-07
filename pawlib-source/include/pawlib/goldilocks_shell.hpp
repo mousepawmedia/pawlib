@@ -46,19 +46,39 @@
 #ifndef PAWLIB_GOLDILOCKS_SHELL_HPP
 #define PAWLIB_GOLDILOCKS_SHELL_HPP
 
+// std::is_base_of
+#include <type_traits>
+#include <string>
+
 #include "goldilocks.hpp"
 
 using namespace pawlib;
 
 namespace pawlib
 {
-    class TestSystem
+    class TestCatalog
     {
         public:
-            TestSystem();
-            ~TestSystem();
+            TestCatalog();
+
+            template <typename T>
+            bool register_suite(std::string name)
+            {
+                /* Before we continue, ensure we are being asked to register an
+                * actual Goldilocks suite!
+                */
+                if(std::is_base_of<TestSuite, T>::value)
+                {
+                    // Register a new instance of the TestSuite with the given name.
+                    this->testmanager->register_suite(name, new T());
+                    return true;
+                }
+                return false;
+            }
 
             TestManager* testmanager;
+
+            ~TestCatalog();
         protected:
         private:
     };
@@ -66,9 +86,28 @@ namespace pawlib
     class GoldilocksShell
     {
         public:
-            int command(TestSystem* sys, unsigned int argc, char* argv[]);
-            void help();
-            void interactive(TestSystem* sys);
+            GoldilocksShell(){}
+
+            /** Run using command-line arguments. Designed to directly accept
+              * the same arguments as `int main()`
+              * \param the pointer to the TestCatalog instance being used.
+              * \param the argument count, as from 'int main()'.
+              * \param the argument array, as from 'int main()'.
+              * \param the return code, to be returned by 'int main()'.
+              */
+            static int command(TestCatalog* sys, unsigned int argc, char* argv[]);
+
+            /** Launch an interactive terminal session using IOChannel.
+              * \param the pointer to the Testcatalog instance being used.
+              */
+            static void interactive(TestCatalog* sys);
+
+            ~GoldilocksShell(){}
+
+        protected:
+            /** The full text of the help command for the shell.
+              */
+            static void help();
     };
 }
 

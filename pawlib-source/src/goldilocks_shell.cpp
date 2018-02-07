@@ -2,27 +2,52 @@
 
 namespace pawlib
 {
-    int GoldilocksShell::command(TestSystem* sys, unsigned int argc, char* argv[])
+    TestCatalog::TestCatalog()
     {
+        // Initialize a new Goldilocks testmanager.
+        testmanager = new TestManager;
+    }
+
+    TestCatalog::~TestCatalog()
+    {
+        delete testmanager;
+        testmanager = 0;
+    }
+
+    int GoldilocksShell::command(TestCatalog* sys, unsigned int argc, char* argv[])
+    {
+        /* The return code; non-zero return codes are needed for failing CI
+         * on test failure.
+         */
         int r = 0;
+        // Whether we've actually loaded something.
         bool loaded = false;
 
+        // We are using std::string for the time being.
         std::vector<std::string> tokens;
 
+        // Parse through the arguments from the command line.
         for(unsigned int i = 1; i < argc; ++i)
         {
+            // Store the currently focused arg as a std::string
             std::string str = argv[i];
+            // If the argument is the "--load" flag...
             if(str == "--load")
             {
+                // We loaded something! Mark that.
                 loaded = true;
             }
+            // Store the argument.
             tokens.push_back(str);
         }
 
+        // Loop thorugh each token...
         for(unsigned int i = 0; i < argc-1; ++i)
         {
+            // If help flag is provided...
             if(tokens[i] == "--help")
             {
+                // Display CLI help
                 ioc << "Usage: ./pawlib-tester [command] [argument]" << io_endline;
                 ioc << "    --help          | Show this screen. "  << io_endline;
                 ioc << "    --list          | List all tests. "  << io_endline;
@@ -33,68 +58,88 @@ namespace pawlib
                 ioc << "    --test [test]   | Run the test [test]. "  << io_endline;
                 ioc << io_end;
             }
+            // If load flag and subsequent argument are provided...
             else if(i <= i+1 && tokens[i] == "--load")
             {
                 // If load succeeds, set the return code to 0, else 1 (error).
                 r = sys->testmanager->load_suite(tokens[++i]) ? 0 : 1;
                 loaded = true;
             }
+            // If list flag is provided...
             else if(tokens[i] == "--list")
             {
+                // If nothing is loaded, load all the suites first.
                 if(!loaded)
                 {
                     sys->testmanager->load_suite();
+                    loaded = true;
                 }
 
                 // List all loaded tests.
                 sys->testmanager->list_tests(true);
             }
+            // If listsuites flag is provided...
             else if(tokens[i] == "--listsuites")
             {
                 // List all suites.
                 sys->testmanager->list_suites(true);
             }
+            // If suite flag and subsequent argument are provided...
             else if(i <= i+1 && tokens[i] == "--suite")
             {
+                // If nothing is loaded, load all the suites first.
                 if(!loaded)
                 {
                     sys->testmanager->load_suite();
+                    loaded = true;
                 }
 
                 // If run_suite succeeds, set the return code to 0, else 1 (error).
                 r = sys->testmanager->run_suite(tokens[++i]) ? 0 : 1;
             }
+            // If test flag and subsequent argument are provided...
             else if(i <= i+1 && tokens[i] == "--test")
             {
+                // If nothing is loaded, load all the suites first.
                 if(!loaded)
                 {
                     sys->testmanager->load_suite();
+                    loaded = true;
                 }
 
                 // If run_test succeeds, set the return code to 0, else 1 (error).
                 r = sys->testmanager->run_test(tokens[++i]) ? 0 : 1;
             }
+            // If the token is invalid...
             else
             {
+                // Throw error and help prompt.
                 ioc << "ERROR: Invalid command " << tokens[i] << io_endline;
-                ioc << "See ./pawlib-tester --help" << io_end;
+                ioc << "See --help" << io_end;
             }
-            // We will add compare later, as it requires an expected outcome.
+            // TODO: We will add compare later, as it requires an expected outcome.
 
+            // If the return code is greater than 0...
             if(r > 0)
             {
+                // Immediately drop out of loop.
                 break;
             }
         }
 
+        // Return code (default 0)
         return r;
     }
 
-    void GoldilocksShell::interactive(TestSystem* sys)
+    void GoldilocksShell::interactive(TestCatalog* sys)
     {
+        // Store user input.
         std::string buffer;
+        // Split user input into tokens
         std::vector<std::string> tokens;
 
+        // Display banner and help prompt.
+        ioc << ta_bold << "Goldilocks Test Shell" << io_end;
         ioc << "Type \"help\" for a list of commands." << io_end;
 
         // Display typing prompt.
@@ -104,7 +149,7 @@ namespace pawlib
         // Split the line into space-delimited tokens.
         stdutils::stdsplit(buffer, " ", tokens);
 
-        //Loop while command is not the pseudocommand "exit"...
+        // Loop while command is not the pseudocommand "exit"...
         while(tokens[0] != "exit")
         {
             if(tokens[0] == "help")
@@ -113,6 +158,11 @@ namespace pawlib
             }
             else if(tokens[0] == "about")
             {
+                if(tokens.size() < 2)
+                {
+                    ioc << fg_red << ta_bold << cat_error
+                        << "ERROR: Not enough arguments." << io_end;
+                }
                 sys->testmanager->show_docs(tokens[1]);
             }
             else if(tokens[0] == "benchmark")
