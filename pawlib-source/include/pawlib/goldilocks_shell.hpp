@@ -46,11 +46,15 @@
 #ifndef PAWLIB_GOLDILOCKS_SHELL_HPP
 #define PAWLIB_GOLDILOCKS_SHELL_HPP
 
+#include <algorithm>
 // std::is_base_of
 #include <type_traits>
+#include <stdlib.h>
 #include <string>
+#include <time.h>
+#include <vector>
 
-#include "goldilocks.hpp"
+#include "pawlib/goldilocks.hpp"
 
 using namespace pawlib;
 
@@ -95,7 +99,7 @@ namespace pawlib
               * \param the argument array, as from 'int main()'.
               * \param the return code, to be returned by 'int main()'.
               */
-            static int command(TestCatalog* sys, unsigned int argc, char* argv[]);
+            static int command(TestCatalog* sys, int argc, char* argv[]);
 
             /** Launch an interactive terminal session using IOChannel.
               * \param the pointer to the Testcatalog instance being used.

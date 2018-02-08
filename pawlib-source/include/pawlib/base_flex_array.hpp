@@ -50,7 +50,7 @@
 #include <stdexcept>
 #include <stdlib.h>
 
-#include "iochannel.hpp"
+#include "pawlib/iochannel.hpp"
 
 
 using pawlib::iochannel;

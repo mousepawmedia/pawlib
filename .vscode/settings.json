@@ -2,8 +2,11 @@
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
 
-    "c-cpp-flylint.cppcheck.force": true,
-    "c-cpp-flylint.cppcheck.includePaths": ["./pawlib-source/include", "./pawlib-tester/include", "../libdeps/libs/include"],
+    "c-cpp-flylint.cppcheck.force": false,
+    "c-cpp-flylint.cppcheck.includePaths": [
+        "./pawlib-source/include",
+        "./pawlib-tester/include"
+    ],
     "c-cpp-flylint.standard": [
         "c11",
         "c++11"

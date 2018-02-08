@@ -46,10 +46,10 @@
 #include <iostream>
 #include <limits>
 
-#include "flex_bit.hpp"
-#include "goldilocks.hpp"
-#include "iochannel.hpp"
-#include "stdutils.hpp"
+#include "pawlib/flex_bit.hpp"
+#include "pawlib/goldilocks.hpp"
+#include "pawlib/iochannel.hpp"
+#include "pawlib/stdutils.hpp"
 
 namespace pawlib
 {

@@ -14,7 +14,7 @@ namespace pawlib
         testmanager = 0;
     }
 
-    int GoldilocksShell::command(TestCatalog* sys, unsigned int argc, char* argv[])
+    int GoldilocksShell::command(TestCatalog* sys, int argc_s, char* argv[])
     {
         /* The return code; non-zero return codes are needed for failing CI
          * on test failure.
@@ -22,6 +22,9 @@ namespace pawlib
         int r = 0;
         // Whether we've actually loaded something.
         bool loaded = false;
+
+        // Convert our signed integer to unsigned.
+        unsigned int argc = static_cast<unsigned int>(argc_s);
 
         // We are using std::string for the time being.
         std::vector<std::string> tokens;

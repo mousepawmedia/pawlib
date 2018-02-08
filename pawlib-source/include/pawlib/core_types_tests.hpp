@@ -42,8 +42,8 @@
 #ifndef PAWLIB_CORETYPES_TESTS_HPP
 #define PAWLIB_CORETYPES_TESTS_HPP
 
-#include "core_types.hpp"
-#include "goldilocks.hpp"
+#include "pawlib/core_types.hpp"
+#include "pawlib/goldilocks.hpp"
 
 namespace pawlib
 {

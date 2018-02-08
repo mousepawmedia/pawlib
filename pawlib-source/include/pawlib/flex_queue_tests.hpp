@@ -44,8 +44,8 @@
 
 #include <queue>
 
-#include "goldilocks.hpp"
-#include "flex_queue.hpp"
+#include "pawlib/goldilocks.hpp"
+#include "pawlib/flex_queue.hpp"
 
 namespace pawlib
 {

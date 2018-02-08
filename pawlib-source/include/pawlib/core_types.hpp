@@ -141,6 +141,7 @@ namespace pawlib
 
             /** Construct a new trilean with an uncertainty variable.
              * \param the uncertainty to copy */
+            // cppcheck-suppress noExplicitConstructor
             tril(const uncertainty& in)
             :data(0)
             {

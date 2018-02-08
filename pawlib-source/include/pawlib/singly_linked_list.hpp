@@ -46,7 +46,7 @@
 
 #include <stdlib.h>
 
-#include "iochannel.hpp"
+#include "pawlib/iochannel.hpp"
 
 using pawlib::iochannel;
 using namespace pawlib::ioformat;

@@ -6,7 +6,6 @@
                 "/usr/include",
                 "/usr/local/include",
                 "${workspaceRoot}/../libdeps/libs/include",
-                "${workspaceRoot}/pawlib-source/include/pawlib",
                 "${workspaceRoot}/pawlib-source/include",
                 "${workspaceRoot}/pawlib-tester/include"
             ],
