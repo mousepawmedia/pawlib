@@ -255,6 +255,16 @@ namespace pawlib
         return *this;
     }
 
+    iochannel& iochannel::operator<<(const IOCursor& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        //Run the command (ANSI or whatever).
+        move_cursor(rhs);
+        return *this;
+    }
+
     iochannel& iochannel::operator<<(const read_size& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
@@ -343,6 +353,23 @@ namespace pawlib
             }
         }
         return *this;
+    }
+
+    void iochannel::move_cursor(const IOCursor& rhs)
+    {
+        //TODO: We will need to switch formats. For now, just ANSI.
+        switch(rhs)
+        {
+            case IOCursor::cur_left:
+                inject("\e[1D");
+                break;
+            case IOCursor::cur_right:
+                inject("\e[1C");
+                break;
+            default:
+                // Can't happen unless you forgot to implement an IOCursor option!
+                break;
+        }
     }
 
     iochannel& iochannel::resolve_pointer(const char* rhs)

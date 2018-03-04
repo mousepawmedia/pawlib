@@ -77,38 +77,38 @@ int main(int argc, char* argv[])
     //Set up signal handling.
     ioc.configure_echo(echo_cout);
 
-    TestCatalog* catalog = new TestCatalog;
-    catalog->register_suite<TestSuite_CoreTypes>("P-sB01");
-    catalog->register_suite<TestSuite_FlexArray>("P-sB10");
-    catalog->register_suite<TestSuite_FlexQueue>("P-sB12");
-    catalog->register_suite<TestSuite_FlexStack>("P-sB13");
-    catalog->register_suite<TestSuite_FlexBit>("P-sB15");
-    catalog->register_suite<TestSuite_Pool>("P-sB16");
-    catalog->register_suite<TestSuite_Onestring>("P-sB30");
-    catalog->register_suite<TestSuite_Pawsort>("P-sB40");
+    GoldilocksShell* shell = new GoldilocksShell(">> ");
+    shell->register_suite<TestSuite_CoreTypes>("P-sB01");
+    shell->register_suite<TestSuite_FlexArray>("P-sB10");
+    shell->register_suite<TestSuite_FlexQueue>("P-sB12");
+    shell->register_suite<TestSuite_FlexStack>("P-sB13");
+    shell->register_suite<TestSuite_FlexBit>("P-sB15");
+    shell->register_suite<TestSuite_Pool>("P-sB16");
+    shell->register_suite<TestSuite_Onestring>("P-sB30");
+    shell->register_suite<TestSuite_Pawsort>("P-sB40");
 
-    (void) catalog;
-    (void) argc;
-    (void) argv;
+    //(void) shell;
+    //(void) argc;
+    //(void) argv;
 
     // If we got command-line arguments.
     if(argc > 1)
     {
-        return GoldilocksShell::command(catalog, argc, argv);
+        return shell->command(argc, argv);
     }
     else
     {
-        test_code();
-
         ioc << ta_bold << fg_blue << "===== PawLIB Tester =====\n" << io_end;
 
+        test_code();
+
         // Shift control to the interactive console.
-        GoldilocksShell::interactive(catalog);
+        shell->interactive();
     }
 
-    // Delete our test catalog.
-    delete catalog;
-    catalog = 0;
+    // Delete our GoldilocksShell.
+    delete shell;
+    shell = 0;
 
     return 0;
 }

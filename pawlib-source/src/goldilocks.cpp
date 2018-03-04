@@ -263,6 +263,19 @@ namespace pawlib
         }
     }
 
+    void TestManager::i_run(testname_t item, unsigned int repeat)
+    {
+        // Don't make this yell on fail...let the next call do it!
+        if(validate(item, false, GolidlocksItemType::test))
+        {
+            i_run_test(item, repeat);
+        }
+        else if(validate(item, true, GolidlocksItemType::suite))
+        {
+            i_run_suite(item);
+        }
+    }
+
     void TestManager::i_run_test(testname_t test, unsigned int repeat)
     {
         // Ensure the test exists before continuing.
@@ -296,10 +309,13 @@ namespace pawlib
 
         if(!suites[suite]->is_loaded())
         {
-            ioc << cat_error << ta_bold << fg_red << "ERROR: The suite " << suite
-                << " is not yet loaded. Aborting."
-                << io_end;
-            return;
+            /* If the suite isn't already loaded, just load it.
+             * If load fails, give up and return.
+             */
+            if(!load_suite(suite))
+            {
+                return;
+            }
         }
 
         ioc << "Run test suite " << io_send;
@@ -415,6 +431,21 @@ namespace pawlib
         return false;
     }
 
+    bool TestManager::run(testname_t item, unsigned int number)
+    {
+        // Don't make this yell on fail...let the next conditional do it!
+        if(validate(item, false, GolidlocksItemType::test))
+        {
+            return run_test(item, number);
+        }
+        else if(validate(item, true, GolidlocksItemType::suite))
+        {
+            return run_suite(item);
+        }
+        // If the item doesn't exist, return false.
+        return false;
+    }
+
     bool TestManager::run_suite(testsuitename_t suite)
     {
         /* ENTRY: Run a suite of tests.*/
@@ -430,10 +461,13 @@ namespace pawlib
 
         if(!suites[suite]->is_loaded())
         {
-            ioc << cat_error << ta_bold << fg_red << "ERROR: The suite " << suite
-                << " is not yet loaded. Aborting."
-                << io_end;
-            return false;
+            /* If the suite isn't already loaded, just load it.
+             * If load fails, give up and return false.
+             */
+            if(!load_suite(suite))
+            {
+                return false;
+            }
         }
 
         // Display the suite name in a banner.
@@ -658,7 +692,8 @@ namespace pawlib
             << io_end;
     }
 
-    void TestManager::run_benchmark(testname_t test, unsigned int repeat, bool showStats)
+    bool TestManager::run_benchmark(testname_t test, unsigned int repeat,
+        bool showStats, bool deadHeat)
     {
         // Ensure both tests exist before continuing.
         /* NOTE: If you're getting a segfault in this function, check here!
@@ -666,13 +701,15 @@ namespace pawlib
          * Undefined Behavior, typically a segfault. */
         if(!validate(test, true, GolidlocksItemType::test) || !validate(test, true, GolidlocksItemType::comparative))
         {
-            return;
+            return -1;
         }
 
-        run_compare(tests[test].get(), comparatives[test].get(), repeat, showStats);
+        return run_compare(tests[test].get(), comparatives[test].get(), repeat,
+            showStats, deadHeat);
     }
 
-    void TestManager::run_compare(testname_t test1, testname_t test2, unsigned int repeat, bool showStats)
+    bool TestManager::run_compare(testname_t test1, testname_t test2,
+        unsigned int repeat, bool showStats, bool deadHeat)
     {
         // Ensure both tests exist before continuing.
         /* NOTE: If you're getting a segfault in this function, check here!
@@ -680,13 +717,15 @@ namespace pawlib
          * Undefined Behavior, typically a segfault. */
         if(!validate(test1, true, GolidlocksItemType::test) || !validate(test2, true, GolidlocksItemType::test))
         {
-            return;
+            return false;
         }
 
-        run_compare(tests[test1].get(), tests[test2].get(), repeat, showStats);
+        return run_compare(tests[test1].get(), tests[test2].get(), repeat,
+            showStats, deadHeat);
     }
 
-    void TestManager::run_compare(Test* test1, Test* test2, unsigned int repeat, bool showStats)
+    bool TestManager::run_compare(Test* test1, Test* test2, unsigned int repeat,
+        bool showStats, bool deadHeat)
     {
         /* ENTRY: Compare two function benchmarks.
          * Largely based on run_benchmark, with several
@@ -702,7 +741,7 @@ namespace pawlib
                 << "between 10-10000 (inclusively)." << io_end;
 
             // Abort the benchmark.
-            return;
+            return false;
         }
 
         // Display the fancy benchmarker banner and disclaimer.
@@ -723,7 +762,7 @@ namespace pawlib
             // Don't worry about test 2 - it hasn't been set up yet.
 
             // Abort the benchmarker.
-            return;
+            return false;
         }
 
         // Attempt to run the "pre" function for test 2. If it fails...
@@ -741,7 +780,7 @@ namespace pawlib
             test1->post();
 
             //Abort the benchmarker.
-            return;
+            return false;
         }
 
         // Let the user know what we're doing...
@@ -762,7 +801,7 @@ namespace pawlib
             test2->post();
 
             //Abort the benchmarker.
-            return;
+            return false;
         }
         // Otherwise, if test 1 succeeds...
         else
@@ -791,7 +830,7 @@ namespace pawlib
             test1->post();
 
             // Abort the benchmarker.
-            return;
+            return false;
         }
         // Otherwise, if test 2 succeeds...
         else
@@ -838,7 +877,7 @@ namespace pawlib
             }
 
             // Abort the benchmarker.
-            return;
+            return false;
         }
 
         // Calibrate our measurement functions. (See that function's comments.)
@@ -1102,6 +1141,24 @@ namespace pawlib
         // Null out the pointers to the results arrays (by habit).
         results1 = NULL;
         results2 = NULL;
+
+        // Calculate which test won (-1=error, 0=dead heat, 1=test A, 2=test B)
+        int8_t verdict = calculateVerdict(baby1, baby2);
+
+        // If test A won...
+        if (verdict == 1)
+        {
+            // Report success
+            return true;
+        }
+        // If it was a dead heat, and that counts as a success (from args)...
+        else if (deadHeat && verdict == 0)
+        {
+            return true;
+        }
+
+        // All other verdict conditions return false.
+        return false;
     }
 
     void TestManager::resultFromArray(BenchmarkResult& result, uint64_t arr[], int repeat)
@@ -1332,6 +1389,38 @@ namespace pawlib
             << "RSD: " << result.rsd << "% / " << result.rsd_adj << "%" << io_end;
     }
 
+    uint8_t TestManager::calculateVerdict(BenchmarkResult& result1, BenchmarkResult& result2)
+    {
+        // Calculate difference between the adjusted mean averages.
+        int64_t difference_adj = result1.mean_adj-result2.mean_adj;
+
+        // If the absolute difference is less than either standard deviation...
+        if(labs(difference_adj) <= result1.std_dev_adj || labs(difference_adj) <= result2.std_dev_adj)
+        {
+            // The tests are roughly the same. Return 0.
+            return 0;
+        }
+        else
+        {
+            //If the first test won (its adjusted mean was smaller)...
+            if(difference_adj < 0)
+            {
+                // Declare the first test as faster.
+                return 1;
+            }
+            //Else if the second test won (its adjusted mean was smaller)...
+            else if(difference_adj > 0)
+            {
+                // Declare the second test as faster.
+                return 2;
+            }
+        }
+
+        // If we get here, math is broken. Panic and return -1 (error).
+        return -1;
+    }
+
+
     void TestManager::printVerdict(BenchmarkResult& result1, BenchmarkResult& result2, Test* test1, Test* test2)
     {
         // Calculate difference between the non-adjusted mean averages.
@@ -1374,13 +1463,13 @@ namespace pawlib
         else
         {
             //If the first test won (its adjusted mean was smaller)...
-            if(difference < 0)
+            if(difference_adj < 0)
             {
                 // Declare the first test as faster, and by how much.
                 ioc << "\tADJUSTED: [" << test1->get_title() << "] faster by approx. " << (labs(difference_adj) - result1.std_dev_adj) << " cycles." << io_end;
             }
             //Else if the second test won (its adjusted mean was smaller)...
-            else if(difference > 0)
+            else if(difference_adj > 0)
             {
                 // Declare the second test as faster, and by how much.
                 ioc << "\tADJUSTED: [" << test2->get_title() << "] faster by approx. " << (labs(difference_adj) - result2.std_dev_adj) << " cycles." << io_end;
@@ -1410,9 +1499,20 @@ namespace pawlib
 
         if(yell && !r)
         {
-            ioc << cat_error << ta_bold << fg_red << "ERROR: The item " << item_name
-                << " is not registered with Goldilocks Test Manager. Aborting."
-                << io_end;
+            switch(type)
+            {
+                case test:
+                case suite:
+                    ioc << cat_error << ta_bold << fg_red << "ERROR: The item " << item_name
+                    << " is not registered with Goldilocks Test Manager. Aborting."
+                    << io_end;
+                    break;
+                case comparative:
+                    ioc << cat_error << ta_bold << fg_red << "ERROR: The item " << item_name
+                    << "does not have a comparative test registered with Golidlocks Test Manager. Aborting."
+                    << io_end;
+                    break;
+            }
         }
 
 

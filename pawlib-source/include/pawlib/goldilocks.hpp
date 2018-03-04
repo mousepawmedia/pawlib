@@ -278,8 +278,15 @@ namespace pawlib
          * those for `register_test()`.*/
         void register_suite(testsuitename_t, TestSuite*);
 
+        /** Run a test or suite intelligently.
+          * \param the name of the item to run
+          * \param the number of times to repeat the test (ignored on suites)
+          * \return true if the item ran successfully, else false */
+        bool run(testname_t, unsigned int = 1);
+
         /**Run a test by name.
          * \param the name of the test to run
+         * \param the number of times to repeat the test
          * \return true if the test ran successfully, else false */
         bool run_test(testname_t, unsigned int = 1);
 
@@ -295,12 +302,16 @@ namespace pawlib
          * profiler. See the documentation for more information.
          * \param the name of the test to benchmark
          * \param the number of times to run the test
-         * \param whether to print all of the output, or just the summaried
-         * verdict.
          * (10 - 10,000, default 100). The more repetitions we have,
          * the more accurate the benchmark will be - but bear execution
-         * time in mind, as some tests can take a while.*/
-        void run_benchmark(testname_t, unsigned int = 100, bool = true);
+         * time in mind, as some tests can take a while.
+         * \param whether to print all of the output, or just the summaried
+         * verdict.
+         * \param whether a dead heat is a success result
+         * \return true if the first test wins, else false.
+         */
+        bool run_benchmark(testname_t, unsigned int = 100, bool = true,
+                           bool = true);
 
         /**Benchmark and compare two tests using a three-pass system.
          * The three passes - MAMA BEAR, PAPA BEAR, and BABY BEAR -
@@ -315,21 +326,26 @@ namespace pawlib
          * \param the name of test A
          * \param the name of test B
          * \param the number of times to run each test per pass
-         * \param whether to print all of the output, or just the summaried
-         * verdict.
          * (10 - 10,000, default 100). The more repetitions we have,
          * the more accurate the benchmark will be - but bear execution
          * time in mind, as some tests can take a while.
          * In short, we have 100 repetitions each * 2 tests * 3 passes,
-         * or 100 => 600 total repetitions.*/
-        void run_compare(testname_t, testname_t, unsigned int = 100,
-                         bool = true);
+         * or 100 => 600 total repetitions.
+         * \param whether to print all of the output, or just the summaried
+         * verdict.
+         * \param whether a dead heat is a success result
+         * \return true if the first test wins, else false.
+         */
+        bool run_compare(testname_t, testname_t, unsigned int = 100,
+                         bool = true, bool = true);
 
         // INTERACTIVE SYSTEM
 
         /**Interactively (confirm before start) load all suites.
          * \param the suite name to load (or leave empty to load all) */
         void i_load_suite(testsuitename_t = "");
+
+        void i_run(testname_t, unsigned int = 1);
 
         /**Interactively (confirm before start) run a test by name.
          * \param the name of the test to run*/
@@ -389,14 +405,18 @@ namespace pawlib
          * \param the name of test A
          * \param the name of test B
          * \param the number of times to run each test per pass
-         * \param whether to print all of the output, or just the summaried
-         * verdict.
          * (10 - 10,000, default 100). The more repetitions we have,
          * the more accurate the benchmark will be - but bear execution
          * time in mind, as some tests can take a while.
          * In short, we have 100 repetitions each * 2 tests * 3 passes,
-         * or 100 => 600 total repetitions.*/
-        void run_compare(Test*, Test*, unsigned int = 100, bool = true);
+         * or 100 => 600 total repetitions.
+         * \param whether to print all of the output, or just the summaried
+         * verdict.
+         * \param whether a dead heat is a success result
+         * \return true if the first test wins, else false
+         */
+        bool run_compare(Test*, Test*, unsigned int = 100, bool = true,
+                         bool = true);
 
         /**The BenchmarkResult struct stores all of the statistical data
          * from a single test benchmark. Having this struct makes our
@@ -473,6 +493,13 @@ namespace pawlib
          * function call with `ioc << [SOME FORMATTING TAGS] << io_send_keep;`
          * \param the BenchmarkResult to output from */
         void printResult(BenchmarkResult&);
+
+        /** Calculate the final verdict based on adjusted results.
+          * \param the BenchmarkResult from test A
+          * \param the BenchmarkResult from test B
+          * \return 0 if even, 1 if A wins, 2 if B wins.
+          */
+        uint8_t calculateVerdict(BenchmarkResult&, BenchmarkResult&);
 
         /**Compare and print two BenchmarkResults. This calculates which
          * result was faster, based on the adjusted statistics (outliers

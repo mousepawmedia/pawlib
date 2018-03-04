@@ -507,6 +507,31 @@ The complete list of stream controls is as follows. Some notes...
 | ``io_flush``        |         |      |     | X  |
 +---------------------+---------+------+-----+----+
 
+..  index::
+    pair: output; cursor movement
+
+Cursor Movement
+----------------------------------------------
+
+IOChannel can move the cursor back and forth on ANSI-enabled terminals
+using the `cur_left` and `cur_right` enums.
+
+..  code-block:: c++
+
+    std::string buffer;
+    pawlib::ioc << "Hello, world!"
+                << pawlib::ioformat::cur_left
+                << pawlib::ioformat::cur_left
+                << pawlib::io_send;
+    std::getline(std::cin, buffer);
+
+    /* Will now wait for user input, while displaying "Hello, world!"
+     * with the cursor highlighting the 'd' character.
+     */
+
+.. IMPORTANT:: Currently, only ANSI is used. Windows support,
+   formatting-removed, and an easy-to-parse formatting flag system for custom
+   outputs will be added soon.
 
 ..  index::
     pair: output; broadcast
@@ -769,6 +794,18 @@ Category (``IOFormatCategory``)
 +-----------------+-------------------------------------------------------------------------------------+
 | ``cat_all``     | All message categories. Does not have a correlating signal.                         |
 +-----------------+-------------------------------------------------------------------------------------+
+
+Cursor Control (``IOCursor``)
+-----------------------------------------
+
++-----------------+--------------------------------------+
+| Enum            | Use                                  |
++=================+======================================+
+| ``cur_left``    | Moves the cursor left one position.  |
++-----------------+--------------------------------------+
+| ``cur_right``   | Moves the cursor right one position. |
++-----------------+--------------------------------------+
+
 
 Echo Mode (``IOEchoMode``)
 -----------------------------------------

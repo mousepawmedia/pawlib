@@ -47,6 +47,7 @@
 #define PAWLIB_GOLDILOCKS_SHELL_HPP
 
 #include <algorithm>
+#include <cstdint>
 // std::is_base_of
 #include <type_traits>
 #include <stdlib.h>
@@ -60,10 +61,40 @@ using namespace pawlib;
 
 namespace pawlib
 {
-    class TestCatalog
+    // cppcheck-suppress noCopyConstructor
+    /* NOTE: We definitely don't want a copy constructor.
+     * Sharing the testmanager is a VERY bad idea in this current form.
+     * We may revisit this later.
+     */
+    class GoldilocksShell
     {
         public:
-            TestCatalog();
+            /** Default constructor*/
+            GoldilocksShell()
+            :testmanager(new TestManager), prompt(":")
+            {}
+
+            /** Construct with a specific prompt string
+              * \param the prompt symbol for the shell interface
+              */
+            // cppcheck-suppress noExplicitConstructor
+            GoldilocksShell(const char* prompt_string)
+            :testmanager(new TestManager), prompt(prompt_string)
+            {}
+
+            /** Run using command-line arguments. Designed to directly accept
+              * the same arguments as `int main()`
+              * \param the argument count, as from 'int main()'.
+              * \param the argument array, as from 'int main()'.
+              * \param the number of arguments to skip, default 0
+              * \return the return code, to be returned by 'int main()'.
+              */
+            int command(int argc, char* argv[], unsigned int skip = 0);
+
+            /** Launch an interactive terminal session using IOChannel.
+              * \param the pointer to the Testcatalog instance being used.
+              */
+            void interactive();
 
             template <typename T>
             bool register_suite(std::string name)
@@ -80,38 +111,31 @@ namespace pawlib
                 return false;
             }
 
+            ~GoldilocksShell()
+            {
+                delete testmanager;
+                testmanager = 0;
+            }
+
+        protected:
+            typedef std::vector<std::string> stringvector;
+
             TestManager* testmanager;
+            std::string prompt;
 
-            ~TestCatalog();
-        protected:
-        private:
-    };
-
-    class GoldilocksShell
-    {
-        public:
-            GoldilocksShell(){}
-
-            /** Run using command-line arguments. Designed to directly accept
-              * the same arguments as `int main()`
-              * \param the pointer to the TestCatalog instance being used.
-              * \param the argument count, as from 'int main()'.
-              * \param the argument array, as from 'int main()'.
-              * \param the return code, to be returned by 'int main()'.
-              */
-            static int command(TestCatalog* sys, int argc, char* argv[]);
-
-            /** Launch an interactive terminal session using IOChannel.
-              * \param the pointer to the Testcatalog instance being used.
-              */
-            static void interactive(TestCatalog* sys);
-
-            ~GoldilocksShell(){}
-
-        protected:
             /** The full text of the help command for the shell.
               */
-            static void help();
+            void help();
+
+            void about(stringvector&);
+            void benchmark(stringvector&);
+            void compare(stringvector&);
+            void list(stringvector&);
+            void listsuites(stringvector&);
+            void load(stringvector&);
+            void run(stringvector&);
+
+            uint8_t validate_arguments(stringvector&, uint8_t, uint8_t = 0);
     };
 }
 

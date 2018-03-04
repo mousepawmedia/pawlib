@@ -17,3 +17,4 @@ tester_debug
 *.config
 *.kdev4
 !default.config
+codealike.json

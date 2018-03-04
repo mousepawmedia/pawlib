@@ -67,10 +67,11 @@ Using ``+=``
 
 ``append()``, ``push_back()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Alternatively, you can use the functions ``append()`` and ``push_back()``
 to add additional Unicode characters at the end of the existing ``OneString``.
 
-Using ``append()``
+Using ``append()``...
 
 ..  code-block:: c++
 
@@ -80,13 +81,12 @@ Using ``append()``
     // Add "s" to `to_add`
     to_add.append('s');
 
-    // `to_add`is now "apples"
+    // `to_add` is now "apples"
 
     // add "!" to `to_add`
-    to_add.push_back(`!`);
+    to_add.push_back('!');
 
     // `to_add` is now "apples!"
-
 
 ``insert()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -177,6 +177,7 @@ The ``==`` operator checks for equivalence between two strings and returns
 a boolean with the result.
 
 ..  code-block:: c++
+
     // Declare two OneString
     OneString dogs = "fun";
     OneString cats = "mean";

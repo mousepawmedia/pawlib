@@ -1,4 +1,4 @@
-PawLIB 1.0 Documentation
+PawLIB 1.1 Documentation
 ################################
 
 The **PawLIB** static library provides various common utility functions,
@@ -15,21 +15,24 @@ and ``LICENSE.md`` for more information.
 Contents
 ====================
 
-.. toctree::
-   :maxdepth: 2
+..  toctree::
+    :maxdepth: 2
+    :glob:
 
-   general/setup
-   flex/flexarray
-   flex/flexqueue
-   flex/flexstack
-   core/trilean
-   goldilocks/goldilocks
-   iochannel/iochannel
-   core/pool
-   core/stdutils
-   general/console
-   general/tests
-   general/support
+    general/setup
+    flex/flexarray
+    flex/flexqueue
+    flex/flexstack
+    core/trilean
+    goldilocks/goldilocks
+    goldilocks/shell
+    iochannel/*
+    onestring/*
+    core/pool
+    core/stdutils
+    general/console
+    general/tests
+    general/support
 
 
 Indices and tables

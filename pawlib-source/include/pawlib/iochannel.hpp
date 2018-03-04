@@ -302,7 +302,7 @@ namespace pawlib
             fg_white = 37
         };
 
-        /**The standard ANSI text background colors.*/
+        /** The standard ANSI text background colors.*/
         enum IOFormatTextBG
         {
             //None.
@@ -323,6 +323,15 @@ namespace pawlib
             bg_cyan = 46,
             ///White text background.
             bg_white = 47
+        };
+
+        /**Basic cursor movement. */
+        enum IOCursor
+        {
+            // Move cursor left ('\[1D]')
+            cur_left,
+            // Move cursor right ('\[1C]')
+            cur_right
         };
 
         /**The level of verbosity necessary for the message to display.*/
@@ -579,6 +588,7 @@ namespace pawlib
             iochannel& operator<<(const IOFormatTextBG&);
             iochannel& operator<<(const IOFormatTextFG&);
             iochannel& operator<<(const IOFormatTextAttributes&);
+            iochannel& operator<<(const IOCursor&);
             iochannel& operator<<(const read_size&);
             iochannel& operator<<(const IOFormatVerbosity&);
             iochannel& operator<<(const IOFormatCategory&);
@@ -744,6 +754,11 @@ namespace pawlib
 
             /**Flush the standard output.*/
             void flush();
+
+            /**Move the cursor given the command.
+              * \param the cursor command
+              */
+            void move_cursor(const IOCursor&);
 
             /**Insert a single character without need for null terminator.
             * \param the character to insert
