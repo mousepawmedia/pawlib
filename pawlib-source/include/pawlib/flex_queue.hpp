@@ -59,7 +59,7 @@ namespace pawlib
             /** Create a new FlexQueue with the default capacity.
               */
             FlexQueue()
-                :Base_FlexArr<type>()
+                :Base_FlexArr<type>(), front(0), back(0)
                 {}
 
             /** Create a new FlexQueue with the specified minimum capacity.
@@ -67,7 +67,7 @@ namespace pawlib
               */
             // cppcheck-suppress noExplicitConstructor
             FlexQueue(uint32_t numElements)
-                :Base_FlexArr<type>(numElements)
+                :Base_FlexArr<type>(numElements), front(0), back(0)
                 {}
 
             /** Adds the specified element to the FlexQueue.
@@ -106,10 +106,24 @@ namespace pawlib
                         return false;
                     }
                 }
+                // If the back is already at the end of the space.
+                else if(this->back == this->capacity - 1)
+                {
+                    // Shift things so front becomes 0.
+                    this->mem_shift(this->front, (0 - this->front));
+                    // Slide the back to the left.
+                    this->back -= this->front;
+                    // Reset front to 0.
+                    this->front = 0;
+                }
 
-                /* Store the new element in the last position and
+                /* Store the new element in the rightmost position and
                  * increment the number of elements. */
-                this->theArray[(this->currElements)++] = newElement;
+                //this->theArray[(this->currElements)++] = newElement;
+
+                /* Store the new element at the back. */
+                this->theArray[this->back] = newElement;
+                ++(this->currElements);
 
                 // Report success.
                 return true;
@@ -124,8 +138,8 @@ namespace pawlib
                 // If there is at least one element in the array...
                 if(this->currElements > 0)
                 {
-                    // Return that element.
-                    return this->at(0);
+                    // Return the front element.
+                    return this->at(this->front);
                 }
                 // Otherwise...
                 else
@@ -161,12 +175,16 @@ namespace pawlib
                 // If there is at least one element in the array...
                 if(this->currElements > 0)
                 {
-                    // Store the first element, to be returned later.
-                    type temp = this->theArray[0];
+                    // Store the front element, to be returned later.
+                    //type temp = this->theArray[0];
+                    type temp = this->theArray[this->front];
+
+                    // The element to the left of this is the new front.
+                    --(this->front);
 
                     /* Shift all elements to the left one index. This
                      * effectively deletes the first element from the array. */
-                    this->mem_shift(1, -1);
+                    //this->mem_shift(1, -1);
 
                     // Decrement the number of elements.
                     --(this->currElements);
@@ -181,6 +199,13 @@ namespace pawlib
                     throw std::out_of_range("FlexQueue: Cannot pop from empty FlexQueue.");
                 }
             }
+
+        protected:
+
+            /// Points to the index of the front of the queue (pop from here)
+            uint32_t front;
+            /// Points to the index of the back of the queue (push to here)
+            uint32_t back;
     };
 }
 

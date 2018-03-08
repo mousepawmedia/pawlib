@@ -206,7 +206,7 @@ namespace pawlib
             uint32_t currElements;
 
             /** The maximum number of elements (capacity) that can be contained
-              * in the structure without resizing. */
+              * in the structure without resizing. (1-based) */
             uint32_t capacity;
 
             /** Double the capacity of the structure.
