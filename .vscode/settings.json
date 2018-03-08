@@ -16,10 +16,20 @@
       "c++11"
     ],
     "cppcheck.includePaths": [
-        "./",
-        "../libdeps"
+        "./pawlib-source/include",
+        "./pawlib-tester/include",
+        "../libdeps/libs/include"
     ],
     "cppcheck.force": false,
+
+    "cppcheck.severityLevels": {
+        "error": "Error",
+        "warning": "Warning",
+        "style": "None",
+        "performance": "Warning",
+        "portability": "Warning",
+        "information": "None"
+    },
 
     "[c]": {
         "editor.detectIndentation": false,
@@ -76,28 +86,44 @@
     "restructuredtext.workspaceRoot": "${workspaceRoot}",
 
     "cSpell.allowCompoundWords": true,
+
+    "cSpell.ignorePaths": [
+        "**/node_modules/**",
+        "**/vscode-extension/**",
+        "**/.git/**",
+        ".vscode",
+        "typings",
+        "**/build_temp/**"
+    ],
+
+    "cSpell.ignoreRegExpList": [
+        "#include (\"\\<)(\\/\\w\\.)+(\"\\>)"
+    ],
+
+    "cSpell.ignoreWords": [
+        "addop",
+        "cpuid",
+        "itos",
+        "ochr",
+        "ostr",
+        "rdtsc",
+    ],
+
     "cSpell.words": [
         "cpgf",
         "deinitialized",
         "golidlocks",
         "io",
         "item",
-        "tril",
-        "trilean",
-        "trileans",
         "mousepaw",
         "pawlib",
         "shutup",
         "significands",
         "speakup",
+        "tril",
+        "tril's",
+        "trilean",
+        "trileans",
         "type"
-    ],
-    "cSpell.ignoreWords": [
-        "cpuid",
-        "itos",
-        "rdtsc",
-    ],
-    "cSpell.ignoreRegExpList": [
-        "#include (\"\\<)(\\/\\w\\.)+(\"\\>)"
     ],
 }
