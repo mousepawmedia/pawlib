@@ -168,7 +168,7 @@ namespace pawlib
             {
                 /* If the specified size is also the maximum valid integer,
                  * which we reserved for our invalid index marker, use one less.
-                 * It is highly unlikely that this subtlty will ever be noticed or
+                 * It is highly unlikely that this subtlety will ever be noticed or
                  * matter to the end-developer, although we'll document it anyway.
                  */
                 if(pool_size == INVALID_INDEX)
@@ -517,10 +517,10 @@ namespace pawlib
                  * own signals.
                  * This code was adapted from cpgf/samples/callback/tutorial_callback.h
                  */
-                poolobjsignal_t::DirectListType & internalList = signal_deinit.getDirectList();
+                poolobjsignal_t::DirectListType& internalList = signal_deinit.getDirectList();
                 for(poolobjsignal_t::IteratorType it = internalList.begin(); it != internalList.end(); ++it)
                 {
-                    poolobjsignal_t::ConnectionType & connection = *it;
+                    poolobjsignal_t::ConnectionType& connection = *it;
                     signal_deinit.remove(connection);
                 }
 

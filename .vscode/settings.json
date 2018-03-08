@@ -2,7 +2,7 @@
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
 
-    "c-cpp-flylint.cppcheck.force": false,
+    /*"c-cpp-flylint.cppcheck.force": false,
     "c-cpp-flylint.cppcheck.includePaths": [
         "./pawlib-source/include",
         "./pawlib-tester/include"
@@ -10,7 +10,16 @@
     "c-cpp-flylint.standard": [
         "c11",
         "c++11"
+    ],*/
+    "cppcheck.standard": [
+      "c11",
+      "c++11"
     ],
+    "cppcheck.includePaths": [
+        "./",
+        "../libdeps"
+    ],
+    "cppcheck.force": false,
 
     "[c]": {
         "editor.detectIndentation": false,
@@ -64,12 +73,31 @@
     "files.trimTrailingWhitespace": true,
 
     "restructuredtext.builtDocumentationPath": "${workspaceRoot}/docs/build/html",
-    "restructuredtext.workspaceRoot": "/home/jason/Code/Repositories/pawlib",
+    "restructuredtext.workspaceRoot": "${workspaceRoot}",
+
+    "cSpell.allowCompoundWords": true,
     "cSpell.words": [
+        "cpgf",
+        "deinitialized",
         "golidlocks",
+        "io",
         "item",
+        "tril",
+        "trilean",
+        "trileans",
         "mousepaw",
         "pawlib",
+        "shutup",
+        "significands",
+        "speakup",
         "type"
+    ],
+    "cSpell.ignoreWords": [
+        "cpuid",
+        "itos",
+        "rdtsc",
+    ],
+    "cSpell.ignoreRegExpList": [
+        "#include (\"\\<)(\\/\\w\\.)+(\"\\>)"
     ],
 }

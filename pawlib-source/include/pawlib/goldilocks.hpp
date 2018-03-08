@@ -1,11 +1,11 @@
 /** Goldilocks Test System [PawLIB]
- * Version: 1.0
+ * Version: 1.1
  *
  * Goldilocks stores, manages, and calls tests.
  * It also contains a runtime benchmarker which
  * measures CPU cycles for any given test with
  * as much accuracy as is possible from user-level
- * assembly code. Goldilock's benchmarker also
+ * assembly code. Goldilocks' benchmarker also
  * calculates additional useful statistical data,
  * especially for comparing the execution of two
  * tests.

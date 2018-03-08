@@ -1,5 +1,5 @@
 /** Goldilocks Shell [PawLIB]
-  * Version 1.0
+  * Version 1.1
   *
   * This is a ready-to-use interface for Goldilocks.
   * It will eventually be expanded and replaced with
