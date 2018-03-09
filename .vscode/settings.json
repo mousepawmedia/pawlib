@@ -2,16 +2,24 @@
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
 
-    /*"c-cpp-flylint.cppcheck.force": false,
+    "c-cpp-flylint.cppcheck.force": false,
     "c-cpp-flylint.cppcheck.includePaths": [
         "./pawlib-source/include",
-        "./pawlib-tester/include"
+        "./pawlib-tester/include",
     ],
     "c-cpp-flylint.standard": [
         "c11",
         "c++11"
-    ],*/
-    "cppcheck.standard": [
+    ],
+    "c-cpp-flylint.cppcheck.severityLevels": {
+        "error": "Error",
+        "warning": "Warning",
+        "style": "Information",
+        "performance": "Warning",
+        "portability": "Warning",
+        "information": "Information"
+      },
+    /*"cppcheck.standard": [
       "c11",
       "c++11"
     ],
@@ -29,7 +37,7 @@
         "performance": "Warning",
         "portability": "Warning",
         "information": "None"
-    },
+    },*/
 
     "[c]": {
         "editor.detectIndentation": false,
@@ -114,6 +122,7 @@
         "deinitialized",
         "golidlocks",
         "io",
+        "ioformat",
         "item",
         "mousepaw",
         "pawlib",

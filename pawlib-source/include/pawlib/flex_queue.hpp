@@ -121,9 +121,14 @@ namespace pawlib
                  * increment the number of elements. */
                 //this->theArray[(this->currElements)++] = newElement;
 
-                /* Store the new element at the back. */
-                this->theArray[this->back] = newElement;
+                /* Store the new element to the right of the back element. */
+                this->theArray[this->back++] = newElement;
                 ++(this->currElements);
+
+                /*ioc << "The new element " << newElement
+                    << " is stored at index " << (this->back - 1)
+                    << " as " << this->theArray[this->back - 1]
+                    << io_end;*/
 
                 // Report success.
                 return true;
@@ -179,8 +184,8 @@ namespace pawlib
                     //type temp = this->theArray[0];
                     type temp = this->theArray[this->front];
 
-                    // The element to the left of this is the new front.
-                    --(this->front);
+                    // The element to the right of this is the new front.
+                    ++(this->front);
 
                     /* Shift all elements to the left one index. This
                      * effectively deletes the first element from the array. */
