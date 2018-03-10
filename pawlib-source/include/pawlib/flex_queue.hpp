@@ -100,7 +100,7 @@ namespace pawlib
                 if(this->currElements == this->capacity)
                 {
                     // Attempt to double the array's capacity. If it fails...
-                    if(!this->double_size())
+                    if(!this->resize())
                     {
                         // Report failure.
                         return false;

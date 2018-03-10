@@ -65,13 +65,13 @@ namespace pawlib
             /** Create a new base flex array, with the default starting size.
               */
             Base_FlexArr()
-            :theArray(nullptr), resizable(true), currElements(0), capacity(4)
+            :theArray(nullptr), head(0), resizable(true), currElements(0), capacity(4)
             {
-                /* The call to double_size() will sets the capacity to 8
+                /* The call to resize() will sets the capacity to 8
                  * on initiation. */
 
                 // Allocate the structure.
-                double_size();
+                resize();
             }
 
             /** Create a new base flex array with room for the specified number
@@ -80,15 +80,15 @@ namespace pawlib
               */
             // cppcheck-suppress noExplicitConstructor
             Base_FlexArr(uint32_t numElements)
-            :theArray(nullptr), resizable(true), currElements(0)
+            :theArray(nullptr), head(0), resizable(true), currElements(0)
             {
                 /* Set the size to be the power of 2 just below the entered
-                 * number. double_size() will initiate with enough
+                 * number. resize() will initiate with enough
                  * room in array. */
                 capacity = pow(2, floor(log2(numElements)));
 
                 // Allocate the structure.
-                double_size();
+                resize();
             }
 
             /** Destructor. */
@@ -118,10 +118,8 @@ namespace pawlib
                 {
                     throw std::out_of_range("BaseFlexArray: Index out of range!");
                 }
-                else
-                {
-                    return theArray[index];
-                }
+
+                return theArray[to_internal_index(index)];
             }
 
             /** Check if the data structure is empty.
@@ -199,6 +197,9 @@ namespace pawlib
             /// The pointer to the actual structure in memory.
             type* theArray;
 
+            /// The first index, as this may drift.
+            uint32_t head;
+
             /// Whether the structure can be resize.
             bool resizable;
 
@@ -209,10 +210,91 @@ namespace pawlib
               * in the structure without resizing. (1-based) */
             uint32_t capacity;
 
+            /** Get the internal array index.
+              * \param the (external) index to access
+              * \return the (internal) index
+              */
+            uint32_t to_internal_index(uint32_t index)
+            {
+                /* Get the internal index, by adding the external index
+                 * to the head index, and then accounting for the
+                 * circular buffer. */
+                index = index + this->head;
+                if(index >= this->capacity)
+                {
+                    index -= this->capacity;
+                }
+                return index;
+            }
+
+            /** Insert at head.
+              * \return true if successful, else false
+              */
+            bool insert_head(type value)
+            {
+                if(this->currElements >= this->capacity)
+                {
+                    resize();
+                }
+
+                if(this->head == 0)
+                {
+                    this->head = this->capacity;
+                }
+                else
+                {
+                    --this->head;
+                }
+
+                this->theArray[this->head] = value;
+            }
+
+            bool insert_tail(type value)
+            {
+                if(this->currElements >= this->capacity)
+                {
+                    resize();
+                }
+
+                this->theArray[to_internal_index(this->currElements++)] = value;
+            }
+
+            bool insert(uint32_t index, type value)
+            {
+                if(this->currElements >= this->capacity)
+                {
+                    resize();
+                }
+
+                this->theArray[to_internal_index(index)] = value;
+                ++this->currElements;
+            }
+
+            bool remove_head()
+            {
+                ++this->head;
+                if (this->head >= this->capacity)
+                {
+                    this->head -= this->capacity;
+                }
+                --this->currElements;
+            }
+
+            bool remove_tail()
+            {
+                --this->currElements;
+            }
+
+            bool remove(uint32_t index)
+            {
+                mem_shift(index, -1);
+                --this->currElements;
+            }
+
             /** Double the capacity of the structure.
               * \return true if it was able to double capacity, else false.
               */
-            bool double_size()
+            bool resize()
             {
                 // If we're not allowed to resize...
                 if(!resizable)
@@ -248,14 +330,32 @@ namespace pawlib
                 if(this->theArray != nullptr)
                 {
                     // Transfer all of the elements over.
-                    /*for(uint32_t i = 0; i < currElements; i++)
-                    {
-                        tempArray[i] = this->theArray[i];
-                    }*/
-                    memmove(
+                    /*memmove(
                         tempArray,
                         this->theArray,
                         sizeof(type) * this->currElements
+                    );*/
+
+                    /* Since this is a circular buffer, we have to move things
+                     * so it has room for expansion. The fastest way to do this
+                     * is by storing the head element back at index 0.
+                     * To do this, we'll move everything in two parts:
+                     * (1) head to end of space, and (2) 0 to head-1.
+                     */
+                    uint32_t step1 = this->capacity - this->head;
+                    uint32_t step2 = this->head;
+                    memmove(
+                        tempArray,
+                        this->theArray,
+                        sizeof(type) * step1
+                    );
+                    /* NOTE: Would the code be faster if this move was in
+                     * an "if step2 == 0" conditional?
+                     */
+                    memmove(
+                        tempArray,
+                        this->theArray + step2,
+                        sizeof(type) * step2
                     );
 
                     // Delete the old structure.
@@ -265,6 +365,9 @@ namespace pawlib
 
                 // Store the new structure.
                 this->theArray = tempArray;
+
+                // Reset the head.
+                this->head = 0;
 
                 // Report success.
                 return true;
@@ -278,22 +381,86 @@ namespace pawlib
               */
             void mem_shift(uint32_t fromIndex, int8_t direction)
             {
+                /* Check if the index was valid given the number of elements
+                 * we're actually storing. (We have to offset fromIndex so
+                 * we do our math in 1-indexing).
+                 */
                 if(fromIndex + 1 > this->currElements)
                 {
                     return;
                 }
 
-                memmove(
-                    // Move TO the given index.
-                    this->theArray + (fromIndex + direction),
-                    // Move FROM the given index, plus one.
-                    this->theArray + fromIndex,
-                    /* Total move size is the number of elements to be moved,
-                    * times element size. The number of elements we move
-                    * is calculated from the 1-based total number of elements.
-                    */
-                    sizeof(type) * ((this->currElements) - (fromIndex))
-                );
+                // Switch fromIndex to internal indexing
+                fromIndex = to_internal_index(fromIndex);
+
+                // If the head is at 0, we can move in one step.
+                if(this->head == 0)
+                {
+                    memmove(
+                        // Move TO the given index.
+                        this->theArray + (fromIndex + direction),
+                        // Move FROM the given index, plus one.
+                        this->theArray + fromIndex,
+                        // Total move size is the number of elements to be moved,
+                        // times element size. The number of elements we move
+                        // is calculated from the 1-based total number of elements.
+                        sizeof(type) * ((this->currElements) - (fromIndex))
+                    );
+                }
+                else if(direction > 0)
+                {
+                    // Shift in a POSITIVE direction
+                    // Slide the section after the wraparound.
+                    memmove(
+                        this->theArray + direction,
+                        this->theArray,
+                        sizeof(type) * (this->currElements - (this->capacity - this->head))
+                    );
+                    // Move the section that wraps around.
+                    memmove(
+                        this->theArray,
+                        this->theArray + this->capacity - direction,
+                        sizeof(type) * abs(direction)
+                    );
+                    // Move the section before the wraparound.
+                    memmove(
+                        this->theArray + fromIndex + direction,
+                        this->theArray + fromIndex,
+                        /* Move all the elements before the wraparound,
+                         * except the ones we already moved.*/
+                        sizeof(type) * (this->capacity - this->head - abs(direction))
+                    );
+                }
+                else if(direction < 0)
+                {
+                    /* NEGATIVE direction
+                     * PART 1: fromIndex..(capacity-1), shift by direction
+                     * PART 2: 0, move to (capacity-1)
+                     * PART 3: 1..tail, shift by direction
+                     */
+
+                    // Shift in a NEGATIVE direction
+                    // Move the section before the wraparound.
+                    memmove(
+                        this->theArray + fromIndex + direction,
+                        this->theArray + fromIndex,
+                        sizeof(type) * (this->capacity - this->head)
+                    );
+                    // Move the section that wraps around.
+                    memmove(
+                        this->theArray + this->capacity - direction,
+                        this->theArray,
+                        sizeof(type) * abs(direction)
+                    );
+                    // Move the section after the wraparound.
+                    memmove(
+                        this->theArray,
+                        this->theArray + direction,
+                        /* Move all the elements after the wraparound,
+                         * except the ones we already moved. */
+                        sizeof(type) * (this->currElements - (this->capacity - this->head) - abs(direction))
+                    );
+                }
             }
 
             /** Add the given element to the back of the structure.
@@ -308,7 +475,7 @@ namespace pawlib
                 {
                     /* Attempt to double the structure's capacity.
                      * If it fails...*/
-                    if(!double_size())
+                    if(!resize())
                     {
                         /* Out of room and could not resize.
                          * Throw a non-fatal error. */

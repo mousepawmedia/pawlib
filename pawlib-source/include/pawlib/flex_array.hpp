@@ -101,7 +101,7 @@ namespace pawlib
                     if(this->full())
                     {
                         // Attempt to double the capacity. If it fails...
-                        if(!this->double_size())
+                        if(!this->resize())
                         {
                             // Report failure.
                             return false;
@@ -186,7 +186,7 @@ namespace pawlib
                     if(this->full())
                     {
                         // Attempt to double the array's capacity. If it fails...
-                        if(!this->double_size())
+                        if(!this->resize())
                         {
                             // Report failure.
                             return false;
@@ -314,7 +314,7 @@ namespace pawlib
                 if(this->full())
                 {
                     // Attempt to double the array's capacity. If it fails...
-                    if(!this->double_size())
+                    if(!this->resize())
                     {
                         // Report failure.
                         return false;
