@@ -59,7 +59,7 @@ namespace pawlib
             /** Create a new FlexQueue with the default capacity.
               */
             FlexQueue()
-                :Base_FlexArr<type>(), front(0), back(0)
+                :Base_FlexArr<type>()
                 {}
 
             /** Create a new FlexQueue with the specified minimum capacity.
@@ -67,7 +67,7 @@ namespace pawlib
               */
             // cppcheck-suppress noExplicitConstructor
             FlexQueue(uint32_t numElements)
-                :Base_FlexArr<type>(numElements), front(0), back(0)
+                :Base_FlexArr<type>(numElements)
                 {}
 
             /** Adds the specified element to the FlexQueue.
@@ -96,42 +96,7 @@ namespace pawlib
               */
             bool enqueue(type newElement)
             {
-                // If the array is full...
-                if(this->currElements == this->capacity)
-                {
-                    // Attempt to double the array's capacity. If it fails...
-                    if(!this->resize())
-                    {
-                        // Report failure.
-                        return false;
-                    }
-                }
-                // If the back is already at the end of the space.
-                else if(this->back == this->capacity - 1)
-                {
-                    // Shift things so front becomes 0.
-                    this->mem_shift(this->front, (0 - this->front));
-                    // Slide the back to the left.
-                    this->back -= this->front;
-                    // Reset front to 0.
-                    this->front = 0;
-                }
-
-                /* Store the new element in the rightmost position and
-                 * increment the number of elements. */
-                //this->theArray[(this->currElements)++] = newElement;
-
-                /* Store the new element to the right of the back element. */
-                this->theArray[this->back++] = newElement;
-                ++(this->currElements);
-
-                /*ioc << "The new element " << newElement
-                    << " is stored at index " << (this->back - 1)
-                    << " as " << this->theArray[this->back - 1]
-                    << io_end;*/
-
-                // Report success.
-                return true;
+                return this->insertAtTail(newElement, true);
             }
 
             /** Returns the next (first) element in the FlexQueue without
@@ -140,18 +105,14 @@ namespace pawlib
               */
             type peek()
             {
-                // If there is at least one element in the array...
-                if(this->currElements > 0)
-                {
-                    // Return the front element.
-                    return this->at(this->front);
-                }
-                // Otherwise...
-                else
+                // If the stack is empty
+                if(this->isEmpty())
                 {
                     // Throw a fatal error.
-                    throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
+                    throw std::out_of_range("FlexQueue: Cannot peek() from empty FlexQueue.");
                 }
+
+                return this->rawAt(0);
             }
 
             /**Return and remove the next element in the FlexStack.
@@ -177,40 +138,21 @@ namespace pawlib
               */
             type dequeue()
             {
-                // If there is at least one element in the array...
-                if(this->currElements > 0)
-                {
-                    // Store the front element, to be returned later.
-                    //type temp = this->theArray[0];
-                    type temp = this->theArray[this->front];
-
-                    // The element to the right of this is the new front.
-                    ++(this->front);
-
-                    /* Shift all elements to the left one index. This
-                     * effectively deletes the first element from the array. */
-                    //this->mem_shift(1, -1);
-
-                    // Decrement the number of elements.
-                    --(this->currElements);
-
-                    // Return the element we just deleted.
-                    return temp;
-                }
-                // Else if there are no elements in the array...
-                else
+                // If the stack is empty
+                if(this->isEmpty())
                 {
                     // Throw a fatal error.
-                    throw std::out_of_range("FlexQueue: Cannot pop from empty FlexQueue.");
+                    throw std::out_of_range("FlexQueue: Cannot dequeue() from empty FlexQueue.");
                 }
+
+                // Store the front element.
+                type temp = this->rawAt(0);
+                // Remove the front element.
+                this->removeAtHead();
+                // Return the stored element.
+                return temp;
+
             }
-
-        protected:
-
-            /// Points to the index of the front of the queue (pop from here)
-            uint32_t front;
-            /// Points to the index of the back of the queue (push to here)
-            uint32_t back;
     };
 }
 

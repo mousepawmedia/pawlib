@@ -81,23 +81,10 @@ namespace pawlib
               */
             bool push(type newElement)
             {
-                // If the array is full...
-                if(this->currElements == this->capacity)
-                {
-                    // Attempt to double the array's capacity. If it fails...
-                    if(!this->resize())
-                    {
-                        // Report failure.
-                        return false;
-                    }
-                }
-
-                /* Store the new element in the last position and
-                 * increment the number of elements. */
-                this->theArray[(this->currElements)++] = newElement;
-
-                // Report success.
-                return true;
+                /* Use the deque tail insertion function.
+                 * Use that function's error messages.
+                 */
+                return this->insertAtTail(newElement, true);
             }
 
             /** Returns the next (last) element in the FlexStack without
@@ -106,18 +93,14 @@ namespace pawlib
               */
             type peek()
             {
-                // If there is at least one element in the array...
-                if(this->currElements > 0)
-                {
-                    // Return that element.
-                    return this->at(this->currElements-1);
-                }
-                // Otherwise...
-                else
+                // If the stack is empty
+                if(this->isEmpty())
                 {
                     // Throw a fatal error.
-                    throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
+                    throw std::out_of_range("FlexStack: Cannot peek() from empty FlexStack.");
                 }
+
+                return this->rawAt(this->currElements-1);
             }
 
             /** Return and remove the next element in the FlexStack.
@@ -134,19 +117,18 @@ namespace pawlib
               */
             type pop()
             {
-                // If there are no elements...
-                if(this->currElements == 0)
+                // If the stack is empty...
+                if(this->isEmpty())
                 {
                     // Throw a fatal error.
-                    throw std::out_of_range("FlexStack: Cannot pop from empty FlexStack.");
+                    throw std::out_of_range("FlexStack: Cannot pop() from empty FlexStack.");
                 }
-                // Else if there is at least one element...
-                else
-                {
-                    /* Return the last element and decrement the
-                     * number of elements. */
-                    return this->theArray[--(this->currElements)];
-                }
+                // Get the current element at the tail.
+                type temp = this->rawAt(this->currElements - 1);
+                // Remove the tail element.
+                this->removeAtTail();
+                // Return the element we stored.
+                return temp;
             }
     };
 }

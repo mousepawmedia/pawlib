@@ -1509,7 +1509,7 @@ namespace pawlib
                     break;
                 case comparative:
                     ioc << cat_error << ta_bold << fg_red << "ERROR: The item " << item_name
-                    << "does not have a comparative test registered with Golidlocks Test Manager. Aborting."
+                    << " does not have a comparative test registered with Golidlocks Test Manager. Aborting."
                     << io_end;
                     break;
             }

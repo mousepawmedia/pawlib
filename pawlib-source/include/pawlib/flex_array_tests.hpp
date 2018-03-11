@@ -219,6 +219,9 @@ namespace pawlib
                     if(flex[0] != i || (i > 0 && flex[1] != i-1))
                     {
                         // Report failure
+                        ioc << "Incorrect shift." << io_endline
+                            << "       i = " << i << io_endline
+                            << "    f[0] = " << flex[0] << io_end;
                         return false;
                     }
                 }
@@ -316,7 +319,8 @@ Middle is calculated as size()/2.";
                 // Insert each required element.
                 for(unsigned int val=1; val<iters; ++val)
                 {
-                    int at = flex.getSize()/2;
+                    int at = flex.getLength()/2;
+
                     // Attempt an insert shift. If it fails...
                     if(!flex.insert(val, at))
                     {
@@ -709,6 +713,7 @@ Middle is calculated as size()/2.";
 
             bool janitor()
             {
+                flex.clear();
                 // Refill the FlexArray.
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -718,7 +723,7 @@ Middle is calculated as size()/2.";
             }
             bool run()
             {
-                // Calcuate erase size as the center half of the elements.
+                // Calculate erase size as the center half of the elements.
                 int first = iters/4;
                 int last = first * 3;
                 // Erase in one step.
@@ -766,7 +771,7 @@ Middle is calculated as size()/2.";
             }
             bool run()
             {
-                // Calcuate erase size as the center half of the elements.
+                // Calculate erase size as the center half of the elements.
                 int first = iters/4;
                 int last = first * 3;
                 // Erase in one step.
