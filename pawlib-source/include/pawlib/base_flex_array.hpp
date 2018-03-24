@@ -8,7 +8,7 @@
   */
 
 /* LICENSE
- * Copyright (c) 2016 MousePaw Media.
+ * Copyright (c) 2018 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,8 @@ namespace pawlib
             /** Create a new base flex array, with the default starting size.
               */
             Base_FlexArr()
-            :internalArray(nullptr), head(0), resizable(true), currElements(0), capacity(4)
+            :internalArray(nullptr), head(0), tail(0), resizable(true),
+             currElements(0), capacity(4)
             {
                 /* The call to resize() will sets the capacity to 8
                  * on initiation. */
@@ -80,7 +81,8 @@ namespace pawlib
               */
             // cppcheck-suppress noExplicitConstructor
             Base_FlexArr(uint32_t numElements)
-            :internalArray(nullptr), head(0), resizable(true), currElements(0)
+            :internalArray(nullptr), head(0), tail(0), resizable(true),
+             currElements(0)
             {
                 /* Set the size to be the power of 2 just below the entered
                  * number. resize() will initiate with enough
@@ -210,6 +212,12 @@ namespace pawlib
             /// The first index, as this may drift.
             uint32_t head;
 
+            /* One past the last filled index. This can be calculated as
+             * toInternalIndex(this->currElements), but it is precalculated
+             * for efficiency.
+             */
+            uint32_t tail;
+
             /// Whether the structure can be resize.
             bool resizable;
 
@@ -284,17 +292,15 @@ namespace pawlib
               * \param the (external) index to access
               * \return the (internal) index
               */
-            uint32_t toInternalIndex(uint32_t index)
+            inline uint32_t toInternalIndex(uint32_t index)
             {
                 /* Get the internal index, by adding the external index
                  * to the head index, and then accounting for the
-                 * circular buffer. */
-                index = index + this->head;
-                if(index >= this->capacity)
-                {
-                    index -= this->capacity;
-                }
-                return index;
+                 * circular buffer.
+                 * Thanks to pydsigner and nisstyre in ##python-offtopic
+                 * for suggesting the modulus.
+                  */
+                return (index + this->head) % this->capacity;
             }
 
             /** Efficiently insert a value at the head of the array.
@@ -307,17 +313,10 @@ namespace pawlib
                 // Check capacity and attempt a resize if necessary.
                 if(!checkSize(yell)) { return false; }
 
-                /* If head is already at the front of the memory space,
-                 * wrap around to the back of the memory space (capacity-1).
-                 */
-                if(this->head == 0)
+                // Move the head back, accounting for wraparound.
+                if(this->head-- == 0)
                 {
                     this->head = this->capacity - 1;
-                }
-                /* Otherwise, just move the head back a position. */
-                else
-                {
-                    --this->head;
                 }
 
                 // Insert our value at the new head position.
@@ -344,7 +343,19 @@ namespace pawlib
                  * We don't need to worry about the wraparound;
                  * toInternalIndex handles that for us.
                  */
-                this->internalArray[toInternalIndex(this->currElements++)] = value;
+                //this->internalArray[toInternalIndex(this->currElements++)] = value;
+
+                // FIXME: This should be made to work right
+                this->internalArray[this->tail] = value;
+
+                // Move the tail forward, accounting for wraparound.
+                if(++this->tail >= this->capacity)
+                {
+                    this->tail = 0;
+                }
+
+                // Increment the number of current elements in the array
+                ++this->currElements;
 
                 return true;
             }
@@ -365,6 +376,17 @@ namespace pawlib
                 memShift(index, 1);
                 // Store the new value.
                 this->internalArray[toInternalIndex(index)] = value;
+
+                // Move the tail forward, accounting for wraparound.
+                /* We must not allow wraparound until we are PAST capacity
+                 * (two past last valid index), so the wraparound anticipates
+                 * resize.
+                 */
+                if(++this->tail >= this->capacity)
+                {
+                    this->tail = 0;
+                }
+
                 // Increment the number of current elements in the array.
                 ++this->currElements;
 
@@ -377,15 +399,10 @@ namespace pawlib
               */
             bool removeAtHead()
             {
-                /* Move the head position forward, so the previous head
-                 * value is now ignored.
-                 */
-                ++this->head;
-
-                // Account for wraparound.
-                if (this->head >= this->capacity)
+                // Move the head forward, accounting for wraparound.
+                if(++this->head >= this->capacity)
                 {
-                    this->head -= this->capacity;
+                    this->head = 0;
                 }
 
                 // Decrement the number of elements we're currently storing.
@@ -403,6 +420,14 @@ namespace pawlib
                 /* Move the tail position back, so the previous last value
                  * is now ignored.
                  */
+
+                // Move the tail back, accounting for wraparound.
+                if(this->tail-- == 0)
+                {
+                    this->tail = this->capacity - 1;
+                }
+
+                // Decrement the number of elements we're currently storing.
                 --this->currElements;
 
                 return true;
@@ -416,8 +441,10 @@ namespace pawlib
               */
             bool removeAtIndex(uint32_t index)
             {
-                // If we have more than one element remaining...
-                if(this->currElements > 1)
+                /* Decrement the number of elements we're storing.
+                 * If we have more than one element remaining...
+                 */
+                if(this->currElements-- > 1)
                 {
                     /* Shift all the elements after the index left one position,
                     * overwriting the element we're removing.
@@ -428,8 +455,11 @@ namespace pawlib
                  * memShift. Just ignore the element's existence.
                  */
 
-                // Decrement the number of elements we're storing.
-                --this->currElements;
+                // Move the tail back, accounting for wraparound.
+                if(this->tail-- == 0)
+                {
+                    this->tail = this->capacity - 1;
+                }
 
                 return true;
             }
@@ -446,6 +476,8 @@ namespace pawlib
                     return false;
                 }
 
+                uint32_t oldCapacity = this->capacity;
+
                 //check to see if maximum size is being approached
                 if(capacity >= UINT32_MAX/2)
                 {
@@ -457,7 +489,7 @@ namespace pawlib
                 else
                 {
                     // Double the maximum size (capacity).
-                    capacity *= 2;
+                    capacity = floor(capacity*1.5);
                 }
                 /* Create the new structure with the new capacity.*/
                 type* tempArray = new type[capacity];
@@ -485,19 +517,16 @@ namespace pawlib
                      * To do this, we'll move everything in two parts:
                      * (1) head to end of space, and (2) 0 to head-1.
                      */
-                    uint32_t step1 = this->capacity - this->head;
+                    uint32_t step1 = oldCapacity - this->head;
                     uint32_t step2 = this->head;
-                    memmove(
-                        tempArray,
-                        this->internalArray,
-                        sizeof(type) * step1
-                    );
-                    /* NOTE: Would the code be faster if this move was in
-                     * an "if step2 == 0" conditional?
-                     */
-                    memmove(
+                    memcpy(
                         tempArray,
                         this->internalArray + step2,
+                        sizeof(type) * step1
+                    );
+                    memcpy(
+                        tempArray + step1,
+                        this->internalArray,
                         sizeof(type) * step2
                     );
 
@@ -509,8 +538,9 @@ namespace pawlib
                 // Store the new structure.
                 this->internalArray = tempArray;
 
-                // Reset the head.
+                // Reset the head and tail
                 this->head = 0;
+                this->tail = this->currElements;
 
                 // Report success.
                 return true;
