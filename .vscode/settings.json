@@ -112,8 +112,10 @@
         "addop",
         "cpuid",
         "itos",
+        "nisstyre",
         "ochr",
         "ostr",
+        "pydsigner",
         "rdtsc",
     ],
 

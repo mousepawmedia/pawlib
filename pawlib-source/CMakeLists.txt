@@ -55,6 +55,7 @@ endif()
 
 # Our global compiler flags.
 add_definitions(-Wall -Wextra -Werror)
+add_definitions(-pedantic)
 
 if(COMPILERTYPE STREQUAL "gcc")
     # Set debug flags. -g is a default.
@@ -88,7 +89,6 @@ include_directories(${CPGF_DIR}/include)
 add_library(${TARGET_NAME} STATIC
     include/pawlib/avl_tree.hpp
     include/pawlib/base_flex_array.hpp
-    include/pawlib/binconv.hpp
     include/pawlib/core_types.hpp
     include/pawlib/core_types_tests.hpp
     include/pawlib/flex_array.hpp
@@ -116,7 +116,6 @@ add_library(${TARGET_NAME} STATIC
     include/pawlib/singly_linked_list.hpp
     include/pawlib/stdutils.hpp
 
-    src/binconv.cpp
     src/core_types.cpp
     src/core_types_tests.cpp
     src/flex_array_tests.cpp

@@ -339,13 +339,13 @@ namespace pawlib
                 // Check capacity and attempt a resize if necessary.
                 if(!checkSize(yell)) { return false; }
 
+                // NOTE: Old method
                 /* We can just insert one past the last stored element.
                  * We don't need to worry about the wraparound;
                  * toInternalIndex handles that for us.
                  */
-                //this->internalArray[toInternalIndex(this->currElements++)] = value;
+                ////this->internalArray[toInternalIndex(this->currElements++)] = value;
 
-                // FIXME: This should be made to work right
                 this->internalArray[this->tail] = value;
 
                 // Move the tail forward, accounting for wraparound.
