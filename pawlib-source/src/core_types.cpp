@@ -244,4 +244,4 @@ namespace pawlib
         output << (u ? 2 : b);
         return output;
     }
-};
+}

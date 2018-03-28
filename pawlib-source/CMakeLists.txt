@@ -54,8 +54,7 @@ else()
 endif()
 
 # Our global compiler flags.
-add_definitions(-Wall -Wextra -Werror)
-add_definitions(-pedantic)
+add_definitions(-Wall -Wextra -Werror -pedantic)
 
 if(COMPILERTYPE STREQUAL "gcc")
     # Set debug flags. -g is a default.
