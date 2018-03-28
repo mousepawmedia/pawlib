@@ -116,20 +116,20 @@ namespace pawlib
              *      template size as the current QuickString.
              * \param the QuickString<oneSize> to be copied
              * \return a new QuickString that is a deep copy of the other */
-            QuickString(const QuickString& ostr):OneStringBase(ostr, quickSize, QUICK_TYPE){};
+            QuickString(const QuickString& ostr):OneStringBase(ostr, quickSize, QUICK_TYPE){}
 
             /**Copy Constructor for all other QuickString sizes
              * \param the QuickString<N> to be copied (N != quickSize)
              * \return a new QuickString that is a deep copy of ostr */
             template <const int N>
-            QuickString(const QuickString<N>& ostr):OneStringBase(ostr, quickSize, QUICK_TYPE){};
+            QuickString(const QuickString<N>& ostr):OneStringBase(ostr, quickSize, QUICK_TYPE){}
 
             /**Copy Constructor for all OneString sizes
              * \param the OneString<N> to be copied (N is any of the specified sizes)
              * \return a new QuickString that is a deep copy of ostr */
             template <const int N>
             // cppcheck-suppress noExplicitConstructor
-            QuickString(const OneString<N>& ostr):OneStringBase(ostr, quickSize, QUICK_TYPE){};
+            QuickString(const OneString<N>& ostr):OneStringBase(ostr, quickSize, QUICK_TYPE){}
 
             /**Tests for equality with a const char*
              * \param a const char* to be tested for equality
@@ -215,7 +215,7 @@ namespace pawlib
             friend QuickString operator+(const QuickString& lhs, R rhs)
             {
                 QADDOP_FUNCT;
-            };
+            }
 
             /**Appends a QuickString to a char*
              * \param the left-hand char* to be added to
@@ -224,7 +224,7 @@ namespace pawlib
             friend QuickString operator+(const char* lhs,  QuickString rhs)
             {
                 QADDOP_FUNCT;
-            };
+            }
 
             /**Appends a QuickString to a char
              * \param the left-hand char to be added to
@@ -233,7 +233,7 @@ namespace pawlib
             friend QuickString operator+(char lhs,  QuickString rhs)
             {
                 QADDOP_FUNCT;
-            };
+            }
 
             /**Appends a QuickString to a std::string
              * \param the left-hand std::string to be added to
@@ -242,7 +242,7 @@ namespace pawlib
             friend QuickString operator+(std::string lhs,  QuickString rhs)
             {
                 QADDOP_FUNCT;
-            };
+            }
 
             /**Appends a QuickString to a OneChar
              * \param the left-hand OneChar to be added to
@@ -251,7 +251,7 @@ namespace pawlib
             friend QuickString operator+(OneChar* lhs, QuickString rhs)
             {
                 QADDOP_FUNCT;
-            };
+            }
 
 	};
 

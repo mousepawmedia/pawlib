@@ -305,5 +305,5 @@ namespace pawlib
             ~TestSuite_FlexQueue(){}
     };
 
-};
+}
 #endif // PAWLIB_FLEXQUEUE_TESTS_HPP_H

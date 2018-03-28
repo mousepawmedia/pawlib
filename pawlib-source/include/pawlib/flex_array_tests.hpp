@@ -301,12 +301,12 @@ is calculated as size()/2.";
 
             testdoc_t get_title()
             {
-                return "FlexArray: Insert " + stdutils::itos(iters, 10) + " Integers At Middle (flexarray)";
+                return "FlexArray: Insert " + stdutils::itos(iters, 10) + " Integers At Middle (FlexArray)";
             }
 
             testdoc_t get_docs()
             {
-                return "Insert " + stdutils::itos(iters, 10) + " integers at the middle of a flexarray. \
+                return "Insert " + stdutils::itos(iters, 10) + " integers at the middle of a FlexArray. \
 Middle is calculated as size()/2.";
             }
 
@@ -854,5 +854,5 @@ Middle is calculated as size()/2.";
 
             ~TestSuite_FlexArray(){}
     };
-};
+}
 #endif // PAWLIB_FLEXARRAY_TESTS_HPP

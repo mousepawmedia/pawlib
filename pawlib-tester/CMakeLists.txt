@@ -54,9 +54,11 @@ else()
 endif()
 
 # Our global compiler flags.
-add_definitions(-Wall -Wextra -Werror)
+add_definitions(-Wall -Wextra -Werror -pedantic)
 
 if(COMPILERTYPE STREQUAL "gcc")
+    # Suppress implicit fallthrough warnings
+    add_definitions(-Wimplicit-fallthrough=0)
     # Set debug flags. -g is a default.
     #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ")
     # Set release flags. -O3 is a default.

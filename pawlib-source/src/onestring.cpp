@@ -3,7 +3,7 @@
 namespace pawlib
 {
     template <const int oneSize>
-    OneString<oneSize>::OneString():OneStringBase(oneSize, ONE_TYPE){};
+    OneString<oneSize>::OneString():OneStringBase(oneSize, ONE_TYPE){}
 
     template <const int oneSize>
     OneString<oneSize>::OneString(const char* str):OneStringBase(oneSize, ONE_TYPE)
@@ -12,13 +12,13 @@ namespace pawlib
     }
 
     template <const int oneSize>
-    OneString<oneSize>::OneString(std::string str):OneString(str.c_str()){};
+    OneString<oneSize>::OneString(std::string str):OneString(str.c_str()){}
 
     template <const int oneSize>
-    OneString<oneSize>::OneString(char ch):OneStringBase(ch, oneSize, ONE_TYPE){};
+    OneString<oneSize>::OneString(char ch):OneStringBase(ch, oneSize, ONE_TYPE){}
 
     template <const int oneSize>
-    OneString<oneSize>::OneString(OneChar& ch):OneStringBase(ch, oneSize, ONE_TYPE){};
+    OneString<oneSize>::OneString(OneChar& ch):OneStringBase(ch, oneSize, ONE_TYPE){}
 
     template <const int oneSize>
     bool OneString<oneSize>::equals(const char* ostr) const
