@@ -127,9 +127,13 @@ namespace pawlib
                         return false;
                     }
                     // if the value pushed isn't found at the end...
+                    //if(flex[i] != i)
                     if(flex.peek() != i)
                     {
                         // Report failure.
+                        ioc << "Incorrect push." << io_endline
+                            << "    expected = " << i << io_endline
+                            << "         got = " << flex.peek() << io_end;
                         return false;
                     }
                 }
@@ -220,8 +224,8 @@ namespace pawlib
                     {
                         // Report failure
                         ioc << "Incorrect shift." << io_endline
-                            << "       i = " << i << io_endline
-                            << "    f[0] = " << flex[0] << io_end;
+                            << "    expected = " << i << io_endline
+                            << "         got = " << flex[0] << io_end;
                         return false;
                     }
                 }
@@ -331,6 +335,11 @@ Middle is calculated as size()/2.";
                     if(flex[at] != val || flex.peek() != 1)
                     {
                         // Report failure.
+                        ioc << "Incorrect insert." << io_endline
+                            << "      expected = " << val << io_endline
+                            << "           got = " << flex[at] << io_endline
+                            << " expected peek = 1" << io_endline
+                            << "      got peek = " << flex.peek() << io_end;
                         return false;
                     }
                 }

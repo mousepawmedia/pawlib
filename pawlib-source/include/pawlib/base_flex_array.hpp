@@ -65,7 +65,8 @@ namespace pawlib
             /** Create a new base flex array, with the default starting size.
               */
             Base_FlexArr()
-            :internalArray(nullptr), head(0), tail(0), resizable(true),
+            :internalArray(nullptr), internalArrayBound(nullptr),
+             head(nullptr), tail(nullptr), resizable(true),
              currElements(0), capacity(4)
             {
                 /* The call to resize() will sets the capacity to 8
@@ -81,7 +82,7 @@ namespace pawlib
               */
             // cppcheck-suppress noExplicitConstructor
             Base_FlexArr(uint32_t numElements)
-            :internalArray(nullptr), head(0), tail(0), resizable(true),
+            :internalArray(nullptr), head(nullptr), tail(nullptr), resizable(true),
              currElements(0)
             {
                 /* Set the size to be the power of 2 just below the entered
@@ -105,7 +106,7 @@ namespace pawlib
             /** Access an element at a given index using the [] operator.
               * For example, "internalArray[5]".
               */
-            type operator[](uint32_t index)
+            type& operator[](uint32_t index)
             {
                 return at(index);
             }
@@ -114,14 +115,14 @@ namespace pawlib
               * \param the index to access.
               * \return the element at the given index.
               */
-            type at(uint32_t index)
+            type& at(uint32_t index)
             {
                 if(!validateIndex(index, false))
                 {
                     throw std::out_of_range("BaseFlexArray: Index out of range!");
                 }
 
-                return rawAt(index);
+                return internalArray[toInternalIndex(index)];
             }
 
             /** Clear all the elements in the array.
@@ -130,6 +131,8 @@ namespace pawlib
             bool clear()
             {
                 this->currElements = 0;
+                this->head = this->internalArray;
+                this->tail = this->internalArray;
                 return true;
             }
 
@@ -209,14 +212,14 @@ namespace pawlib
             /// The pointer to the actual structure in memory.
             type* internalArray;
 
-            /// The first index, as this may drift.
-            uint32_t head;
+            /// The pointer to the end of the internal array.
+            type* internalArrayBound;
 
-            /* One past the last filled index. This can be calculated as
-             * toInternalIndex(this->currElements), but it is precalculated
-             * for efficiency.
-             */
-            uint32_t tail;
+            /// Pointer to the head element.
+            type* head;
+
+            // Pointer to one past the tail element.
+            type* tail;
 
             /// Whether the structure can be resize.
             bool resizable;
@@ -228,39 +231,14 @@ namespace pawlib
               * in the structure without resizing. (1-based) */
             uint32_t capacity;
 
-            /** Return the value at the given index.
-              * Does NOT validate the index.
+            /** Directly access a value in the internal array.
+              * Does not check for bounds.
+              * \param the internal index to access
+              * \return the element at index
               */
-            inline type rawAt(uint32_t index)
+            type& rawAt(uint32_t index)
             {
                 return internalArray[toInternalIndex(index)];
-            }
-
-            /** Check if the array is full and attempt a resize if necessary.
-              * \param whether to show an error message on failure, default false
-              * \return true if resize successful or no resize necessary
-              */
-            inline bool checkSize(bool yell = false)
-            {
-                // If we're full, attempt a resize.
-                if(this->currElements >= this->capacity)
-                {
-                    // If we weren't able to resize, report failure.
-                    if(!resize())
-                    {
-                        if(yell)
-                        {
-                            ioc << cat_error
-                            << "Data structure is full and cannot be resized."
-                            << io_end;
-                        }
-                        return false;
-                    }
-                }
-                /* If no resize was necessary, or if resize was successful,
-                 * report success.
-                 */
-                return true;
             }
 
             /** Validate the given index is in range
@@ -300,7 +278,22 @@ namespace pawlib
                  * Thanks to pydsigner and nisstyre in ##python-offtopic
                  * for suggesting the modulus.
                   */
-                return (index + this->head) % this->capacity;
+                return (this->head - this->internalArray + index) % this->capacity;
+            }
+
+            type& getFromHead()
+            {
+                return *(this->head);
+            }
+
+            type& getFromTail()
+            {
+                if(this->tail == this->internalArray)
+                {
+                    // We have to get the element at the end of the internalArray.
+                    return *(this->internalArray + (this->capacity - 1));
+                }
+                return *(this->tail - 1);
             }
 
             /** Efficiently insert a value at the head of the array.
@@ -314,13 +307,13 @@ namespace pawlib
                 if(!checkSize(yell)) { return false; }
 
                 // Move the head back, accounting for wraparound.
-                if(this->head-- == 0)
+                if(this->head-- <= this->internalArray)
                 {
-                    this->head = this->capacity - 1;
+                    this->head = this->internalArray + (this->capacity - 1);
                 }
 
                 // Insert our value at the new head position.
-                this->internalArray[this->head] = value;
+                *(this->head) = value;
 
                 // Increment the number of current elements in the array.
                 ++this->currElements;
@@ -339,19 +332,12 @@ namespace pawlib
                 // Check capacity and attempt a resize if necessary.
                 if(!checkSize(yell)) { return false; }
 
-                // NOTE: Old method
-                /* We can just insert one past the last stored element.
-                 * We don't need to worry about the wraparound;
-                 * toInternalIndex handles that for us.
-                 */
-                ////this->internalArray[toInternalIndex(this->currElements++)] = value;
-
-                this->internalArray[this->tail] = value;
+                *(this->tail) = value;
 
                 // Move the tail forward, accounting for wraparound.
-                if(++this->tail >= this->capacity)
+                if(++this->tail >= this->internalArrayBound)
                 {
-                    this->tail = 0;
+                    this->tail = this->internalArray;
                 }
 
                 // Increment the number of current elements in the array
@@ -378,13 +364,9 @@ namespace pawlib
                 this->internalArray[toInternalIndex(index)] = value;
 
                 // Move the tail forward, accounting for wraparound.
-                /* We must not allow wraparound until we are PAST capacity
-                 * (two past last valid index), so the wraparound anticipates
-                 * resize.
-                 */
-                if(++this->tail >= this->capacity)
+                if(++this->tail >= this->internalArrayBound)
                 {
-                    this->tail = 0;
+                    this->tail = this->internalArray;
                 }
 
                 // Increment the number of current elements in the array.
@@ -400,9 +382,9 @@ namespace pawlib
             bool removeAtHead()
             {
                 // Move the head forward, accounting for wraparound.
-                if(++this->head >= this->capacity)
+                if(++this->head - this->internalArray >= this->capacity)
                 {
-                    this->head = 0;
+                    this->head = this->internalArray;
                 }
 
                 // Decrement the number of elements we're currently storing.
@@ -422,9 +404,9 @@ namespace pawlib
                  */
 
                 // Move the tail back, accounting for wraparound.
-                if(this->tail-- == 0)
+                if(this->tail-- == this->internalArray)
                 {
-                    this->tail = this->capacity - 1;
+                    this->tail = this->internalArray + (this->capacity - 1);
                 }
 
                 // Decrement the number of elements we're currently storing.
@@ -456,11 +438,38 @@ namespace pawlib
                  */
 
                 // Move the tail back, accounting for wraparound.
-                if(this->tail-- == 0)
+                if(this->tail-- == this->internalArray)
                 {
-                    this->tail = this->capacity - 1;
+                    this->tail = this->internalArray + (this->capacity - 1);
                 }
 
+                return true;
+            }
+
+            /** Check if the array is full and attempt a resize if necessary.
+              * \param whether to show an error message on failure, default false
+              * \return true if resize successful or no resize necessary
+              */
+            inline bool checkSize(bool yell = false)
+            {
+                // If we're full, attempt a resize.
+                if(this->currElements >= this->capacity)
+                {
+                    // If we weren't able to resize, report failure.
+                    if(!resize())
+                    {
+                        if(yell)
+                        {
+                            ioc << cat_error
+                            << "Data structure is full and cannot be resized."
+                            << io_end;
+                        }
+                        return false;
+                    }
+                }
+                /* If no resize was necessary, or if resize was successful,
+                 * report success.
+                 */
                 return true;
             }
 
@@ -469,30 +478,27 @@ namespace pawlib
               */
             bool resize()
             {
-                // If we're not allowed to resize...
-                if(!resizable)
-                {
-                    // Report failure.
-                    return false;
-                }
+                // If we're not allowed to resize, report failure.
+                if(!resizable){ return false; }
 
                 uint32_t oldCapacity = this->capacity;
 
-                //check to see if maximum size is being approached
-                if(capacity >= UINT32_MAX/2)
+                // check to see if maximum size is being approached
+                if(this->capacity >= UINT32_MAX/2)
                 {
                     // set it to limit defined by UINT32_MAX
-                    capacity = UINT32_MAX;
+                    this->capacity = UINT32_MAX;
                     // set it so that array can no longer be doubled in size
                     resizable = false;
                 }
                 else
                 {
                     // Double the maximum size (capacity).
-                    capacity = floor(capacity*1.5);
+                    this->capacity = floor(this->capacity*1.5);
                 }
+
                 /* Create the new structure with the new capacity.*/
-                type* tempArray = new type[capacity];
+                type* tempArray = new type[this->capacity];
 
                 // If there was an error allocating the new array...
                 if(tempArray == nullptr)
@@ -504,24 +510,19 @@ namespace pawlib
                 // If an old array exists...
                 if(this->internalArray != nullptr)
                 {
-                    // Transfer all of the elements over.
-                    /*memmove(
-                        tempArray,
-                        this->internalArray,
-                        sizeof(type) * this->currElements
-                    );*/
-
-                    /* Since this is a circular buffer, we have to move things
+                    /* Transfer all of the elements over.
+                     * Since this is a circular buffer, we have to move things
                      * so it has room for expansion. The fastest way to do this
                      * is by storing the head element back at index 0.
                      * To do this, we'll move everything in two parts:
                      * (1) head to end of space, and (2) 0 to head-1.
                      */
-                    uint32_t step1 = oldCapacity - this->head;
-                    uint32_t step2 = this->head;
+                    uint32_t headIndex = this->head - this->internalArray;
+                    uint32_t step1 = oldCapacity - headIndex;
+                    uint32_t step2 = headIndex;
                     memcpy(
                         tempArray,
-                        this->internalArray + step2,
+                        this->head,
                         sizeof(type) * step1
                     );
                     memcpy(
@@ -531,16 +532,17 @@ namespace pawlib
                     );
 
                     // Delete the old structure.
-                    delete[] internalArray;
+                    delete[] this->internalArray;
                     this->internalArray = nullptr;
                 }
 
                 // Store the new structure.
                 this->internalArray = tempArray;
+                this->internalArrayBound = this->internalArray + this->capacity;
 
                 // Reset the head and tail
-                this->head = 0;
-                this->tail = this->currElements;
+                this->head = this->internalArray;
+                this->tail = this->internalArray + this->currElements;
 
                 // Report success.
                 return true;
@@ -570,7 +572,7 @@ namespace pawlib
                 fromIndex = toInternalIndex(fromIndex);
 
                 // If the head is at 0, we can move in one step.
-                if(this->head == 0)
+                if(this->head == this->internalArray)
                 {
                     memmove(
                         // Move TO the given index.
@@ -585,12 +587,13 @@ namespace pawlib
                 }
                 else if(direction > 0)
                 {
+                    uint32_t headIndex = this->head - this->internalArray;
                     // Shift in a POSITIVE direction
                     // Slide the section after the wraparound.
                     memmove(
                         this->internalArray + direction,
                         this->internalArray,
-                        sizeof(type) * (this->currElements - (this->capacity - this->head))
+                        sizeof(type) * (this->currElements - (this->capacity - headIndex))
                     );
                     // Move the section that wraps around.
                     memmove(
@@ -604,23 +607,18 @@ namespace pawlib
                         this->internalArray + fromIndex,
                         /* Move all the elements before the wraparound,
                          * except the ones we already moved.*/
-                        sizeof(type) * (this->capacity - this->head - abs(direction))
+                        sizeof(type) * (this->capacity - headIndex - abs(direction))
                     );
                 }
                 else if(direction < 0)
                 {
-                    /* NEGATIVE direction
-                     * PART 1: fromIndex..(capacity-1), shift by direction
-                     * PART 2: 0, move to (capacity-1)
-                     * PART 3: 1..tail, shift by direction
-                     */
-
+                    uint32_t headIndex = this->head - this->internalArray;
                     // Shift in a NEGATIVE direction
                     // Move the section before the wraparound.
                     memmove(
                         this->internalArray + fromIndex + direction,
                         this->internalArray + fromIndex,
-                        sizeof(type) * (this->capacity - this->head)
+                        sizeof(type) * (this->capacity - headIndex)
                     );
                     // Move the section that wraps around.
                     memmove(
@@ -634,7 +632,7 @@ namespace pawlib
                         this->internalArray + direction,
                         /* Move all the elements after the wraparound,
                          * except the ones we already moved. */
-                        sizeof(type) * (this->currElements - (this->capacity - this->head) - abs(direction))
+                        sizeof(type) * (this->currElements - (this->capacity - headIndex) - abs(direction))
                     );
                 }
             }

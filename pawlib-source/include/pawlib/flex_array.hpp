@@ -94,6 +94,42 @@ namespace pawlib
                 return this->insertAtIndex(newElement, index);
             }
 
+            type& peek_front()
+            {
+                // If the array is empty...
+                if(this->isEmpty())
+                {
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexArray: Cannot peek_front() from empty FlexArray.");
+                }
+                return this->getFromHead();
+            }
+
+            /** Returns the last element in the FlexArray without modifying
+              * the data structure.
+              * \return the last element in the FlexArray.
+              */
+            type peek()
+            {
+                // If the array is empty...
+                if(this->isEmpty())
+                {
+                    // Throw a fatal error.
+                    throw std::out_of_range("FlexArray: Cannot peek() from empty FlexArray.");
+                }
+                return this->getFromTail();
+            }
+
+            /** Returns the last element in FlexArray without modifying
+              * the data structure
+              * Just an alias for peek.
+              * \return the first element in the FlexArray.
+              */
+            type peek_back()
+            {
+                return peek();
+            }
+
             /** Remove and return the element at the given index.
               * \param the index to act on.
               * \return the element from the given index.
@@ -141,31 +177,6 @@ namespace pawlib
                  * Use that function's error messages.
                  */
                 return this->insertAtHead(newElement, true);
-            }
-
-            /** Returns the last element in the FlexArray without modifying
-              * the data structure.
-              * \return the last element in the FlexArray.
-              */
-            type peek()
-            {
-                // If the array is empty...
-                if(this->isEmpty())
-                {
-                    // Throw a fatal error.
-                    throw std::out_of_range("FlexArray: Cannot peek() from empty FlexArray.");
-                }
-                return this->rawAt(this->currElements - 1);
-            }
-
-            /** Returns the last element in FlexArray without modifying
-              * the data structure
-              * Just an alias for peek.
-              * \return the first element in the FlexArray.
-              */
-            type peek_back()
-            {
-                return peek();
             }
 
             /** Returns and removes the first element in the FlexArray.

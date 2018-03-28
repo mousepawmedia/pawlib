@@ -6,6 +6,27 @@ namespace pawlib
     iochannel ioc;
 
     iochannel::iochannel()
+    : msg(""),
+      process_c(cat_all),
+      process_v(vrb_tmi),
+      echomode(echo_printf),
+      echovrb(vrb_tmi),
+      echocat(cat_all),
+      base(base_10),
+      boolstyle(bool_lower),
+      charval(char_char),
+      significands(14),
+      sci(sci_auto),
+      numcase(num_upper),
+      ptr(ptr_value),
+      readsize(1),
+      memformat(0),
+      ta(ta_none),
+      bg(bg_none),
+      fg(fg_none),
+      vrb(vrb_normal),
+      cat(cat_normal),
+      parse(maybe)
     {
         ta = ta_none;
         fg = fg_none;
