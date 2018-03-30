@@ -100,7 +100,7 @@ namespace pawlib
                     throw std::out_of_range("FlexStack: Cannot peek() from empty FlexStack.");
                 }
 
-                return this->rawAt(this->currElements-1);
+                return this->getFromTail();
             }
 
             /** Return and remove the next element in the FlexStack.
@@ -124,7 +124,7 @@ namespace pawlib
                     throw std::out_of_range("FlexStack: Cannot pop() from empty FlexStack.");
                 }
                 // Get the current element at the tail.
-                type temp = this->rawAt(this->currElements - 1);
+                type temp = this->getFromTail();
                 // Remove the tail element.
                 this->removeAtTail();
                 // Return the element we stored.

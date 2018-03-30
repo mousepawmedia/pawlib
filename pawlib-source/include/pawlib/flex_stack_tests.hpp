@@ -56,9 +56,6 @@ namespace pawlib
     class TestSStack_Push : public Test
     {
         private:
-            //may move declaration to public
-            std::stack<unsigned int> stk;
-
             unsigned int iters;
 
         public:
@@ -81,6 +78,8 @@ namespace pawlib
             //Run the test
             bool run()
             {
+                std::stack<unsigned int, std::vector<unsigned int>> stk;
+
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     stk.push(i);
@@ -191,7 +190,7 @@ namespace pawlib
     class TestSStack_Pop : public Test
     {
         private:
-            std::stack<unsigned int> stk;
+            std::stack<unsigned int, std::vector<unsigned int>> stk;
             unsigned int iters;
         public:
             explicit TestSStack_Pop(unsigned int iterations)

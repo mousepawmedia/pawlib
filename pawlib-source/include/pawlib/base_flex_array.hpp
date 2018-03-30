@@ -67,31 +67,26 @@ namespace pawlib
             Base_FlexArr()
             :internalArray(nullptr), internalArrayBound(nullptr),
              head(nullptr), tail(nullptr), resizable(true),
-             currElements(0), capacity(4)
+             currElements(0), capacity(0)
             {
                 /* The call to resize() will sets the capacity to 8
                  * on initiation. */
 
-                // Allocate the structure.
-                resize();
+                // Allocate the structure with an initial size.
+                resize(8);
             }
 
             /** Create a new base flex array with room for the specified number
               * of elements.
-              * \param the minimum number of elements the structure can hold.
+              * \param the number of elements the structure can hold.
               */
             // cppcheck-suppress noExplicitConstructor
             Base_FlexArr(uint32_t numElements)
             :internalArray(nullptr), head(nullptr), tail(nullptr), resizable(true),
-             currElements(0)
+             currElements(0), capacity(0)
             {
-                /* Set the size to be the power of 2 just below the entered
-                 * number. resize() will initiate with enough
-                 * room in array. */
-                capacity = pow(2, floor(log2(numElements)));
-
-                // Allocate the structure.
-                resize();
+                // Allocate the structure with the requested size.
+                resize(numElements);
             }
 
             /** Destructor. */
@@ -208,7 +203,18 @@ namespace pawlib
                 return capacity;
             }
 
+            /** Reserves room for the exact number of elements.
+              * \param the number of elements to reserve
+              * \return true if successful, else false
+              */
+            bool reserve(uint32_t size)
+            {
+                return resize(size);
+            }
+
         protected:
+            const float RESIZE_FACTOR = 1.5;
+
             /// The pointer to the actual structure in memory.
             type* internalArray;
 
@@ -476,25 +482,35 @@ namespace pawlib
             /** Double the capacity of the structure.
               * \return true if it was able to double capacity, else false.
               */
-            bool resize()
+            bool resize(uint32_t reserve = 0)
             {
                 // If we're not allowed to resize, report failure.
                 if(!resizable){ return false; }
 
                 uint32_t oldCapacity = this->capacity;
 
-                // check to see if maximum size is being approached
-                if(this->capacity >= UINT32_MAX/2)
+                if(reserve == 0)
                 {
-                    // set it to limit defined by UINT32_MAX
-                    this->capacity = UINT32_MAX;
-                    // set it so that array can no longer be doubled in size
-                    resizable = false;
+                    // check to see if maximum size is being approached
+                    if(this->capacity >= UINT32_MAX/2)
+                    {
+                        // set it to limit defined by UINT32_MAX
+                        this->capacity = UINT32_MAX;
+                        // set it so that array can no longer be doubled in size
+                        resizable = false;
+                    }
+                    // Increase the capacity.
+                    this->capacity = this->capacity * RESIZE_FACTOR;
                 }
                 else
                 {
-                    // Double the maximum size (capacity).
-                    this->capacity = floor(this->capacity*1.5);
+                    // If the reservation would shrink the structure..
+                    if(reserve <= this->capacity)
+                    {
+                        // Report error.
+                        return false;
+                    }
+                    this->capacity = reserve;
                 }
 
                 /* Create the new structure with the new capacity.*/

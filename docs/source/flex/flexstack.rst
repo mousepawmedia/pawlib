@@ -11,20 +11,12 @@ algorithms, with the goal of creating a higher-performance data structure.
 Performance
 ------------------------------------
 
-Initial benchmark comparisons show that FlexStack is always at least as fast
-as ``std::stack``, and often faster. We believe the main reasons for this
-may be:
+FlexStack is slightly slower than ``std::stack``, but this is acceptable because
+of the inherent difference between Flex and ``std::deque``; while Flex
+guarantees storage in contiguous memory, ``std::deque`` does not. As a result,
+we instead must compare against ``std::vector``.
 
-(1) The underlying structure *doubles* in size every time an operation will
-    exceed the capacity of the FlexStack. While this greatly reduces the
-    frequency of dynamic allocations (and thus improves performance), it may
-    have negative impacts on memory usage for higher capacities. We will be
-    experimenting with other resizing algorithms in future versions.
-
-(2) The code base is structured to be less prone to instruction cache misses.
-
-We will be exploring further optimizations and algorithm improvements in future
-verisons.
+For the analogous data structure with non-contiguous memory, see ``SpeedQueue``.
 
 Comparison to ``std::stack``
 -------------------------------------
@@ -34,8 +26,7 @@ it is not intended to feature-identical. Some functionality hasn't been
 implemented yet, and we may not include some other features to leave room
 for future optimization and experimentation.
 
-* Internally, this is the same as FlexArray. It will be given stack-specific
-  optimizations later.
+* Internally, this is a contiguous-memory circular buffer.
 * FlexStack does not offer iterators. This *may* be added in the future.
 * You cannot change the underlying data structure. Our base class is where
   most of the heavy lifting occurs.

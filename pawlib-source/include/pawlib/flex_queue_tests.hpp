@@ -60,23 +60,25 @@ namespace pawlib
 
             testdoc_t get_title()
             {
-                return "FlexQueue: Push " + stdutils::itos(iters, 10) + " Integers (std::queue)";
+                return "FlexQueue: Push " + stdutils::itos(iters, 10) + " Integers (std::vector)";
             }
 
             testdoc_t get_docs()
             {
-                return "Push " + stdutils::itos(iters, 10) + " integers to a std::queue.";
+                return "Push " + stdutils::itos(iters, 10) + " integers to a std::vector.";
             }
 
             bool run()
             {
                 // Create instance of queue.
-                std::queue<unsigned int> sq;
+                // Technically we must use vector as a queue!
+                ////std::queue<unsigned int> sq;
+                std::vector<unsigned int> sq;
 
                 // Push each required element to the queue.
                 for(unsigned int i=0; i<iters; ++i)
                 {
-                    sq.push(i);
+                    sq.push_back(i);
                     if(sq.back() != i)
                     {
                         return false;
@@ -183,7 +185,10 @@ namespace pawlib
     class TestSQueue_Pop : public Test
     {
         private:
-            std::queue<unsigned int> sq;
+            /* We must compare against a std::vector, as std::queue doesn't
+             * use contiguous memory, and cannot be based on std::vector.
+             */
+            std::vector<unsigned int> sq;
             unsigned int iters;
 
         public:
@@ -193,12 +198,12 @@ namespace pawlib
 
             testdoc_t get_title()
             {
-                return "FlexQueue: Pop " + stdutils::itos(iters, 10) + " Integers (std::queue)";
+                return "FlexQueue: Pop " + stdutils::itos(iters, 10) + " Integers (std::vector)";
             }
 
             testdoc_t get_docs()
             {
-                return "Pop " + stdutils::itos(iters, 10) + " integers from a std::queue.";
+                return "Pop " + stdutils::itos(iters, 10) + " integers from a std::vector.";
             }
 
             bool pre()
@@ -211,7 +216,7 @@ namespace pawlib
                 // Refill the std::queue
                 for(unsigned int i=0; i<iters; ++i)
                 {
-                    sq.push(i);
+                    sq.push_back(i);
                 }
                 return true;
             }
@@ -228,7 +233,7 @@ namespace pawlib
                         return false;
                     }
 
-                    sq.pop();
+                    sq.erase(sq.begin());
                 }
                 return true;
             }

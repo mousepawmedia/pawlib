@@ -112,7 +112,7 @@ namespace pawlib
                     throw std::out_of_range("FlexQueue: Cannot peek() from empty FlexQueue.");
                 }
 
-                return this->rawAt(0);
+                return this->getFromHead();
             }
 
             /**Return and remove the next element in the FlexStack.
@@ -146,12 +146,11 @@ namespace pawlib
                 }
 
                 // Store the front element.
-                type temp = this->rawAt(0);
+                type temp = this->getFromHead();
                 // Remove the front element.
                 this->removeAtHead();
                 // Return the stored element.
                 return temp;
-
             }
     };
 }
