@@ -312,11 +312,7 @@ namespace pawlib
                 // Check capacity and attempt a resize if necessary.
                 if(!checkSize(yell)) { return false; }
 
-                // Move the head back, accounting for wraparound.
-                if(this->head-- <= this->internalArray)
-                {
-                    this->head = this->internalArray + (this->capacity - 1);
-                }
+                shiftHeadBack();
 
                 // Insert our value at the new head position.
                 *(this->head) = value;
@@ -340,11 +336,7 @@ namespace pawlib
 
                 *(this->tail) = value;
 
-                // Move the tail forward, accounting for wraparound.
-                if(++this->tail >= this->internalArrayBound)
-                {
-                    this->tail = this->internalArray;
-                }
+                shiftTailForward();
 
                 // Increment the number of current elements in the array
                 ++this->currElements;
@@ -364,19 +356,39 @@ namespace pawlib
                 // Check capacity and attempt a resize if necessary.
                 if(!checkSize(yell)) { return false; }
 
+                ioc << "=== BEFORE ===" << io_end;
+                ioc << "Start: " << ptr_address << this->internalArray << io_end;
+                ioc << " Head: " << ptr_address << this->head << io_end;
+                ioc << " Tail: " << ptr_address << this->tail << io_end;
+                ioc << "Bound: " << ptr_address << this->internalArrayBound << io_end;
+                for (uint32_t i = 0; i < this->capacity; ++i)
+                {
+                    ioc << "  [" << i << "]: " << ptr_memory << mem_allsep << read_size(sizeof(type)) << this->internalArray + i << io_send;
+                    ioc << " (" << this->internalArray[i] << ")" << io_end;
+                }
+                ioc << "Shifting from " << index << io_end;
+                ioc << io_endline << io_end;
+
                 // Shift the values to make room.
                 memShift(index, 1);
                 // Store the new value.
                 this->internalArray[toInternalIndex(index)] = value;
 
-                // Move the tail forward, accounting for wraparound.
-                if(++this->tail >= this->internalArrayBound)
-                {
-                    this->tail = this->internalArray;
-                }
+                // Leave the head/tail shifting to memShift!
 
                 // Increment the number of current elements in the array.
                 ++this->currElements;
+
+                ioc << "=== AFTER ===" << io_end;
+                ioc << "Start: " << ptr_address << this->internalArray << io_end;
+                ioc << " Head: " << ptr_address << this->head << io_end;
+                ioc << " Tail: " << ptr_address << this->tail << io_end;
+                ioc << "Bound: " << ptr_address << this->internalArrayBound << io_end;
+                for (uint32_t i = 0; i < this->capacity; ++i)
+                {
+                    ioc << "  [" << i << "]: " << ptr_memory << mem_allsep << read_size(sizeof(type)) << this->internalArray + i << io_send;
+                    ioc << " (" << this->internalArray[i] << ")" << io_end;
+                }
 
                 return true;
             }
@@ -387,11 +399,7 @@ namespace pawlib
               */
             bool removeAtHead()
             {
-                // Move the head forward, accounting for wraparound.
-                if(++this->head - this->internalArray >= this->capacity)
-                {
-                    this->head = this->internalArray;
-                }
+                shiftHeadForward();
 
                 // Decrement the number of elements we're currently storing.
                 --this->currElements;
@@ -409,11 +417,7 @@ namespace pawlib
                  * is now ignored.
                  */
 
-                // Move the tail back, accounting for wraparound.
-                if(this->tail-- == this->internalArray)
-                {
-                    this->tail = this->internalArray + (this->capacity - 1);
-                }
+                shiftTailBack();
 
                 // Decrement the number of elements we're currently storing.
                 --this->currElements;
@@ -439,14 +443,12 @@ namespace pawlib
                     */
                     memShift(index, -1);
                 }
-                /* If we have only one element remaining, we should not
-                 * memShift. Just ignore the element's existence.
-                 */
-
-                // Move the tail back, accounting for wraparound.
-                if(this->tail-- == this->internalArray)
+                else
                 {
-                    this->tail = this->internalArray + (this->capacity - 1);
+                    /* If we have only one element remaining, we should not
+                     * memShift. Just ignore the element's existence.
+                     */
+                    shiftTailBack();
                 }
 
                 return true;
@@ -484,6 +486,8 @@ namespace pawlib
               */
             bool resize(uint32_t reserve = 0)
             {
+                ioc << "Resizing..." << io_end;
+
                 // If we're not allowed to resize, report failure.
                 if(!resizable){ return false; }
 
@@ -584,6 +588,44 @@ namespace pawlib
                 // If the array is already empty, there's nothing to move.
                 if(isEmpty()){ return; }
 
+                // If we haven't yet had wraparound, move the tail section.
+                if(this->tail > this->head && this->tail + 1 < this->internalArrayBound)
+                {
+                    memmove(
+                        // Move TO the given index.
+                        this->head + (fromIndex + direction),
+                        // Move FROM the given index.
+                        this->head + fromIndex,
+                        // Total move size is the number of elements to be moved,
+                        // times element size. The number of elements we move
+                        // is calculated from the 1-based total number of elements.
+                        sizeof(type) * ((this->currElements) - (fromIndex))
+                    );
+
+                    shiftTail(direction);
+                }
+                // Else If we've already had wraparound, move the head section.
+                else if(this->tail < this->head)
+                {
+                    memmove(
+                        // Move TO the given index.
+                        this->head + direction,
+                        // Move FROM the given index.
+                        this->head,
+                        // NOTE: Would this have an edge-case of fromIndex 0?
+                        sizeof(type) * fromIndex
+                    );
+
+                    shiftHead(-direction);
+                }
+                else
+                {
+                    // FIXME: Why am I reaching this on P-tB1003
+                    ioc << "weird edge case" << io_end;
+                }
+
+                // OLD METHOD
+                /*
                 // Switch fromIndex to internal indexing
                 fromIndex = toInternalIndex(fromIndex);
 
@@ -621,8 +663,8 @@ namespace pawlib
                     memmove(
                         this->internalArray + fromIndex + direction,
                         this->internalArray + fromIndex,
-                        /* Move all the elements before the wraparound,
-                         * except the ones we already moved.*/
+                        // Move all the elements before the wraparound,
+                        // except the ones we already moved.
                         sizeof(type) * (this->capacity - headIndex - abs(direction))
                     );
                 }
@@ -646,10 +688,84 @@ namespace pawlib
                     memmove(
                         this->internalArray,
                         this->internalArray + direction,
-                        /* Move all the elements after the wraparound,
-                         * except the ones we already moved. */
+                        // Move all the elements after the wraparound,
+                        // except the ones we already moved.
                         sizeof(type) * (this->currElements - (this->capacity - headIndex) - abs(direction))
                     );
+                }*/
+            }
+
+            inline void shiftHead(int32_t direction)
+            {
+                uint32_t magnitude = abs(direction);
+                if(direction > 0)
+                {
+                    for(uint32_t i = 0; i < magnitude; ++i)
+                    {
+                        shiftHeadForward();
+                    }
+                }
+                else
+                {
+                    for(uint32_t i = 0; i < magnitude; ++i)
+                    {
+                        shiftHeadBack();
+                    }
+                }
+            }
+
+            inline void shiftHeadBack()
+            {
+                // Move the head back, accounting for wraparound.
+                if(this->head-- <= this->internalArray)
+                {
+                    this->head = this->internalArray + (this->capacity - 1);
+                }
+            }
+
+            inline void shiftHeadForward()
+            {
+                // Move the head forward, accounting for wraparound.
+                if(++this->head - this->internalArray >= this->capacity)
+                {
+                    this->head = this->internalArray;
+                }
+            }
+
+            inline void shiftTail(int32_t direction)
+            {
+                uint32_t magnitude = abs(direction);
+                if(direction > 0)
+                {
+                    for(uint32_t i = 0; i < magnitude; ++i)
+                    {
+                        shiftTailForward();
+                    }
+                }
+                else
+                {
+                    for(uint32_t i = 0; i < magnitude; ++i)
+                    {
+                        shiftTailBack();
+                    }
+                }
+            }
+
+            inline void shiftTailBack()
+            {
+                // Move the tail back, accounting for wraparound.
+                if(this->tail-- == this->internalArray)
+                {
+                    this->tail = this->internalArray + (this->capacity - 1);
+                }
+            }
+
+            inline void shiftTailForward()
+            {
+                // Move the tail forward, accounting for wraparound.
+                if(++this->tail >= this->internalArrayBound)
+                {
+                    this->tail = this->internalArray;
                 }
             }
     };

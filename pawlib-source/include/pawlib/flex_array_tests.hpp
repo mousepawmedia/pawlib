@@ -224,8 +224,10 @@ namespace pawlib
                     {
                         // Report failure
                         ioc << "Incorrect shift." << io_endline
-                            << "    expected = " << i << io_endline
-                            << "         got = " << flex[0] << io_end;
+                            << "      expected = " << i << io_endline
+                            << "           got = " << flex[0] << io_endline
+                            << " f[1] expected = " << i-1 << io_endline
+                            << "      f[1] got = " << flex[1] << io_end;
                         return false;
                     }
                 }
