@@ -118,7 +118,7 @@ namespace pawlib
                           : "=r" (high), "=r" (low)
                           :: "%eax", "%edx");
             cyc1 = ((uint64_t)high << 32) | low;
-            if(test!=NULL) test->run();
+            if(test!=NULL) test->run_optimized();
             asm volatile (/*"cpuid;"*/
                           "rdtsc;"
                           "mov %%edx, %0;"
@@ -642,8 +642,10 @@ namespace pawlib
             ioc << cat_normal << "Pass " << stdutils::itos(i+1)
                 << " of " << stdutils::itos(repeat) << io_end;
 
+            tests[test]->janitor();
+
             // Run the test. If it fails (returned false)...
-            if(!(tests[test]->run()))
+            if(!(tests[test]->run()) || !(tests[test]->verify()))
             {
                 status = false;
                 break;
@@ -786,8 +788,10 @@ namespace pawlib
         // Let the user know what we're doing...
         ioc << "Ensuring [" << test1->get_title() << "] succeeds before benchmarking..." << io_end;
 
+        test1->janitor();
+
         // Run test1 to make sure it works. If it fails...
-        if(!(test1->run()))
+        if(!(test1->run()) || !(test1->verify()))
         {
             // Alert the user with an error message.
             ioc << cat_error << ta_bold << bg_red << fg_white
@@ -815,8 +819,10 @@ namespace pawlib
         // Give the user a status update.
         ioc << "Ensuring [" << test2->get_title() << "] succeeds before benchmarking..." << io_end;
 
+        test2->janitor();
+
         // Run test2 to make sure it works. If it fails...
-        if(!(test2->run()))
+        if(!(test2->run()) || !(test2->verify()))
         {
             // Alert the user with an error message.
             ioc << cat_error << ta_bold << bg_red << fg_white
@@ -920,6 +926,8 @@ namespace pawlib
             test1->janitor();
             // Record test 1 measurement, offset by baseline.
             results1[i] = clock(test1) - base;
+            // Run verification on test1.
+            test1->verify();
 
             // Display progress (overwrite line.)
             ioc << cat_normal << "(MAMA BEAR) Pass " << (i+1) << "-B of " << repeat << ".  " << io_show;
@@ -927,6 +935,8 @@ namespace pawlib
             test2->janitor();
             // Record test 2 measurement, offset by baseline.
             results2[i] = clock(test2) - base;
+            // Run verification on test2.
+            test2->verify();
         }
 
         // Move to a new line for output.
@@ -953,6 +963,8 @@ namespace pawlib
             test1->janitor();
             // Record test 1 measurement, offset by baseline.
             results1[i] = clock(test1) - base;
+            // Run verification on test1.
+            test1->verify();
         }
 
         // Take <repeat> measurements of test B.
@@ -964,6 +976,8 @@ namespace pawlib
             test2->janitor();
             // Record test 2 measurement, offset by baseline.
             results2[i] = clock(test2) - base;
+            // Run verification on test2.
+            test2->verify();
         }
 
         // Move to a new line for output.
@@ -1007,6 +1021,8 @@ namespace pawlib
                 test1->janitor();
                 // Record test 1 measurement, offset by baseline.
                 results1[i1] = clock(test1) - base;
+                // Run verification on test1.
+                test1->verify();
             }
 
             // Run test 2 eight consecutive times for this set...
@@ -1018,6 +1034,8 @@ namespace pawlib
                 test2->janitor();
                 // Record test 2 measurement, offset by baseline.
                 results2[i2] = clock(test2) - base;
+                // Run verification on test2.
+                test2->verify();
             }
         }
 
@@ -1030,6 +1048,8 @@ namespace pawlib
             test1->janitor();
             // Record test 1 measurement, offset by baseline.
             results1[r1] = clock(test1) - base;
+            // Run verification on test1.
+            test1->verify();
         }
 
         // Run test 2 the remaining number of times consecutively...
@@ -1041,6 +1061,8 @@ namespace pawlib
             test2->janitor();
             // Record test 2 measurement, offset by baseline.
             results2[r2] = clock(test2) - base;
+            // Run verification on test2.
+            test2->verify();
         }
 
         // Move to a new line for output.

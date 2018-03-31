@@ -87,6 +87,21 @@ namespace pawlib
                 return true;
             }
 
+            bool run_optimized()
+            {
+                // Create instance of queue.
+                // Technically we must use vector as a queue!
+                ////std::queue<unsigned int> sq;
+                std::vector<unsigned int> sq;
+
+                // Push each required element to the queue.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    sq.push_back(i);
+                }
+                return true;
+            }
+
             ~TestSQueue_Push(){}
     };
 
@@ -131,6 +146,19 @@ namespace pawlib
                     {
                         // Report failure.
                     }
+                }
+                return true;
+            }
+
+            bool run_optimized()
+            {
+                // Create an instance of FlexQueue.
+                pawlib::FlexQueue<unsigned int> fq;
+
+                // Push each required element.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    fq.push(i);
                 }
                 return true;
             }
@@ -225,18 +253,20 @@ namespace pawlib
             {
                 for(unsigned int i=0; i<iters; ++i)
                 {
-                    unsigned int temp = sq.front();
-
-                    // Can't happen, so if it does, things went weird.
-                    if(sq.front() != temp)
-                    {
-                        return false;
-                    }
-
                     sq.erase(sq.begin());
                 }
                 return true;
             }
+
+            bool run_optimized()
+            {
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    sq.erase(sq.begin());
+                }
+                return true;
+            }
+
             ~TestSQueue_Pop(){}
     };
 
@@ -288,6 +318,16 @@ namespace pawlib
                         // Report failure.
                         return false;
                     }
+                }
+                return true;
+            }
+
+            bool run_optimized()
+            {
+                // Pop each element.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    fq.pop();
                 }
                 return true;
             }

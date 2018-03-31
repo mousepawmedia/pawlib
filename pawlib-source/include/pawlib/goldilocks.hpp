@@ -134,8 +134,18 @@ namespace pawlib
         virtual bool janitor() { return true; }
 
         /**Run test.
-         * \return true if successful, false if it fails.*/
+         * \return true if successful, false if it fails (error).*/
         virtual bool run() = 0;
+
+        /** Benchmark-optimized form of the test. May be needed if the
+          * validity testing will throw off the benchmark.
+          * \return true if successful, false if it fails (error). */
+        virtual bool run_optimized() { return run(); }
+
+        /** Verify test success.
+          * \return true if successful, false if the test fails.
+          */
+        virtual bool verify() { return true; }
 
         /**Clean up after successful test.
          * \return true if successful, false if it fails.*/

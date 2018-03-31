@@ -90,6 +90,18 @@ namespace pawlib
                 }
                 return true;
             }
+
+            bool run_optimized()
+            {
+                std::stack<unsigned int, std::vector<unsigned int>> stk;
+
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    stk.push(i);
+                }
+                return true;
+            }
+
             ~TestSStack_Push(){}
     };
 
@@ -135,6 +147,20 @@ namespace pawlib
                     {
                         // Report failure.
                     }
+                }
+                // Report success.
+                return true;
+            }
+
+            bool run_optimized()
+            {
+                // Create instance of FlexStack.
+                pawlib::FlexStack<unsigned int> fstk;
+
+                // Insert each required element via a push.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    fstk.push(i);
                 }
                 // Report success.
                 return true;
@@ -239,6 +265,14 @@ namespace pawlib
                 }
                 return true;
             }
+            bool run_optimized()
+            {
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    stk.pop();
+                }
+                return true;
+            }
 
             ~TestSStack_Pop(){}
     };
@@ -290,6 +324,15 @@ namespace pawlib
                         // Report failure.
                         return false;
                     }
+                }
+                return true;
+            }
+            bool run_optimized()
+            {
+                // Pop each element.
+                for(unsigned int i=(iters-1); i; --i)
+                {
+                    fstk.pop();
                 }
                 return true;
             }
