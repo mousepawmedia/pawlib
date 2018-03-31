@@ -211,7 +211,6 @@ namespace pawlib
             {
                 return resize(size);
             }
-
         protected:
             const float RESIZE_FACTOR = 1.5;
 
@@ -356,19 +355,6 @@ namespace pawlib
                 // Check capacity and attempt a resize if necessary.
                 if(!checkSize(yell)) { return false; }
 
-                ioc << "=== BEFORE ===" << io_end;
-                ioc << "Start: " << ptr_address << this->internalArray << io_end;
-                ioc << " Head: " << ptr_address << this->head << io_end;
-                ioc << " Tail: " << ptr_address << this->tail << io_end;
-                ioc << "Bound: " << ptr_address << this->internalArrayBound << io_end;
-                for (uint32_t i = 0; i < this->capacity; ++i)
-                {
-                    ioc << "  [" << i << "]: " << ptr_memory << mem_allsep << read_size(sizeof(type)) << this->internalArray + i << io_send;
-                    ioc << " (" << this->internalArray[i] << ")" << io_end;
-                }
-                ioc << "Shifting from " << index << io_end;
-                ioc << io_endline << io_end;
-
                 // Shift the values to make room.
                 memShift(index, 1);
                 // Store the new value.
@@ -378,17 +364,6 @@ namespace pawlib
 
                 // Increment the number of current elements in the array.
                 ++this->currElements;
-
-                ioc << "=== AFTER ===" << io_end;
-                ioc << "Start: " << ptr_address << this->internalArray << io_end;
-                ioc << " Head: " << ptr_address << this->head << io_end;
-                ioc << " Tail: " << ptr_address << this->tail << io_end;
-                ioc << "Bound: " << ptr_address << this->internalArrayBound << io_end;
-                for (uint32_t i = 0; i < this->capacity; ++i)
-                {
-                    ioc << "  [" << i << "]: " << ptr_memory << mem_allsep << read_size(sizeof(type)) << this->internalArray + i << io_send;
-                    ioc << " (" << this->internalArray[i] << ")" << io_end;
-                }
 
                 return true;
             }
@@ -486,8 +461,6 @@ namespace pawlib
               */
             bool resize(uint32_t reserve = 0)
             {
-                ioc << "Resizing..." << io_end;
-
                 // If we're not allowed to resize, report failure.
                 if(!resizable){ return false; }
 
@@ -577,10 +550,10 @@ namespace pawlib
             void memShift(uint32_t fromIndex, int8_t direction)
             {
                 /* Check if the index was valid given the number of elements
-                 * we're actually storing. (We have to offset fromIndex so
-                 * we do our math in 1-indexing).
+                 * we're actually storing. (We have to offset so we do our math
+                 * in 1-indexing).
                  */
-                if(fromIndex + 1 > this->currElements)
+                if(fromIndex >= this->currElements)
                 {
                     return;
                 }
@@ -589,17 +562,17 @@ namespace pawlib
                 if(isEmpty()){ return; }
 
                 // If we haven't yet had wraparound, move the tail section.
-                if(this->tail > this->head && this->tail + 1 < this->internalArrayBound)
+                if(this->tail > this->head && this->tail < this->internalArrayBound)
                 {
                     memmove(
                         // Move TO the given index.
-                        this->head + (fromIndex + direction),
+                        this->head + fromIndex + direction,
                         // Move FROM the given index.
                         this->head + fromIndex,
                         // Total move size is the number of elements to be moved,
                         // times element size. The number of elements we move
                         // is calculated from the 1-based total number of elements.
-                        sizeof(type) * ((this->currElements) - (fromIndex))
+                        sizeof(type) * (this->currElements - fromIndex)
                     );
 
                     shiftTail(direction);
@@ -607,12 +580,16 @@ namespace pawlib
                 // Else If we've already had wraparound, move the head section.
                 else if(this->tail < this->head)
                 {
+                    /* There is an ironic side-effect here that, if we are
+                     * inserting at 0, we'll only move the head, and not
+                     * actually shift anything! (Weird, but it works.)
+                     */
                     memmove(
                         // Move TO the given index.
-                        this->head + direction,
+                        // Must invert direction for this to work right.
+                        this->head - direction,
                         // Move FROM the given index.
                         this->head,
-                        // NOTE: Would this have an edge-case of fromIndex 0?
                         sizeof(type) * fromIndex
                     );
 
@@ -620,84 +597,14 @@ namespace pawlib
                 }
                 else
                 {
-                    // FIXME: Why am I reaching this on P-tB1003
+                    // NOTE: Test for this.
                     ioc << "weird edge case" << io_end;
                 }
-
-                // OLD METHOD
-                /*
-                // Switch fromIndex to internal indexing
-                fromIndex = toInternalIndex(fromIndex);
-
-                // If the head is at 0, we can move in one step.
-                if(this->head == this->internalArray)
-                {
-                    memmove(
-                        // Move TO the given index.
-                        this->internalArray + (fromIndex + direction),
-                        // Move FROM the given index.
-                        this->internalArray + fromIndex,
-                        // Total move size is the number of elements to be moved,
-                        // times element size. The number of elements we move
-                        // is calculated from the 1-based total number of elements.
-                        sizeof(type) * ((this->currElements) - (fromIndex))
-                    );
-                }
-                else if(direction > 0)
-                {
-                    uint32_t headIndex = this->head - this->internalArray;
-                    // Shift in a POSITIVE direction
-                    // Slide the section after the wraparound.
-                    memmove(
-                        this->internalArray + direction,
-                        this->internalArray,
-                        sizeof(type) * (this->currElements - (this->capacity - headIndex))
-                    );
-                    // Move the section that wraps around.
-                    memmove(
-                        this->internalArray,
-                        this->internalArray + this->capacity - direction,
-                        sizeof(type) * abs(direction)
-                    );
-                    // Move the section before the wraparound.
-                    memmove(
-                        this->internalArray + fromIndex + direction,
-                        this->internalArray + fromIndex,
-                        // Move all the elements before the wraparound,
-                        // except the ones we already moved.
-                        sizeof(type) * (this->capacity - headIndex - abs(direction))
-                    );
-                }
-                else if(direction < 0)
-                {
-                    uint32_t headIndex = this->head - this->internalArray;
-                    // Shift in a NEGATIVE direction
-                    // Move the section before the wraparound.
-                    memmove(
-                        this->internalArray + fromIndex + direction,
-                        this->internalArray + fromIndex,
-                        sizeof(type) * (this->capacity - headIndex)
-                    );
-                    // Move the section that wraps around.
-                    memmove(
-                        this->internalArray + this->capacity - direction,
-                        this->internalArray,
-                        sizeof(type) * abs(direction)
-                    );
-                    // Move the section after the wraparound.
-                    memmove(
-                        this->internalArray,
-                        this->internalArray + direction,
-                        // Move all the elements after the wraparound,
-                        // except the ones we already moved.
-                        sizeof(type) * (this->currElements - (this->capacity - headIndex) - abs(direction))
-                    );
-                }*/
             }
 
             inline void shiftHead(int32_t direction)
             {
-                uint32_t magnitude = abs(direction);
+                uint32_t magnitude = direction;
                 if(direction > 0)
                 {
                     for(uint32_t i = 0; i < magnitude; ++i)
@@ -734,7 +641,7 @@ namespace pawlib
 
             inline void shiftTail(int32_t direction)
             {
-                uint32_t magnitude = abs(direction);
+                uint32_t magnitude = direction;
                 if(direction > 0)
                 {
                     for(uint32_t i = 0; i < magnitude; ++i)
