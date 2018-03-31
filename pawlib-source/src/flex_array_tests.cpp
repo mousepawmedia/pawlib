@@ -34,7 +34,7 @@ namespace pawlib
         register_test("P-tB1007", new TestFArray_Erase(onethou), true, new TestVector_Erase(onethou));
         register_test("P-tS1007", new TestFArray_Erase(hunthou), false);
 
-        register_test("P-tB1008", new TestFArray_Peek());
+        register_test("P-tB1008", new TestFArray_Peek(), true, new TestVector_Peek());
     }
 
 }

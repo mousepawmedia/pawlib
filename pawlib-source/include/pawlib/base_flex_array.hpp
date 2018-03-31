@@ -58,7 +58,7 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template <typename type>
+    template <typename type, bool factor_double = true>
     class Base_FlexArr
     {
         public:
@@ -212,8 +212,6 @@ namespace pawlib
                 return resize(size);
             }
         protected:
-            const float RESIZE_FACTOR = 1.5;
-
             /// The pointer to the actual structure in memory.
             type* internalArray;
 
@@ -477,7 +475,17 @@ namespace pawlib
                         resizable = false;
                     }
                     // Increase the capacity.
-                    this->capacity = this->capacity * RESIZE_FACTOR;
+
+                    /* Which option we use depends on whether we want to
+                     * optimize for SPEED (2) or SPACE (1.5). */
+                    if(factor_double)
+                    {
+                        this->capacity = this->capacity * 2;
+                    }
+                    else
+                    {
+                        this->capacity += this->capacity / 2;
+                    }
                 }
                 else
                 {

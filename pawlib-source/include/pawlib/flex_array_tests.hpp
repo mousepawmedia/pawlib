@@ -961,15 +961,61 @@ Middle is calculated as size()/2.";
             ~TestVector_Erase(){}
     };
 
+    class TestVector_Peek : public Test
+    {
+        protected:
+            // Create instance of FlexArray.
+            std::vector<unsigned int> vec;
+
+            unsigned int expected = 42;
+            unsigned int other = 9;
+        public:
+            TestVector_Peek(){}
+
+            testdoc_t get_title()
+            {
+                return "FlexArray: Peek (std::vector)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Access the last element in the vector.";
+            }
+
+            bool pre()
+            {
+                /* We initially push three values, to make the
+                 * math calculating the insert index a bit safer.*/
+                vec.push_back(other);
+                vec.push_back(other);
+                vec.push_back(other);
+                vec.push_back(expected);
+                return true;
+            }
+
+            bool run()
+            {
+                (void)vec.back();
+                return true;
+            }
+    };
+
     // P-tB1008
     class TestFArray_Peek : public Test
     {
+        protected:
+            // Create instance of FlexArray.
+            pawlib::FlexArray<unsigned int> flex;
+
+            unsigned int expected = 42;
+            unsigned int other = 9;
+
         public:
             TestFArray_Peek(){}
 
             testdoc_t get_title()
             {
-                return "FlexArray: Peek (flexarray)";
+                return "FlexArray: Peek (FlexArray)";
             }
 
             testdoc_t get_docs()
@@ -977,21 +1023,19 @@ Middle is calculated as size()/2.";
                 return "Ensure the last element is being peeked correctly.";
             }
 
-            bool run()
+            bool pre()
             {
-                // Create instance of FlexArray.
-                pawlib::FlexArray<unsigned int> flex;
-
-                unsigned int expected = 42;
-                unsigned int other = 9;
-
                 /* We initially push three values, to make the
                  * math calculating the insert index a bit safer.*/
                 flex.push(other);
                 flex.push(other);
                 flex.push(other);
                 flex.push(expected);
+                return true;
+            }
 
+            bool run()
+            {
                 unsigned int peeked = flex.peek();
                 if(peeked == expected)
                 {
@@ -1002,7 +1046,12 @@ Middle is calculated as size()/2.";
                 {
                     return false;
                 }
+            }
 
+            bool run_optimized()
+            {
+                (void)flex.peek();
+                return true;
             }
 
             ~TestFArray_Peek(){}
