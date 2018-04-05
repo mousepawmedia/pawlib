@@ -120,14 +120,18 @@
     ],
 
     "cSpell.words": [
+        "cout",
         "cpgf",
         "deinitialized",
+        "deque",
         "golidlocks",
         "io",
+        "iochannel",
         "ioformat",
         "item",
         "mousepaw",
         "pawlib",
+        "rsds",
         "shutup",
         "significands",
         "speakup",
@@ -136,6 +140,7 @@
         "trilean",
         "trileans",
         "type",
+        "unshift",
         "vlas"
     ],
 }

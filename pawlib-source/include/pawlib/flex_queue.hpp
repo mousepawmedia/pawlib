@@ -1,9 +1,9 @@
 /** FlexQueue [PawLIB]
-  * Version: 1.0
+  * Version: 1.1
   *
   * A Flex-based queue with a low dynamic allocation demand.
   *
-  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
@@ -52,8 +52,8 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template <typename type>
-    class FlexQueue : public Base_FlexArr<type>
+    template <typename type, bool factor_double = true>
+    class FlexQueue : public Base_FlexArr<type, factor_double>
     {
         public:
             /** Create a new FlexQueue with the default capacity.

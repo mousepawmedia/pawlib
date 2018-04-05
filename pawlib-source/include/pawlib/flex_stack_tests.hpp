@@ -57,6 +57,7 @@ namespace pawlib
     {
         private:
             unsigned int iters;
+            std::stack<unsigned int, std::vector<unsigned int>> stk;
 
         public:
             //TestSStack_PushU with iterators
@@ -78,8 +79,6 @@ namespace pawlib
             //Run the test
             bool run()
             {
-                std::stack<unsigned int, std::vector<unsigned int>> stk;
-
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     stk.push(i);
@@ -93,8 +92,6 @@ namespace pawlib
 
             bool run_optimized()
             {
-                std::stack<unsigned int, std::vector<unsigned int>> stk;
-
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     stk.push(i);
@@ -110,7 +107,7 @@ namespace pawlib
     {
         private:
             unsigned int iters;
-
+            pawlib::FlexStack<unsigned int> fstk;
         public:
             explicit TestFStack_Push(unsigned int iterations)
                 :iters(iterations)
@@ -130,9 +127,6 @@ namespace pawlib
             // Run the test
             bool run()
             {
-                // Create instance of FlexStack.
-                pawlib::FlexStack<unsigned int> fstk;
-
                 // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -154,9 +148,6 @@ namespace pawlib
 
             bool run_optimized()
             {
-                // Create instance of FlexStack.
-                pawlib::FlexStack<unsigned int> fstk;
-
                 // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
                 {

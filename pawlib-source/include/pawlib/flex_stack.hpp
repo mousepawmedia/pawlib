@@ -1,9 +1,9 @@
 /** FlexStack [PawLIB]
-  * Version: 1.0
+  * Version: 1.1
   *
   * A Flex-based stack with a low dynamic allocation demand.
   *
-  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
@@ -54,8 +54,8 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template <class type>
-    class FlexStack : public Base_FlexArr<type>
+    template <typename type, bool factor_double = true>
+    class FlexStack : public Base_FlexArr<type, factor_double>
     {
         public:
             FlexStack() : Base_FlexArr<type>() { }

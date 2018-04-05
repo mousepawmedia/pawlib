@@ -1,10 +1,10 @@
 /** FlexArray [PawLIB]
-  * Version: 1.0
+  * Version: 1.1
   *
   * A dynamic array with a low dynamic allocation demand.
   * Designed to take the place of 'std::vector'.
   *
-  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
@@ -57,8 +57,8 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template <typename type>
-    class FlexArray : public Base_FlexArr<type>
+    template <typename type, bool factor_double = true>
+    class FlexArray : public Base_FlexArr<type, factor_double>
     {
         public:
             /** Create a new FlexArray with the default capacity.

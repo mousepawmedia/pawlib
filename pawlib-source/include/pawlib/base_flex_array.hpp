@@ -1,10 +1,10 @@
 /** Base FlexArray [PawLIB]
-  * Version: 1.0
+  * Version: 1.1
   *
   * The base class for a dynamic array with a low dynamic allocation demand.
   * FlexArray, FlexQueue, and FlexStack all rely on these.
   *
-  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
@@ -85,8 +85,17 @@ namespace pawlib
             :internalArray(nullptr), head(nullptr), tail(nullptr), resizable(true),
              currElements(0), capacity(0)
             {
-                // Allocate the structure with the requested size.
-                resize(numElements);
+                // Never allow instantiating with a capacity less than 2.
+                if(numElements > 1)
+                {
+                    // Allocate the structure with the requested size.
+                    resize(numElements);
+                }
+                else
+                {
+                    resize(2);
+                }
+
             }
 
             /** Destructor. */
@@ -210,6 +219,17 @@ namespace pawlib
             bool reserve(uint32_t size)
             {
                 return resize(size);
+            }
+
+            bool shrink()
+            {
+                // Never allow shrinking smaller than 2.
+                if(this->currElements < 2)
+                {
+                    return resize(2, true);
+                }
+                // (implicit else)
+                return resize(this->currElements, true);
             }
         protected:
             /// The pointer to the actual structure in memory.
@@ -455,9 +475,11 @@ namespace pawlib
             }
 
             /** Double the capacity of the structure.
+              * \param the number of elements to reserve space for
+              * \param whether we're allowed to non-destructively shrink.
               * \return true if it was able to double capacity, else false.
               */
-            bool resize(uint32_t reserve = 0)
+            bool resize(uint32_t reserve = 0, bool allow_shrink = false)
             {
                 // If we're not allowed to resize, report failure.
                 if(!resizable){ return false; }
@@ -489,8 +511,15 @@ namespace pawlib
                 }
                 else
                 {
-                    // If the reservation would shrink the structure..
-                    if(reserve <= this->capacity)
+                    // If the reservation would destroy elements...
+                    if(reserve < this->currElements)
+                    {
+                        // Report error.
+                        return false;
+                    }
+                    /* If the reservation would shrink the structure
+                     * without permission... */
+                    else if(!allow_shrink && reserve <= this->capacity)
                     {
                         // Report error.
                         return false;
