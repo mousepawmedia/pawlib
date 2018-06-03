@@ -57,9 +57,12 @@ endif()
 add_definitions(-Wall -Wextra -Werror)
 
 if(COMPILERTYPE STREQUAL "gcc")
-    # TODO: This is necessary for GCC 7.0 and onward
-    # TEMPORARY until C++17 (https://dzone.com/articles/implicit-fallthrough-in-gcc-7)
-    add_definitions(-Wimplicit-fallthrough=0)
+    # -Wimplicit-fallthrough=0 is required for
+    # GCC 7.x and onward. That is, until we switch
+    # to C++17
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL OR VERSION_GREATER "7")
+        add_definitions(-Wimplicit-fallthrough=0)
+    endif()
 
     # Set debug flags. -g is a default.
     #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ")
