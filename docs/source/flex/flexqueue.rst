@@ -86,9 +86,9 @@ When the FlexQueue is first created, you must specify the type of its elements.
 Resize Factor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To minimize the number of CPU cycles used on reallocation, when we run out of
-space in the data structure, on the next insertion, we allocate more space than
-we immediately need. This *resize factor* is controllable.
+When we run out of space in the data structure, we need to reallocate memory.
+To reduce the CPU cycles used on reallocation, we allocate more space than we
+immediately need. This *resize factor* is controllable.
 
 By default, when the FlexQueue resizes, it **doubles** its capacity (``n * 2``).
 This provides the best general performance. However, if you want to preserve
