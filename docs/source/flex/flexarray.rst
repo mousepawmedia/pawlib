@@ -4,30 +4,34 @@ FlexArray
 What is FlexArray?
 ===================================
 
-FlexArray is a flexibly-sized array similar to ``std::vector``. We created this
-implementation to be able to experiment with various optimizations and
-algorithms, with the goal of creating a higher-performance data structure.
+FlexArray is a flexibly-sized array similar to ``std::vector``. Internally,
+it is implemented as a circular buffer deque, guaranteed to be stored in
+contiguous memory, thereby helping to avoid or minimize cache misses.
+
+While we aim to create a high-performance data structure, our top priority is
+in giving the user easy *control* over the tradeoffs between CPU performance,
+memory, and cache misses.
 
 Performance
 ------------------------------------
 
-Initial benchmark comparisons show that FlexArray is always at least as fast
-as ``std::vector``, and often faster. We believe the main reasons for this
-may be:
+FlexArray is usually as fast as, or faster than, ``std::vector``. Unlike
+``std::deque``, FlexArray is guaranteed to be stored in contiguous memory.
 
-(1) The underlying structure *doubles* in size every time an operation will
-    exceed the capacity of the FlexArray. While this greatly reduces the
-    frequency of dynamic allocations (and thus improves performance), it may
-    have negative impacts on memory usage for higher capacities. We will be
-    experimenting with other resizing algorithms in future versions.
+Here's how FlexArray stacks up against the GCC implementation of
+``std::vector``...
 
-(2) The code base is structured to be less prone to instruction cache misses.
+- Inserting to end is as fast or faster.
+- Inserting to the middle is *slower*. (We plan to improve this in a later release.)
+- Inserting to the beginning is faster.
+- Removing from any position is faster.
+- Accessing any position is as fast.
 
-We will be exploring further optimizations and algorithm improvements in future
-verisons.
+If general performance is more important to you than contiguous memory, see
+``SpeedList``.
 
-Comparison to ``std::vector``
--------------------------------------
+Functional Comparison to ``std::vector``
+-------------------------------------------
 
 FlexArray offers largely the same functionality as ``std::vector``. However,
 it is not intended to feature-identical. Some functionality hasn't been
@@ -75,50 +79,48 @@ When the FlexArray is first created, you must specify the type of its elements.
 
     FlexArray<int>* temps_low = new FlexArray<int>;
 
+Resize Factor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To minimize the number of CPU cycles used on reallocation, when we run out of
+space in the data structure, on the next insertion, we allocate more space than
+we immediately need. This *resize factor* is controllable.
+
+By default, when the FlexArray resizes, it **doubles** its capacity (``n * 2``).
+This provides the best general performance. However, if you want to preserve
+memory at a small performance cost, you can switch to a resize factor of
+``n * 1.5`` (internally implemented as ``n + n / 2``).
+
+To switch to the ``1.5`` factor, include ``false`` as the second template
+parameter (``factor_double``).
+
+..  code-block:: c++
+
+    FlexArray<int, false> i_resize_slower;
+
+Reserve Size
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We can specify the initial size (in elements) of the FlexArray in the
+constructor.
+
+..  code-block::
+
+    FlexArray<int>* temps_high = new FlexArray<int>(100);
+
+..  NOTE:: The FlexArray will always have minimum capacity of 2.
+
 Adding Elements
 ------------------------------------------
 
-You can insert an element anywhere into a FlexArray. As with ``std::vector``
+You can insert an element anywhere into a FlexArray. As with ``std::vector``,
 the first element is considered the "front", and the last element the "back".
-
-``push()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The most common action is to "push" an element to the back using the ``push()``
-function. The alias ``push_back()`` is also provided for convenience.
-
-..  code-block:: c++
-
-    FlexArray<int> temps_high;
-    temps_high.push(45);
-    temps_high.push(37);
-    temps_high.push(35);
-    temps_high.push_back(48); // we can also use push_back()
-    // The FlexArray is now [45, 37, 35, 48]
-
-``shift()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-You can also "shift" an element to the front using ``shift()``. The alias
-``push_front()`` is also provided.
-
-..  code-block:: c++
-
-    FlexArray<int> temps_low;
-    temps_low.shift(45);
-    temps_low.shift(37);
-    temps_low.shift(35);
-    temps_low.push_front(48); // we can also use push_front()
-    // The FlexArray is now [48, 35, 37, 45]
-
-Bear in mind that, when shifting in an element, FlexArray must also move
-all the other elements. Thus, the performance cost for ``shift()`` is ``O(n)``.
-If performance is a concern, you should use ``push()`` whenever possible.
 
 ``insert()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 It is possible to insert an element anywhere in the array using ``insert()``.
+This function has a worst-case performance of ``O(n/2)``.
 
 ..  code-block:: c++
 
@@ -135,29 +137,53 @@ It is possible to insert an element anywhere in the array using ``insert()``.
 
     // The FlexArray is now [48, 35, 37, 45]
 
-Accessing Elements
--------------------------------------------
+If there is ever a problem adding a value, the function will return ``false``.
+Otherwise, it will return ``true``.
 
-``peek()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``push()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``peek()`` allows you to access the first element in the array without modifying the
-data structure. The alias ``peek_back()`` is also provided for convenience.
+The most common action is to "push" an element to the back using the ``push()``
+function. The alias ``push_back()`` is also provided for convenience.
+
+In FlexArray, ``push()`` has exactly the same performance as ``shift()``;
+that is, ``O(1)``.
 
 ..  code-block:: c++
 
-    FlexArray<int> apples;
+    FlexArray<int> temps_high;
+    temps_high.push(45);
+    temps_high.push(37);
+    temps_high.push(35);
+    temps_high.push_back(48); // we can also use push_back()
+    // The FlexArray is now [45, 37, 35, 48]
 
-    // We'll push some values for our example
-    apples.push(23);
-    apples.push(42);
-    apples.push(36);
+If there is ever a problem adding a value, the function will return ``false``.
+Otherwise, it will return ``true``.
 
-    apples.peek();
-    // This outputs 36.
-    // The array remains [23, 42, 36]
+``shift()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to "peek" the first element, use ``at(0)``.
+You can also "shift" an element to the front using ``shift()``. The alias
+``push_front()`` is also provided.
+
+In FlexArray, ``shift()`` has exactly the same performance as ``push()``;
+that is, ``O(1)``.
+
+..  code-block:: c++
+
+    FlexArray<int> temps_low;
+    temps_low.shift(45);
+    temps_low.shift(37);
+    temps_low.shift(35);
+    temps_low.push_front(48); // we can also use push_front()
+    // The FlexArray is now [48, 35, 37, 45]
+
+If there is ever a problem adding a value, the function will return ``false``.
+Otherwise, it will return ``true``.
+
+Accessing Elements
+-------------------------------------------
 
 ``at()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -187,14 +213,83 @@ Alternatively, you can use the ``[]`` operator to access a value.
     // The array is [23, 42, 36]
     // This output yields 36
 
+..  WARNING:: If the array is empty, or if the specified index is too large,
+    this function/operator will throw the exception ``std::out_of_range``.
+
+``peek()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``peek()`` allows you to access the last element in the array without modifying
+the data structure. The alias ``peek_back()`` is also provided for convenience.
+
+..  code-block:: c++
+
+    FlexArray<int> apples;
+
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
+
+    apples.peek();
+    // This outputs 36.
+    // The array remains [23, 42, 36]
+
+..  WARNING:: If the array is empty, this function will throw the exception
+    ``std::out_of_range``.
+
+If you want to "peek" the first element, use ``peek_front()``.
+
+``peek_front()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``peek_front()`` allows you to access the first element in the array without
+modifying the data structure.
+
+..  code-block:: c++
+
+    FlexArray<int> apples;
+
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
+
+    apples.peek_front();
+    // This outputs 23.
+    // The array remains [23, 42, 36]
+
+..  WARNING:: If the array is empty, this function will throw the exception
+    ``std::out_of_range``.
+
 Removing Elements
 -------------------------------------------
 
-``yank()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``clear()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``yank()`` removes a value at a given index. Remaining values at indexes greater than
-that removed are shifted left to fill in the empty slot.
+``clear()`` removes all the elements in the FlexArray.
+
+..  code-block:: c++
+
+    FlexArray<int> pie_sizes;
+
+    pie_sizes.push(18);
+    pie_sizes.push(18);
+    pie_sizes.push(15);
+
+    // I ate everything...
+    pie_sizes.clear();
+
+This function always returns true, and will never throw an exception
+(**no-throw guarantee**).
+
+``erase()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``erase()`` allows you to delete elements in an array in a given range.
+Remaining values are shifted to fill in the empty slot. This function has a
+worst-case performance of ``O(n/2)``.
 
 ..  code-block:: c++
 
@@ -207,14 +302,45 @@ that removed are shifted left to fill in the empty slot.
 
     // The array is currently [23, 42, 36]
 
-    apples.yank(1);
-    // Returns 42.
-    // The array is now [23, 36]
+    apples.erase(0,1);
+    // The first number in the function call is the lower bound
+    // The second number is the upper bound.
+    // The array is now simply [36]
+
+If any of the indices are too large, this function will return ``false``.
+Otherwise, it will return true. It never throws exceptions
+(**no-throw guarantee**).
+
+``pop()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``pop()`` returns the last value in an array, and then removes it from the data
+set. The alias ``pop_back()`` is also provided. In FlexArray, ``pop()`` has
+exactly the same performance as ``unshift()``; that is, ``O(1)``.
+
+..  code-block:: c++
+
+    FlexArray<int> apples;
+
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
+
+    // The array is currently [23, 42, 36]
+
+    apples.pop(0,1);
+    // Returns 3. The array is now [23, 42]
+
+..  WARNING:: If the array is empty, this function will throw the exception
+    ``std::out_of_range``.
 
 ``unshift()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``unshift()`` will return the first element in the array, and remove it. All remaining
-values are shifted one slot to the left.
+
+``unshift()`` will return the first element in the array, and remove it.
+In FlexArray, ``unshift()`` has exactly the same performance as ``pop()``;
+that is, ``O(1)``.
 
 ..  code-block:: c++
 
@@ -231,85 +357,154 @@ values are shifted one slot to the left.
     // Returns 23.
     // The array is now [42, 36]
 
-``erase()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..  WARNING:: If the array is empty, this function will throw the exception
+    ``std::out_of_range``.
 
-``erase()`` allows you to delete elements in an array in a given range. Values above
-the top limit of the range will be shifted left to fill in empty indexes.
-
-..  code-block:: c++
-
-    FlexArray<int> apples;
-
-    // We'll push some values for our example
-    apples.push(23);
-    apples.push(42);
-    apples.push(36);
-
-    // The array is currently [23, 42, 36]
-
-    apples.erase(0,1);
-    // The first number in the fuction call is the lower bound
-    // The second number is the upper bound.
-    // The array is now simply [36]
-
-``pop()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-``pop()`` returns the last value in an array, and then removes it from the data set.
-The alias ``pop_back()`` is also provided.
-
-..  code-block:: c++
-
-    FlexArray<int> apples;
-
-    // We'll push some values for our example
-    apples.push(23);
-    apples.push(42);
-    apples.push(36);
-
-    // The array is currently [23, 42, 36]
-
-    apples.pop(0,1);
-    // Returns 3. The array is now [23, 42]
-
-Other Functions
------------------------------
-
-``empty()``
+``yank()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``empty()`` is a boolean that returns true if the array is empty, and false if it
-contains values.
+``yank()`` removes a value at a given index. Remaining values are shifted
+to fill in the empty slot. This function has a worst-case performance of
+``O(n/2)``.
 
 ..  code-block:: c++
 
     FlexArray<int> apples;
 
-    apples.empty();
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
+
+    // The array is currently [23, 42, 36]
+
+    apples.yank(1);
+    // Returns 42.
+    // The array is now [23, 36]
+
+..  WARNING:: If the array is empty, or if the specified index is too large,
+    this function will throw the exception ``std::out_of_range``.
+
+Size and Capacity Functions
+-------------------------------------------
+
+``getCapacity()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``getCapacity()`` returns the total number of elements that can be stored in
+the FlexArray without resizing.
+
+..  code-block:: c++
+
+    FlexArray<int> short_term_memory;
+
+    short_term_memory.getCapacity();
+    // Returns 8, the default size.
+
+``getLength()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``getLength()`` allows you to check how many elements are currently
+in the FlexArray.
+
+..  code-block:: c++
+
+    FlexArray<int> apples;
+
+    // We'll push some values for our example
+    apples.push(23);
+    apples.push(42);
+    apples.push(36);
+
+    apples.getLength();
+    // The function will return 3
+
+``isEmpty()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``isEmpty()`` returns true if the FlexArray is empty, and false if it contains
+values.
+
+..  code-block:: c++
+
+    FlexArray<int> answers;
+
+    answers.isEmpty();
     // The function will return true
 
     // We'll push some values for our example
-    apples.push(23);
-    apples.push(42);
-    apples.push(36);
+    answers.push(42);
 
-    apples.empty();
+    answers.isEmpty();
     // The function will return false
 
-``getSize()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``getSize()`` allows you to check how many elements are currently in an array.
+``isFull()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``isFull()`` returns true if the FlexArray is full to the current capacity
+(before resizing), and false otherwise.
 
 ..  code-block:: c++
 
-    FlexArray<int> apples;
+    FlexArray<int> answers;
 
-    // We'll push some values for our example
-    apples.push(23);
-    apples.push(42);
-    apples.push(36);
+    answers.isFull();
+    // The function will return false
 
-    apples.getsize();
-    // The function will return 3
+    // Push values until we are full, using the isFull() function to check.
+    while(!answers.isFull())
+    {
+        answers.push(42);
+    }
+
+``reserve()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use ``reserve()`` to resize the FlexArray to be able to store the given
+number of elements. If the data structure is already equal to or larger than
+the requested capacity, nothing will happen, and the function will
+return ``false``.
+
+..  code-block:: c++
+
+    FlexArray<std::string> labors_of_hercules;
+
+    // Reserve space for all the elements we plan on storing.
+    labors_of_hercules.reserve(12);
+
+    labors_of_hercules.getCapacity();
+    // Returns 12, the requested capacity.
+
+After reserving space in an existing FlexArray, it can continue to resize.
+
+This function is effectively identical to specifying a size at instantiation.
+
+``shrink()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use ``shrink()`` function to resize the FlexArray to only be large
+enough to store the current number of elements in it. If the shrink is
+successful, it wil return ``true``, otherwise it will return ``false``.
+
+..  code-block:: c++
+
+    FlexArray<int> marble_collection;
+
+    for(int i = 0; i < 100; ++i)
+    {
+        marble_collection.push(i);
+    }
+
+    marble_collection.getCapacity();
+    // Returns 128, because FlexArray is leaving room for more elements.
+
+    // Shrink to only hold the current number of elements.
+    marble_collection.shrink();
+
+    marble_collection.getCapacity();
+    // Returns 100, the same as the number of elements.
+
+After shrinking, we can continue to resize as new elements are added.
+
+..  NOTE:: It is not possible to shrink below a capacity of 2.

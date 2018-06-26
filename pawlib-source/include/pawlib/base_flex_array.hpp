@@ -1,14 +1,14 @@
 /** Base FlexArray [PawLIB]
-  * Version: 1.0
+  * Version: 1.1
   *
   * The base class for a dynamic array with a low dynamic allocation demand.
   * FlexArray, FlexQueue, and FlexStack all rely on these.
   *
-  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
- * Copyright (c) 2016 MousePaw Media.
+ * Copyright (c) 2018 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,52 +58,59 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template <typename type>
+    template <typename type, bool factor_double = true>
     class Base_FlexArr
     {
         public:
             /** Create a new base flex array, with the default starting size.
               */
             Base_FlexArr()
-            :theArray(nullptr), resizable(true), currElements(0), capacity(4)
+            :internalArray(nullptr), internalArrayBound(nullptr),
+             head(nullptr), tail(nullptr), resizable(true),
+             currElements(0), capacity(0)
             {
-                /* The call to double_size() will sets the capacity to 8
+                /* The call to resize() will sets the capacity to 8
                  * on initiation. */
 
-                // Allocate the structure.
-                double_size();
+                // Allocate the structure with an initial size.
+                resize(8);
             }
 
             /** Create a new base flex array with room for the specified number
               * of elements.
-              * \param the minimum number of elements the structure can hold.
+              * \param the number of elements the structure can hold.
               */
             // cppcheck-suppress noExplicitConstructor
             Base_FlexArr(uint32_t numElements)
-            :theArray(nullptr), resizable(true), currElements(0)
+            :internalArray(nullptr), head(nullptr), tail(nullptr), resizable(true),
+             currElements(0), capacity(0)
             {
-                /* Set the size to be the power of 2 just below the entered
-                 * number. double_size() will initiate with enough
-                 * room in array. */
-                capacity = pow(2, floor(log2(numElements)));
+                // Never allow instantiating with a capacity less than 2.
+                if(numElements > 1)
+                {
+                    // Allocate the structure with the requested size.
+                    resize(numElements);
+                }
+                else
+                {
+                    resize(2);
+                }
 
-                // Allocate the structure.
-                double_size();
             }
 
             /** Destructor. */
             ~Base_FlexArr()
             {
-                if(theArray != nullptr)
+                if(internalArray != nullptr)
                 {
-                    delete[] theArray;
+                    delete[] internalArray;
                 }
             }
 
             /** Access an element at a given index using the [] operator.
-              * For example, "theArray[5]".
+              * For example, "internalArray[5]".
               */
-            type operator[](uint32_t index)
+            type& operator[](uint32_t index)
             {
                 return at(index);
             }
@@ -112,22 +119,31 @@ namespace pawlib
               * \param the index to access.
               * \return the element at the given index.
               */
-            type at(uint32_t index)
+            type& at(uint32_t index)
             {
-                if(index > currElements - 1)
+                if(!validateIndex(index, false))
                 {
                     throw std::out_of_range("BaseFlexArray: Index out of range!");
                 }
-                else
-                {
-                    return theArray[index];
-                }
+
+                return internalArray[toInternalIndex(index)];
+            }
+
+            /** Clear all the elements in the array.
+              * \return true if successful, else false
+              */
+            bool clear()
+            {
+                this->currElements = 0;
+                this->head = this->internalArray;
+                this->tail = this->internalArray;
+                return true;
             }
 
             /** Check if the data structure is empty.
               * \return true if empty, else false
               */
-            bool empty()
+            bool isEmpty()
             {
                 return (currElements == 0);
             }
@@ -135,7 +151,7 @@ namespace pawlib
             /** Check to see if the data structure is full.
               * \return true is full, else false
               */
-            bool full()
+            bool isFull()
             {
                   return (capacity == currElements);
             }
@@ -154,18 +170,19 @@ namespace pawlib
                 }
 
                 // If the range [first-last] is valid...
-                if(last >= first && last < currElements)
+                if(last >= first && last < this->currElements)
                 {
                     uint32_t removeCount = (last+1) - first;
 
                     //...and if we'll have leftovers after `last`
-                    if(last < currElements - 1)
+                    if(last < this->currElements - 1)
                     {
                         // Shift the leftovers backwards into place.
-                        mem_shift(last+1, -removeCount);
+                        memShift(last+1, -removeCount);
                     }
                     // Recalculate the elements we have.
-                    currElements -= removeCount;
+                    this->currElements -= removeCount;
+
                     return true;
                 }
                 else
@@ -181,7 +198,7 @@ namespace pawlib
             /** Get the current number of elements in the structure.
               * \return the number of elements
               */
-            uint32_t getSize()
+            uint32_t getLength()
             {
                 return currElements;
             }
@@ -190,14 +207,42 @@ namespace pawlib
               * without resizing.
               * \return the maximum number of elements
               */
-            uint32_t getArraySize()
+            uint32_t getCapacity()
             {
                 return capacity;
             }
 
+            /** Reserves room for the exact number of elements.
+              * \param the number of elements to reserve
+              * \return true if successful, else false
+              */
+            bool reserve(uint32_t size)
+            {
+                return resize(size);
+            }
+
+            bool shrink()
+            {
+                // Never allow shrinking smaller than 2.
+                if(this->currElements < 2)
+                {
+                    return resize(2, true);
+                }
+                // (implicit else)
+                return resize(this->currElements, true);
+            }
         protected:
             /// The pointer to the actual structure in memory.
-            type* theArray;
+            type* internalArray;
+
+            /// The pointer to the end of the internal array.
+            type* internalArrayBound;
+
+            /// Pointer to the head element.
+            type* head;
+
+            // Pointer to one past the tail element.
+            type* tail;
 
             /// Whether the structure can be resize.
             bool resizable;
@@ -206,36 +251,284 @@ namespace pawlib
             uint32_t currElements;
 
             /** The maximum number of elements (capacity) that can be contained
-              * in the structure without resizing. */
+              * in the structure without resizing. (1-based) */
             uint32_t capacity;
 
-            /** Double the capacity of the structure.
-              * \return true if it was able to double capacity, else false.
+            /** Directly access a value in the internal array.
+              * Does not check for bounds.
+              * \param the internal index to access
+              * \return the element at index
               */
-            bool double_size()
+            type& rawAt(uint32_t index)
             {
-                // If we're not allowed to resize...
-                if(!resizable)
+                return internalArray[toInternalIndex(index)];
+            }
+
+            /** Validate the given index is in range
+              * \param the index to validate
+              * \param whether to show an error message on failure, default false
+              * \return true if index is in range, else false
+              */
+            inline bool validateIndex(uint32_t index, bool yell = false)
+            {
+                /* If the index is greater than the number of elements
+                 * in the array currently. */
+                if(index > this->currElements - 1)
                 {
+                    if(yell)
+                    {
+                        // Throw a non-fatal error. Numbers are 0-based.
+                        ioc << cat_error << vrb_quiet << "Index " << index
+                        << " out of bounds [0 - " << this->currElements - 1
+                        << "]." << io_end;
+                    }
                     // Report failure.
                     return false;
                 }
+                // Otherwise, return true.
+                return true;
+            }
 
-                //check to see if maximum size is being approached
-                if(capacity >= UINT32_MAX/2)
+            /** Convert an index to an internal index.
+              * \param the (external) index to access
+              * \return the (internal) index
+              */
+            inline uint32_t toInternalIndex(uint32_t index)
+            {
+                /* Get the internal index, by adding the external index
+                 * to the head index, and then accounting for the
+                 * circular buffer.
+                 * Thanks to pydsigner and nisstyre in ##python-offtopic
+                 * for suggesting the modulus.
+                  */
+                return (this->head - this->internalArray + index) % this->capacity;
+            }
+
+            type& getFromHead()
+            {
+                return *(this->head);
+            }
+
+            type& getFromTail()
+            {
+                if(this->tail == this->internalArray)
                 {
-                  //set it to limit defined by UINT32_MAX
-                  capacity = UINT32_MAX;
-                  //set it so that array can no longer be doubled in size
-                  resizable = false;
+                    // We have to get the element at the end of the internalArray.
+                    return *(this->internalArray + (this->capacity - 1));
+                }
+                return *(this->tail - 1);
+            }
+
+            /** Efficiently insert a value at the head of the array.
+              * \param the value to insert
+              * \param whether to show an error message on failure, default false
+              * \return true if successful, else false
+              */
+            bool insertAtHead(type value, bool yell = false)
+            {
+                // Check capacity and attempt a resize if necessary.
+                if(!checkSize(yell)) { return false; }
+
+                shiftHeadBack();
+
+                // Insert our value at the new head position.
+                *(this->head) = value;
+
+                // Increment the number of current elements in the array.
+                ++this->currElements;
+
+                return true;
+            }
+
+
+            /** Efficiently insert a value at the tail of the array.
+              * \param the value to insert
+              * \param whether to show an error message on failure, default false
+              * return true if successful, else false
+              */
+            bool insertAtTail(type value, bool yell = false)
+            {
+                // Check capacity and attempt a resize if necessary.
+                if(!checkSize(yell)) { return false; }
+
+                *(this->tail) = value;
+
+                shiftTailForward();
+
+                // Increment the number of current elements in the array
+                ++this->currElements;
+
+                return true;
+            }
+
+            /** Insert a value at the given position in the array.
+              * Does NOT check index validity.
+              * \param the value to insert
+              * \param the index to insert the value at
+              * \param whether to show an error message on failure, default false
+              * \return true if successful, else false
+              */
+            bool insertAtIndex(type value, uint32_t index, bool yell = false)
+            {
+                // Check capacity and attempt a resize if necessary.
+                if(!checkSize(yell)) { return false; }
+
+                // Shift the values to make room.
+                memShift(index, 1);
+                // Store the new value.
+                this->internalArray[toInternalIndex(index)] = value;
+
+                // Leave the head/tail shifting to memShift!
+
+                // Increment the number of current elements in the array.
+                ++this->currElements;
+
+                return true;
+            }
+
+            /** Efficiently remove a value from the head.
+              * Does NOT check if the array is empty.
+              * \return true if successful, else false
+              */
+            bool removeAtHead()
+            {
+                shiftHeadForward();
+
+                // Decrement the number of elements we're currently storing.
+                --this->currElements;
+
+                return true;
+            }
+
+            /** Efficiently remove a value from the tail.
+              * Does NOT check if the array is empty.
+              * \return true if successful, else false
+              */
+            bool removeAtTail()
+            {
+                /* Move the tail position back, so the previous last value
+                 * is now ignored.
+                 */
+
+                shiftTailBack();
+
+                // Decrement the number of elements we're currently storing.
+                --this->currElements;
+
+                return true;
+            }
+
+            /** Remove a value from the array.
+              * Does NOT check index validity.
+              * Does NOT check if the array is empty.
+              * \param the index to remove
+              * \return true if successful, else false
+              */
+            bool removeAtIndex(uint32_t index)
+            {
+                /* Decrement the number of elements we're storing.
+                 * If we have more than one element remaining...
+                 */
+                if(this->currElements-- > 1)
+                {
+                    /* Shift all the elements after the index left one position,
+                    * overwriting the element we're removing.
+                    */
+                    memShift(index, -1);
                 }
                 else
                 {
-                    // Double the maximum size (capacity).
-                    capacity *= 2;
+                    /* If we have only one element remaining, we should not
+                     * memShift. Just ignore the element's existence.
+                     */
+                    shiftTailBack();
                 }
+
+                return true;
+            }
+
+            /** Check if the array is full and attempt a resize if necessary.
+              * \param whether to show an error message on failure, default false
+              * \return true if resize successful or no resize necessary
+              */
+            inline bool checkSize(bool yell = false)
+            {
+                // If we're full, attempt a resize.
+                if(this->currElements >= this->capacity)
+                {
+                    // If we weren't able to resize, report failure.
+                    if(!resize())
+                    {
+                        if(yell)
+                        {
+                            ioc << cat_error
+                            << "Data structure is full and cannot be resized."
+                            << io_end;
+                        }
+                        return false;
+                    }
+                }
+                /* If no resize was necessary, or if resize was successful,
+                 * report success.
+                 */
+                return true;
+            }
+
+            /** Double the capacity of the structure.
+              * \param the number of elements to reserve space for
+              * \param whether we're allowed to non-destructively shrink.
+              * \return true if it was able to double capacity, else false.
+              */
+            bool resize(uint32_t reserve = 0, bool allow_shrink = false)
+            {
+                // If we're not allowed to resize, report failure.
+                if(!resizable){ return false; }
+
+                uint32_t oldCapacity = this->capacity;
+
+                if(reserve == 0)
+                {
+                    // check to see if maximum size is being approached
+                    if(this->capacity >= UINT32_MAX/2)
+                    {
+                        // set it to limit defined by UINT32_MAX
+                        this->capacity = UINT32_MAX;
+                        // set it so that array can no longer be doubled in size
+                        resizable = false;
+                    }
+                    // Increase the capacity.
+
+                    /* Which option we use depends on whether we want to
+                     * optimize for SPEED (2) or SPACE (1.5). */
+                    if(factor_double)
+                    {
+                        this->capacity = this->capacity * 2;
+                    }
+                    else
+                    {
+                        this->capacity += this->capacity / 2;
+                    }
+                }
+                else
+                {
+                    // If the reservation would destroy elements...
+                    if(reserve < this->currElements)
+                    {
+                        // Report error.
+                        return false;
+                    }
+                    /* If the reservation would shrink the structure
+                     * without permission... */
+                    else if(!allow_shrink && reserve <= this->capacity)
+                    {
+                        // Report error.
+                        return false;
+                    }
+                    this->capacity = reserve;
+                }
+
                 /* Create the new structure with the new capacity.*/
-                type* tempArray = new type[capacity];
+                type* tempArray = new type[this->capacity];
 
                 // If there was an error allocating the new array...
                 if(tempArray == nullptr)
@@ -245,26 +538,41 @@ namespace pawlib
                 }
 
                 // If an old array exists...
-                if(this->theArray != nullptr)
+                if(this->internalArray != nullptr)
                 {
-                    // Transfer all of the elements over.
-                    /*for(uint32_t i = 0; i < currElements; i++)
-                    {
-                        tempArray[i] = this->theArray[i];
-                    }*/
-                    memmove(
+                    /* Transfer all of the elements over.
+                     * Since this is a circular buffer, we have to move things
+                     * so it has room for expansion. The fastest way to do this
+                     * is by storing the head element back at index 0.
+                     * To do this, we'll move everything in two parts:
+                     * (1) head to end of space, and (2) 0 to head-1.
+                     */
+                    uint32_t headIndex = this->head - this->internalArray;
+                    uint32_t step1 = oldCapacity - headIndex;
+                    uint32_t step2 = headIndex;
+                    memcpy(
                         tempArray,
-                        this->theArray,
-                        sizeof(type) * this->currElements
+                        this->head,
+                        sizeof(type) * step1
+                    );
+                    memcpy(
+                        tempArray + step1,
+                        this->internalArray,
+                        sizeof(type) * step2
                     );
 
                     // Delete the old structure.
-                    delete[] theArray;
-                    this->theArray = nullptr;
+                    delete[] this->internalArray;
+                    this->internalArray = nullptr;
                 }
 
                 // Store the new structure.
-                this->theArray = tempArray;
+                this->internalArray = tempArray;
+                this->internalArrayBound = this->internalArray + this->capacity;
+
+                // Reset the head and tail
+                this->head = this->internalArray;
+                this->tail = this->internalArray + this->currElements;
 
                 // Report success.
                 return true;
@@ -276,56 +584,134 @@ namespace pawlib
               * \param the index to shift elements from
               * \param the direction and distance to shift the elements in.
               */
-            void mem_shift(uint32_t fromIndex, int8_t direction)
+            void memShift(uint32_t fromIndex, int8_t direction)
             {
-                if(fromIndex + 1 > this->currElements)
+                /* Check if the index was valid given the number of elements
+                 * we're actually storing. (We have to offset so we do our math
+                 * in 1-indexing).
+                 */
+                if(fromIndex >= this->currElements)
                 {
                     return;
                 }
 
-                memmove(
-                    // Move TO the given index.
-                    this->theArray + (fromIndex + direction),
-                    // Move FROM the given index, plus one.
-                    this->theArray + fromIndex,
-                    /* Total move size is the number of elements to be moved,
-                    * times element size. The number of elements we move
-                    * is calculated from the 1-based total number of elements.
-                    */
-                    sizeof(type) * ((this->currElements) - (fromIndex))
-                );
+                // If the array is already empty, there's nothing to move.
+                if(isEmpty()){ return; }
+
+                // If we haven't yet had wraparound, move the tail section.
+                if(this->tail > this->head && this->tail < this->internalArrayBound)
+                {
+                    memmove(
+                        // Move TO the given index.
+                        this->head + fromIndex + direction,
+                        // Move FROM the given index.
+                        this->head + fromIndex,
+                        // Total move size is the number of elements to be moved,
+                        // times element size. The number of elements we move
+                        // is calculated from the 1-based total number of elements.
+                        sizeof(type) * (this->currElements - fromIndex)
+                    );
+
+                    shiftTail(direction);
+                }
+                // Else If we've already had wraparound, move the head section.
+                else if(this->tail < this->head)
+                {
+                    /* There is an ironic side-effect here that, if we are
+                     * inserting at 0, we'll only move the head, and not
+                     * actually shift anything! (Weird, but it works.)
+                     */
+                    memmove(
+                        // Move TO the given index.
+                        // Must invert direction for this to work right.
+                        this->head - direction,
+                        // Move FROM the given index.
+                        this->head,
+                        sizeof(type) * fromIndex
+                    );
+
+                    shiftHead(-direction);
+                }
+                else
+                {
+                    // NOTE: Test for this.
+                    ioc << "weird edge case" << io_end;
+                }
             }
 
-            /** Add the given element to the back of the structure.
-              * \param the element to add to the structure.
-              * \return true if successful, else false.
-              */
-            bool push_back(type newElement)
+            inline void shiftHead(int32_t direction)
             {
-                /* If we only have room to push THIS element before running
-                 * out of room in the structure...*/
-                if(currElements > capacity - 1)
+                uint32_t magnitude = direction;
+                if(direction > 0)
                 {
-                    /* Attempt to double the structure's capacity.
-                     * If it fails...*/
-                    if(!double_size())
+                    for(uint32_t i = 0; i < magnitude; ++i)
                     {
-                        /* Out of room and could not resize.
-                         * Throw a non-fatal error. */
-                        ioc << cat_error << "Data structure is full and cannot be resized." << io_end;
-
-                        // Report the failure status.
-                        return false;
+                        shiftHeadForward();
                     }
                 }
-
-                // Add the new element to the structure.
-                this->theArray[currElements++] = newElement;
-
-                // Report success.
-                return true;
+                else
+                {
+                    for(uint32_t i = 0; i < magnitude; ++i)
+                    {
+                        shiftHeadBack();
+                    }
+                }
             }
 
+            inline void shiftHeadBack()
+            {
+                // Move the head back, accounting for wraparound.
+                if(this->head-- <= this->internalArray)
+                {
+                    this->head = this->internalArray + (this->capacity - 1);
+                }
+            }
+
+            inline void shiftHeadForward()
+            {
+                // Move the head forward, accounting for wraparound.
+                if(++this->head - this->internalArray >= this->capacity)
+                {
+                    this->head = this->internalArray;
+                }
+            }
+
+            inline void shiftTail(int32_t direction)
+            {
+                uint32_t magnitude = direction;
+                if(direction > 0)
+                {
+                    for(uint32_t i = 0; i < magnitude; ++i)
+                    {
+                        shiftTailForward();
+                    }
+                }
+                else
+                {
+                    for(uint32_t i = 0; i < magnitude; ++i)
+                    {
+                        shiftTailBack();
+                    }
+                }
+            }
+
+            inline void shiftTailBack()
+            {
+                // Move the tail back, accounting for wraparound.
+                if(this->tail-- == this->internalArray)
+                {
+                    this->tail = this->internalArray + (this->capacity - 1);
+                }
+            }
+
+            inline void shiftTailForward()
+            {
+                // Move the tail forward, accounting for wraparound.
+                if(++this->tail >= this->internalArrayBound)
+                {
+                    this->tail = this->internalArray;
+                }
+            }
     };
 }
 

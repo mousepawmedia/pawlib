@@ -118,20 +118,20 @@ namespace pawlib
              *      template size as the current OneString.
              * \param the OneString<oneSize> to be copied
              * \return a new OneString that is a deep copy of the other */
-            OneString(const OneString& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){};
+            OneString(const OneString& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){}
 
             /**Copy Constructor for all other OneString sizes
              * \param the OneString<N> to be copied (N != oneSize)
              * \return a new OneString that is a deep copy of ostr */
             template <const int N>
-            OneString(const OneString<N>& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){};
+            OneString(const OneString<N>& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){}
 
             /**Copy Constructor for all QuickString sizes
              * \param the QuickString<N> to be copied (N is any of the specified sizes)
              * \return a new OneString that is a deep copy of ostr */
             template <const int N>
             // cppcheck-suppress noExplicitConstructor
-            OneString(const QuickString<N>& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){};
+            OneString(const QuickString<N>& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){}
 
             /**Tests for equality with a const char*
              * \param a const char* to be tested for equality
@@ -223,7 +223,7 @@ namespace pawlib
             friend OneString operator+(const OneString& lhs, R rhs)
             {
                 ADDOP_FUNCT;
-            };
+            }
 
             /**Appends a OneString to a char*
              * \param the left-hand char* to be added to
@@ -232,7 +232,7 @@ namespace pawlib
             friend OneString operator+(const char* lhs,  OneString rhs)
             {
                 ADDOP_FUNCT;
-            };
+            }
 
             /**Appends a OneString to a char
              * \param the left-hand char to be added to
@@ -241,7 +241,7 @@ namespace pawlib
             friend OneString operator+(char lhs,  OneString rhs)
             {
                 ADDOP_FUNCT;
-            };
+            }
 
             /**Appends a OneString to a std::string
              * \param the left-hand std::string to be added to
@@ -250,7 +250,7 @@ namespace pawlib
             friend OneString operator+(std::string lhs,  OneString rhs)
             {
                 ADDOP_FUNCT;
-            };
+            }
 
             /**Appends a OneString to a OneChar
              * \param the left-hand OneChar to be added to
@@ -259,7 +259,7 @@ namespace pawlib
             friend OneString operator+(OneChar* lhs, OneString rhs)
             {
                 ADDOP_FUNCT;
-            };
+            }
 
 	};
 

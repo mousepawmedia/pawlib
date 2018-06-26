@@ -1,9 +1,9 @@
 /** FlexQueue [PawLIB]
-  * Version: 1.0
+  * Version: 1.1
   *
   * A Flex-based queue with a low dynamic allocation demand.
   *
-  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
@@ -52,8 +52,8 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template <typename type>
-    class FlexQueue : public Base_FlexArr<type>
+    template <typename type, bool factor_double = true>
+    class FlexQueue : public Base_FlexArr<type, factor_double>
     {
         public:
             /** Create a new FlexQueue with the default capacity.
@@ -96,23 +96,7 @@ namespace pawlib
               */
             bool enqueue(type newElement)
             {
-                // If the array is full...
-                if(this->currElements == this->capacity)
-                {
-                    // Attempt to double the array's capacity. If it fails...
-                    if(!this->double_size())
-                    {
-                        // Report failure.
-                        return false;
-                    }
-                }
-
-                /* Store the new element in the last position and
-                 * increment the number of elements. */
-                this->theArray[(this->currElements)++] = newElement;
-
-                // Report success.
-                return true;
+                return this->insertAtTail(newElement, true);
             }
 
             /** Returns the next (first) element in the FlexQueue without
@@ -121,18 +105,14 @@ namespace pawlib
               */
             type peek()
             {
-                // If there is at least one element in the array...
-                if(this->currElements > 0)
-                {
-                    // Return that element.
-                    return this->at(0);
-                }
-                // Otherwise...
-                else
+                // If the stack is empty
+                if(this->isEmpty())
                 {
                     // Throw a fatal error.
-                    throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
+                    throw std::out_of_range("FlexQueue: Cannot peek() from empty FlexQueue.");
                 }
+
+                return this->getFromHead();
             }
 
             /**Return and remove the next element in the FlexStack.
@@ -158,28 +138,19 @@ namespace pawlib
               */
             type dequeue()
             {
-                // If there is at least one element in the array...
-                if(this->currElements > 0)
-                {
-                    // Store the first element, to be returned later.
-                    type temp = this->theArray[0];
-
-                    /* Shift all elements to the left one index. This
-                     * effectively deletes the first element from the array. */
-                    this->mem_shift(1, -1);
-
-                    // Decrement the number of elements.
-                    --(this->currElements);
-
-                    // Return the element we just deleted.
-                    return temp;
-                }
-                // Else if there are no elements in the array...
-                else
+                // If the stack is empty
+                if(this->isEmpty())
                 {
                     // Throw a fatal error.
-                    throw std::out_of_range("FlexQueue: Cannot pop from empty FlexQueue.");
+                    throw std::out_of_range("FlexQueue: Cannot dequeue() from empty FlexQueue.");
                 }
+
+                // Store the front element.
+                type temp = this->getFromHead();
+                // Remove the front element.
+                this->removeAtHead();
+                // Return the stored element.
+                return temp;
             }
     };
 }

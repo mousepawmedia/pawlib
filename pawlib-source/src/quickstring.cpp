@@ -12,7 +12,7 @@
 namespace pawlib
 {
     template <const int quickSize>
-    QuickString<quickSize>::QuickString():OneStringBase(quickSize, QUICK_TYPE){};
+    QuickString<quickSize>::QuickString():OneStringBase(quickSize, QUICK_TYPE){}
 
     template <const int quickSize>
     QuickString<quickSize>::QuickString(const char* str):OneStringBase(quickSize, QUICK_TYPE)
@@ -21,13 +21,13 @@ namespace pawlib
     }
 
     template <const int quickSize>
-    QuickString<quickSize>::QuickString(std::string str):QuickString(str.c_str()){};
+    QuickString<quickSize>::QuickString(std::string str):QuickString(str.c_str()){}
 
     template <const int quickSize>
-    QuickString<quickSize>::QuickString(char ch):OneStringBase(ch, quickSize, QUICK_TYPE){};
+    QuickString<quickSize>::QuickString(char ch):OneStringBase(ch, quickSize, QUICK_TYPE){}
 
     template <const int quickSize>
-    QuickString<quickSize>::QuickString(OneChar& ch):OneStringBase(ch, quickSize, QUICK_TYPE){};
+    QuickString<quickSize>::QuickString(OneChar& ch):OneStringBase(ch, quickSize, QUICK_TYPE){}
 
     template <const int quickSize>
     bool QuickString<quickSize>::equals(const char* ostr) const

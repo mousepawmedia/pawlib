@@ -609,7 +609,7 @@ We always start by screening the baseline::
     	RSD: 8% / 8%
 
 We have no outliers and very low RSDs, so our results probably aren't
-contaminated. Of course, benchmarking is unpredicable, and external factors
+contaminated. Of course, benchmarking is unpredictable, and external factors
 may change during the benchmarking itself. However, we have no reason here to
 throw out the results.
 

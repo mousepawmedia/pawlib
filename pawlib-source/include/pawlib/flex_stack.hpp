@@ -1,9 +1,9 @@
 /** FlexStack [PawLIB]
-  * Version: 1.0
+  * Version: 1.1
   *
   * A Flex-based stack with a low dynamic allocation demand.
   *
-  * Author(s): Michael Parkman, Jonathan Theodore, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
   */
 
 /* LICENSE
@@ -54,8 +54,8 @@ using namespace pawlib::ioformat;
 
 namespace pawlib
 {
-    template <class type>
-    class FlexStack : public Base_FlexArr<type>
+    template <typename type, bool factor_double = true>
+    class FlexStack : public Base_FlexArr<type, factor_double>
     {
         public:
             FlexStack() : Base_FlexArr<type>() { }
@@ -81,23 +81,10 @@ namespace pawlib
               */
             bool push(type newElement)
             {
-                // If the array is full...
-                if(this->currElements == this->capacity)
-                {
-                    // Attempt to double the array's capacity. If it fails...
-                    if(!this->double_size())
-                    {
-                        // Report failure.
-                        return false;
-                    }
-                }
-
-                /* Store the new element in the last position and
-                 * increment the number of elements. */
-                this->theArray[(this->currElements)++] = newElement;
-
-                // Report success.
-                return true;
+                /* Use the deque tail insertion function.
+                 * Use that function's error messages.
+                 */
+                return this->insertAtTail(newElement, true);
             }
 
             /** Returns the next (last) element in the FlexStack without
@@ -106,18 +93,14 @@ namespace pawlib
               */
             type peek()
             {
-                // If there is at least one element in the array...
-                if(this->currElements > 0)
-                {
-                    // Return that element.
-                    return this->at(this->currElements-1);
-                }
-                // Otherwise...
-                else
+                // If the stack is empty
+                if(this->isEmpty())
                 {
                     // Throw a fatal error.
-                    throw std::out_of_range("FlexArray: Cannot peek from empty FlexArray.");
+                    throw std::out_of_range("FlexStack: Cannot peek() from empty FlexStack.");
                 }
+
+                return this->getFromTail();
             }
 
             /** Return and remove the next element in the FlexStack.
@@ -134,19 +117,18 @@ namespace pawlib
               */
             type pop()
             {
-                // If there are no elements...
-                if(this->currElements == 0)
+                // If the stack is empty...
+                if(this->isEmpty())
                 {
                     // Throw a fatal error.
-                    throw std::out_of_range("FlexStack: Cannot pop from empty FlexStack.");
+                    throw std::out_of_range("FlexStack: Cannot pop() from empty FlexStack.");
                 }
-                // Else if there is at least one element...
-                else
-                {
-                    /* Return the last element and decrement the
-                     * number of elements. */
-                    return this->theArray[--(this->currElements)];
-                }
+                // Get the current element at the tail.
+                type temp = this->getFromTail();
+                // Remove the tail element.
+                this->removeAtTail();
+                // Return the element we stored.
+                return temp;
             }
     };
 }

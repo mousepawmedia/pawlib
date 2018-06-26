@@ -54,7 +54,7 @@ else()
 endif()
 
 # Our global compiler flags.
-add_definitions(-Wall -Wextra -Werror)
+add_definitions(-Wall -Wextra -Werror -pedantic)
 
 if(COMPILERTYPE STREQUAL "gcc")
     # -Wimplicit-fallthrough=0 is required for
@@ -63,7 +63,6 @@ if(COMPILERTYPE STREQUAL "gcc")
     if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL OR VERSION_GREATER "7")
         add_definitions(-Wimplicit-fallthrough=0)
     endif()
-
     # Set debug flags. -g is a default.
     #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ")
     # Set release flags. -O3 is a default.
@@ -95,7 +94,6 @@ include_directories(${CPGF_DIR}/include)
 add_library(${TARGET_NAME} STATIC
     include/pawlib/avl_tree.hpp
     include/pawlib/base_flex_array.hpp
-    include/pawlib/binconv.hpp
     include/pawlib/core_types.hpp
     include/pawlib/core_types_tests.hpp
     include/pawlib/flex_array.hpp
@@ -123,7 +121,6 @@ add_library(${TARGET_NAME} STATIC
     include/pawlib/singly_linked_list.hpp
     include/pawlib/stdutils.hpp
 
-    src/binconv.cpp
     src/core_types.cpp
     src/core_types_tests.cpp
     src/flex_array_tests.cpp

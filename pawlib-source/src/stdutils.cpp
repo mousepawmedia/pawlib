@@ -305,11 +305,14 @@ namespace pawlib
         *(pos++) = '0';
 
         //Reverse the string.
-        char temp[strlen(str)];
+        //char temp[strlen(str)];
+        char* temp = new char[strlen(str)];
         temp[0] = '\0';
 
         strcpy(temp, str);
         strcpy(str, strrev(temp));
+
+        delete[] temp;
     }
 
     void stdutils::btoa(char* str, unsigned int val, int len, bool use_caps)
@@ -362,11 +365,14 @@ namespace pawlib
         }
 
         //Reverse the string.
-        char temp[strlen(str)];
+        //char temp[strlen(str)];
+        char* temp = new char[strlen(str)];
         temp[0] = '\0';
 
         strcpy(temp, str);
         strcpy(str, strrev(temp));
+
+        delete[] temp;
     }
 
     template <typename T>
@@ -518,10 +524,12 @@ namespace pawlib
                 c -= m;
 
                 //Reverse the string.
-                char temp[strlen(c)];
+                //char temp[strlen(c)];
+                char* temp = new char[strlen(c)];
                 temp[0] = '\0';
                 strcpy(temp, c);
                 strcpy(c, strrev(temp));
+                delete[] temp;
 
                 /* We don't use the XOR method because it is generally less
                  * efficient than just swapping with temporary.*/
@@ -548,7 +556,8 @@ namespace pawlib
     {
         int len = intlen(val, base, true) + 1;
 
-        char cstr[len];
+        //char cstr[len];
+        char* cstr = new char[len];
         /* We have to initialize after the fact to keep Clang happy,
          * but we must fill the array to avoid memory issues.
          * Thus, we'll use the std::fill_n function to fill the array
@@ -557,6 +566,7 @@ namespace pawlib
 
         itoa(cstr, val, base, len, use_caps);
         std::string str = cstr;
+        delete[] cstr;
         return str;
     }
     template std::string stdutils::itos<char>(char, int, bool);
@@ -581,7 +591,8 @@ namespace pawlib
         /* Declare a new C-string with the size equal to the estimated
          * maximum number of characters in the float, plus 1 for the null
          * terminator.*/
-        char cstr[len];
+        //char cstr[len];
+        char* cstr = new char[len];
 
         /* We have to initialize after the fact to keep Clang happy,
          * but we must fill the array to avoid memory issues.
@@ -593,6 +604,7 @@ namespace pawlib
         ftoa(cstr, val, significand, sci);
         //Convert the cstring into a string.
         std::string str = cstr;
+        delete[] cstr;
         //Return the string.
         return str;
     }

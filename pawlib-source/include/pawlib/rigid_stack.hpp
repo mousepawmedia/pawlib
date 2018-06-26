@@ -110,14 +110,11 @@ namespace pawlib
                 // If the stack is full...
                 if(next >= len)
                 {
-                    if(failsafe)
+                    if(F)
                     {
                         return;
                     }
-                    else
-                    {
-                        throw std::length_error("Cannot push to full RigidStack.");
-                    }
+                    throw std::length_error("Cannot push to full RigidStack.");
                 }
                 // Else, store the element and increment next.
                 stk[next++] = ele;

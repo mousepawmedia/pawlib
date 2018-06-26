@@ -2,24 +2,42 @@
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
 
-    /*"c-cpp-flylint.cppcheck.force": false,
+    "c-cpp-flylint.cppcheck.force": false,
     "c-cpp-flylint.cppcheck.includePaths": [
         "./pawlib-source/include",
-        "./pawlib-tester/include"
+        "./pawlib-tester/include",
     ],
     "c-cpp-flylint.standard": [
         "c11",
         "c++11"
-    ],*/
-    "cppcheck.standard": [
+    ],
+    "c-cpp-flylint.cppcheck.severityLevels": {
+        "error": "Error",
+        "warning": "Warning",
+        "style": "Information",
+        "performance": "Warning",
+        "portability": "Warning",
+        "information": "Information"
+      },
+    /*"cppcheck.standard": [
       "c11",
       "c++11"
     ],
     "cppcheck.includePaths": [
-        "./",
-        "../libdeps"
+        "./pawlib-source/include",
+        "./pawlib-tester/include",
+        "../libdeps/libs/include"
     ],
     "cppcheck.force": false,
+
+    "cppcheck.severityLevels": {
+        "error": "Error",
+        "warning": "Warning",
+        "style": "None",
+        "performance": "Warning",
+        "portability": "Warning",
+        "information": "None"
+    },*/
 
     "[c]": {
         "editor.detectIndentation": false,
@@ -76,28 +94,53 @@
     "restructuredtext.workspaceRoot": "${workspaceRoot}",
 
     "cSpell.allowCompoundWords": true,
+
+    "cSpell.ignorePaths": [
+        "**/node_modules/**",
+        "**/vscode-extension/**",
+        "**/.git/**",
+        ".vscode",
+        "typings",
+        "**/build_temp/**"
+    ],
+
+    "cSpell.ignoreRegExpList": [
+        "#include (\"\\<)(\\/\\w\\.)+(\"\\>)"
+    ],
+
+    "cSpell.ignoreWords": [
+        "addop",
+        "cpuid",
+        "itos",
+        "nisstyre",
+        "ochr",
+        "ostr",
+        "pydsigner",
+        "rdtsc",
+    ],
+
     "cSpell.words": [
+        "cout",
         "cpgf",
         "deinitialized",
+        "deque",
         "golidlocks",
         "io",
+        "iochannel",
+        "ioformat",
         "item",
-        "tril",
-        "trilean",
-        "trileans",
         "mousepaw",
         "pawlib",
+        "rsds",
         "shutup",
         "significands",
         "speakup",
-        "type"
-    ],
-    "cSpell.ignoreWords": [
-        "cpuid",
-        "itos",
-        "rdtsc",
-    ],
-    "cSpell.ignoreRegExpList": [
-        "#include (\"\\<)(\\/\\w\\.)+(\"\\>)"
+        "tril",
+        "tril's",
+        "trilean",
+        "trileans",
+        "type",
+        "unshift",
+        "vlas"
     ],
 }

@@ -6,6 +6,27 @@ namespace pawlib
     iochannel ioc;
 
     iochannel::iochannel()
+    : msg(""),
+      process_c(cat_all),
+      process_v(vrb_tmi),
+      echomode(echo_printf),
+      echovrb(vrb_tmi),
+      echocat(cat_all),
+      base(base_10),
+      boolstyle(bool_lower),
+      charval(char_char),
+      significands(14),
+      sci(sci_auto),
+      numcase(num_upper),
+      ptr(ptr_value),
+      readsize(1),
+      memformat(0),
+      ta(ta_none),
+      bg(bg_none),
+      fg(fg_none),
+      vrb(vrb_normal),
+      cat(cat_normal),
+      parse(maybe)
     {
         ta = ta_none;
         fg = fg_none;
@@ -361,10 +382,12 @@ namespace pawlib
         switch(rhs)
         {
             case IOCursor::cur_left:
-                inject("\e[1D");
+                //NOTE: Watch this. \x1B is allegedly equal to \e, check it.
+                inject("\x1B[1D");
                 break;
             case IOCursor::cur_right:
-                inject("\e[1C");
+                //NOTE: Watch this. \x1B is allegedly equal to \e, check it.
+                inject("\x1B[1C");
                 break;
             default:
                 // Can't happen unless you forgot to implement an IOCursor option!
@@ -491,11 +514,18 @@ namespace pawlib
 
         // We're changing approach below to keep Clang happy.
         //// char cstr[len] = {'\0'};
-        char cstr[len];
+        /*char cstr[len];
+        std::fill_n(cstr, len, '\0');*/
+
+        // Accepting defeat on VLAs - we'll just have to dynamically allocate.
+        char* cstr = new char[len];
         std::fill_n(cstr, len, '\0');
 
         stdutils::itoa(cstr, rhs, base, len, numcase);
         inject(cstr);
+
+        delete[] cstr;
+
         return *this;
     }
     template iochannel& iochannel::resolve_integer<char>(const char&);
@@ -515,14 +545,20 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        // We're changing approach below to keep Clang happy.
-        ////char cstr[stdutils::floatlen(rhs, significands, sci, true) + 1] = {'\0'};
-        char cstr[stdutils::floatlen(rhs, significands, sci, true) + 1];
-        cstr[0] = '\0';
+        /*char cstr[stdutils::floatlen(rhs, significands, sci, true) + 1];
+        cstr[0] = '\0';*/
+
+        // Accepting defeat on VLAs - we'll just have to dynamically allocate.
+        uint32_t len = stdutils::floatlen(rhs, significands, sci, true) + 1;
+        char* cstr = new char[len];
+        std::fill_n(cstr, len, '\0');
 
         //Convert the float to a cstring, and dump into cstr.
         stdutils::ftoa(cstr, rhs, significands, sci);
         inject(cstr);
+
+        delete[] cstr;
+
         return *this;
     }
     template iochannel& iochannel::resolve_float<float>(const float&);
@@ -678,10 +714,11 @@ namespace pawlib
                 }
             }
 
-            // We're changing approach below to keep Clang happy.
-            ////char mem[memsize] = {'\0'};
-            char mem[memsize];
-            mem[0] = '\0';
+            /*char mem[memsize];
+            mem[0] = '\0';*/
+            // Accepting defeat on VLAs - we'll just have to dynamically allocate.
+            char* mem = new char[memsize];
+            std::fill_n(mem, memsize, '\0');
 
             stdutils::memdump(mem, ptr, len, false, memformat);
             inject(mem);

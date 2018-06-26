@@ -1,5 +1,5 @@
 /** Tests for FlexArray[PawLIB]
-  * Version: 1.0
+  * Version: 1.1
   *
   * Author(s): Jonathan Theodore, Jason C. McDonald
   */
@@ -56,6 +56,9 @@ namespace pawlib
         private:
             unsigned int iters;
 
+            //Create instance of vector.
+            std::vector<unsigned int> vec;
+
         public:
             explicit TestVector_Push(unsigned int iterations)
                 :iters(iterations)
@@ -73,18 +76,29 @@ namespace pawlib
 
             bool run()
             {
-                //Create instance of vector.
-                std::vector<unsigned int> vec;
-
                 // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
                 {
                     vec.push_back(i);
-                    if(vec.back() != i)
+                }
+                return true;
+            }
+
+            bool verify()
+            {
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    if(vec[i] != i)
                     {
                         return false;
                     }
                 }
+                return true;
+            }
+
+            bool janitor()
+            {
+                vec.clear();
                 return true;
             }
 
@@ -97,6 +111,8 @@ namespace pawlib
     {
         private:
                 unsigned int iters;
+                // Create instance of FlexArray.
+                pawlib::FlexArray<unsigned int> flex;
 
         public:
             explicit TestFArray_Push(unsigned int iterations)
@@ -114,9 +130,6 @@ namespace pawlib
 
             bool run()
             {
-                // Create instance of FlexArray.
-                pawlib::FlexArray<unsigned int> flex;
-
                 // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -126,15 +139,43 @@ namespace pawlib
                         // Report failure.
                         return false;
                     }
-                    // if the value pushed isn't found at the end...
-                    if(flex.peek() != i)
-                    {
-                        // Report failure.
-                        return false;
-                    }
                 }
                 // Report success.
                 return true;
+            }
+
+            bool run_optimized()
+            {
+                // Insert each required element via a push.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    flex.push(i);
+                }
+                // Report success.
+                return true;
+            }
+
+            bool verify()
+            {
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    // if the value pushed isn't found at the end...
+                    //if(flex[i] != i)
+                    if(flex[i] != i)
+                    {
+                        // Report failure.
+                        ioc << "Incorrect push." << io_endline
+                            << "    expected = " << i << io_endline
+                            << "         got = " << flex.peek() << io_end;
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            bool janitor()
+            {
+                return flex.clear();
             }
 
             ~TestFArray_Push(){}
@@ -170,6 +211,19 @@ namespace pawlib
                     {
                         return false;
                     }
+                }
+                return true;
+            }
+
+            bool run_optimized()
+            {
+                // Create instance of vector.
+                std::vector<unsigned int> vec;
+
+                // Insert each required element via a shift.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    vec.insert(vec.begin(), i);
                 }
                 return true;
             }
@@ -219,8 +273,26 @@ namespace pawlib
                     if(flex[0] != i || (i > 0 && flex[1] != i-1))
                     {
                         // Report failure
+                        ioc << "Incorrect shift." << io_endline
+                            << "      expected = " << i << io_endline
+                            << "           got = " << flex[0] << io_endline
+                            << " f[1] expected = " << i-1 << io_endline
+                            << "      f[1] got = " << flex[1] << io_end;
                         return false;
                     }
+                }
+                return true;
+            }
+
+            bool run_optimized()
+            {
+                // Create instance of FlexArray.
+                pawlib::FlexArray<unsigned int> flex;
+
+                // Insert each required element via a shift.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    flex.shift(i);
                 }
                 return true;
             }
@@ -234,6 +306,7 @@ namespace pawlib
     {
         private:
             unsigned int iters;
+            std::vector<unsigned int> vec;
 
         public:
             explicit TestVector_Insert(unsigned int iterations)
@@ -251,18 +324,23 @@ namespace pawlib
 is calculated as size()/2.";
             }
 
-            bool run()
+            bool pre()
             {
-                // Create an instance of vector.
-                std::vector<unsigned int> vec;
+                return janitor();
+            }
 
+            bool janitor()
+            {
+                vec.clear();
                 // We initially push two values, to make the
                 // math calculating the insert index a bit safer.
                 vec.push_back(0);
                 vec.push_back(1);
+                return true;
+            }
 
-
-
+            bool run()
+            {
                 // Insert each required element.
                 for(unsigned int val=1; val<1000; ++val)
                 {
@@ -276,6 +354,17 @@ is calculated as size()/2.";
                 return true;
             }
 
+            bool run_optimized()
+            {
+                // Insert each required element.
+                for(unsigned int val=1; val<1000; ++val)
+                {
+                    unsigned int at = vec.size()/2;
+                    vec.insert(vec.begin()+at, val);
+                }
+                return true;
+            }
+
             ~TestVector_Insert(){}
 
     };
@@ -285,7 +374,8 @@ is calculated as size()/2.";
     {
         private:
             unsigned int iters;
-
+            // Create instance of FlexArray.
+            pawlib::FlexArray<unsigned int> flex;
 
         public:
             explicit TestFArray_Insert(unsigned int iterations)
@@ -294,29 +384,37 @@ is calculated as size()/2.";
 
             testdoc_t get_title()
             {
-                return "FlexArray: Insert " + stdutils::itos(iters, 10) + " Integers At Middle (flexarray)";
+                return "FlexArray: Insert " + stdutils::itos(iters, 10) + " Integers At Middle (FlexArray)";
             }
 
             testdoc_t get_docs()
             {
-                return "Insert " + stdutils::itos(iters, 10) + " integers at the middle of a flexarray. \
+                return "Insert " + stdutils::itos(iters, 10) + " integers at the middle of a FlexArray. \
 Middle is calculated as size()/2.";
             }
 
-            bool run()
+            bool pre()
             {
-                // Create instance of FlexArray.
-                pawlib::FlexArray<unsigned int> flex;
+                return janitor();
+            }
 
+            bool janitor()
+            {
+                flex.clear();
                 /* We initially push two values, to make the
                  * math calculating the insert index a bit safer.*/
                 flex.push(0);
                 flex.push(1);
+                return true;
+            }
 
+            bool run()
+            {
                 // Insert each required element.
                 for(unsigned int val=1; val<iters; ++val)
                 {
-                    int at = flex.getSize()/2;
+                    int at = flex.getLength()/2;
+
                     // Attempt an insert shift. If it fails...
                     if(!flex.insert(val, at))
                     {
@@ -327,8 +425,26 @@ Middle is calculated as size()/2.";
                     if(flex[at] != val || flex.peek() != 1)
                     {
                         // Report failure.
+                        ioc << "Incorrect insert." << io_endline
+                            << "      expected = " << val << io_endline
+                            << "           got = " << flex[at] << io_endline
+                            << " expected peek = 1" << io_endline
+                            << "      got peek = " << flex.peek() << io_end;
                         return false;
                     }
+                }
+
+                // Report success.
+                return true;
+            }
+
+            bool run_optimized()
+            {
+                // Insert each required element.
+                for(unsigned int val=1; val<iters; ++val)
+                {
+                    int at = flex.getLength()/2;
+                    flex.insert(val, at);
                 }
 
                 // Report success.
@@ -397,6 +513,20 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
+            bool run_optimized()
+            {
+                // Remove and return each element.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    // Access the back element.
+                    (void)vec.back();
+
+                    // Remove the element.
+                    vec.pop_back();
+                }
+                return true;
+            }
+
             ~TestVector_Yank(){}
     };
 
@@ -423,17 +553,17 @@ Middle is calculated as size()/2.";
                 return "Erase " + stdutils::itos(iters, 10) + " integers at any given index (yank).";
             }
 
-            bool pre()
-            {
-                return janitor();
-            }
-
             bool janitor()
             {
+                flex.clear();
+
                 // Refill the FlexArray.
                 for(unsigned int i=0; i<iters; ++i)
                 {
-                    flex.push(i);
+                    if(!flex.push(i))
+                    {
+                        return false;
+                    }
                 }
                 return true;
             }
@@ -445,7 +575,6 @@ Middle is calculated as size()/2.";
                 {
                     // Store the element at i.
                     unsigned int temp = flex.at(i);
-
                     // If the yanked element isn't what it should be...
                     if(flex.yank(i) != temp)
                     {
@@ -455,6 +584,18 @@ Middle is calculated as size()/2.";
                 }
                 return true;
             }
+
+            bool run_optimized()
+            {
+                // For each element...
+                for(int i=(iters-1); i>=0; --i)
+                {
+                    // If the yanked element isn't what it should be...
+                    (void)flex.yank(i);
+                }
+                return true;
+            }
+
         ~TestFArray_Yank(){}
     };
 
@@ -511,6 +652,17 @@ Middle is calculated as size()/2.";
                 }
                 return true;
             }
+
+            bool run_optimized()
+            {
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    (void)vec.front();
+                    vec.erase(vec.begin());
+                }
+                return true;
+            }
+
             ~TestVector_Unshift(){}
     };
 
@@ -562,6 +714,16 @@ Middle is calculated as size()/2.";
                         // Report failure.
                         return false;
                     }
+                }
+                return true;
+            }
+
+            bool run_optimized()
+            {
+                // Pop each element.
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    (void)flex.unshift();
                 }
                 return true;
             }
@@ -623,6 +785,16 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
+            bool run_optimized()
+            {
+                for(unsigned int i=0; i<iters; ++i)
+                {
+                    (void)vec.back();
+                    vec.pop_back();
+                }
+                return true;
+            }
+
             ~TestVector_Pop(){}
     };
 
@@ -677,6 +849,16 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
+            bool run_optimized()
+            {
+                // Pop each element.
+                for(unsigned int i=(iters-1); i; --i)
+                {
+                    (void)flex.pop();
+                }
+                return true;
+            }
+
             ~TestFArray_Pop(){}
     };
 
@@ -709,6 +891,7 @@ Middle is calculated as size()/2.";
 
             bool janitor()
             {
+                flex.clear();
                 // Refill the FlexArray.
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -718,7 +901,7 @@ Middle is calculated as size()/2.";
             }
             bool run()
             {
-                // Calcuate erase size as the center half of the elements.
+                // Calculate erase size as the center half of the elements.
                 int first = iters/4;
                 int last = first * 3;
                 // Erase in one step.
@@ -766,7 +949,7 @@ Middle is calculated as size()/2.";
             }
             bool run()
             {
-                // Calcuate erase size as the center half of the elements.
+                // Calculate erase size as the center half of the elements.
                 int first = iters/4;
                 int last = first * 3;
                 // Erase in one step.
@@ -778,15 +961,61 @@ Middle is calculated as size()/2.";
             ~TestVector_Erase(){}
     };
 
+    class TestVector_Peek : public Test
+    {
+        protected:
+            // Create instance of FlexArray.
+            std::vector<unsigned int> vec;
+
+            unsigned int expected = 42;
+            unsigned int other = 9;
+        public:
+            TestVector_Peek(){}
+
+            testdoc_t get_title()
+            {
+                return "FlexArray: Peek (std::vector)";
+            }
+
+            testdoc_t get_docs()
+            {
+                return "Access the last element in the vector.";
+            }
+
+            bool pre()
+            {
+                /* We initially push three values, to make the
+                 * math calculating the insert index a bit safer.*/
+                vec.push_back(other);
+                vec.push_back(other);
+                vec.push_back(other);
+                vec.push_back(expected);
+                return true;
+            }
+
+            bool run()
+            {
+                (void)vec.back();
+                return true;
+            }
+    };
+
     // P-tB1008
     class TestFArray_Peek : public Test
     {
+        protected:
+            // Create instance of FlexArray.
+            pawlib::FlexArray<unsigned int> flex;
+
+            unsigned int expected = 42;
+            unsigned int other = 9;
+
         public:
             TestFArray_Peek(){}
 
             testdoc_t get_title()
             {
-                return "FlexArray: Peek (flexarray)";
+                return "FlexArray: Peek (FlexArray)";
             }
 
             testdoc_t get_docs()
@@ -794,21 +1023,19 @@ Middle is calculated as size()/2.";
                 return "Ensure the last element is being peeked correctly.";
             }
 
-            bool run()
+            bool pre()
             {
-                // Create instance of FlexArray.
-                pawlib::FlexArray<unsigned int> flex;
-
-                unsigned int expected = 42;
-                unsigned int other = 9;
-
                 /* We initially push three values, to make the
                  * math calculating the insert index a bit safer.*/
                 flex.push(other);
                 flex.push(other);
                 flex.push(other);
                 flex.push(expected);
+                return true;
+            }
 
+            bool run()
+            {
                 unsigned int peeked = flex.peek();
                 if(peeked == expected)
                 {
@@ -819,7 +1046,12 @@ Middle is calculated as size()/2.";
                 {
                     return false;
                 }
+            }
 
+            bool run_optimized()
+            {
+                (void)flex.peek();
+                return true;
             }
 
             ~TestFArray_Peek(){}
@@ -840,5 +1072,5 @@ Middle is calculated as size()/2.";
 
             ~TestSuite_FlexArray(){}
     };
-};
+}
 #endif // PAWLIB_FLEXARRAY_TESTS_HPP

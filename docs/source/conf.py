@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'PawLIB'
-copyright = '2016, MousePaw Media'
+copyright = '2018, MousePaw Media'
 author = 'MousePaw Media'
 
 # The version info for the project you're documenting, acts as replacement for
