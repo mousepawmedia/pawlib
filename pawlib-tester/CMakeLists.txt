@@ -57,8 +57,12 @@ endif()
 add_definitions(-Wall -Wextra -Werror -pedantic)
 
 if(COMPILERTYPE STREQUAL "gcc")
-    # Suppress implicit fallthrough warnings
-    add_definitions(-Wimplicit-fallthrough=0)
+    # -Wimplicit-fallthrough=0 is required for
+    # GCC 7.x and onward. That is, until we switch
+    # to C++17
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL OR VERSION_GREATER "7")
+        add_definitions(-Wimplicit-fallthrough=0)
+    endif()
     # Set debug flags. -g is a default.
     #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ")
     # Set release flags. -O3 is a default.
@@ -68,10 +72,6 @@ elseif(COMPILERTYPE STREQUAL "clang")
     if(LLVM)
         add_definitions(-stdlib=libc++)
         message("Using LLVM libc++...")
-    endif()
-    if(LLD)
-        message("Using LLVM lld linker...")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld")
     endif()
     # Set debug flags. -g is a default.
     #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ")
