@@ -1,38 +1,47 @@
+MK_DIR = @cmake -E make_directory
+CH_DIR = @cmake -E chdir
+CP = @cmake -E copy
+CP_DIR = @cmake -E copy_directory
+RM = @cmake -E remove
+RM_DIR = @cmake -E remove_directory
+ECHO = @cmake -E echo
+LN = @cmake -E create_symlink
+
 none: help
 
 help:
-	@echo "=== PawLIB 1.0 ==="
-	@echo "Select a build target:"
-	@echo "  make ready         Build PawLIB and bundles it for distribution."
-	@echo "  make clean         Clean up PawLIB and Tester."
-	@echo "  make cleandebug    Clean up PawLIB and Tester Debug."
-	@echo "  make cleanrelease  Clean up PawLIB and Tester Release."
-	@echo "  make docs          Generate HTML docs."
-	@echo "  make docs_pdf      Generate PDF docs."
-	@echo "  make pawlib        Build PawLIB as release."
-	@echo "  make pawlib_debug  Build PawLIB as debug."
-	@echo "  make tester        Build PawLIB Tester (+PawLIB) as release."
-	@echo "  make tester_debug  Build PawLIB Tester (+PawLIB) as debug."
-	@echo "  make all           Build everything."
-	@echo "  make allfresh      Clean and rebuild everything."
-	@echo
-	@echo "Clang Sanitizers (requires Debug build and Clang.)"
-	@echo "  SAN=address     Use AddressSanitizer"
-	@echo "  SAN=leak        Use LeakSanitizer w/o AddressSanitizer (Linux only)"
-	@echo "  SAN=memory      Use MemorySanitizer"
-	@echo "  SAN=thread      Use ThreadSanitizer"
-	@echo "  SAN=undefined   Use UndefiniedBehaviorSanitizer"
-	@echo
-	@echo "Optional Architecture"
-	@echo "  ARCH=32         Make x86 build (-m32)"
-	@echo "  ARCH=64         Make x64 build (-m64)"
-	@echo
-	@echo "Use Configuration File"
-	@echo "  CONFIG=foo      Uses the configuration file 'foo.config'"
-	@echo "                  in the root of this repository."
-	@echo "  When unspecified, default.config will be used."
-	@echo
-	@echo "For other build options, see the 'make' command in 'docs/', 'pawlib-source/', and 'pawlib-tester/'."
+	$(ECHO) "=== PawLIB 1.1 ==="
+	$(ECHO) "Select a build target:"
+	$(ECHO) "  make ready         Build PawLIB and bundles it for distribution."
+	$(ECHO) "  make clean         Clean up PawLIB and Tester."
+	$(ECHO) "  make cleandebug    Clean up PawLIB and Tester Debug."
+	$(ECHO) "  make cleanrelease  Clean up PawLIB and Tester Release."
+	$(ECHO) "  make docs          Generate HTML docs."
+	$(ECHO) "  make docs_pdf      Generate PDF docs."
+	$(ECHO) "  make pawlib        Build PawLIB as release."
+	$(ECHO) "  make pawlib_debug  Build PawLIB as debug."
+	$(ECHO) "  make tester        Build PawLIB Tester (+PawLIB) as release."
+	$(ECHO) "  make tester_debug  Build PawLIB Tester (+PawLIB) as debug."
+	$(ECHO) "  make all           Build everything."
+	$(ECHO) "  make allfresh      Clean and rebuild everything."
+	$(ECHO)
+	$(ECHO) "Clang Sanitizers (requires Debug build and Clang.)"
+	$(ECHO) "  SAN=address     Use AddressSanitizer"
+	$(ECHO) "  SAN=leak        Use LeakSanitizer w/o AddressSanitizer (Linux only)"
+	$(ECHO) "  SAN=memory      Use MemorySanitizer"
+	$(ECHO) "  SAN=thread      Use ThreadSanitizer"
+	$(ECHO) "  SAN=undefined   Use UndefiniedBehaviorSanitizer"
+	$(ECHO)
+	$(ECHO) "Optional Architecture"
+	$(ECHO) "  ARCH=32         Make x86 build (-m32)"
+	$(ECHO) "  ARCH=64         Make x64 build (-m64)"
+	$(ECHO)
+	$(ECHO) "Use Configuration File"
+	$(ECHO) "  CONFIG=foo      Uses the configuration file 'foo.config'"
+	$(ECHO) "                  in the root of this repository."
+	$(ECHO) "  When unspecified, default.config will be used."
+	$(ECHO)
+	$(ECHO) "For other build options, see the 'make' command in 'docs/', 'pawlib-source/', and 'pawlib-tester/'."
 
 clean:
 	$(MAKE) clean -C pawlib-source
@@ -50,19 +59,19 @@ cleanrelease:
 	$(MAKE) cleanrelease -C pawlib-tester
 
 docs:
-	@rm -rf docs/build/html
+	$(RM_DIR) docs/build/html
 	$(MAKE) html -C docs
-	@echo "-------------"
-	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo "View docs at 'docs/build/html/index.html'."
-	@echo "-------------"
+	$(ECHO) "-------------"
+	$(ECHO) "<<<<<<< FINISHED >>>>>>>"
+	$(ECHO) "View docs at 'docs/build/html/index.html'."
+	$(ECHO) "-------------"
 
 docs_pdf:
 	$(MAKE) latexpdf -C docs
-	@echo "-------------"
-	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo "View docs at 'docs/build/latex/PawLIB.pdf'."
-	@echo "-------------"
+	$(ECHO) "-------------"
+	$(ECHO) "<<<<<<< FINISHED >>>>>>>"
+	$(ECHO) "View docs at 'docs/build/latex/PawLIB.pdf'."
+	$(ECHO) "-------------"
 
 pawlib:
 	$(MAKE) release -C pawlib-source
@@ -79,19 +88,19 @@ pawlib_debug:
 	@echo "-------------"
 
 ready: pawlib
-	@rm -rf pawlib
-	@echo "Creating file structure..."
-	@mkdir -p pawlib/lib
-	@echo "Copying PawLIB..."
-	@cp -r pawlib-source/include pawlib/
-	@cp pawlib-source/lib/Release/libpawlib.a pawlib/lib/libpawlib.a
-	@echo "Copying README and LICENSE..."
-	@cp README.md pawlib/README.md
-	@cp LICENSE.md pawlib/LICENSE.md
-	@echo "-------------"
-	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo "The libraries are in 'pawlib'."
-	@echo "-------------"
+	$(RM_DIR) pawlib
+	$(ECHO) "Creating file structure..."
+	$(MK_DIR) pawlib/lib
+	$(ECHO) "Copying PawLIB..."
+	$(CP_DIR) pawlib-source/include pawlib/
+	$(CP) pawlib-source/lib/Release/libpawlib.a pawlib/lib/libpawlib.a
+	$(ECHO) "Copying README and LICENSE..."
+	$(CP) README.md pawlib/README.md
+	$(CP) LICENSE.md pawlib/LICENSE.md
+	$(ECHO) "-------------"
+	$(ECHO) "<<<<<<< FINISHED >>>>>>>"
+	$(ECHO) "The libraries are in 'pawlib'."
+	$(ECHO) "-------------"
 
 tester: pawlib
 	$(MAKE) release -C pawlib-tester

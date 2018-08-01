@@ -12,6 +12,7 @@ endif
 
 MK_DIR = @cmake -E make_directory
 CH_DIR = @cmake -E chdir
+RM_DIR = @cmake -E remove_directory
 ECHO = @cmake -E echo
 
 TEMP_DIR = build_temp
@@ -19,52 +20,54 @@ BUILD_DIR = bin
 
 EXEC_BUILD = $(CH_DIR) $(TEMP_DIR)
 
-none:
-	@echo "=== PawLIB Tester ==="
-	@echo "Select a build target:"
-	@echo "  make debug"
-	@echo "  make release"
-	@echo
-	@echo "  make clean"
-	@echo "  make cleandebug"
-	@echo "  make cleanrelease"
-	@echo
-	@echo "Clang Sanitizers (requires Debug build and Clang.)"
-	@echo "  SAN=address     Use AddressSanitizer"
-	@echo "  SAN=leak        Use LeakSanitizer w/o AddressSanitizer (Linux only)"
-	@echo "  SAN=memory      Use MemorySanitizer"
-	@echo "  SAN=thread      Use ThreadSanitizer"
-	@echo "  SAN=undefined   Use UndefiniedBehaviorSanitizer"
-	@echo
-	@echo "Optional Architecture"
-	@echo "  ARCH=32         Make x86 build (-m32)"
-	@echo "  ARCH=64         Make x64 build (-m64)"
-	@echo
-	@echo "Use Configuration File"
-	@echo "  CONFIG=foo      Uses the configuration file 'foo.config'"
-	@echo "                  in the root of this repository."
-	@echo "  When unspecified, default.config will be used."
+none: help
+
+help:
+	$(ECHO) "=== PawLIB Tester ==="
+	$(ECHO) "Select a build target:"
+	$(ECHO) "  make debug"
+	$(ECHO) "  make release"
+	$(ECHO)
+	$(ECHO) "  make clean"
+	$(ECHO) "  make cleandebug"
+	$(ECHO) "  make cleanrelease"
+	$(ECHO)
+	$(ECHO) "Clang Sanitizers (requires Debug build and Clang.)"
+	$(ECHO) "  SAN=address     Use AddressSanitizer"
+	$(ECHO) "  SAN=leak        Use LeakSanitizer w/o AddressSanitizer (Linux only)"
+	$(ECHO) "  SAN=memory      Use MemorySanitizer"
+	$(ECHO) "  SAN=thread      Use ThreadSanitizer"
+	$(ECHO) "  SAN=undefined   Use UndefiniedBehaviorSanitizer"
+	$(ECHO)
+	$(ECHO) "Optional Architecture"
+	$(ECHO) "  ARCH=32         Make x86 build (-m32)"
+	$(ECHO) "  ARCH=64         Make x64 build (-m64)"
+	$(ECHO)
+	$(ECHO) "Use Configuration File"
+	$(ECHO) "  CONFIG=foo      Uses the configuration file 'foo.config'"
+	$(ECHO) "                  in the root of this repository."
+	$(ECHO) "  When unspecified, default.config will be used."
 
 clean:
-	@cmake -E remove_directory $(BUILD_DIR)
-	@cmake -E remove_directory $(TEMP_DIR)
+	$(RM_DIR) $(BUILD_DIR)
+	$(RM_DIR) $(TEMP_DIR)
 
 cleandebug:
-	@cmake -E remove_directory $(BUILD_DIR)/Debug
-	@cmake -E remove_directory $(TEMP_DIR)/Debug
+	$(RM_DIR) $(BUILD_DIR)/Debug
+	$(RM_DIR) $(TEMP_DIR)/Debug
 
 cleanrelease:
-	@cmake -E remove_directory $(BUILD_DIR)/Release
-	@cmake -E remove_directory $(TEMP_DIR)/Release
+	$(RM_DIR) $(BUILD_DIR)/Release
+	$(RM_DIR) $(TEMP_DIR)/Release
 
 debug:
 	$(MK_DIR) $(TEMP_DIR)/Debug$(ARCH)
 	$(CH_DIR) $(TEMP_DIR)/Debug$(ARCH) $(CMAKE) $(T_DEBUG) -DARCH=$(ARCH) -DSAN=$(SAN) $(P_CONF)$(P_CONF_PATH)
-	$(EXEC_BUILD)/Debug$(ARCH) $(MAKE) $(TARGET) VERBOSE=1
+	$(EXEC_BUILD)/Debug$(ARCH) $(MAKE) VERBOSE=1
 
 release:
 	$(MK_DIR) $(TEMP_DIR)/Release$(ARCH)
 	$(CH_DIR) $(TEMP_DIR)/Release$(ARCH) $(CMAKE) $(T_RELEASE) -DARCH=$(ARCH) $(P_CONF)$(P_CONF_PATH)
-	$(EXEC_BUILD)/Release$(ARCH) $(MAKE) $(TARGET) VERBOSE=1
+	$(EXEC_BUILD)/Release$(ARCH) $(MAKE) VERBOSE=1
 
-.PHONY: clean cleandebug cleanrelease
+.PHONY: clean cleandebug cleanrelease help
