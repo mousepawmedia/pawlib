@@ -60,7 +60,7 @@ if(COMPILERTYPE STREQUAL "gcc")
     # -Wimplicit-fallthrough=0 is required for
     # GCC 7.x and onward. That is, until we switch
     # to C++17
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL OR VERSION_GREATER "7")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "7" OR CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "7")
         add_definitions(-Wimplicit-fallthrough=0)
     endif()
     # Set debug flags. -g is a default.
