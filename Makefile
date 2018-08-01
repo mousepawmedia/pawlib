@@ -65,14 +65,14 @@ docs_pdf:
 	@echo "-------------"
 
 pawlib:
-	$(MAKE) release ARCH=$(ARCH) CONFIG=$(CONFIG) -C pawlib-source
+	$(MAKE) release -C pawlib-source
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
 	@echo "PawLIB is in 'pawlib-source/lib/Release'."
 	@echo "-------------"
 
 pawlib_debug:
-	$(MAKE) debug ARCH=$(ARCH) CONFIG=$(CONFIG) SAN=$(SAN) -C pawlib-source
+	$(MAKE) debug -C pawlib-source
 	@echo "-------------"
 	@echo "<<<<<<< FINISHED >>>>>>>"
 	@echo  on "PawLIB is in 'pawlib-source/lib/Debug'."
@@ -94,7 +94,7 @@ ready: pawlib
 	@echo "-------------"
 
 tester: pawlib
-	$(MAKE) release ARCH=$(ARCH) CONFIG=$(CONFIG) -C pawlib-tester
+	$(MAKE) release -C pawlib-tester
 	@rm -f tester
 	@ln -s pawlib-tester/bin/Release/pawlib-tester tester
 	@echo "-------------"
@@ -105,7 +105,7 @@ tester: pawlib
 
 
 tester_debug: pawlib_debug
-	$(MAKE) debug ARCH=$(ARCH) CONFIG=$(CONFIG) SAN=$(SAN) -C pawlib-tester
+	$(MAKE) debug -C pawlib-tester
 	@rm -f tester_debug
 	@ln -s pawlib-tester/bin/Debug/pawlib-tester tester_debug
 	@echo "-------------"
