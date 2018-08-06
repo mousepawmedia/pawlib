@@ -75,17 +75,17 @@ docs_pdf:
 
 pawlib:
 	$(MAKE) release -C pawlib-source
-	@echo "-------------"
-	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo "PawLIB is in 'pawlib-source/lib/Release'."
-	@echo "-------------"
+	$(ECHO) "-------------"
+	$(ECHO) "<<<<<<< FINISHED >>>>>>>"
+	$(ECHO) "PawLIB is in 'pawlib-source/lib/Release'."
+	$(ECHO) "-------------"
 
 pawlib_debug:
 	$(MAKE) debug -C pawlib-source
-	@echo "-------------"
-	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo  on "PawLIB is in 'pawlib-source/lib/Debug'."
-	@echo "-------------"
+	$(ECHO) "-------------"
+	$(ECHO) "<<<<<<< FINISHED >>>>>>>"
+	$(ECHO)  on "PawLIB is in 'pawlib-source/lib/Debug'."
+	$(ECHO) "-------------"
 
 ready: pawlib
 	$(RM_DIR) pawlib
@@ -106,22 +106,22 @@ tester: pawlib
 	$(MAKE) release -C pawlib-tester
 	@rm -f tester
 	@ln -s pawlib-tester/bin/Release/pawlib-tester tester
-	@echo "-------------"
-	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo "PawLIB Tester is in 'pawlib-tester/bin/Release'."
-	@echo "The link './tester' has been created for convenience."
-	@echo "-------------"
+	$(ECHO) "-------------"
+	$(ECHO) "<<<<<<< FINISHED >>>>>>>"
+	$(ECHO) "PawLIB Tester is in 'pawlib-tester/bin/Release'."
+	$(ECHO) "The link './tester' has been created for convenience."
+	$(ECHO) "-------------"
 
 
 tester_debug: pawlib_debug
 	$(MAKE) debug -C pawlib-tester
 	@rm -f tester_debug
 	@ln -s pawlib-tester/bin/Debug/pawlib-tester tester_debug
-	@echo "-------------"
-	@echo "<<<<<<< FINISHED >>>>>>>"
-	@echo "PawLIB Tester is in 'pawlib-tester/bin/Debug'."
-	@echo "The link './tester_debug' has been created for convenience."
-	@echo "-------------"
+	$(ECHO) "-------------"
+	$(ECHO) "<<<<<<< FINISHED >>>>>>>"
+	$(ECHO) "PawLIB Tester is in 'pawlib-tester/bin/Debug'."
+	$(ECHO) "The link './tester_debug' has been created for convenience."
+	$(ECHO) "-------------"
 
 all: docs tester
 
