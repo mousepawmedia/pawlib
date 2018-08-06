@@ -46,6 +46,8 @@ help:
 clean:
 	$(MAKE) clean -C pawlib-source
 	$(MAKE) clean -C pawlib-tester
+	$(RM) tester_debug
+	$(RM) tester
 
 cleanall: clean
 	$(MAKE) clean -C docs
@@ -53,10 +55,12 @@ cleanall: clean
 cleandebug:
 	$(MAKE) cleandebug -C pawlib-source
 	$(MAKE) cleandebug -C pawlib-tester
+	$(RM) tester_debug
 
 cleanrelease:
 	$(MAKE) cleanrelease -C pawlib-source
 	$(MAKE) cleanrelease -C pawlib-tester
+	$(RM) tester
 
 docs:
 	$(RM_DIR) docs/build/html
@@ -90,10 +94,10 @@ pawlib_debug:
 ready: pawlib
 	$(RM_DIR) pawlib
 	$(ECHO) "Creating file structure..."
-	$(MK_DIR) pawlib/lib
+	$(MK_DIR) pawlib
 	$(ECHO) "Copying PawLIB..."
-	$(CP_DIR) pawlib-source/include pawlib/
-	$(CP) pawlib-source/lib/Release/libpawlib.a pawlib/lib/libpawlib.a
+	$(CP_DIR) pawlib-source/include/ pawlib/include/
+	$(CP_DIR) pawlib-source/lib/Release/ pawlib/lib/
 	$(ECHO) "Copying README and LICENSE..."
 	$(CP) README.md pawlib/README.md
 	$(CP) LICENSE.md pawlib/LICENSE.md
@@ -104,8 +108,8 @@ ready: pawlib
 
 tester: pawlib
 	$(MAKE) release -C pawlib-tester
-	@rm -f tester
-	@ln -s pawlib-tester/bin/Release/pawlib-tester tester
+	$(RM) tester
+	$(LN) pawlib-tester/bin/Release/pawlib-tester tester
 	$(ECHO) "-------------"
 	$(ECHO) "<<<<<<< FINISHED >>>>>>>"
 	$(ECHO) "PawLIB Tester is in 'pawlib-tester/bin/Release'."
@@ -115,8 +119,8 @@ tester: pawlib
 
 tester_debug: pawlib_debug
 	$(MAKE) debug -C pawlib-tester
-	@rm -f tester_debug
-	@ln -s pawlib-tester/bin/Debug/pawlib-tester tester_debug
+	$(RM) tester_debug
+	$(LN) pawlib-tester/bin/Debug/pawlib-tester tester_debug
 	$(ECHO) "-------------"
 	$(ECHO) "<<<<<<< FINISHED >>>>>>>"
 	$(ECHO) "PawLIB Tester is in 'pawlib-tester/bin/Debug'."
