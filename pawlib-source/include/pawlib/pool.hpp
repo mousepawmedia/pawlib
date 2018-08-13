@@ -1,5 +1,5 @@
 /** Pool [PawLIB]
-  * Version: 1.0
+  * Version: 1.1
   *
   * A general-purpose object pool implementation, which offers
   * on-demand initialization, access, and deinitialization of
@@ -355,7 +355,7 @@ namespace pawlib
             pool_ref(pool_t* pool, uint32_t i, poolobjsignal_t* signal)
             :pool_ptr(pool), index(i)
             {
-                signal->add(this, &pool_ref<T>::invalidate);
+                signal->add(cpgf::makeCallback(this, &pool_ref<T>::invalidate));
             }
 
             /** Sets the reference's index to INVALID. */
@@ -372,7 +372,7 @@ namespace pawlib
             {
                 if(pool_ptr != nullptr && index != INVALID_INDEX)
                 {
-                    pool_ptr->object_signal(index)->remove(this, &pool_ref<T>::invalidate);
+                    pool_ptr->object_signal(index)->remove(cpgf::makeCallback(this, &pool_ref<T>::invalidate));
                 }
             }
 
@@ -408,7 +408,7 @@ namespace pawlib
             {
                 if(pool_ptr && index != INVALID_INDEX)
                 {
-                    pool_ptr->object_signal(index)->add(this, &pool_ref<T>::invalidate);
+                    pool_ptr->object_signal(index)->add(cpgf::makeCallback(this, &pool_ref<T>::invalidate));
                 }
             }
 
@@ -419,7 +419,7 @@ namespace pawlib
                 index = cpy.index;
                 if(index != INVALID_INDEX)
                 {
-                   pool_ptr->object_signal(index)->add(this, &pool_ref<T>::invalidate);
+                   pool_ptr->object_signal(index)->add(cpgf::makeCallback(this, &pool_ref<T>::invalidate));
                 }
             }
 
@@ -515,14 +515,9 @@ namespace pawlib
                  * object was recycled, sometimes old signals would persist.
                  * To get around this, we just have the object remove its
                  * own signals.
-                 * This code was adapted from cpgf/samples/callback/tutorial_callback.h
+                 * REVISED 13 AUG: CallbackList now provides clear()
                  */
-                poolobjsignal_t::DirectListType& internalList = signal_deinit.getDirectList();
-                for(poolobjsignal_t::IteratorType it = internalList.begin(); it != internalList.end(); ++it)
-                {
-                    poolobjsignal_t::ConnectionType& connection = *it;
-                    signal_deinit.remove(connection);
-                }
+                signal_deinit.clear();
 
             }
 

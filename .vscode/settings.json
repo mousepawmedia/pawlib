@@ -85,7 +85,11 @@
         "tuple": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "string_view": "cpp"
     },
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
