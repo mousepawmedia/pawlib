@@ -59,7 +59,7 @@ ECHO = @cmake -E echo
 NAME = "PawLIB Tester"
 
 # CHANGEME: Set to 'lib' or 'bin'
-BUILD_DIR = lib
+BUILD_DIR = bin
 
 TEMP_DIR = build_temp
 
