@@ -44,10 +44,13 @@ If you want to test out PawLIB directly, run `make tester`. Then, look for the
 Alternatively, you may use the symbolic link `tester` or `tester_debug` in the
 root of this repository.
 
-## Code::Blocks
+## IDE Support
 
-PawLIB was written and built in CodeBlocks. The projects (`*.cbp`) in this
-repository are pre-configured to build directly in the repository.
+PawLIB was written and built in CodeBlocks and VSCode. The CodeBlocks projects
+(`*.cbp`) in this repository are pre-configured to build using the
+Makefile/CMake build system. The configuration files in `.vscode/` are
+pre-configured to provide the best IDE experience, and allow building and
+debugging.
 
 ## Source Directories
 
