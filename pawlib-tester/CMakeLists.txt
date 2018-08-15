@@ -41,7 +41,7 @@
 # Specify the verison being used as well as the language.
 cmake_minimum_required(VERSION 3.1)
 
-#Name your project here
+# CHANGEME: Name your project here
 project("PawLIB Tester")
 set(TARGET_NAME "pawlib-tester")
 
@@ -128,7 +128,7 @@ include_directories(../pawlib-source/include)
 include_directories(${CPGF_DIR}/include)
 
 # CHANGEME: Include files to compile.
-add_executable(pawlib-tester
+add_executable(${TARGET_NAME}
     main.cpp
 )
 
