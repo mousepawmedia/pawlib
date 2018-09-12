@@ -18,3 +18,6 @@ tester_debug
 *.kdev4
 !default.config
 codealike.json
+.codelite/
+Pawlib.workspace
+pawlib.project

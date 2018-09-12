@@ -566,8 +566,7 @@ unique values. Really, this is just evil incarnate.";
 
             bool run()
             {
-                pawsort::introsort(test_arr, test_size);
-
+                pawsort::introsort(test_arr, 0, test_size-1);
                 // Verify sorting.
                 for(int i = 1; i < test_size; ++i)
                 {
@@ -584,6 +583,43 @@ unique values. Really, this is just evil incarnate.";
 
             ~TestPawSort(){}
     };
+
+    class TestInsertionSort : public TestSort
+    {
+        public:
+            explicit TestInsertionSort(TestArrayType type):TestSort(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return title + " (insertion_sort)";
+            }
+
+            bool run() override
+            {
+                /* Test sorting from index to test_size - 1 - index*/              
+                pawsort::insertion_sort(test_arr, INDEX, test_size -1 - INDEX);
+                
+                // Verify sorting.
+                for(int i = 1 + INDEX; i < test_size - INDEX ; ++i)
+                {
+                    // If the item is less than the previous item.
+                    if(test_arr[i] < test_arr[i-1])
+                    {
+                        // Out of order. Fail.
+                        return false;
+                    }
+                }
+                // If we make it this far, validation passed.
+                return true;
+            }
+
+            ~TestInsertionSort(){}
+            
+    private:
+        const int INDEX = 100;
+    };
+
 
     class TestSuite_Pawsort : public TestSuite
     {
