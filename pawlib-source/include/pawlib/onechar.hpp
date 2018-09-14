@@ -1,13 +1,13 @@
 /** OneChar [PawLIB]
   * Version: 0.3
   *
-  * OneChar is a base class for the characters that make up
-  * OneString and QuickString. OneChar is an abstract class. The two types of
-  * OneChars are UniChar and AscChar. UniChar is an array of characters
-  * used to represent Unicode characters. An AscChar is a standard ASCII
-  * character with the standard functionality needed for OneString.
+
+  * OneChar is an array of character that can be used to represent both
+  * Unicode character along with ASCII characters. We decided to go with
+  * one class instead of the original two to cut out the problems that
+  * arise when dealing with class hierarchies.
   *
-  * Author(s): Scott Taylor
+  * Author(s): Scott Taylor, Jarek Thomas, Bowen Volwiler
   */
 
 /* LICENSE
@@ -45,266 +45,115 @@
  * on how to contribute to our projects.
  */
 
-#ifndef PAWLIB_ONECHAR_HPP
-#define PAWLIB_ONECHAR_HPP
 
-#include <cstring>
-#include <iomanip>
-#include <iostream>
+ #ifndef ONECHAR_HPP
+ #define ONECHAR_HPP
 
-#include "pawlib/iochannel.hpp"
+ #include <cstring>
+ #include <iomanip>
+ #include <iostream>
 
-// Constants for ASCII and Unicode
-const bool ASCII = 0;
-const bool UNICODE = 1;
+ #include "pawlib/iochannel.hpp"
 
-namespace pawlib
-{
-    /* OneChar is the base class for UniChar and AscChar. It is meant to
-    provide some basic functions and require others to be defined in the
-    derived classes */
-    class OneChar
-    {
-        public:
-            /** Default constructor
-             * \return a OneChar initialized as an ASCII character */
-            explicit OneChar()
-            {
-				// Set to ascii by default
-				charId = ASCII;
-			};
+ namespace pawlib
+ {
+     /* Onchar class, now our main and only class. It contains all
+        functions needed to handle both ASCII character and Unicode
+        characters.*/
+     class OneChar
+     {
+     public:
 
-			/** Mode constructor
-			 * \param a bool to indicate whether the OneChar should be ASCII or Unicode
-			 * \return */
-			explicit OneChar(bool mode)
-			{
-				// Set the mode appropriately
-				charId = mode;
-			};
+        /** Default constructor*/
+        OneChar(char* newChar);
 
-			/** Get the type of the OneChar
-			 * \return a bool representing either ASCII or Unicode*/
-			bool getId() const
-			{
-			    // Return the ID
-			    return charId;
-			}
+        /** Blank constructor
+        *  Neccesary for declaring an
+        *  array of OneChars */
+        OneChar(){};
 
+        /** Destructor */
+        ~OneChar(){};
 
-			// Declare functions that must be defined in derived classes
+        /** Retrieve char from OneChar
+        * This takes care of the setting part of the index operator
+        * \param the desired position within the OneChar
+        * \return returns that reference of the char located at pos*/
+        char operator[](int pos) const;
 
-			/**Retrieve char from OneChar
-             * This takes care of the "getting" part of the index operator
-             * \param the desired position within in the OneChar
-             * \return returns the char located at pos */
-			virtual char operator[](int pos) const = 0;
+        /** Assignment operator for char
+        * \param the char to be initialized from
+        * \return an initialized OneChar*/
+        OneChar& operator=(char newChar);
 
-            /**Retrieve char from OneChar
-             * This takes care of the "setting" part of the index operator
-             * \param the desired position within in the OneChar
-             * \return returns the reference of the char located at pos */
-            virtual char& operator[](int pos) = 0;
+        /** Assignment operator for const char*
+        * \param the const char* to be initialized from
+        * \return an initialized OneChar*/
+        OneChar& operator=(const char* newChar);
 
-            /** Assignment operator for char
-             * \param the char to be initialized from
-             * \return an initialized OneChar, either AscChar or UniChar*/
-            virtual OneChar& operator=(char newChar) = 0;
+        /** Assignment operator for OneChar
+        * \param the base class OneChar to be initialized from
+        * \return an initialized OneChar*/
+        OneChar& operator=(const OneChar& newChar);
 
-            /** Assignment operator for const char*
-             * \param the const char* to be initialized from
-             * \return an initialized OneChar, either AscChar or UniChar*/
-            virtual OneChar& operator=(const char* newChar) = 0;
+        /** Equals operator for char
+        * \param the char to be compared to
+        * \return true if the param is equal to the current OneChar
+            otherwise return false*/
+        bool operator==(char newChar);
 
-            /** Assignment operator for OneChar
-             * \param the base class OneChar to be initialized from
-             * \return an initialized OneChar, either AscChar or UniChar*/
-            virtual OneChar& operator=(const OneChar& newChar) = 0;
+        /** Equals operator for OneChar
+        * \param the base class OneChar to be compared to
+        * \return true if the param is equal to the current OneChar
+            otherwise return false*/
+        virtual bool operator==(OneChar& newChar) const;
 
-            /** Equals operator for OneChar
-             * \param the base class OneChar to be compared to
-             * \return true if the param is equal to the current OneChar */
-            virtual bool operator==(const OneChar& newChar) = 0;
+        /** Not equals operator for OneChar
+        * \param the base class OneChar to be compared to
+        * \return true if the param is equal to the current OneChar
+            otherwise return false*/
+        bool operator!=(char newChar) const;
 
-            /** Equals operator for char
-             * \param the char to be compared to
-             * \return true if the param is equal to the current OneChar */
-            virtual bool operator==(char newChar) = 0;
+        /** Not equals operator for OneChar
+        * \param the base class OneChar to be compared to
+        * \return true if the param is equal to the current OneChar
+            otherwise return false*/
+        bool operator!=(OneChar& newChar) const;
 
-            /** Helper function for operator<<
-             * \param std::ostream to put output on */
-            virtual void print( std::ostream& os) const = 0;
+        /** Helper function for operator<<
+        * \param std::ostream to put output on */
+        // NOTE: Was previously pure
+        virtual void print(std:: ostream& os) const;
 
-            /** Helper function for operator<
-             * \param the OneChar to be compared to
-             * \return true if the OneChar is equal to the current class */
-            virtual bool lessOneChar(const OneChar& compChar) = 0;
+        /** Helper funstion for operator<
+        * \param the OneChar to be compared to
+        * \return true if the OneChar is equal to the current class */
+        bool lessOneChar(const OneChar& compChar);
 
-            // Other functions
+        /** Function to allow direct access to MiniChar array
+         * \param miniChar array exists to add */
+        void addDirectly(char newChar, int pos);
 
-             /**Determines if a OneChar is less than another
-             * \param the OneChar being compared to.
-             * \return true if ochr's value is less than newChar */
-            bool operator<(const OneChar& compChar)
-            {
-                return lessOneChar(compChar);
-            }
+        /** Determines if a OneChar is less than another OneChar
+        * \param the OneChar being compared to.
+        \ return true if ochr's value is less than newChar */
+        bool operator<(const OneChar& compChar)
+        {
+            return lessOneChar(compChar);
+        }
 
+        /** Output operator
+        * \param std::ostream to display output on
+        * \param the OneChar that is the output
+        * \return the std::ostream to output */
+        friend std::ostream& operator<<(std:: ostream& os, const OneChar& ostr)
+        {
+            ostr.print(os);
+            return os;
+        }
 
-            /** Output operator
-             * \param std::ostream to display output on
-             * \param the OneChar to be output (either AscChar or UniChar)
-             * \return the std::ostream to output */
-            friend std::ostream& operator<<( std::ostream& os, const OneChar& ostr )
-            {
-				ostr.print( os );
-				return os;
-			};
-
-
-         private:
-
-			bool charId;   		// Keeps track of character type
-    };
-
-    /* OneChar is a special array of of chars
-    It's purpose is to allow for Unicode characters in OneString */
-    class UniChar: public OneChar
-    {
-		public:
-			// Initialize the OneChar
-			explicit UniChar():OneChar(UNICODE){miniChar[0] = '\0';};
-
-
-            /**Create UniChar from const char*
-             * \param the const char* to initialize the UniChar */
-             // cppcheck-suppress noExplicitConstructor
-			UniChar(const char* newChar);
-
-            /**Retrieve char from UniChar
-             * This takes care of the "getting" part of the index operator
-             * \param the desired position within in the UniChar
-             * \return returns the char located at pos */
-            char operator[](int pos) const;
-
-            /**Retrieve char from UniChar
-             * This takes care of the "setting" part of the index operator
-             * \param the desired position within in the UniChar
-             * \return returns the char reference located at pos */
-            char& operator[](int pos);
-
-            /**Construct new UniChar
-             * \param the char to initialize UniChar with
-             * \return a new UniChar containing a char and '\0' */
-            OneChar& operator=(char newChar);
-
-             /**Construct new UniChar from Unicode character
-             * \param the 2-4 byte Unicode character to put in UniChar
-             * \return a new UniChar containing a Unicode character and '\0' */
-            OneChar& operator=(const char* newChar);
-
-            /**Copy from another UniChar
-             * \param the UniChar to copy from
-             * \return a new UniChar copied from newChar */
-            OneChar& operator=(const OneChar& newChar);
-
-            /**Operator to output a UniChar
-             * \param the ostream to output on */
-            virtual void print( std::ostream& os) const;
-
-             /**Determines if a OneChar is less than another
-             * \param the OneChar being compared to.
-             * \return true if ochr's value is less than newChar */
-            bool lessOneChar(const OneChar& compChar);
-
-            /**Compares UniChar to a OneChar
-             * \param the OneChar being compared to
-             * \return true if the OneChars are exactly equal. false otherwise */
-            bool operator==(const OneChar& newChar);
-
-            /**Compares UniChar to a single char
-             * \param the char to be compared to
-             * \return true if the two are exactly equal. false otherwise */
-            bool operator==(char newChar);
-
-            /**Compares UniChar to a char*
-             * Used for Unicode comparisons
-             * \param the primary UniChar
-             * \param the char* to be compared to (needs to be parsed)
-             * \return true if the two are exactly equal. false otherwise */
-            friend bool operator==(const UniChar& ochr, char* newChar);
-
-        private:
-            char miniChar[5];
-    };
-
-    class AscChar: public OneChar
-    {
-        public:
-            // Initialize the OneChar
-			AscChar():OneChar(ASCII){masterChar = '\0';};
-
-			/**Retrieve char from UniChar
-             * This takes care of the "getting" part of the index operator
-             * \param the desired position within in the UniChar
-             * \return returns the char located at pos */
-            char operator[](int pos) const;
-
-            /**Retrieve char from UniChar
-             * This takes care of the "setting" part of the index operator
-             * \param the desired position within in the UniChar
-             * \return returns the char reference located at pos */
-            char& operator[](int pos);
-
-            /**Construct new AscChar
-             * \param the char to initialize AscChar with
-             * \return a new AscChar containing a char */
-            OneChar& operator=(char newChar);
-
-             /**Construct new AscChar from Unicode character
-             * \param the 2-4 byte Unicode character to put in AscChar
-             * \return a new AscChar containing a Unicode character */
-            OneChar& operator=(const char* newChar);
-
-            /**Copy from another AscChar
-             * \param the AscChar to copy from
-             * \return a new AscChar copied from newChar */
-            OneChar& operator=(const OneChar& newChar);
-
-            /**Operator to output a AscChar
-             * \param the ostream to output on */
-            virtual void print( std::ostream& os) const;
-
-            /**Determines if a OneChar is less than another
-             * \param the OneChar being compared to.
-             * \return true if ochr's value is less than newChar */
-            bool lessOneChar(const OneChar& compChar);
-
-            /**Compares AscChar to another OneChar
-             * \param the OneChar being compared to
-             * \return true if the OneChars are exactly equal. false otherwise */
-            bool operator==(const OneChar& newChar);
-
-            /**Compares AscChar to a char
-             * \param the char to be compared to
-             * \return true if the AscChar and char are the same */
-            bool operator==(char newChar);
-
-            /**Compares AscChar to a char*
-             * Used for Unicode comparisons
-             * \param the primary AscChar
-             * \param the char* to be compared to (needs to be parsed)
-             * \return true if the two are exactly equal. false otherwise */
-            friend bool operator==(const AscChar& ochr, char* newChar);
-
-            /**Compares AscChar to a single char
-             * \param the primary AscChar
-             * \param the char to be compared to
-             * \return true if the two are exactly equal. false otherwise */
-            friend bool operator==(const AscChar& ochr, char newChar);
-
-	    private:
-			char masterChar;
-    };
-}
-#endif // PAWLIB_ONECHAR_HPP
+     private:
+       char miniChar[5];
+     };
+ }
+ #endif // ONECHAR_HPP

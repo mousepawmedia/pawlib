@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     shell->register_suite<TestSuite_Pool>("P-sB16");
     shell->register_suite<TestSuite_Pawsort>("P-sB30");
     shell->register_suite<TestSuite_Onestring>("P-sB40");
-    
+
 
     //(void) shell;
     //(void) argc;

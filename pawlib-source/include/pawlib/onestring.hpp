@@ -3,12 +3,12 @@
   *
   * OneString is a multi-sized, Unicode-compatible replacement
   * for std::string. OneString contains all the
-  * basic functions found in std::string all while
-  * avoiding dynamic allocation whenever possible.
+  * basic functions found in std::string. The size of the
+  * the OneString is doubled whenever the current size is maxed out.
   * To handle Unicode, each OneString is made of OneChars,
   * which are enhanced characters.
   *
-  * Author(s): Scott Taylor
+  * Author(s): Scott Taylor, Jarek Thomas, Bowen Volwiler
   */
 
 /* LICENSE
@@ -55,213 +55,324 @@
 
 #include "pawlib/iochannel.hpp"
 #include "pawlib/onechar.hpp"
-#include "pawlib/quickstring.hpp"
-#include "pawlib/onestringbase.hpp"
 
 namespace pawlib
 {
-    // Forward declare QuickString
-    template <const int oneSize>
-    class QuickString;
+     /* The purpose of OneString is to provide the functionality of std::string
+      * but with better allocation of memory along with increased support for Unicode
+      * characters. OneString works just like std::string only when the max size of the
+      * current string is hit, the size is automatically doubled. The size starts with 4
+      * and is then immediately increased to 8. Each OneString class contains a master
+      * array of OneChars.*/
 
-    /* The purpose of OneString is to provide the functionality of std::string
-     * but without dynamic allocation and with increased support for Unicode
-     * Characters. As a templated class, the possible types of OneString are:
-     * OneString<8>, OneString<16>, OneString<32>, OneString<64>, OneString<128>,
-     * and any other future forward declarations. The difference between each of these
-     * OneString types is the MAX_SIZE of each. OneString<8> can hold a maximum of 8 OneChars
-     * while OneString<32> can hold up to 32 OneChars. Each OneString
-     * class contains a master array that is an array of OneChars. The size of
-     * the master array is determined by the MAX_SIZE for the class.
-     * When expanding the possible OneString sizes, one must add the forward declaration
-     * to the end of OneString.cpp and the corresponding declarations/implementation for
-     * the copy constructor, equals(), append(), insert(), swap(), and operator=().*/
-    template <const int oneSize>
-    class OneString: public OneStringBase
-	{
-		public:
-			explicit OneString();
+    class OneString
+    {
+        public:
 
-			 /**Create a OneString from const char*
-             * Note: Double quotes default to const char*
-             * \param the const char* to be converted to OneString
-             * \return a OneString representation of str.
-             *         All Unicode will be parsed appropriately. */
-            // cppcheck-suppress noExplicitConstructor
-            OneString(const char* str);
+        /*******************************************
+        * Constructors + Destructor
+        *******************************************/
 
-			/**Create a OneString from std::string
-             * \param the string to be converted to OneString
-             * \return a OneString representation of str.
-             *         All Unicode will be parsed appropriately. */
-            // cppcheck-suppress noExplicitConstructor
-            OneString(std::string str);
+        /**Default Constructor*/
+        OneString();
 
-            /**Create a OneString from a single char
-             * \param the char to be converted to OneString
-             * \return a OneString representation of ch. */
-            // cppcheck-suppress noExplicitConstructor
-            OneString(char ch);
+        /**Create a OneString from const char*
+        * Note: Double quotes default to const char*
+        * \param the const char* to be converted to OneString
+        * \return a OneString representation of str.
+        *         All Unicode will be parsed appropriately. */
+        OneString(const char* str);
 
-            /**Create a OneString from a OneChar
-             * \param the OneChar to be converted to OneString
-             * \return a OneString representation of ch */
-            // cppcheck-suppress noExplicitConstructor
-            OneString(OneChar& ch);
+        /**Create a OneString from std::string
+        * Note: Double quotes default to const char*
+        * \param the string to be converted to OneString
+        * \return a OneString representation of str.
+        *         All Unicode will be parsed appropriately. */
+        OneString(const std::string& str);
 
-            /* Constructors do not handle the abstract base well. Therefore,
-             it is necessary to create a constructor for each OneString and
-             QuickString size. Luckily this can be accomplished in only 3 functions */
+        /**Create a OneString from another OneString
+        * \param the OneString to be copied
+        * \return a OneString representation of str.
+        *         All Unicode will be parsed appropriately.*/
+        OneString(const OneString& str);
 
-            /**Copy constructor for OneString<oneSize>
-             * NOTE: This constructor is for a OneString that has the same
-             *      template size as the current OneString.
-             * \param the OneString<oneSize> to be copied
-             * \return a new OneString that is a deep copy of the other */
-            OneString(const OneString& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){}
+        /**Create a OneString from a char
+         *  \param the char to be added
+         *  \return a OneString containing that char */
+        OneString(char ch);
 
-            /**Copy Constructor for all other OneString sizes
-             * \param the OneString<N> to be copied (N != oneSize)
-             * \return a new OneString that is a deep copy of ostr */
-            template <const int N>
-            OneString(const OneString<N>& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){}
+         /**Create a OneString from a char
+         *  \param the OneChar to be added
+         *  \return a OneString containing that OneChar */
+        OneString(const OneChar& ch);
 
-            /**Copy Constructor for all QuickString sizes
-             * \param the QuickString<N> to be copied (N is any of the specified sizes)
-             * \return a new OneString that is a deep copy of ostr */
-            template <const int N>
-            // cppcheck-suppress noExplicitConstructor
-            OneString(const QuickString<N>& ostr):OneStringBase(ostr, oneSize, ONE_TYPE){}
+        /**Destructor*/
+        ~OneString();
 
-            /**Tests for equality with a const char*
-             * \param a const char* to be tested for equality
-             * \return true if the master array is equivalent to the const char*. */
-            bool equals(const char* ostr) const;
+        /*******************************************
+        * Helpers
+        *******************************************/
 
-             // Include all declarations in base class
-            using OneStringBase::equals;
+        /**Helper function for operator= that must be declared in derived
+             * classes.
+             * \param the const char* to be returned as a OneString
+             * \return the initialized OneString */
+        OneString& assignHelper(const char* str);
 
-            /**Adds a const char* onto the end of the master array
-             * \param the const char* to be added to the end of the master array */
-            void append(const char* ostr);
-
-            // Include all declarations in base class
-            using OneStringBase::append;
-
-             /**Parses char* into OneString based on size
+        /**Parses char* into OneString based on size
              * Used primarily for Unicode Characters within OneString(const char*)
              * \param the const char* to be parsed
              * \param an int to represent the index to parse the char* at
              * \param an int to represent the number of bytes in the char* */
-            void parseChar(const char* str, int index, int bytes);
+        void parseChar(const char* str, int index, int bytes);
 
-             /**Inserts a char* into the master array at a specific position
-             * \param an int that indicates the position to insert at
-             * \param the const char* to be inserted */
-            void insert(int pos, const char* ostr);
+        /**Parses char* into OneString based on size
+             * Used primarily for Unicode Characters within OneString(const std::string*)
+             * \param the const string to be parsed
+             * \param an int to represent the index to parse the string at
+             * \param an int to represent the number of bytes in the string */
+        void parseChar(const std::string& str, int index, int bytes);
 
-             // Include all declarations in base class
-            using OneStringBase::insert;
+        /**Handles resizing the array
+         * when max_size is reached
+         * \param
+         * \returns */
+        void doubleSize();
 
-            /**Creates a substring from the master array
-             * \param an int that corresponds to the start of the substring
-             * \param an int for the size of the substring. Defaults to -1 to
-             * indicate that the substring goes to the end of the master array
-             * \return a OneString that is a substring of the master array*/
-            OneStringBase& substr(int pos, int sublen = -1);
+        /*******************************************
+        * Access
+        *******************************************/
 
-            /**Exchanges the master array for the contents of str while
-              * Note: must be the same MAX_SIZE
-              * the contents of str become that of the master array
-              * \param the reference to the OneString to be swapped with */
-             void swap(OneString& str);
+        /**Gets the OneChar at a given position
+         * \param the index of the OneChar to return
+         * \return cooresponding OneChar */
+        OneChar at(int pos) const;
 
-            /**Helper function for operator= that must be declared in derived
-             * classes.
-             * \param the const char* to be returned as a OneStringBase
-             * \return either an initialized OneString or QuickString. */
-            OneStringBase& assignHelper(const char* str);
+        /**Checks to see if a OneString
+         * contains any OneChars
+         * \param
+         * \returns true/false depending on if the OneString
+         *          contains OneChars */
+        bool empty() const;
 
-             /**Helper function for operator= defined in derived classes.
-             * \param the char to be converted to OneStringBase
-             * \return a OneStringBase representation of an Ascii character */
-            OneStringBase& assignChar(char ch);
+        /**Gets the current max_size of
+         * the OneString. Used primarily internally
+         * for resizing purposes.
+         * \param
+         * \returns the size of the OneString */
+        int max_size() const;
 
-             /** Helper function for operator<
-             * \param the OneStringBase to be compared to
-             * \return true if the current string is less than the argument */
-            bool lessThanStr(const OneStringBase& ostr);
+        /**Gets the current number of
+         * elements in the OneString
+         * \param
+         * \return the number of elements */
+        int length() const;
 
-            /** Helper function for operator< (char*)
-             * \param the const char* to be compared to
-             * \return true if ostr is less than the current string. */
-            bool lessThanCharP(const char* ostr);
+        /*******************************************
+        * Adding + Inserting
+        ********************************************/
 
-            /*******************************************************************
-            * CURRENT WORKING SOLUTION TO OPERATOR+ ISSUE
-            ********************************************************************/
+        /**Adds the cooresponding type to
+         * the end of the OneString
+         * in the form of a OneChar.
+         * \param the characters to be added to the OneString
+         * \returns */
+        void append(const OneString& ostr);
+        void append(char ochar);
+        void append(const char* ostr);
+        void append(const std::string& ostr);
+        void append(const OneChar& ochar);
 
-            // Define Macro to associate code to each operator+ function
-            #define ADDOP_FUNCT \
-            { \
-                /* We don't want to alter the left-hand side, so we create a copy*/\
-                OneString cpyStr = lhs;\
-                /* Append the right-hand side */\
-                cpyStr.append(rhs);\
-                return cpyStr;\
-            }
+        /**Inserts a series of characters
+         * Into a OneString at a given position
+         * \param the position to be added
+         * \param the characters to be added
+         * \returns */
+        void insert(int pos, const OneString& ostr);
+        void insert(int pos, std::string ostr);
+        void insert(int pos, char* ostr);
+        void insert(int pos, char ochar);
+        void insert(int pos, OneChar* ochar);
+        void insert(int pos, OneChar& ochar);
 
-            /**Appends the right hand operator onto the left hand operator
-             * What makes this different from += is that + may be used
-             * multiple times per line of code
-             * The rhs param can be either a OneString, char, const char*,
-             * OneChar, or std::string.
-             * \param the left-hand OneString to be added to
-             * \param the right-hand argument to be appended
-             * \return the OneString result of joining the lhs and rhs*/
-            template <class R>
-            friend OneString operator+(const OneString& lhs, R rhs)
+        /*An alias for append, adds characters
+        * to the end of a OneString
+        * \param the characters to be added
+        * \returns */
+        void push_back(const OneString& ostr);
+        void push_back(char ochar);
+        void push_back(const char* ostr);
+        void push_back(const std::string ostr);
+        void push_back(const OneChar& ochar);
+
+        /*******************************************
+        * Removing
+        ********************************************/
+
+        /**Clears a OneString and
+         * Reallocates it back to BASE_SIZE
+         * \param
+         * \returns */
+        void clear();
+
+        /**Removes the last element
+         * in a OneString
+         * \param
+         * \returns */
+        void pop_back();
+
+        /*******************************************
+        * Comparison
+        ********************************************/
+
+        /**Compares the OneString to another
+         * character data type
+         * \param the characters to compare to
+         * \returns whether or not they are equivalent */
+        bool equals(const OneString& ostr) const;
+        bool equals(std::string ostr) const;
+        bool equals(const char* ostr) const;
+
+        /**Helper functions for < and > operators
+         * Parse through a OneString or char*
+         * to detirmine greater than or less than
+         * \param the OneString or char* to compare
+         * \return whether or not the OneString is
+         *         less than or equal to the item compared*/
+        bool lessThanStr(const OneString& ostr);
+        bool lessThanCharP(const char* ostr);
+
+        /*******************************************
+        * Other
+        ********************************************/
+
+        /**Swaps one OneString with another
+         * \param the OneString to swithc with
+         * \return */
+        void swap(OneString& str);
+
+        /**Creates a smaller string out of
+         * a series of OneChars in the existing OneString
+         * \param the position to begin the string to be created
+         * \param the length of the string to be created
+         * \return the created string */
+        OneString substr(int pos, int sublen);
+
+        /*******************************************
+        * Operators
+        ********************************************/
+
+        /**Retrieve OneChar from OneString
+         * This takes care of the "setting" part of the index operator
+         * \param the desired position within in the OneString
+         * \return returns the OneChar located at pos */
+        OneChar& operator[](int pos) const;
+
+        /**Assignment operators
+         * Assigns the OneString to the given
+         * parameter. All unicode will be parsed appropriately
+         * \param the data type with characters
+         *        to be copied to a OneString
+         * \return the OneString containing those characters*/
+        OneString& operator=(std::string str);
+        OneString& operator=(const char* str);
+        OneString& operator=(const OneChar& str);
+        OneString& operator=(OneChar* ch);
+        OneString& operator=(char ch);
+        OneString& operator=(OneString& ostr);
+
+        /**Compares the OneString to another
+         * text data type to check for equivalence
+         * \param the text object to compare to
+         * \return whether or not they are equivalent*/
+        bool operator==(const OneString& ostr);
+        bool operator==(const char* ostr);
+        bool operator==(std::string ostr);
+
+        /**Checks to see if the OneString is
+         * less than the cooresponding text data object
+         * \param the text object to compare to
+         * \return whether or not the OneString is less than*/
+        bool operator<(const char* ostr2);
+        bool operator<(std::string ostr2);
+        bool operator<(const OneString& ostr2);
+
+        /**Checks to see if the OneString is
+         * less or equal to the cooresponding text data object
+         * \param the text object to compare to
+         * \return whether or not the OneString is less than or equal*/
+        bool operator<=(const OneString& ostr2);
+        bool operator<=(const char* ostr2);
+        bool operator<=(std::string ostr2);
+
+        /**Checks to see if the OneString is
+         * greater than the cooresponding text data object
+         * \param the text object to compare to
+         * \return whether or not the OneString is greater than*/
+        bool operator>(const OneString& ostr2);
+        bool operator>(const char* ostr2);
+        bool operator>(std::string ostr2);
+
+        /**Checks to see if the OneString is
+         * greater or equal to  the cooresponding text data object
+         * \param the text object to compare to
+         * \return whether or not the OneString is greater than or equal*/
+        bool operator>=(const OneString& ostr2);
+        bool operator>=(const char* ostr2);
+        bool operator>=(std::string ostr2);
+
+        /**Adds the cooresponding type to
+         * the end of the OneString
+         * in the form of a OneChar.
+         * \param the characters to be added to the OneString
+         * \returns */
+        void operator+=(const OneString& ostr2);
+        void operator+=(const char* ostr2);
+        void operator+=(std::string ostr2);
+        void operator+=(char ochar);
+        void operator+=(const OneChar& ochar);
+
+        /*******************************************
+        * Friends
+        *******************************************/
+
+        /*friend std::istream& operator>>(std::istream& in, OneString& ostr)
+        {
+            ostr.clear();
+            std::string temp;
+            std::getline(in, temp);
+
+            int counter = 0;
+            while (temp[counter] != '\0')
             {
-                ADDOP_FUNCT;
+                counter++;
             }
 
-            /**Appends a OneString to a char*
-             * \param the left-hand char* to be added to
-             * \param the right-hand OneString to be appended
-             * \return the OneString result of joining the lhs and rhs*/
-            friend OneString operator+(const char* lhs,  OneString rhs)
+            ostr.resize(counter);
+
+            ostr = temp;
+
+            return in;
+        };*/
+
+        /**Operator to output a OneString
+        * \param the ostream to output on
+        * \param the OneString to output
+        * \return outputs the OneString as a cohesive string */
+        friend std::ostream& operator<<(std::ostream& os, const OneString& ostr)
+        {
+            for(int i = 0; i < ostr.length(); ++i)
             {
-                ADDOP_FUNCT;
+                os << ostr.masterArray[i];
             }
+            return os;
+        };
 
-            /**Appends a OneString to a char
-             * \param the left-hand char to be added to
-             * \param the right-hand OneString to be appended
-             * \return the OneString result of joining the lhs and rhs*/
-            friend OneString operator+(char lhs,  OneString rhs)
-            {
-                ADDOP_FUNCT;
-            }
-
-            /**Appends a OneString to a std::string
-             * \param the left-hand std::string to be added to
-             * \param the right-hand OneString to be appended
-             * \return the OneString result of joining the lhs and rhs*/
-            friend OneString operator+(std::string lhs,  OneString rhs)
-            {
-                ADDOP_FUNCT;
-            }
-
-            /**Appends a OneString to a OneChar
-             * \param the left-hand OneChar to be added to
-             * \param the right-hand OneString to be appended
-             * \return the OneString result of joining the lhs and rhs*/
-            friend OneString operator+(OneChar* lhs, OneString rhs)
-            {
-                ADDOP_FUNCT;
-            }
-
-	};
-
+        private:
+        const int BASE_SIZE = 4; // the size the OneString is initialized at
+        int MAX_SIZE;   // the current size of the array
+        int currElements = 0; // the number of elements in the array
+        OneChar* masterArray; // the array of OneChars
+    };
 }
 #endif // PAWLIB_ONESTRING_HPP

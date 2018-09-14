@@ -2,60 +2,260 @@
 
 namespace pawlib
 {
-    template <const int oneSize>
-    OneString<oneSize>::OneString():OneStringBase(oneSize, ONE_TYPE){}
-
-    template <const int oneSize>
-    OneString<oneSize>::OneString(const char* str):OneStringBase(oneSize, ONE_TYPE)
+    /*******************************************
+    * Constructors + Destructor
+    *******************************************/
+    OneString::OneString()
     {
+        MAX_SIZE = BASE_SIZE;
+        currElements = 0;
+        masterArray = new OneChar[MAX_SIZE];
+    }
+
+    OneString::OneString(const char* str)
+    {
+        MAX_SIZE = BASE_SIZE;
+        masterArray = new OneChar[MAX_SIZE];
         append(str);
     }
 
-    template <const int oneSize>
-    OneString<oneSize>::OneString(std::string str):OneString(str.c_str()){}
-
-    template <const int oneSize>
-    OneString<oneSize>::OneString(char ch):OneStringBase(ch, oneSize, ONE_TYPE){}
-
-    template <const int oneSize>
-    OneString<oneSize>::OneString(OneChar& ch):OneStringBase(ch, oneSize, ONE_TYPE){}
-
-    template <const int oneSize>
-    bool OneString<oneSize>::equals(const char* ostr) const
+    OneString::OneString(const std::string& str)
     {
-         // Convert the char* to a OneString and then call the equals function
-        OneString<oneSize> compareStr(ostr);
-
-        int thisSize = size();
-
-        if(thisSize == compareStr.size())
-        {
-            for(int i = 0; i < thisSize; ++i)
-            {
-                if(!(master[i] == compareStr[i]))
-                    return false;
-            }
-            return true;
-        }
-        return false;
+        MAX_SIZE = BASE_SIZE;
+        masterArray = new OneChar[MAX_SIZE];
+        append(str);
     }
 
-    template <const int oneSize>
-    void OneString<oneSize>::append(const char* ostr)
+    OneString::OneString(const OneString& str)
+    {
+        MAX_SIZE = BASE_SIZE;
+        masterArray = new OneChar[MAX_SIZE];
+        append(str);
+    }
+
+    OneString::OneString(char ch)
+    {
+        MAX_SIZE = BASE_SIZE;
+        masterArray = new OneChar[MAX_SIZE];
+        append(ch);
+    }
+
+    OneString::OneString(const OneChar& ch)
+    {
+        MAX_SIZE = BASE_SIZE;
+        masterArray = new OneChar[MAX_SIZE];
+        append(ch);
+    }
+
+    OneString::~OneString()
+    {
+        if (masterArray != nullptr)
+        {
+            delete [] masterArray;
+        }
+    }
+
+    /*******************************************
+    * Helpers
+    *******************************************/
+
+    OneString& OneString::assignHelper(const char* str)
+    {
+        currElements = 0;
+        int index = 0;
+
+        while(str[index] != '\0')
+        {
+            if(currElements+ 1 >= MAX_SIZE)
+            {
+                doubleSize();
+            }
+
+            if((str[index] & 0xF0) == 0xF0)
+            {
+                // Insert a 4 byte Unicode Char into the OneString
+                parseChar(str, index, 4);
+                index+=4;
+            }
+            // Does it start with an E?
+            else if((str[index] & 0xF0) == 0xE0)
+            {
+                // Insert a 3 byte Unicode Char into the OneString
+                parseChar(str, index, 3);
+                index+=3;
+            }
+            // Does it start with a C?
+            else if((str[index] & 0xF0) == 0xC0)
+            {
+                // Insert a 2 byte Unicode Char into the OneString
+                parseChar(str, index, 2);
+                index+=2;
+            }
+            // Check if the char is valid
+            else if((str[index] & 0xF0) == 0x80)
+            {
+                ioc << cat_error << ta_bold << fg_red << "OneString Error: " <<
+                " Invalid Character in String at Position: " << index <<io_end;
+                break;
+            }
+            else
+            {
+                // Insert a 1-byte ASCII char
+                parseChar(str, index, 1);
+                index++;
+            }
+
+            currElements++;
+            masterArray[currElements] = '\0';
+        }
+        return *this;
+    }
+
+    void OneString::parseChar(const char* str, int index, int bytes)
+    {
+        int theLength = length();
+
+        for(int i = 0; i < bytes; ++i)
+        {
+            //master[length][i] = str[index + i];
+            masterArray[theLength].addDirectly(str[index + i], i);
+        }
+       // master[length][bytes] = '\0';
+       masterArray[theLength].addDirectly('\0', bytes);
+    }
+
+    void OneString::parseChar(const std::string& str, int index, int bytes)
+    {
+        int theLength = length();
+
+        for(int i = 0; i < bytes; ++i)
+        {
+            //master[length][i] = str[index + i];
+            masterArray[theLength].addDirectly(str[index + i], i);
+        }
+       // master[length][bytes] = '\0';
+       masterArray[theLength].addDirectly('\0', bytes);
+    }
+
+    void OneString::doubleSize()
+    {
+        MAX_SIZE *= 2;
+
+        OneChar* tempArray = new OneChar[MAX_SIZE];
+
+        // If an old array exists...
+        if(this->masterArray != nullptr)
+        {
+            /*memmove(
+                tempArray,
+                this -> masterArray,
+                sizeof(OneChar) * this->currElements
+            );*/
+
+            // copy the structure to new array
+            int i = 0;
+            while(!(this -> masterArray[i] == '\0'))
+            {
+                tempArray[i] = this -> masterArray[i];
+                i++;
+            }
+            tempArray[i] = '\0';
+
+            // Delete the old structure.
+            delete[] masterArray;
+            this->masterArray = nullptr;
+        }
+
+        // Store the new structure.
+        this->masterArray = tempArray;
+    }
+
+    /*******************************************
+    * Access
+    *******************************************/
+
+    OneChar OneString::at(int pos) const
+    {
+        if (pos < 0 || pos > currElements)
+        {
+            ioc << cat_error << ta_bold << fg_red <<
+            "OneString Error: Index out of Bounds" << io_end;
+        }
+
+        return masterArray[pos];
+    }
+
+    bool OneString::empty() const
+    {
+        return (currElements == 0);
+    }
+
+    int OneString::max_size() const
+    {
+        return MAX_SIZE;
+    }
+
+    int OneString::length() const
+    {
+        return currElements;
+    }
+
+    /*******************************************
+    * Adding + Inserting
+    ********************************************/
+
+    void OneString::append(const OneString& ostr)
+    {
+        while (currElements + ostr.length() + 1 >= MAX_SIZE)
+        {
+            doubleSize();
+        }
+
+        int index = 0;
+        while(!(ostr[index] == '\0'))
+        {
+            masterArray[index + currElements] = ostr[index];
+            index++;
+        }
+
+        currElements += ostr.length();
+        masterArray[currElements] = '\0';
+    }
+
+    void OneString::append(const OneChar& ochar)
+    {
+        if(currElements + 1 >= MAX_SIZE)
+        {
+            doubleSize();
+        }
+
+        masterArray[currElements] = ochar;
+        currElements++;
+        masterArray[currElements] = '\0';
+    }
+
+    void OneString::append(char ochar)
+    {
+        if(currElements + 1 >= MAX_SIZE)
+        {
+            doubleSize();
+        }
+
+        masterArray[currElements].addDirectly(ochar, 0);
+        currElements++;
+        masterArray[currElements] = '\0';
+    }
+
+    void OneString::append(const char* ostr)
     {
         int index = 0;
         while(ostr[index] != '\0')
         {
-             // Check if the OneString is full
-            if(size() >= oneSize)
+            if(currElements + 1 >= OneString::MAX_SIZE)
             {
-                ioc << cat_error << ta_bold << fg_red <<
-                "OneString Error: Input string is too large." << io_end;
-                OneString();
-                return;
+                doubleSize();
             }
 
-            // Can tell how many bytes by masking the first character
             switch(ostr[index] & 0xF0)
             {
                 case 0xF0 :
@@ -91,243 +291,576 @@ namespace pawlib
                         parseChar(ostr, index, 1);
                         ++index;
                     }
-
             }
-             incLen();
+            currElements++;
         }
+
+        masterArray[currElements] = '\0';
     }
 
-    template <const int oneSize>
-    void OneString<oneSize>::parseChar(const char* str, int index, int bytes)
+    void OneString::append(const std::string& ostr)
     {
-        int length = size();
-        // Bytes indicates the size of the desired parsing area while
-        // index indicates the start of the parse area. Loop through the parse
-        // area and add each character to the current OneChar in the OneString
-        for(int i = 0; i < bytes; ++i)
-            master[length][i] = str[index + i];
-        master[length][bytes] = '\0'; // Terminate the OneChar
-    }
-
-    template <const int oneSize>
-    void OneString<oneSize>::insert(int pos, const char* ostr)
-    {
-        // Convert to OneString then insert
-        OneString<oneSize> temp = ostr;
-        insert(pos, temp);
-    }
-
-    template <const int oneSize>
-    OneStringBase& OneString<oneSize>::substr(int pos, int sublen)
-    {
-        // Check sublen flag. If -1, then go to the end of the OneString
-        if(sublen == -1)
-        {
-            // Calculate the size from the position to the end of the OneString
-            sublen = size() - pos;
-        }
-        // Check for valid index
-        if((pos >= oneSize) || (pos < 0))
-        {
-            ioc << cat_error << ta_bold << fg_red << "OneString Error:" <<
-            " Index Out of Bounds" << io_end;
-            return *this;
-        }
-        // If the substring size is too large throw an error
-        else if(sublen + pos > size())
-        {
-            ioc << cat_error << ta_bold << fg_red << "OneString Error: " <<
-            "Size exceeds limits of OneString"<<io_end;
-            return *this;
-        }
-        else
-        {
-            // Create a new OneString and append each character that is found
-            // in the substring
-            OneString<oneSize>* newOne = new OneString();
-            for(int i = 0; i < sublen; ++i)
-            {
-                newOne->append(master[pos]);
-                pos++;
-            }
-            return *newOne;
-        }
-    }
-
-    template <const int oneSize>
-    void OneString<oneSize>::swap(OneString<oneSize>& str)
-    {
-         /* Cannot swap if they are not of the same OneString type */
-        if(str.size() > oneSize)
-        {
-            ioc << cat_error << ta_bold << fg_red << "OneStringBase Error" <<
-            ": The OneStringBase argument is too large to"
-            << " swap with" <<io_end;
-        }
-        else
-        {
-            OneString<oneSize> temp( *this);
-            *this = str;
-            str = temp;
-        }
-    }
-
-
-    template <const int oneSize>
-    OneStringBase& OneString<oneSize>::assignHelper(const char* str)
-    {
-        this->setLen(0);
         int index = 0;
-        // Loop to end of char*
-        while(str[index] != '\0')
+        while(ostr[index] != '\0')
         {
-            // Check if the OneString is full
-            if(size() >= oneSize)
+            //need to change size() getting error with it, error with signed/unsigned
+            if(currElements + 1 >= OneString::MAX_SIZE)
             {
-                ioc << cat_error << ta_bold << fg_red << "OneString Error" <<
-                ": Input String is Too Large" <<io_end;
-                return *this;
+                OneString::doubleSize();
             }
-            // Does it start with an F?
-            if((str[index] & 0xF0) == 0xF0)
+
+            switch(ostr[index] & 0xF0)
             {
-                // Insert a 4 byte Unicode Char into the OneString
-                parseChar(str, index, 4);
-                index+=4;
+                case 0xF0 :
+                    {
+                        // Insert a 4 byte Unicode Char into the OneString
+                        parseChar(ostr, index, 4);
+                        index+=4;
+                        break;
+                    }
+                case 0xE0 :
+                    {
+                        // Insert a 3 byte Unicode Char into the OneString
+                        parseChar(ostr, index, 3);
+                        index+=3;
+                        break;
+                    }
+                case 0xC0:
+                    {
+                        // Insert a 2 byte Unicode Char into the OneString
+                        parseChar(ostr, index, 2);
+                        index+=2;
+                        break;
+                    }
+                case 0x80:
+                    {
+                        ioc << cat_error << ta_bold << fg_red <<
+                        "OneString Error: Invalid Character In String At Position: " << index << io_end;
+                        return;
+                    }
+                default :
+                    {
+                        // Insert a standard char
+                        parseChar(ostr, index, 1);
+                        ++index;
+                    }
             }
-            // Does it start with an E?
-            else if((str[index] & 0xF0) == 0xE0)
+            currElements++;
+        }
+        masterArray[currElements] = '\0';
+    }
+
+    void OneString::insert(int pos, const OneString& ostr)
+    {
+        int insertSize = ostr.length();
+
+        if(pos < 0 || pos > currElements)
+        {
+            ioc << cat_error << ta_bold << fg_red <<
+            "OneString Error: Index out of Bounds" << io_end;
+            return;
+        }
+
+        while(pos >= MAX_SIZE || (currElements + insertSize + 1 > MAX_SIZE))
+        {
+            doubleSize();
+        }
+
+        if(pos != currElements)
+        {
+            for(int i = currElements - 1; i >= pos; --i)
             {
-                // Insert a 3 byte Unicode Char into the OneString
-                parseChar(str, index, 3);
-                index+=3;
+                masterArray[i + insertSize] = masterArray[i];
             }
-            // Does it start with a C?
-            else if((str[index] & 0xF0) == 0xC0)
+        }
+
+        for(int off = 0; off < insertSize; ++off)
+        {
+            //invalid conversion from OneChar* to char
+            masterArray[pos + off] = ostr[off];
+        }
+
+        currElements += ostr.length();
+
+        masterArray[currElements] = '\0';
+    }
+
+    void OneString::insert(int pos, std::string ostr)
+    {
+        int insertSize = 0;
+
+        while(ostr[insertSize] != '\0')
+        {
+            insertSize++;
+        }
+
+        if(pos < 0 || pos > currElements)
+        {
+            ioc << cat_error << ta_bold << fg_red <<
+            "OneString Error: Index out of Bounds" << io_end;
+            return;
+        }
+
+        while(pos >= MAX_SIZE || (currElements + insertSize + 1 > MAX_SIZE))
+        {
+            doubleSize();
+        }
+
+        if(pos != currElements)
+        {
+            for(int i = currElements - 1; i >= pos; --i)
             {
-                // Insert a 2 byte Unicode Char into the OneString
-                parseChar(str, index, 2);
-                index+=2;
+                masterArray[i + insertSize] = masterArray[i];
             }
-            // Check if the char is valid
-            else if((str[index] & 0xF0) == 0x80)
+        }
+
+        for(int off = 0; off < insertSize; ++off)
+        {
+            //invalid conversion from OneChar* to char
+            masterArray[pos + off] = ostr[off];
+        }
+
+        currElements += insertSize;
+        masterArray[currElements] = '\0';
+    }
+
+    // the offending insert function
+    void OneString::insert(int pos, char* ostr)
+    {
+        /*OneString temp = ostr;
+        //temp not declared
+        insert(pos, temp);*/
+
+        int charLength = 0;
+
+        // get the size of the characters being added
+        while (ostr[charLength] != '\0')
+        {
+            charLength++;
+        }
+
+        while (currElements + charLength + 1 >= MAX_SIZE)
+        {
+            doubleSize();
+        }
+
+        for (int i = currElements; i >= pos; i--)
+        {
+            masterArray[i + charLength] = masterArray[i];
+        }
+
+        for (int i = 0; i < charLength; i++)
+        {
+            masterArray[pos] = ostr[i];
+            pos++;
+        }
+
+        currElements = currElements + charLength;
+    }
+
+    void OneString::insert(int pos, char ochar)
+    {
+        if(currElements + 1 == MAX_SIZE)
+        {
+            doubleSize();
+        }
+
+        for(int i = currElements - 1; i >= pos; --i)
+        {
+            masterArray[i + 1] = masterArray[i];
+        }
+
+        masterArray[pos] = ochar;
+
+        currElements++;
+        masterArray[currElements] = '\0';
+    }
+
+    void OneString::insert(int pos, OneChar* ochar)
+    {
+        if(currElements + 1 == MAX_SIZE)
+        {
+            doubleSize();
+        }
+
+        if(pos < 0 || pos > currElements)
+        {
+            ioc << cat_error << ta_bold << fg_red <<
+            "OneString Error: Index out of Bounds" << io_end;
+            return;
+        }
+
+        for(int i = currElements - 1; i >= pos; --i)
+        {
+            masterArray[i + 1] = masterArray[i];
+        }
+
+        masterArray[pos] = *ochar;
+
+        currElements++;
+        masterArray[currElements] = '\0';
+    }
+
+    void OneString::insert(int pos, OneChar& ochar)
+    {
+        if(currElements + 1 == MAX_SIZE)
+        {
+            doubleSize();
+        }
+
+        if(pos < 0 || pos > currElements)
+        {
+            ioc << cat_error << ta_bold << fg_red <<
+            "OneString Error: Index out of Bounds" << io_end;
+            return;
+        }
+
+        for(int i = currElements - 1; i >= pos; --i)
+        {
+            masterArray[i + 1] = masterArray[i];
+        }
+
+        masterArray[pos] = ochar;
+
+        currElements++;
+        masterArray[currElements] = '\0';
+    }
+
+    void OneString::push_back(char ochar)
+    {
+        append(ochar);
+    }
+
+    void OneString::push_back(const char* ostr)
+    {
+        append(ostr);
+    }
+
+    void OneString::push_back(const std::string ostr)
+    {
+        append(ostr);
+    }
+
+    void OneString::push_back(const OneChar& ochar)
+    {
+        append(ochar);
+    }
+
+    /*******************************************
+    * Removing
+    ********************************************/
+
+    void OneString::clear()
+    {
+        delete [] masterArray;
+        masterArray = nullptr;
+        MAX_SIZE = BASE_SIZE;
+        masterArray = new OneChar[MAX_SIZE];
+        currElements = 0;
+    }
+
+    void OneString::pop_back()
+    {
+        if(currElements == 0)
+        {
+            ioc << cat_error << ta_bold << fg_red <<
+            "OneString Error: Can't POP an empty OneString" << io_end;
+        }
+        else
+        {
+            masterArray[currElements - 1] = '\0';
+            currElements--;
+        }
+    }
+
+    /*******************************************
+    * Comparison
+    ********************************************/
+
+    bool OneString::equals(const OneString& ostr) const
+    {
+        if(currElements == ostr.length())
+        {
+            for(int i = 0; i < currElements; ++i)
             {
-                ioc << cat_error << ta_bold << fg_red << "OneString Error: " <<
-                " Invalid Character in String at Position: " << index <<io_end;
-                break;
+                if(!(ostr[i] == masterArray[i]))
+                {
+                    return false;
+                }
             }
+            return true;
+        }
+        return false;
+    }
+
+    bool OneString::equals(std::string ostr) const
+    {
+        return equals(ostr.c_str());
+    }
+
+    bool OneString::equals(const char* ostr) const
+    {
+        OneString compareStr(ostr);
+
+        int thisSize = length();
+        if(thisSize == compareStr.length())
+        {
+            for (int i = 0; i < thisSize; ++i)
+            {
+                if(!(OneString::masterArray[i] == compareStr[i]))
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool OneString::lessThanCharP(const char* ostr)
+    {
+        int mainIndex = 0;
+        int smallIndex = 0;
+        int charIndex = 0;
+        int endIndex = length();
+
+        while(mainIndex < endIndex)
+        {
+            if(OneString::masterArray[mainIndex][smallIndex] > ostr[charIndex])
+                return true;
+            else if(OneString::masterArray[mainIndex][smallIndex] < ostr[charIndex])
+                return true;
+            if(OneString::masterArray[mainIndex][smallIndex + 1] != '\0')
+                ++smallIndex;
             else
             {
-                // Insert a 1-byte ASCII char
-                parseChar(str, index, 1);
-                index++;
+                ++mainIndex;
+                smallIndex = 0;
             }
-            this->incLen(); // Set the size for the OneString
+
+            ++charIndex;
         }
-        return *this;
+
+        if(ostr[charIndex] != '\0')
+            return true;
+        return false;
     }
 
-    template <const int oneSize>
-    OneStringBase& OneString<oneSize>::assignChar(char ch)
+    //OneString does not name a type
+    bool OneString::lessThanStr(const OneString& ostr)
     {
-        // Directly set the first OneChar in the OneString
-        this->master[0][0] = ch;
-        this->master[0][1] = '\0';
-        this->setLen(1);
-        return *this;
-    }
-
-    template <const int oneSize>
-    bool OneString<oneSize>::lessThanStr(const OneStringBase& ostr)
-    {
-        // Only loop as far as the smallest string
-        int small_len = (size() < ostr.size())? size(): ostr.size();
-        for(int i = 0; i< small_len; i++)
+        int small_len = (length() < ostr.length())? length(): ostr.length();
+        for(int i = 0; i < small_len; ++i)
         {
-            if(master[i] < (*ostr[i]))
+            if(OneString::masterArray[i] < (ostr[i]))
             {
                 return true;
             }
             else
             {
-                // If a OneChar is neither less than or equal, then it is
-                // greater. Therefore making the input smaller
-                if(!(master[i] == (*ostr[i])))
+                //if(!(master[i] == (ostr[i])))
+                if(!(ostr[i] == (masterArray[i])))
                 {
                     return false;
                 }
             }
         }
 
-        // If they made it through the loop and ostr1 is smaller
-        // then return true
-        if((small_len == size()) && (small_len != ostr.size()))
+        if((small_len == length()) && (small_len != ostr.length()))
         {
             return true;
         }
         return false;
     }
 
-    template <const int oneSize>
-    bool OneString<oneSize>::lessThanCharP(const char* ostr)
+
+    /*******************************************
+    * Other
+    ********************************************/
+
+    void OneString::swap(OneString& str)
     {
-        int mainIndex = 0;
-        int smallIndex = 0;
-        int charIndex = 0;
-        int endIndex = size();
-
-        /*Search through every index of the OneString, including each index
-         of each UniChar. Compare to each index in input */
-        while(mainIndex < endIndex)
-        {
-            //If an index is bigger, return false
-            if(master[mainIndex][smallIndex] > ostr[charIndex])
-            {
-                return false;
-            }
-            //If an index is smaller in the OneString, then it is smaller
-            else if(master[mainIndex][smallIndex] < ostr[charIndex])
-            {
-                return true;
-            }
-
-            //If we are not at the end of the UniChar, increase smallIndex
-            if(master[mainIndex][smallIndex + 1] != '\0')
-            {
-                ++smallIndex;
-            }
-            //If we are at null-terminator move to the next UniChar.
-            else
-            {
-                ++mainIndex;
-
-                // Reset smallIndex for new UniChar
-                smallIndex = 0;
-            }
-
-            // Always increase position in input const char*
-            ++charIndex;
-        }
-
-        // Check that we are at the end of both strings. If the input is not
-        // done, then the OneString is smaller
-        if(ostr[charIndex] != '\0')
-        {
-            return true;
-        }
-        return false;
+        OneString temp(*this);
+        *this = str;
+        str = temp;
     }
 
+    OneString OneString::substr(int beginningIndex, int length)
+    {
+        OneString substr;
 
-    // Forward declare all template sizes
-    template class OneString<8>;
-    template class OneString<16>;
-    template class OneString<32>;
-    template class OneString<64>;
-    template class OneString<128>;
-    template class OneString<256>;
-    template class OneString<512>;
-    template class OneString<1024>;
-    template class OneString<2048>;
-    template class OneString<4096>;
+        if (beginningIndex > 0 && beginningIndex + length < currElements)
+        {
+            for(int i = 0; i < length; i++)
+            {
+                substr.append(masterArray[beginningIndex]);
+                beginningIndex++;
+            }
+            substr.append('\0');
+        }
+        else
+        {
+            ioc << cat_error << ta_bold << fg_red <<
+            "OneString Error : IDEX OUT OF BOUNDS" << io_end;
+        }
+        return substr;
+    }
+
+    /*******************************************
+    * Operators
+    ********************************************/
+
+    OneChar& OneString::operator[](int pos) const
+    {
+        if((pos <= currElements) && (pos >= 0))
+        {
+            return masterArray[pos];
+        }
+        else
+        {
+            ioc << cat_error << ta_bold << fg_red <<
+            "OneString Error : IDEX OUT OF BOUNDS" << io_end;
+            return masterArray[currElements - 1];
+        }
+    }
+
+    OneString& OneString::operator=(std::string str)
+    {
+        clear();
+        append(str);
+        return *this;
+    }
+
+    OneString& OneString::operator=(const char* str)
+    {
+        clear();
+        append(str);
+        return *this;
+    }
+
+    OneString& OneString::operator=(const OneChar& str)
+    {
+        clear();
+        append(str);
+        return *this;
+    }
+
+    OneString& OneString::operator=(char ch)
+    {
+        clear();
+        append(ch);
+        return *this;
+    }
+
+    OneString& OneString::operator=(OneChar* ch)
+    {
+        clear();
+        append(*ch);
+        return *this;
+    }
+
+    OneString& OneString::operator=(OneString& ostr)
+    {
+        clear();
+        append(ostr);
+        return *this;
+    }
+
+    bool OneString::operator==(const OneString& ostr)
+    {
+        return equals(ostr);
+    }
+
+    bool OneString::operator==(const char* ostr)
+    {
+        return equals(ostr);
+    }
+
+    bool OneString::operator==(std::string ostr)
+    {
+        return equals(ostr);
+    }
+
+    bool OneString::operator<(const char* ostr2)
+    {
+        return lessThanCharP(ostr2);
+    }
+
+    bool OneString::operator<(std::string ostr2)
+    {
+        return lessThanCharP(ostr2.c_str());
+    }
+
+    bool OneString::operator<(const OneString& ostr2)
+    {
+        return lessThanStr(ostr2);
+    }
+
+    bool OneString::operator<=(const OneString& ostr2)
+    {
+        return (((*this) < ostr2) || ((*this) == ostr2));
+    }
+
+    bool OneString::operator<=(const char* ostr2)
+    {
+        return (((*this) < ostr2)|| ((*this) == ostr2));
+    }
+
+    bool OneString::operator<=(std::string ostr2)
+    {
+        return (((*this) < ostr2)|| ((*this) == ostr2));
+    }
+
+    bool OneString::operator>(const OneString& ostr2)
+    {
+        return(!((*this) <= ostr2));
+    }
+
+    bool OneString::operator>(const char* ostr2)
+    {
+        return(!((*this) <= ostr2));
+    }
+
+    bool OneString::operator>(std::string ostr2)
+    {
+        return(!((*this) <= ostr2));
+    }
+
+    bool OneString::operator>=(const OneString& ostr2)
+    {
+        return(!((*this) < ostr2));
+    }
+
+    bool OneString::operator>=(const char* ostr2)
+    {
+        return(!((*this) < ostr2));
+    }
+
+    bool OneString::operator>=(std::string ostr2)
+    {
+        return(!((*this) < ostr2));
+    }
+
+    void OneString::operator+=(const OneString& ostr2)
+    {
+        append(ostr2);
+    }
+
+    void OneString::operator+=(const char* ostr2)
+    {
+        append(ostr2);
+    }
+
+    void OneString::operator+=(std::string ostr2)
+    {
+        append(ostr2);
+    }
+
+    void OneString::operator+=(char ochar)
+    {
+        append(ochar);
+    }
+
+    void OneString::operator+=(const OneChar& ochar)
+    {
+        append(ochar);
+    }
 }

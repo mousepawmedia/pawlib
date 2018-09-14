@@ -468,9 +468,11 @@ namespace pawlib
         protected:
             TestType tType;
             std::string mainStr;
-            QuickString<2048> mainPStr;
+            //QuickString mainPStr;
+            std::string mainPStr;
             std::string compStr;
-            QuickString<2048> compPStr;
+            //QuickString compPStr;
+            std::string compPStr;
 
             testdoc_t title;
             testdoc_t docs;
