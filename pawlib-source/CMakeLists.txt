@@ -151,13 +151,11 @@ add_library(${TARGET_NAME} STATIC
     include/pawlib/iochannel.hpp
     include/pawlib/onechar.hpp
     include/pawlib/onestring.hpp
-    include/pawlib/onestringbase.hpp
     include/pawlib/onestring_tests.hpp
     include/pawlib/pawsort.hpp
     include/pawlib/pawsort_tests.hpp
     include/pawlib/pool.hpp
     include/pawlib/pool_tests.hpp
-    include/pawlib/quickstring.hpp
     include/pawlib/rigid_stack.hpp
     include/pawlib/singly_linked_list.hpp
     include/pawlib/stdutils.hpp
@@ -173,11 +171,9 @@ add_library(${TARGET_NAME} STATIC
     src/iochannel.cpp
     src/onechar.cpp
     src/onestring.cpp
-    src/onestringbase.cpp
     src/onestring_tests.cpp
     src/pawsort_tests.cpp
     src/pool_tests.cpp
-    src/quickstring.cpp
     src/stdutils.cpp
 
 )
