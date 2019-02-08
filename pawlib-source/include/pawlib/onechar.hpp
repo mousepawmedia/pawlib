@@ -57,7 +57,7 @@
 
  namespace pawlib
  {
-     /* Onchar class, now our main and only class. It contains all
+     /* OneChar class, now our main and only class. It contains all
         functions needed to handle both ASCII character and Unicode
         characters.*/
      class OneChar
@@ -65,12 +65,13 @@
      public:
 
         /** Default constructor*/
+        // cppcheck-suppress noExplicitConstructor
         OneChar(char* newChar);
 
         /** Blank constructor
         *  Neccesary for declaring an
         *  array of OneChars */
-        OneChar(){};
+        OneChar();
 
         /** Destructor */
         ~OneChar(){};
@@ -125,7 +126,7 @@
         // NOTE: Was previously pure
         virtual void print(std:: ostream& os) const;
 
-        /** Helper funstion for operator<
+        /** Helper function for operator<
         * \param the OneChar to be compared to
         * \return true if the OneChar is equal to the current class */
         bool lessOneChar(const OneChar& compChar);

@@ -8,7 +8,7 @@
   * To handle Unicode, each OneString is made of OneChars,
   * which are enhanced characters.
   *
-  * Author(s): Scott Taylor, Jarek Thomas, Bowen Volwiler
+  * Author(s): Scott Taylor, Jarek Thomas, Bowen Volwiler, Jason C. McDonald
   */
 
 /* LICENSE
@@ -99,11 +99,13 @@ namespace pawlib
         /**Create a OneString from a char
          *  \param the char to be added
          *  \return a OneString containing that char */
+        // cppcheck-suppress noExplicitConstructor
         OneString(char ch);
 
          /**Create a OneString from a char
          *  \param the OneChar to be added
          *  \return a OneString containing that OneChar */
+        // cppcheck-suppress noExplicitConstructor
         OneString(const OneChar& ch);
 
         /**Destructor*/
@@ -119,6 +121,18 @@ namespace pawlib
              * \return the initialized OneString */
         OneString& assignHelper(const char* str);
 
+        /**Helper function for operator= that must be declared in derived
+             * classes.
+             * \param the const char to be returned as a OneString
+             * \return the initialized OneString */
+        OneString& assignHelper(char str);
+
+        /**Helper function for operator= that must be declared in derived
+             * classes.
+             * \param the const string to be returned as a OneString
+             * \return the initialized OneString */
+        OneString& assignHelper(std::string str);
+
         /**Parses char* into OneString based on size
              * Used primarily for Unicode Characters within OneString(const char*)
              * \param the const char* to be parsed
@@ -133,11 +147,18 @@ namespace pawlib
              * \param an int to represent the number of bytes in the string */
         void parseChar(const std::string& str, int index, int bytes);
 
+        /**Parses char into OneString based on size
+             * Used primarily for Unicode Characters within OneString(const std::string*)
+             * \param the const string to be parsed
+             * \param an int to represent the index to parse the string at
+             * \param an int to represent the number of bytes in the string */
+        void parseChar(const char str, int bytes);
+
         /**Handles resizing the array
-         * when max_size is reached
+         * when capacity is reached
          * \param
          * \returns */
-        void doubleSize();
+        void resize();
 
         /*******************************************
         * Access
@@ -155,12 +176,12 @@ namespace pawlib
          *          contains OneChars */
         bool empty() const;
 
-        /**Gets the current max_size of
+        /**Gets the current capacity of
          * the OneString. Used primarily internally
          * for resizing purposes.
          * \param
          * \returns the size of the OneString */
-        int max_size() const;
+        int getCapacity() const;
 
         /**Gets the current number of
          * elements in the OneString
@@ -192,7 +213,7 @@ namespace pawlib
         void insert(int pos, std::string ostr);
         void insert(int pos, char* ostr);
         void insert(int pos, char ochar);
-        void insert(int pos, OneChar* ochar);
+        //void insert(int pos, OneChar* ochar);
         void insert(int pos, OneChar& ochar);
 
         /*An alias for append, adds characters
@@ -202,7 +223,7 @@ namespace pawlib
         void push_back(const OneString& ostr);
         void push_back(char ochar);
         void push_back(const char* ostr);
-        void push_back(const std::string ostr);
+        void push_back(const std::string& ostr);
         void push_back(const OneChar& ochar);
 
         /*******************************************
@@ -235,7 +256,7 @@ namespace pawlib
 
         /**Helper functions for < and > operators
          * Parse through a OneString or char*
-         * to detirmine greater than or less than
+         * to determine greater than or less than
          * \param the OneString or char* to compare
          * \return whether or not the OneString is
          *         less than or equal to the item compared*/
@@ -247,7 +268,7 @@ namespace pawlib
         ********************************************/
 
         /**Swaps one OneString with another
-         * \param the OneString to swithc with
+         * \param the OneString to switch with
          * \return */
         void swap(OneString& str);
 
@@ -288,6 +309,10 @@ namespace pawlib
         bool operator==(const OneString& ostr);
         bool operator==(const char* ostr);
         bool operator==(std::string ostr);
+        bool operator!=(const OneString& ostr);
+        bool operator!=(const char* ostr);
+        bool operator!=(std::string ostr);
+
 
         /**Checks to see if the OneString is
          * less than the cooresponding text data object
@@ -336,24 +361,14 @@ namespace pawlib
         * Friends
         *******************************************/
 
-        /*friend std::istream& operator>>(std::istream& in, OneString& ostr)
+        friend std::istream& operator>>(std::istream& in, OneString& ostr)
         {
             ostr.clear();
             std::string temp;
             std::getline(in, temp);
-
-            int counter = 0;
-            while (temp[counter] != '\0')
-            {
-                counter++;
-            }
-
-            ostr.resize(counter);
-
-            ostr = temp;
-
+            ostr.append(temp);
             return in;
-        };*/
+        };
 
         /**Operator to output a OneString
         * \param the ostream to output on
@@ -363,14 +378,15 @@ namespace pawlib
         {
             for(int i = 0; i < ostr.length(); ++i)
             {
-                os << ostr.masterArray[i];
+                ostr.masterArray[i].print(os);
             }
             return os;
         };
 
         private:
         const int BASE_SIZE = 4; // the size the OneString is initialized at
-        int MAX_SIZE;   // the current size of the array
+        const float RESIZE_FACTOR = 1.5;
+        int capacity;   // the current size of the array
         int currElements = 0; // the number of elements in the array
         OneChar* masterArray; // the array of OneChars
     };

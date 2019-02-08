@@ -49,6 +49,8 @@ message("Using ${CONFIG_FILENAME}.config")
 include(${CMAKE_HOME_DIRECTORY}/../${CONFIG_FILENAME}.config)
 
 # Compiler and Version check...
+
+# Compiler and Version check...
 # Allow Clang 3.4
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.4")
@@ -56,6 +58,12 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     endif()
     set(COMPILERTYPE "clang")
     message("Clang 3.4 or later detected. Proceeding...")
+# Allow AppleClang
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "5")
+        message(FATAL_ERROR "Clang is too old. >= v5.x required. Aborting build.")
+    endif()
+    set(COMPILERTYPE "clang")
 # Allow GCC 5.x
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "5")

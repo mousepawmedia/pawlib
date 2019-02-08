@@ -17,7 +17,10 @@
         "performance": "Warning",
         "portability": "Warning",
         "information": "Information"
-      },
+    },
+
+    "cmake.configureOnOpen": false,
+
     /*"cppcheck.standard": [
       "c11",
       "c++11"
@@ -87,7 +90,11 @@
         "deque": "cpp",
         "list": "cpp",
         "unordered_map": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "fstream": "cpp",
+        "numeric": "cpp",
+        "optional": "cpp",
+        "algorithm": "cpp"
     },
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
@@ -131,6 +138,7 @@
         "iochannel",
         "ioformat",
         "item",
+        "jarek",
         "mousepaw",
         "pawlib",
         "rsds",
@@ -143,6 +151,7 @@
         "trileans",
         "type",
         "unshift",
-        "vlas"
+        "vlas",
+        "volwiler"
     ],
 }

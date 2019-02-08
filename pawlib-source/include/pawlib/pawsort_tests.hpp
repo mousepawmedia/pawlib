@@ -116,7 +116,8 @@ namespace pawlib
 
         public:
             // cppcheck-suppress uninitMemberVar
-            explicit TestSort(TestArrayType type):arrayType(type)
+            explicit TestSort(TestArrayType type)
+            :arrayType(type)
             {
                 // We'll initialize titles and doc strings in the constructor.
                 switch(arrayType)
@@ -597,9 +598,9 @@ unique values. Really, this is just evil incarnate.";
 
             bool run() override
             {
-                /* Test sorting from index to test_size - 1 - index*/              
+                /* Test sorting from index to test_size - 1 - index*/
                 pawsort::insertion_sort(test_arr, INDEX, test_size -1 - INDEX);
-                
+
                 // Verify sorting.
                 for(int i = 1 + INDEX; i < test_size - INDEX ; ++i)
                 {
@@ -615,7 +616,7 @@ unique values. Really, this is just evil incarnate.";
             }
 
             ~TestInsertionSort(){}
-            
+
     private:
         const int INDEX = 100;
     };

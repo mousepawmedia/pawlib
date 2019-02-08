@@ -1,7 +1,7 @@
 /** Tests for OneString[PawLIB]
   * Version: 0.3
   *
-  * Author(s): Scott Taylor
+  * Author(s): Scott Taylor, Bo Volwiler, Jason C. McDonald
   */
 
 /* LICENSE
@@ -46,502 +46,728 @@
 
 #include "pawlib/goldilocks.hpp"
 #include "pawlib/onestring.hpp"
+#include "iochannel.hpp"
+#include "goldilocks.hpp"
+
+using namespace pawlib::ioformat;
+using namespace pawlib;
 
 namespace pawlib
 {
-    class TestString: public Test
+    class TestOneString : public Test
     {
         public:
-            enum TestType
-            {
-                // The strings are equal with no unicode chars
-                SAME_NO_UNICODE,
-
-                // The strings are equal with some unicode
-                SAME_SOME_UNICODE,
-
-                // The strings are equal and have only unicdoe chars
-                SAME_ALL_UNICODE,
-
-                // The strings are not equal, which can be determined by the first char
-                NSAME_FIRST_CHAR,
-
-                // The strings are equal until the middle character.
-                NSAME_MIDDLE_CHAR,
-
-                // The strings are equal except for the very last character
-                NSAME_LAST_CHAR
+            enum TestStringType {
+                NO_UNICODE,
+                SOME_UNICODE,
+                JUST_UNICODE
             };
 
-            explicit TestString(TestType type):tType(type)
-            {
-                switch(tType)
-                {
-                    case SAME_NO_UNICODE:
-                    {
-                        title = "QuickString: Compare, Same No Unicode";
-                        docs = "Compares two identical strings containing no Unicode.";
-                        break;
-                    }
-                    case SAME_SOME_UNICODE:
-                    {
-                        title = "QuickString: Compare, Same Some Unicode";
-                        docs = "Compares two identical strings containing some Unicode.";
-                        break;
-                    }
-                    case SAME_ALL_UNICODE:
-                    {
-                        title = "QuickString: Compare, Same All Unicode";
-                        docs = "Compares two identical strings containing all Unicode.";
-                        break;
-                    }
-                    case NSAME_FIRST_CHAR:
-                    {
-                        title = "QuickString: Compare, Diff First";
-                        docs = "Compares two strings with the first character different.";
-                        break;
-                    }
-                    case NSAME_MIDDLE_CHAR:
-                    {
-                        title = "QuickString: Compare, Diff Middle";
-                        docs = "Compares two strings with the middle character different.";
-                        break;
-                    }
-                    case NSAME_LAST_CHAR:
-                    {
-                        title = "QuickString: Compare, Diff Last";
-                        docs = "Compares two strings with the last character different.";
-                        break;
-                    }
-                }
-            }
+            OneString noUnicode1 = "The quick brown fox jumped over the lazy dog.";
+            OneString someUnicode1 = "The quick brown 🦊 jumped over the lazy 🐶.";
+            OneString justUnicode1 = "Ø÷ℌ№Ⅳ↉₲ↇ↕↹↱";
 
-            virtual testdoc_t get_title() = 0;
-
-            testdoc_t get_docs()
-            {
-               return docs;
-            }
-
-            bool pre()
-            {
-                switch(tType)
-                {
-                    case SAME_NO_UNICODE:
-                    {
-                        mainStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                         mainPStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                        compStr = mainStr;
-                        compPStr = mainPStr;
-                        break;
-                    }
-
-                    case SAME_SOME_UNICODE:
-                    {
-                        mainStr = "♬ We're going down, down in an earlier round. ♬"
-                            "我A名B是C科D我E蝙F我G名H是I科J我K蝙L我M名N我O蝙P我Q蝙R我S名T我U蝙VWXYZ"
-                            "This is a normal line containing no unicode. Everything is alphanumeric."
-                            "ΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮ"
-                            "This next line however contains some amounts of unicode. Not too much."
-                            "A B C D E F G H I J K L M N O P Q R S ᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒ"
-                            "However, these next lines will be many integrals and subsets, with notation."
-                            "Calculate the integrals: ∫f(x) ∫f(gx) ∫ x ∫∫ f(x + 1) ∫s dx ∫ 3!"
-                            "A ⊆ B C ⊆ B and C ⊆ AB ⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆"
-                            "Now let's go for quite awhile without any unicode, in order to be sparing."
-                            "⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷"
-                            "Ooops I lied. My bad. Now I shall recite the alphabet so that we only have letters."
-                            "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z now I know my ABCs"
-                            "¶ When editing documents, paragraphs are usually marked with the ¶ symbol. ¶"
-                            "☠a☠b☠c☠d☠e☠f☠g☠h☠i☠j☠k☠l☠m☠☠n☠o☠p☠q☠r☠s☠t☠☠u☠☠v☠w☠x☠y☠☠z☠☠"
-                            "♬ Welcome to the end of eras. Ice has melted back to life. ♬♬";
-
-                        mainPStr = "♬ We're going down, down in an earlier round. ♬"
-                            "我A名B是C科D我E蝙F我G名H是I科J我K蝙L我M名N我O蝙P我Q蝙R我S名T我U蝙VWXYZ"
-                            "This is a normal line containing no unicode. Everything is alphanumeric."
-                            "ΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮ"
-                            "This next line however contains some amounts of unicode. Not too much."
-                            "A B C D E F G H I J K L M N O P Q R S ᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒ"
-                            "However, these next lines will be many integrals and subsets, with notation."
-                            "Calculate the integrals: ∫f(x) ∫f(gx) ∫ x ∫∫ f(x + 1) ∫s dx ∫ 3!"
-                            "A ⊆ B C ⊆ B and C ⊆ AB ⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆"
-                            "Now let's go for quite awhile without any unicode, in order to be sparing."
-                            "⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷"
-                            "Ooops I lied. My bad. Now I shall recite the alphabet so that we only have letters."
-                            "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z now I know my ABCs"
-                            "¶ When editing documents, paragraphs are usually marked with the ¶ symbol. ¶"
-                            "☠a☠b☠c☠d☠e☠f☠g☠h☠i☠j☠k☠l☠m☠☠n☠o☠p☠q☠r☠s☠t☠☠u☠☠v☠w☠x☠y☠☠z☠☠"
-                            "♬ Welcome to the end of eras. Ice has melted back to life. ♬♬";
-
-                        compStr = mainStr;
-                        compPStr = mainPStr;
-                        break;
-
-                    }
-
-
-                    case SAME_ALL_UNICODE:
-                    {
-                        mainStr = "我的名字是斯科特我是蝙蝠我的名字是斯科特我是蝙蝠我的名字我是蝙蝠"
-                            "我的名字是斯科特我是蝙蝠我的名字是斯科特我是蝙蝠我的名字我是蝙蝠我是蝙蝠我的名字我是蝙蝠"
-                            "ΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮ"
-                            "ΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮ"
-                            "ჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯ"
-                            "ᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒ"
-                            "∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫"
-                            "⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆"
-                            "☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯"
-                            "ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð"
-                            "⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷"
-                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦";
-
-                        mainPStr = "我的名字是斯科特我是蝙蝠我的名字是斯科特我是蝙蝠我的名字我是蝙蝠"
-                            "我的名字是斯科特我是蝙蝠我的名字是斯科特我是蝙蝠我的名字我是蝙蝠我是蝙蝠我的名字我是蝙蝠"
-                            "ΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮ"
-                            "ΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮΠΦΣψϢϮ"
-                            "ჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯჯ"
-                            "ᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒᨒ"
-                            "∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫∫"
-                            "⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆⊆"
-                            "☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯☯"
-                            "ððððððððððððððððððððððððððððððððððððððððððððððððððððððððððððð"
-                            "⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷⛷"
-                            "䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦䯦";
-
-                        compStr = mainStr;
-                        compPStr = mainPStr;
-                        break;
-                    }
-
-                    case NSAME_FIRST_CHAR:
-                    {
-                        mainStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                         mainPStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                        compStr = "Doming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                        compPStr = compStr;
-
-                        break;
-
-                    }
-                    case NSAME_MIDDLE_CHAR:
-                    {
-                        mainStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                         mainPStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                        // Change love in the middle to live
-                        compStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I live the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                         compPStr = compStr;
-
-                         break;
-
-                    }
-                     case NSAME_LAST_CHAR:
-                    {
-                        mainStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                         mainPStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name.";
-
-                        // Changing last char
-                        compStr = "Coming in unannounced, drag my nails on the tile. I "
-                            "just followed your scent. You can just follow my smile."
-                            "All of your flaws are aligned with this mood of mine."
-                            "Cutting me to the bone, nothing left to leave behind."
-                            "You ought to keep me concealed, just like I was a weapon."
-                            "I didn't come for a fight but I will fight till the end."
-                            "And this one might be a battle, might not turn out okay."
-                            "You know you look so Seattle, but you feel so LA. And I "
-                            "love the way you hurt me. It's irresistible, yeah. I love"
-                            "the way. I love the way. I love the way you hurt me, baby."
-                            "I love the way. I love the way. I love the way you hurt me,"
-                            " baby. I'm gonna get you to burst just like you were a "
-                            "bubble. Frame me up on your wall just to keep me out of trouble."
-                            "Like a moth getting trapped in the light by fixation."
-                            "Truly free, love it baby, I'm talking no inflation. "
-                            "Too many war wounds and not enough wars. "
-                            "Too few rounds in the ring and not enough settled scores."
-                            "Too many sharks, not enough blood in the waves."
-                            "You know I give my love a four letter name?";
-
-                        compPStr = compStr;
-
-                        break;
-
-
-                    }
-
-                }
-                return true;
-            }
-
-            virtual bool run()
-            {
-                return true;
-            }
-            ~TestString(){}
+            OneString noUnicode2 = "Jackdaws love my big sphinx of quartz.";
+            OneString someUnicode2 = "🐦 ❤️ my big sphinx of 💎.";
+            OneString justUnicode2 = "℀ℂ℟ℚⅦↂℬΩ℡";
 
         protected:
-            TestType tType;
-            std::string mainStr;
-            //QuickString mainPStr;
-            std::string mainPStr;
-            std::string compStr;
-            //QuickString compPStr;
-            std::string compPStr;
+            TestStringType stringType;
 
             testdoc_t title;
-            testdoc_t docs;
+
+        public:
+            explicit TestOneString(TestStringType type)
+            :stringType(type)
+            {
+                switch(stringType)
+                {
+                    case NO_UNICODE:
+                    {
+                        title = "(No Unicode)";
+                        break;
+                    }
+                    case SOME_UNICODE:
+                    {
+                        title = "(Some Unicode)";
+                        break;
+                    }
+                    case JUST_UNICODE:
+                    {
+                        title = "(Just Unicode)";
+                        break;
+                    }
+                }
+            }
+
+            virtual testdoc_t get_title() override = 0;
+
+            virtual testdoc_t get_docs() override = 0;
     };
 
-
-    class TestPawCompare: public TestString
+    // P-tB4001[a-c]
+    class TestOneString_Equal : public TestOneString
     {
         public:
-            explicit TestPawCompare(TestType type):TestString(type)
+            explicit TestOneString_Equal(TestStringType type)
+            :TestOneString(type)
             {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
-                return title + " (QuickString)";
+                return "OneString: == Operator " + title;
             }
 
-            bool run()
+            testdoc_t get_docs() override
             {
+                return "Test that the == operator returns true between like strings.";
+            }
 
-                for(int i=0; i < 1000; ++i)
+            bool run() override {
+                switch(stringType)
                 {
-                    if(mainPStr == compPStr){};
+                    case NO_UNICODE:
+                    {
+                        return (noUnicode1 == noUnicode1 && noUnicode2 == noUnicode2);
+                    }
+                    case SOME_UNICODE:
+                    {
+                        return (someUnicode1 == someUnicode1 && someUnicode2 == someUnicode2);
+                    }
+                    case JUST_UNICODE:
+                    {
+                        return (justUnicode1 == justUnicode1 && justUnicode2 == justUnicode2);
+                    }
                 }
-                return true;
+                return false;
             }
-            ~TestPawCompare(){}
-
     };
 
-
-    class TestStdCompare: public TestString
+    // P-tB4002[a-c]
+    class TestOneString_EqualFail : public TestOneString
     {
         public:
-            explicit TestStdCompare(TestType type):TestString(type)
+            explicit TestOneString_EqualFail(TestStringType type)
+            :TestOneString(type)
             {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
-                return title + " (std::string)";
+                return "OneString: == Operator Fail " + title;
             }
 
-            bool run()
+            testdoc_t get_docs() override
             {
-                for(int i=0; i < 1000; ++i)
+                return "Test that the == operator returns false between non-like strings.";
+            }
+
+            bool run() override {
+                switch(stringType)
                 {
-                    if(mainStr == compStr){};
+                    case NO_UNICODE:
+                    {
+                        // cppcheck-suppress duplicateExpression
+                        return (noUnicode1 == noUnicode2 || noUnicode2 == noUnicode1) ? false : true;
+                    }
+                    case SOME_UNICODE:
+                    {
+                        // cppcheck-suppress duplicateExpression
+                        return (someUnicode1 == someUnicode2 || someUnicode2 == someUnicode1) ? false : true;
+                    }
+                    case JUST_UNICODE:
+                    {
+                        // cppcheck-suppress duplicateExpression
+                        return (justUnicode1 == justUnicode2 || justUnicode2 == justUnicode1) ? false : true;
+                    }
                 }
-                return true;
-
+                return false;
             }
-            ~TestStdCompare(){}
-
     };
 
-    class TestSuite_Onestring : public TestSuite
+    // P-tB4003[a-c]
+    class TestOneString_NotEqual : public TestOneString
     {
         public:
-            explicit TestSuite_Onestring(){}
+            explicit TestOneString_NotEqual(TestStringType type)
+            :TestOneString(type)
+            {}
 
-            void load_tests();
+            testdoc_t get_title() override
+            {
+                return "OneString: != Operator " + title;
+            }
 
-            testdoc_t get_title()
+            testdoc_t get_docs() override
+            {
+                return "Test that the != operator returns true between non-like strings.";
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case NO_UNICODE:
+                    {
+                        // cppcheck-suppress duplicateExpression
+                        return (noUnicode1 != noUnicode2 && noUnicode2 != noUnicode1);
+                    }
+                    case SOME_UNICODE:
+                    {
+                        // cppcheck-suppress duplicateExpression
+                        return (someUnicode1 != someUnicode2 && someUnicode2 != someUnicode1);
+                    }
+                    case JUST_UNICODE:
+                    {
+                        // cppcheck-suppress duplicateExpression
+                        return (justUnicode1 != justUnicode2 && justUnicode2 != justUnicode1);
+                    }
+                }
+                return false;
+            }
+    };
+
+    // P-tB4004[a-c]
+    class TestOneString_NotEqualFail : public TestOneString
+    {
+        public:
+            explicit TestOneString_NotEqualFail(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: != Operator " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test that the != operator returns false between like strings.";
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case NO_UNICODE:
+                    {
+                        return (noUnicode1 != noUnicode1 || noUnicode2 != noUnicode2) ? false : true;
+                    }
+                    case SOME_UNICODE:
+                    {
+                        return (someUnicode1 != someUnicode1 || someUnicode2 != someUnicode2) ? false : true;
+                    }
+                    case JUST_UNICODE:
+                    {
+                        return (justUnicode1 != justUnicode1 || justUnicode2 != justUnicode2) ? false : true;
+                    }
+                }
+                return false;
+            }
+    };
+
+    // P-tB4005[a-c]
+    class TestOneString_Equals : public TestOneString
+    {
+        public:
+            explicit TestOneString_Equals(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: equals() " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test that the equal() function returns true between like strings.";
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case NO_UNICODE:
+                    {
+                        return (noUnicode1.equals(noUnicode1) && noUnicode2.equals(noUnicode2));
+                    }
+                    case SOME_UNICODE:
+                    {
+                        return (someUnicode1.equals(someUnicode1) && someUnicode2.equals(someUnicode2));
+                    }
+                    case JUST_UNICODE:
+                    {
+                        return (justUnicode1.equals(justUnicode1) && justUnicode2.equals(justUnicode2));
+                    }
+                }
+                return false;
+            }
+    };
+
+    // P-tB4006[a-c]
+    class TestOneString_EqualsFail : public TestOneString
+    {
+        public:
+            explicit TestOneString_EqualsFail(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: equals() Fail " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test that the equals() function returns false between non-like strings.";
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case NO_UNICODE:
+                    {
+                        return (noUnicode1.equals(noUnicode2) || noUnicode2.equals(noUnicode1)) ? false : true;
+                    }
+                    case SOME_UNICODE:
+                    {
+                        return (someUnicode1.equals(someUnicode2) || someUnicode2.equals(someUnicode1)) ? false : true;
+                    }
+                    case JUST_UNICODE:
+                    {
+                        return (justUnicode1.equals(justUnicode2) || justUnicode2.equals(justUnicode1)) ? false : true;
+                    }
+                }
+                return false;
+            }
+    };
+
+    // P-tB4007
+    class TestOneString_Append : public Test
+    {
+        protected:
+            OneString start = "Ø÷";
+            OneString target1 = "Ø÷a";
+            OneString target2 = "Ø÷aऐ";
+            OneString test;
+        public:
+            TestOneString_Append(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: append()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test for adding characters to a OneString with append()";
+            }
+
+            bool pre() override
+            {
+                return janitor();
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override
+            {
+                // Append a C char
+                test.append('a');
+                if(test != target1)
+                {
+                    return false;
+                }
+
+                // Append a Unicode character string literal
+                test.append("ऐ");
+                if(test != target2)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+    };
+
+    // P-tB4008
+    class TestOneString_PopBack : public Test
+    {
+        protected:
+            OneString start = "The quick brown 🦊 jumped over the lazy 🐶📣";
+            OneString target = "The quick brown 🦊 jumped over the lazy 🐶";
+            OneString test;
+
+        public:
+            TestOneString_PopBack(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: pop_back()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Tests for removing characters from a OneString using pop_back().";
+            }
+
+            bool pre() override
+            {
+                return janitor();
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override
+            {
+                test.pop_back();
+                return (test == target);
+            }
+    };
+
+    // P-tB4009
+    class TestOneString_Length : public Test
+    {
+        protected:
+            OneString start = "Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷";
+            OneString test;
+
+        public:
+            TestOneString_Length(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: length()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test the length() function.";
+            }
+
+            bool pre() override
+            {
+                return janitor();
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override
+            {
+                if (test.length() != 14)
+                {
+                    return false;
+                }
+
+                test.pop_back();
+
+                if (test.length() != 13)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+    };
+
+    // P-tB4010
+    class TestOneString_Empty : public Test
+    {
+        protected:
+            OneString test = "";
+
+        public:
+            TestOneString_Empty(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: empty()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test that the empty() function returns true on an empty string.";
+            }
+
+            bool run() override
+            {
+                return test.empty();
+            }
+    };
+
+    // P-tB4011
+    class TestOneString_EmptyFail : public Test
+    {
+        protected:
+            OneString test = "a";
+
+        public:
+            TestOneString_EmptyFail(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: empty() Fail";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test that the empty() function returns false on a non-empty string.";
+            }
+
+            bool run() override
+            {
+                return (!test.empty());
+            }
+    };
+
+    // P-tB4012
+    class TestOneString_Insert : public Test
+    {
+        protected:
+            OneString start = "Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷";
+            OneString test;
+
+        public:
+            TestOneString_Insert(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: insert()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test inserting characters in the middle of a OneString using insert().";
+            }
+
+            bool pre() override
+            {
+                return janitor();
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override
+            {
+                OneChar toInsert;
+                toInsert = "Ø";
+                OneChar toCheck;
+                toCheck = "÷";
+                test.insert(3, toInsert);
+
+                if(test[3] != toInsert)
+                {
+                    return false;
+                }
+                if(test[2] != toCheck)
+                {
+                    return false;
+                }
+                if(test[4] != toCheck)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+    };
+
+    // P-tB4013
+    class TestOneString_Clear : public Test
+    {
+        protected:
+            OneString start = "Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷";
+            OneString test;
+
+        public:
+            TestOneString_Clear(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: clear()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Tests for clearing all items in a OneString with clear().";
+            }
+
+            bool pre() override {
+                return janitor();
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (!test.empty());
+            }
+
+            bool run() override
+            {
+                test.clear();
+                return test.empty();
+            }
+    };
+
+    // P-tB4014
+    class TestOneString_Swap : public Test
+    {
+        protected:
+            OneString beforeOne;
+            OneString beforeTwo;
+            OneString afterOne;
+            OneString afterTwo;
+
+        public:
+            TestOneString_Swap(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: swap()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test swapping two OneStrings.";
+            }
+
+            bool pre() override
+            {
+                return janitor();
+            }
+
+            bool janitor() override
+            {
+                beforeOne = "Pre Swap Ø";
+                beforeTwo = "Ø Post Swap";
+                afterOne = beforeOne;
+                afterTwo = beforeTwo;
+                return true;
+            }
+
+            bool run() override
+            {
+                beforeOne.swap(beforeTwo);
+
+                if(beforeOne != afterTwo)
+                {
+                    return false;
+                }
+                if(beforeTwo != afterOne)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+    };
+
+    // P-tB4015
+    class TestOneString_Substr : public Test
+    {
+        protected:
+            OneString start = "⛰ The Matterhorn ⛰";
+
+        public:
+            TestOneString_Substr(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: substr()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test creating a substring from a OneString.";
+            }
+
+            bool run() override
+            {
+                OneString partial = start.substr(12,4);
+                return (partial == "horn");
+            }
+    };
+
+    // P-tB4016
+    class TestOneString_At : public Test
+    {
+        protected:
+            OneString before = "⛰ The Matterhorn ⛰";
+
+        public:
+            TestOneString_At(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: at()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test accessing one character of a OneString with at()";
+            }
+
+            bool run() override
+            {
+                OneChar toCheck;
+                toCheck = "⛰";
+                return (before.at(17) == toCheck);
+            }
+    };
+
+    // P-tB4017
+    class TestOneString_ForceResize : public Test
+    {
+        protected:
+            OneString target = "🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉";
+        public:
+            TestOneString_ForceResize(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Force Resize";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Append characters to force resizing of the OneString's internal structure.";
+            }
+
+            bool run() override
+            {
+                OneString test;
+                for (int i = 0; i < target.length(); ++i)
+                {
+                    test.append("🐉");
+                }
+                return (test == target);
+            }
+    };
+
+    class TestSuite_OneString : public TestSuite
+    {
+        public:
+            explicit TestSuite_OneString(){}
+
+            void load_tests() override;
+
+            testdoc_t get_title() override
             {
                 return "PawLIB: OneString Tests";
             }
-
-            ~TestSuite_Onestring(){}
     };
 }
-
 #endif // PAWLIB_ONESTRING_TESTS_HPP

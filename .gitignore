@@ -21,3 +21,5 @@ codealike.json
 .codelite/
 Pawlib.workspace
 pawlib.project
+.DS_Store
+.kdev4

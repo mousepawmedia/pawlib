@@ -6,7 +6,7 @@ namespace pawlib
     OneChar::OneChar(char* newChar)
     {
         int index = 0;
-        
+
         // Add each non-terminating character to the char array.
         while (newChar[index] != '\0')
         {
@@ -16,6 +16,11 @@ namespace pawlib
 
         // Add a null terminator to the end of the char array
         miniChar[index] = '\0';
+    }
+
+    OneChar::OneChar()
+    {
+        miniChar[0] = '\0';
     }
 
     char OneChar::operator[](int pos) const
@@ -34,7 +39,7 @@ namespace pawlib
     OneChar& OneChar::operator=(const char* newChar)
     {
         int index = 0;
-        
+
         // Add each non-terminating character to the char array.
         while (newChar[index] != '\0')
         {
@@ -51,7 +56,7 @@ namespace pawlib
     OneChar& OneChar::operator=(const OneChar& newChar)
     {
         int index = 0;
-        
+
         // Add each non-terminating character to the char array.
         while (newChar[index] != '\0')
         {
@@ -103,7 +108,7 @@ namespace pawlib
 
     void OneChar::print(std:: ostream& os) const
     {
-        for (int index = 0; index < 5; index++)
+        for (int index = 0; index < 5 || miniChar[index] == '\0'; index++)
         {
             os << miniChar[index];
         }
