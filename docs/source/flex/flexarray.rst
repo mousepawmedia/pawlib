@@ -401,10 +401,10 @@ the FlexArray without resizing.
     short_term_memory.getCapacity();
     // Returns 8, the default size.
 
-``getLength()``
+``length()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``getLength()`` allows you to check how many elements are currently
+``length()`` allows you to check how many elements are currently
 in the FlexArray.
 
 ..  code-block:: c++
@@ -416,7 +416,7 @@ in the FlexArray.
     apples.push(42);
     apples.push(36);
 
-    apples.getLength();
+    apples.length();
     // The function will return 3
 
 ``isEmpty()``

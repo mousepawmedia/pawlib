@@ -295,10 +295,10 @@ the FlexQueue without resizing.
     short_term_memory.getCapacity();
     // Returns 8, the default size.
 
-``getLength()``
+``length()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``getLength()`` allows you to check how many elements are currently
+``length()`` allows you to check how many elements are currently
 in the FlexQueue.
 
 ..  code-block:: c++
@@ -310,7 +310,7 @@ in the FlexQueue.
     apples.enqueue(42);
     apples.enqueue(36);
 
-    apples.getLength();
+    apples.length();
     // The function will return 3
 
 ``isEmpty()``

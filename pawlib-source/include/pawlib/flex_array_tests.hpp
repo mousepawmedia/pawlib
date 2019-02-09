@@ -413,7 +413,7 @@ Middle is calculated as size()/2.";
                 // Insert each required element.
                 for(unsigned int val=1; val<iters; ++val)
                 {
-                    int at = flex.getLength()/2;
+                    int at = flex.length()/2;
 
                     // Attempt an insert shift. If it fails...
                     if(!flex.insert(val, at))
@@ -443,7 +443,7 @@ Middle is calculated as size()/2.";
                 // Insert each required element.
                 for(unsigned int val=1; val<iters; ++val)
                 {
-                    int at = flex.getLength()/2;
+                    int at = flex.length()/2;
                     flex.insert(val, at);
                 }
 

@@ -277,10 +277,10 @@ the FlexStack without resizing.
     short_term_memory.getCapacity();
     // Returns 8, the default size.
 
-``getLength()``
+``length()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``getLength()`` allows you to check how many elements are currently
+``length()`` allows you to check how many elements are currently
 in the FlexStack.
 
 ..  code-block:: c++
@@ -292,7 +292,7 @@ in the FlexStack.
     albums.push("Comatose");
     albums.push("Fireproof");
 
-    albums.getLength();
+    albums.length();
     // The function will return 3
 
 ``isEmpty()``

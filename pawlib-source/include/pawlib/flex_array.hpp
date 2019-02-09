@@ -71,7 +71,7 @@ namespace pawlib
               * \param the minimum number of elements that the FlexArray can contain.
               */
             // cppcheck-suppress noExplicitConstructor
-            FlexArray(uint32_t numElements)
+            FlexArray(size_t numElements)
                 :Base_FlexArr<type>(numElements)
                 {}
 
@@ -81,13 +81,13 @@ namespace pawlib
              * \param the index to insert the element at.
              * \return true if insert successful, else false.
              */
-            bool insert(type newElement, uint32_t index)
+            bool insert(type newElement, size_t index)
             {
                 if(!this->validateIndex(index))
                 {
                     ioc << cat_error << vrb_quiet
                         << "FlexArray: insert() failed. " << index
-                        << " out of bounds [0 - " << this->currElements - 1
+                        << " out of bounds [0 - " << this->_elements - 1
                         << "]." << io_end;
                     return false;
                 }
@@ -134,7 +134,7 @@ namespace pawlib
               * \param the index to act on.
               * \return the element from the given index.
               */
-            type yank(uint32_t index)
+            type yank(size_t index)
             {
                 // If there are no elements in the array...
                 if(this->isEmpty())
@@ -221,7 +221,7 @@ namespace pawlib
                 }
 
                 // Store the last element, to be returned later.
-                type temp = this->rawAt(this->currElements-1);
+                type temp = this->rawAt(this->_elements-1);
                 // Delete the back value.
                 this->removeAtTail();
                 // Return the element we just deleted.
