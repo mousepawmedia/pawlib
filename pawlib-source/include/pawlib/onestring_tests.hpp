@@ -749,7 +749,7 @@ namespace pawlib
             bool run() override
             {
                 OneString test;
-                for (int i = 0; i < target.length(); ++i)
+                for (size_t i = 0; i < target.length(); ++i)
                 {
                     test.append("🐉");
                 }

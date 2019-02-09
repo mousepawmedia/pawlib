@@ -6,44 +6,43 @@ namespace pawlib
     * Constructors + Destructor
     *******************************************/
     OneString::OneString()
+    :_capacity(BASE_SIZE), _elements(0)
     {
-        capacity = BASE_SIZE;
-        currElements = 0;
-        masterArray = new OneChar[capacity];
+        masterArray = new OneChar[_capacity];
     }
 
     OneString::OneString(const char* str)
+    :_capacity(BASE_SIZE), _elements(0)
     {
-        capacity = BASE_SIZE;
-        masterArray = new OneChar[capacity];
+        masterArray = new OneChar[_capacity];
         append(str);
     }
 
     OneString::OneString(const std::string& str)
+    :_capacity(BASE_SIZE), _elements(0)
     {
-        capacity = BASE_SIZE;
-        masterArray = new OneChar[capacity];
+        masterArray = new OneChar[_capacity];
         append(str);
     }
 
     OneString::OneString(const OneString& str)
+    :_capacity(BASE_SIZE), _elements(0)
     {
-        capacity = BASE_SIZE;
-        masterArray = new OneChar[capacity];
+        masterArray = new OneChar[_capacity];
         append(str);
     }
 
     OneString::OneString(char ch)
+    :_capacity(BASE_SIZE), _elements(0)
     {
-        capacity = BASE_SIZE;
-        masterArray = new OneChar[capacity];
+        masterArray = new OneChar[_capacity];
         append(ch);
     }
 
     OneString::OneString(const OneChar& ch)
+    :_capacity(BASE_SIZE), _elements(0)
     {
-        capacity = BASE_SIZE;
-        masterArray = new OneChar[capacity];
+        masterArray = new OneChar[_capacity];
         append(ch);
     }
 
@@ -59,200 +58,38 @@ namespace pawlib
     * Helpers
     *******************************************/
 
-    OneString& OneString::assignHelper(const char* str)
+    void OneString::parseChar(const char* str, size_t index, uint_fast8_t bytes)
     {
-        //currElements = 0;
-        int index = 0;
-
-        while(str[index] != '\0')
+        for(uint_fast8_t i = 0; i < bytes; ++i)
         {
-            if(currElements+ 1 >= capacity)
-            {
-                resize();
-            }
-
-            if((str[index] & 0xF0) == 0xF0)
-            {
-                // Insert a 4 byte Unicode Char into the OneString
-                parseChar(str, index, 4);
-                index+=4;
-            }
-            // Does it start with an E?
-            else if((str[index] & 0xF0) == 0xE0)
-            {
-                // Insert a 3 byte Unicode Char into the OneString
-                parseChar(str, index, 3);
-                index+=3;
-            }
-            // Does it start with a C?
-            else if((str[index] & 0xF0) == 0xC0)
-            {
-                // Insert a 2 byte Unicode Char into the OneString
-                parseChar(str, index, 2);
-                index+=2;
-            }
-            // Check if the char is valid
-            else if((str[index] & 0xF0) == 0x80)
-            {
-                // TODO: Is there a better way to handle this than with an error?
-                ioc << cat_error << ta_bold << fg_red << "OneString Error: "
-                    << " Invalid Character in String at Position: " << index
-                    << io_end;
-                break;
-            }
-            else
-            {
-                // Insert a 1-byte ASCII char
-                parseChar(str, index, 1);
-                index++;
-            }
-
-            currElements++;
-            masterArray[currElements] = '\0';
+            masterArray[this->_elements].addDirectly(str[index + i], i);
         }
-        return *this;
+       masterArray[this->_elements].addDirectly('\0', bytes);
     }
 
-    OneString& OneString::assignHelper(char str)
+    void OneString::parseChar(const std::string& str, size_t index, uint_fast8_t bytes)
     {
-        if(currElements + 1 >= capacity)
+        for(uint_fast8_t i = 0; i < bytes; ++i)
         {
-            resize();
+            masterArray[this->_elements].addDirectly(str[index + i], i);
         }
-
-        if((str & 0xF0) == 0xF0)
-        {
-            // Insert a 4 byte Unicode Char into the OneString
-            parseChar(str, 4);
-        }
-        // Does it start with an E?
-        else if((str & 0xF0) == 0xE0)
-        {
-            // Insert a 3 byte Unicode Char into the OneString
-            parseChar(str, 3);
-        }
-        // Does it start with a C?
-        else if((str & 0xF0) == 0xC0)
-        {
-            // Insert a 2 byte Unicode Char into the OneString
-            parseChar(str, 2);
-        }
-        // Check if the char is valid
-        else if((str & 0xF0) == 0x80)
-        {
-            /* This indicates a continuation bit, which we would only get if we
-             * have an INCOMPLETE Unicode character. Presently, it doesn't look
-             * like we need to do anything in this scenario, including throwing
-             * an error. Just move on quietly.
-             */
-        }
-        else
-        {
-            // Insert a 1-byte ASCII char
-            parseChar(str, 1);
-        }
-
-        currElements++;
-        masterArray[currElements] = '\0';
-
-        return *this;
+       masterArray[this->_elements].addDirectly('\0', bytes);
     }
 
-    OneString& OneString::assignHelper(std::string ostr)
+    void OneString::parseChar(const char str, uint_fast8_t bytes)
     {
-        int index = 0;
-        while(ostr[index] != '\0')
+        for(uint_fast8_t i = 0; i < bytes; ++i)
         {
-            if(currElements + 1 >= OneString::capacity)
-            {
-                OneString::resize();
-            }
-
-            switch(ostr[index] & 0xF0)
-            {
-                case 0xF0 :
-                    {
-                        // Insert a 4 byte Unicode Char into the OneString
-                        parseChar(ostr, index, 4);
-                        index+=4;
-                        break;
-                    }
-                case 0xE0 :
-                    {
-                        // Insert a 3 byte Unicode Char into the OneString
-                        parseChar(ostr, index, 3);
-                        index+=3;
-                        break;
-                    }
-                case 0xC0:
-                    {
-                        // Insert a 2 byte Unicode Char into the OneString
-                        parseChar(ostr, index, 2);
-                        index+=2;
-                        break;
-                    }
-                case 0x80:
-                    {
-                        ioc << cat_error << ta_bold << fg_red <<
-                        "OneString Error: Invalid Character In String At Position: " << index << io_end;
-                        return *this;
-                    }
-                default :
-                    {
-                        // Insert a standard char
-                        parseChar(ostr, index, 1);
-                        ++index;
-                    }
-            }
-                currElements++;
-            }
-            masterArray[currElements] = '\0';
-
-        return *this;
-    }
-
-    void OneString::parseChar(const char* str, int index, int bytes)
-    {
-        int theLength = length();
-
-        for(int i = 0; i < bytes; ++i)
-        {
-            masterArray[theLength].addDirectly(str[index + i], i);
+            masterArray[this->_elements].addDirectly(str, i);
         }
-       masterArray[theLength].addDirectly('\0', bytes);
-    }
-
-    void OneString::parseChar(const std::string& str, int index, int bytes)
-    {
-        int theLength = length();
-
-        for(int i = 0; i < bytes; ++i)
-        {
-            //master[length][i] = str[index + i];
-            masterArray[theLength].addDirectly(str[index + i], i);
-        }
-       // master[length][bytes] = '\0';
-       masterArray[theLength].addDirectly('\0', bytes);
-    }
-
-    void OneString::parseChar(const char str, int bytes)
-    {
-        int theLength = length();
-
-        for(int i = 0; i < bytes; ++i)
-        {
-            //master[length][i] = str[index + i];
-            masterArray[theLength].addDirectly(str, i);
-        }
-       // master[length][bytes] = '\0';
-       masterArray[theLength].addDirectly('\0', bytes);
+       masterArray[this->_elements].addDirectly('\0', bytes);
     }
 
     void OneString::resize()
     {
-        capacity *= RESIZE_FACTOR;
+        _capacity *= RESIZE_FACTOR;
 
-        OneChar* tempArray = new OneChar[capacity];
+        OneChar* tempArray = new OneChar[_capacity];
 
         // If an old array exists...
         if(this->masterArray != nullptr)
@@ -261,7 +98,7 @@ namespace pawlib
             memmove(
                 (void*) tempArray,
                 (void*) this -> masterArray,
-                sizeof(OneChar) * this->currElements
+                sizeof(OneChar) * this->_elements
             );
 
             // Delete the old structure.
@@ -277,12 +114,11 @@ namespace pawlib
     * Access
     *******************************************/
 
-    OneChar OneString::at(int pos) const
+    OneChar OneString::at(size_t pos) const
     {
-        if (pos < 0 || pos > currElements)
+        if (pos > _elements)
         {
-            ioc << cat_error << ta_bold << fg_red <<
-            "OneString Error: Index out of Bounds" << io_end;
+            throw std::out_of_range("OneString: Index out of bounds.");
         }
 
         return masterArray[pos];
@@ -290,85 +126,158 @@ namespace pawlib
 
     bool OneString::empty() const
     {
-        return (currElements == 0);
+        return (_elements == 0);
     }
 
-    int OneString::getCapacity() const
+    size_t OneString::capacity() const
     {
-        return capacity;
+        return _capacity;
     }
 
-    int OneString::length() const
+    size_t OneString::length() const
     {
-        return currElements;
+        return _elements;
     }
 
     /*******************************************
     * Adding + Inserting
     ********************************************/
 
-    // if characters have already been parsed,
-    // we can move them as normal...
     void OneString::append(const OneString& ostr)
     {
-        while (currElements + ostr.length() + 1 >= capacity)
+        while (_elements + ostr.length() + 1 >= _capacity)
         {
             resize();
         }
 
-        int index = 0;
+        size_t index = 0;
         while(!(ostr[index] == '\0'))
         {
-            masterArray[index + currElements] = ostr[index];
+            masterArray[index + _elements] = ostr[index];
             index++;
         }
 
-        currElements += ostr.length();
-        masterArray[currElements] = '\0';
+        _elements += ostr.length();
+        masterArray[_elements] = '\0';
     }
 
     void OneString::append(const OneChar& ochar)
     {
-        if(currElements + 1 >= capacity)
+        if(_elements + 1 >= _capacity)
         {
             resize();
         }
 
-        masterArray[currElements] = ochar;
-        currElements++;
-        masterArray[currElements] = '\0';
+        masterArray[_elements] = ochar;
+        _elements++;
+        masterArray[_elements] = '\0';
     }
 
-    // ...otherwise, we have to check them
-    // for their size (which assignHelper does)
-    void OneString::append(char ochar)
+    void OneString::append(char ch)
     {
-        assignHelper(ochar);
+        // TODO: Switch this to a checkSize() function?
+        if(_elements + 1 >= _capacity)
+        {
+            resize();
+        }
+
+        /* NOTE: Removed the Unicode parsing from function, as it would
+         * not behave as expected by the end-user. Watch for edge cases!
+         */
+
+        // Insert a 1-byte ASCII char
+        parseChar(ch, 1);
+
+        _elements++;
+        masterArray[_elements] = '\0';
     }
 
-    void OneString::append(const char* ostr)
+    void OneString::append(const char* str)
     {
-        assignHelper(ostr);
+        size_t index = 0;
+
+        // Loop through each character in the string literal
+        while(str[index] != '\0')
+        {
+            // TODO: Switch this to a checkSize() function?
+            if(_elements + 1 >= _capacity)
+            {
+                resize();
+            }
+
+            /* If a byte in Unicode starts with 11, it is the first byte in a
+             * multi-byte character. The number of 1s at the beginning indicates
+             * the number of bytes in the character.
+             */
+            switch(str[index] & 0xF0)
+            {
+                // Four-byte Unicode character (started with 11110...)
+                case 0xF0:
+                {
+                    // Insert the next four bytes as a single OneChar.
+                    parseChar(str, index, 4);
+                    index += 4;
+                    break;
+                }
+                // Three-byte Unicode character (started with 1110...)
+                case 0xE0:
+                {
+                    // Insert the next three bytes as a single OneChar.
+                    parseChar(str, index, 3);
+                    index += 3;
+                    break;
+                }
+                // Two-byte Unicode character (started with 1100...)
+                case 0xC0:
+                {
+                    // Insert the next two bytes as a single OneChar.
+                    parseChar(str, index, 2);
+                    index += 2;
+                    break;
+                }
+                /* Continuation character (started with 10...), so we're in the
+                 * middle of a multi-byte Unicode character.
+                 */
+                case 0x80:
+                {
+                    /* We'll let the error pass silently. This is basically a
+                     * "can't happen" scenario.
+                     */
+                    break;
+                }
+                // Single-byte character (started with 0...)
+                default:
+                {
+                    // Insert this byte as a single OneChar.
+                    parseChar(str, index, 1);
+                    ++index;
+                }
+            }
+
+            ++_elements;
+        }
+        // Insert the null terminator at the end of the string.
+        masterArray[_elements] = '\0';
     }
 
-    void OneString::append(const std::string& ostr)
+    void OneString::append(const std::string& str)
     {
-        // TODO: Benchmark the assignHelper() function; possibly change to macro?
-        assignHelper(ostr);
+        // Parse the internal c string directly.
+        append(str.c_str());
     }
 
-    void OneString::insert(int pos, const OneString& ostr)
+    void OneString::insert(size_t pos, const OneString& ostr)
     {
         // TODO: Possible inefficiency. Potentially refactor.
         OneString left;
         OneString right;
 
-        for(int i = 0; i < pos; i++)
+        for(size_t i = 0; i < pos; i++)
         {
             left.append(this -> masterArray[i]);
         }
 
-        for(int i = pos; i < this -> currElements; i++)
+        for(size_t i = pos; i < this -> _elements; i++)
         {
             right.append(this -> masterArray[i]);
         }
@@ -380,17 +289,17 @@ namespace pawlib
         this -> append(right);
     }
 
-    void OneString::insert(int pos, std::string ostr)
+    void OneString::insert(size_t pos, std::string ostr)
     {
         OneString left;
         OneString right;
 
-        for(int i = 0; i < pos; i++)
+        for(size_t i = 0; i < pos; i++)
         {
             left.append(this -> masterArray[i]);
         }
 
-        for(int i = pos; i < this -> currElements; i++)
+        for(size_t i = pos; i < this -> _elements; i++)
         {
             right.append(this -> masterArray[i]);
         }
@@ -403,17 +312,17 @@ namespace pawlib
     }
 
     // the offending insert function
-    void OneString::insert(int pos, char* ostr)
+    void OneString::insert(size_t pos, char* ostr)
     {
         OneString left;
         OneString right;
 
-        for(int i = 0; i < pos; i++)
+        for(size_t i = 0; i < pos; i++)
         {
             left.append(this -> masterArray[i]);
         }
 
-        for(int i = pos; i < this -> currElements; i++)
+        for(size_t i = pos; i < this -> _elements; i++)
         {
             right.append(this -> masterArray[i]);
         }
@@ -425,17 +334,17 @@ namespace pawlib
         this -> append(right);
     }
 
-    void OneString::insert(int pos, char ochar)
+    void OneString::insert(size_t pos, char ochar)
     {
         OneString left;
         OneString right;
 
-        for(int i = 0; i < pos; i++)
+        for(size_t i = 0; i < pos; i++)
         {
             left.append(this -> masterArray[i]);
         }
 
-        for(int i = pos; i < this -> currElements; i++)
+        for(size_t i = pos; i < this -> _elements; i++)
         {
             right.append(this -> masterArray[i]);
         }
@@ -447,39 +356,17 @@ namespace pawlib
         this -> append(right);
     }
 
-    /*void OneString::insert(int pos, OneChar* ochar)
+    void OneString::insert(size_t pos, OneChar& ochar)
     {
         OneString left;
         OneString right;
 
-        for(int i = 0; i < pos; i++)
+        for(size_t i = 0; i < pos; i++)
         {
             left.append(this -> masterArray[i]);
         }
 
-        for(int i = pos; i < this -> currElements; i++)
-        {
-            right.append(this -> masterArray[i]);
-        }
-
-        this -> clear();
-
-        this -> append(left);
-        this -> append(ochar);
-        this -> append(right);
-    }*/
-
-    void OneString::insert(int pos, OneChar& ochar)
-    {
-        OneString left;
-        OneString right;
-
-        for(int i = 0; i < pos; i++)
-        {
-            left.append(this -> masterArray[i]);
-        }
-
-        for(int i = pos; i < this -> currElements; i++)
+        for(size_t i = pos; i < this -> _elements; i++)
         {
             right.append(this -> masterArray[i]);
         }
@@ -519,22 +406,23 @@ namespace pawlib
     {
         delete [] masterArray;
         masterArray = nullptr;
-        capacity = BASE_SIZE;
-        masterArray = new OneChar[capacity];
-        currElements = 0;
+        _capacity = BASE_SIZE;
+        masterArray = new OneChar[_capacity];
+        _elements = 0;
     }
 
     void OneString::pop_back()
     {
-        if(currElements == 0)
+        if(_elements == 0)
         {
             ioc << cat_error << ta_bold << fg_red <<
             "OneString Error: Can't POP an empty OneString" << io_end;
+            // TODO: Exception instead
         }
         else
         {
-            masterArray[currElements - 1] = '\0';
-            currElements--;
+            masterArray[_elements - 1] = '\0';
+            _elements--;
         }
     }
 
@@ -544,9 +432,9 @@ namespace pawlib
 
     bool OneString::equals(const OneString& ostr) const
     {
-        if(currElements == ostr.length())
+        if(_elements == ostr.length())
         {
-            for(int i = 0; i < currElements; ++i)
+            for(size_t i = 0; i < _elements; ++i)
             {
                 if(!(ostr[i] == masterArray[i]))
                 {
@@ -567,10 +455,9 @@ namespace pawlib
     {
         OneString compareStr(ostr);
 
-        int thisSize = length();
-        if(thisSize == compareStr.length())
+        if(this->_elements == compareStr.length())
         {
-            for (int i = 0; i < thisSize; ++i)
+            for (size_t i = 0; i < this->_elements; ++i)
             {
                 if(!(OneString::masterArray[i] == compareStr[i]))
                     return false;
@@ -582,10 +469,10 @@ namespace pawlib
 
     bool OneString::lessThanCharP(const char* ostr)
     {
-        int mainIndex = 0;
-        int smallIndex = 0;
-        int charIndex = 0;
-        int endIndex = length();
+        size_t mainIndex = 0;
+        size_t smallIndex = 0;
+        size_t charIndex = 0;
+        size_t endIndex = length();
 
         while(mainIndex < endIndex)
         {
@@ -612,8 +499,8 @@ namespace pawlib
     //OneString does not name a type
     bool OneString::lessThanStr(const OneString& ostr)
     {
-        int small_len = (length() < ostr.length())? length(): ostr.length();
-        for(int i = 0; i < small_len; ++i)
+        size_t small_len = (this->_elements < ostr.length())? this->_elements: ostr.length();
+        for(size_t i = 0; i < small_len; ++i)
         {
             if(OneString::masterArray[i] < (ostr[i]))
             {
@@ -629,7 +516,7 @@ namespace pawlib
             }
         }
 
-        if((small_len == length()) && (small_len != ostr.length()))
+        if((small_len == this->_elements) && (small_len != ostr.length()))
         {
             return true;
         }
@@ -648,13 +535,13 @@ namespace pawlib
         str = temp;
     }
 
-    OneString OneString::substr(int beginningIndex, int length)
+    OneString OneString::substr(size_t beginningIndex, size_t length)
     {
         OneString substr;
 
-        if (beginningIndex > 0 && beginningIndex + length < currElements)
+        if (beginningIndex > 0 && beginningIndex + length < _elements)
         {
-            for(int i = 0; i < length; i++)
+            for(size_t i = 0; i < length; i++)
             {
                 // We're implicitly including the \0 because of the +1
                 substr.append(masterArray[beginningIndex + i]);
@@ -662,8 +549,7 @@ namespace pawlib
         }
         else
         {
-            ioc << cat_error << ta_bold << fg_red <<
-            "OneString Error : INDEX OUT OF BOUNDS" << io_end;
+            throw std::out_of_range("OneString: Index out of bounds.");
         }
         return substr;
     }
@@ -672,21 +558,19 @@ namespace pawlib
     * Operators
     ********************************************/
 
-    OneChar& OneString::operator[](int pos) const
+    OneChar& OneString::operator[](size_t pos) const
     {
-        if((pos <= currElements) && (pos >= 0))
+        if((pos <= _elements) && (pos >= 0))
         {
             return masterArray[pos];
         }
         else
         {
-            ioc << cat_error << ta_bold << fg_red <<
-            "OneString Error : INDEX OUT OF BOUNDS" << io_end;
-            return masterArray[currElements - 1];
+            throw std::out_of_range("OneString: Index out of bounds.");
         }
     }
 
-    OneString& OneString::operator=(std::string str)
+    OneString& OneString::operator=(const std::string& str)
     {
         clear();
         append(str);
@@ -738,7 +622,7 @@ namespace pawlib
         return equals(ostr);
     }
 
-    bool OneString::operator==(std::string ostr)
+    bool OneString::operator==(const std::string& ostr)
     {
         return equals(ostr);
     }
@@ -753,7 +637,7 @@ namespace pawlib
         return !(equals(ostr));
     }
 
-    bool OneString::operator!=(std::string ostr)
+    bool OneString::operator!=(const std::string& ostr)
     {
         return !(equals(ostr));
     }
@@ -763,7 +647,7 @@ namespace pawlib
         return lessThanCharP(ostr2);
     }
 
-    bool OneString::operator<(std::string ostr2)
+    bool OneString::operator<(const std::string& ostr2)
     {
         return lessThanCharP(ostr2.c_str());
     }
@@ -783,7 +667,7 @@ namespace pawlib
         return (((*this) < ostr2)|| ((*this) == ostr2));
     }
 
-    bool OneString::operator<=(std::string ostr2)
+    bool OneString::operator<=(const std::string& ostr2)
     {
         return (((*this) < ostr2)|| ((*this) == ostr2));
     }
@@ -798,7 +682,7 @@ namespace pawlib
         return(!((*this) <= ostr2));
     }
 
-    bool OneString::operator>(std::string ostr2)
+    bool OneString::operator>(const std::string& ostr2)
     {
         return(!((*this) <= ostr2));
     }
@@ -813,7 +697,7 @@ namespace pawlib
         return(!((*this) < ostr2));
     }
 
-    bool OneString::operator>=(std::string ostr2)
+    bool OneString::operator>=(const std::string& ostr2)
     {
         return(!((*this) < ostr2));
     }
@@ -828,7 +712,7 @@ namespace pawlib
         append(ostr2);
     }
 
-    void OneString::operator+=(std::string ostr2)
+    void OneString::operator+=(const std::string& ostr2)
     {
         append(ostr2);
     }

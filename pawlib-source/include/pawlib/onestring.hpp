@@ -49,6 +49,7 @@
 #ifndef PAWLIB_ONESTRING_HPP
 #define PAWLIB_ONESTRING_HPP
 
+#include <cstdint>
 #include <cstring>
 #include <iomanip>
 #include <iostream>
@@ -68,327 +69,311 @@ namespace pawlib
     class OneString
     {
         public:
+            /*******************************************
+            * Constructors + Destructor
+            *******************************************/
 
-        /*******************************************
-        * Constructors + Destructor
-        *******************************************/
+            /**Default Constructor*/
+            OneString();
 
-        /**Default Constructor*/
-        OneString();
+            /**Create a OneString from string literal
+            * Note: Double quotes default to const char*
+            * \param the string literal to be converted to OneString
+            * \return a OneString containing the character literal
+            */
+            // cppcheck-suppress noExplicitConstructor
+            OneString(const char* str);
 
-        /**Create a OneString from const char*
-        * Note: Double quotes default to const char*
-        * \param the const char* to be converted to OneString
-        * \return a OneString representation of str.
-        *         All Unicode will be parsed appropriately. */
-        OneString(const char* str);
+            /**Create a OneString from std::string
+            * Note: Double quotes default to const char*
+            * \param the string to be converted to OneString
+            * \return a OneString representation of str.
+            */
+            // cppcheck-suppress noExplicitConstructor
+            OneString(const std::string& str);
 
-        /**Create a OneString from std::string
-        * Note: Double quotes default to const char*
-        * \param the string to be converted to OneString
-        * \return a OneString representation of str.
-        *         All Unicode will be parsed appropriately. */
-        OneString(const std::string& str);
+            /**Create a OneString from another OneString
+            * \param the OneString to be copied
+            * \return a OneString representation of str.
+            */
+            OneString(const OneString& str);
 
-        /**Create a OneString from another OneString
-        * \param the OneString to be copied
-        * \return a OneString representation of str.
-        *         All Unicode will be parsed appropriately.*/
-        OneString(const OneString& str);
+            /**Create a OneString from a char
+             *  \param the char to be added
+             *  \return a OneString containing that char */
+            // cppcheck-suppress noExplicitConstructor
+            OneString(char ch);
 
-        /**Create a OneString from a char
-         *  \param the char to be added
-         *  \return a OneString containing that char */
-        // cppcheck-suppress noExplicitConstructor
-        OneString(char ch);
+            /**Create a OneString from a char
+             *  \param the OneChar to be added
+             *  \return a OneString containing that OneChar */
+            // cppcheck-suppress noExplicitConstructor
+            OneString(const OneChar& ch);
 
-         /**Create a OneString from a char
-         *  \param the OneChar to be added
-         *  \return a OneString containing that OneChar */
-        // cppcheck-suppress noExplicitConstructor
-        OneString(const OneChar& ch);
+            /**Destructor*/
+            ~OneString();
 
-        /**Destructor*/
-        ~OneString();
+            /*******************************************
+            * Helpers
+            *******************************************/
 
-        /*******************************************
-        * Helpers
-        *******************************************/
+            /**Parses char* into OneString based on size
+                 * Used primarily for Unicode Characters within OneString(const char*)
+                 * \param the const char* to be parsed
+                 * \param an int to represent the index to parse the char* at
+                 * \param an int to represent the number of bytes in the char* */
+            void parseChar(const char* str, size_t index, uint_fast8_t bytes);
 
-        /**Helper function for operator= that must be declared in derived
-             * classes.
-             * \param the const char* to be returned as a OneString
-             * \return the initialized OneString */
-        OneString& assignHelper(const char* str);
+            /**Parses char* into OneString based on size
+                 * Used primarily for Unicode Characters within OneString(const std::string*)
+                 * \param the const string to be parsed
+                 * \param an int to represent the index to parse the string at
+                 * \param an int to represent the number of bytes in the string */
+            void parseChar(const std::string& str, size_t index, uint_fast8_t bytes);
 
-        /**Helper function for operator= that must be declared in derived
-             * classes.
-             * \param the const char to be returned as a OneString
-             * \return the initialized OneString */
-        OneString& assignHelper(char str);
+            /**Parses char into OneString based on size
+                 * Used primarily for Unicode Characters within OneString(const std::string*)
+                 * \param the const string to be parsed
+                 * \param an int to represent the index to parse the string at
+                 * \param an int to represent the number of bytes in the string */
+            void parseChar(const char str, uint_fast8_t bytes);
 
-        /**Helper function for operator= that must be declared in derived
-             * classes.
-             * \param the const string to be returned as a OneString
-             * \return the initialized OneString */
-        OneString& assignHelper(std::string str);
+            /**Handles resizing the array
+             * when capacity is reached
+             * \param
+             * \returns */
+            void resize();
 
-        /**Parses char* into OneString based on size
-             * Used primarily for Unicode Characters within OneString(const char*)
-             * \param the const char* to be parsed
-             * \param an int to represent the index to parse the char* at
-             * \param an int to represent the number of bytes in the char* */
-        void parseChar(const char* str, int index, int bytes);
+            /*******************************************
+            * Access
+            *******************************************/
 
-        /**Parses char* into OneString based on size
-             * Used primarily for Unicode Characters within OneString(const std::string*)
-             * \param the const string to be parsed
-             * \param an int to represent the index to parse the string at
-             * \param an int to represent the number of bytes in the string */
-        void parseChar(const std::string& str, int index, int bytes);
+            /**Gets the OneChar at a given position
+             * \param the index of the OneChar to return
+             * \return cooresponding OneChar */
+            OneChar at(size_t pos) const;
 
-        /**Parses char into OneString based on size
-             * Used primarily for Unicode Characters within OneString(const std::string*)
-             * \param the const string to be parsed
-             * \param an int to represent the index to parse the string at
-             * \param an int to represent the number of bytes in the string */
-        void parseChar(const char str, int bytes);
+            /**Checks to see if a OneString
+             * contains any OneChars
+             * \param
+             * \returns true/false depending on if the OneString
+             *          contains OneChars */
+            bool empty() const;
 
-        /**Handles resizing the array
-         * when capacity is reached
-         * \param
-         * \returns */
-        void resize();
+            /**Gets the current capacity of
+             * the OneString. Used primarily internally
+             * for resizing purposes.
+             * \param
+             * \returns the size of the OneString */
+            size_t capacity() const;
 
-        /*******************************************
-        * Access
-        *******************************************/
+            /**Gets the current number of
+             * elements in the OneString
+             * \param
+             * \return the number of elements */
+            size_t length() const;
 
-        /**Gets the OneChar at a given position
-         * \param the index of the OneChar to return
-         * \return cooresponding OneChar */
-        OneChar at(int pos) const;
+            /*******************************************
+            * Adding + Inserting
+            ********************************************/
 
-        /**Checks to see if a OneString
-         * contains any OneChars
-         * \param
-         * \returns true/false depending on if the OneString
-         *          contains OneChars */
-        bool empty() const;
+            /**Adds the cooresponding type to
+             * the end of the OneString
+             * in the form of a OneChar.
+             * \param the characters to be added to the OneString
+             * \returns */
+            void append(const OneString& ostr);
+            void append(char ochar);
+            void append(const char* ostr);
+            void append(const std::string& ostr);
+            void append(const OneChar& ochar);
 
-        /**Gets the current capacity of
-         * the OneString. Used primarily internally
-         * for resizing purposes.
-         * \param
-         * \returns the size of the OneString */
-        int getCapacity() const;
+            /**Inserts a series of characters
+             * Into a OneString at a given position
+             * \param the position to be added
+             * \param the characters to be added
+             * \returns */
+            void insert(size_t pos, const OneString& ostr);
+            void insert(size_t pos, std::string ostr);
+            void insert(size_t pos, char* ostr);
+            void insert(size_t pos, char ochar);
+            //void insert(int pos, OneChar* ochar);
+            void insert(size_t pos, OneChar& ochar);
 
-        /**Gets the current number of
-         * elements in the OneString
-         * \param
-         * \return the number of elements */
-        int length() const;
+            /*An alias for append, adds characters
+            * to the end of a OneString
+            * \param the characters to be added
+            * \returns */
+            void push_back(const OneString& ostr);
+            void push_back(char ochar);
+            void push_back(const char* ostr);
+            void push_back(const std::string& ostr);
+            void push_back(const OneChar& ochar);
 
-        /*******************************************
-        * Adding + Inserting
-        ********************************************/
+            /*******************************************
+            * Removing
+            ********************************************/
 
-        /**Adds the cooresponding type to
-         * the end of the OneString
-         * in the form of a OneChar.
-         * \param the characters to be added to the OneString
-         * \returns */
-        void append(const OneString& ostr);
-        void append(char ochar);
-        void append(const char* ostr);
-        void append(const std::string& ostr);
-        void append(const OneChar& ochar);
+            /**Clears a OneString and
+             * Reallocates it back to BASE_SIZE
+             * \param
+             * \returns */
+            void clear();
 
-        /**Inserts a series of characters
-         * Into a OneString at a given position
-         * \param the position to be added
-         * \param the characters to be added
-         * \returns */
-        void insert(int pos, const OneString& ostr);
-        void insert(int pos, std::string ostr);
-        void insert(int pos, char* ostr);
-        void insert(int pos, char ochar);
-        //void insert(int pos, OneChar* ochar);
-        void insert(int pos, OneChar& ochar);
+            /**Removes the last element
+             * in a OneString
+             * \param
+             * \returns */
+            void pop_back();
 
-        /*An alias for append, adds characters
-        * to the end of a OneString
-        * \param the characters to be added
-        * \returns */
-        void push_back(const OneString& ostr);
-        void push_back(char ochar);
-        void push_back(const char* ostr);
-        void push_back(const std::string& ostr);
-        void push_back(const OneChar& ochar);
+            /*******************************************
+            * Comparison
+            ********************************************/
 
-        /*******************************************
-        * Removing
-        ********************************************/
+            /**Compares the OneString to another
+             * character data type
+             * \param the characters to compare to
+             * \returns whether or not they are equivalent */
+            bool equals(const OneString& ostr) const;
+            bool equals(std::string ostr) const;
+            bool equals(const char* ostr) const;
 
-        /**Clears a OneString and
-         * Reallocates it back to BASE_SIZE
-         * \param
-         * \returns */
-        void clear();
+            /**Helper functions for < and > operators
+             * Parse through a OneString or char*
+             * to determine greater than or less than
+             * \param the OneString or char* to compare
+             * \return whether or not the OneString is
+             *         less than or equal to the item compared*/
+            bool lessThanStr(const OneString& ostr);
+            bool lessThanCharP(const char* ostr);
 
-        /**Removes the last element
-         * in a OneString
-         * \param
-         * \returns */
-        void pop_back();
+            /*******************************************
+            * Other
+            ********************************************/
 
-        /*******************************************
-        * Comparison
-        ********************************************/
+            /**Swaps one OneString with another
+             * \param the OneString to switch with
+             * \return */
+            void swap(OneString& str);
 
-        /**Compares the OneString to another
-         * character data type
-         * \param the characters to compare to
-         * \returns whether or not they are equivalent */
-        bool equals(const OneString& ostr) const;
-        bool equals(std::string ostr) const;
-        bool equals(const char* ostr) const;
+            /**Creates a smaller string out of
+             * a series of OneChars in the existing OneString
+             * \param the position to begin the string to be created
+             * \param the length of the string to be created
+             * \return the created string */
+            OneString substr(size_t pos, size_t sublen);
 
-        /**Helper functions for < and > operators
-         * Parse through a OneString or char*
-         * to determine greater than or less than
-         * \param the OneString or char* to compare
-         * \return whether or not the OneString is
-         *         less than or equal to the item compared*/
-        bool lessThanStr(const OneString& ostr);
-        bool lessThanCharP(const char* ostr);
+            /*******************************************
+            * Operators
+            ********************************************/
 
-        /*******************************************
-        * Other
-        ********************************************/
+            /**Retrieve OneChar from OneString
+             * This takes care of the "setting" part of the index operator
+             * \param the desired position within in the OneString
+             * \return returns the OneChar located at pos */
+            OneChar& operator[](size_t pos) const;
 
-        /**Swaps one OneString with another
-         * \param the OneString to switch with
-         * \return */
-        void swap(OneString& str);
+            /**Assignment operators
+             * Assigns the OneString to the given
+             * parameter. All unicode will be parsed appropriately
+             * \param the data type with characters
+             *        to be copied to a OneString
+             * \return the OneString containing those characters*/
+            OneString& operator=(const std::string& str);
+            OneString& operator=(const char* str);
+            OneString& operator=(const OneChar& str);
+            OneString& operator=(OneChar* ch);
+            OneString& operator=(char ch);
+            OneString& operator=(OneString& ostr);
 
-        /**Creates a smaller string out of
-         * a series of OneChars in the existing OneString
-         * \param the position to begin the string to be created
-         * \param the length of the string to be created
-         * \return the created string */
-        OneString substr(int pos, int sublen);
-
-        /*******************************************
-        * Operators
-        ********************************************/
-
-        /**Retrieve OneChar from OneString
-         * This takes care of the "setting" part of the index operator
-         * \param the desired position within in the OneString
-         * \return returns the OneChar located at pos */
-        OneChar& operator[](int pos) const;
-
-        /**Assignment operators
-         * Assigns the OneString to the given
-         * parameter. All unicode will be parsed appropriately
-         * \param the data type with characters
-         *        to be copied to a OneString
-         * \return the OneString containing those characters*/
-        OneString& operator=(std::string str);
-        OneString& operator=(const char* str);
-        OneString& operator=(const OneChar& str);
-        OneString& operator=(OneChar* ch);
-        OneString& operator=(char ch);
-        OneString& operator=(OneString& ostr);
-
-        /**Compares the OneString to another
-         * text data type to check for equivalence
-         * \param the text object to compare to
-         * \return whether or not they are equivalent*/
-        bool operator==(const OneString& ostr);
-        bool operator==(const char* ostr);
-        bool operator==(std::string ostr);
-        bool operator!=(const OneString& ostr);
-        bool operator!=(const char* ostr);
-        bool operator!=(std::string ostr);
+            /**Compares the OneString to another
+             * text data type to check for equivalence
+             * \param the text object to compare to
+             * \return whether or not they are equivalent*/
+            bool operator==(const OneString& ostr);
+            bool operator==(const char* ostr);
+            bool operator==(const std::string& ostr);
+            bool operator==(const OneChar& ostr);
+            bool operator!=(const OneString& ostr);
+            bool operator!=(const char* ostr);
+            bool operator!=(const std::string& ostr);
 
 
-        /**Checks to see if the OneString is
-         * less than the cooresponding text data object
-         * \param the text object to compare to
-         * \return whether or not the OneString is less than*/
-        bool operator<(const char* ostr2);
-        bool operator<(std::string ostr2);
-        bool operator<(const OneString& ostr2);
+            /**Checks to see if the OneString is
+             * less than the cooresponding text data object
+             * \param the text object to compare to
+             * \return whether or not the OneString is less than*/
+            bool operator<(const char* ostr2);
+            bool operator<(const std::string& ostr2);
+            bool operator<(const OneString& ostr2);
 
-        /**Checks to see if the OneString is
-         * less or equal to the cooresponding text data object
-         * \param the text object to compare to
-         * \return whether or not the OneString is less than or equal*/
-        bool operator<=(const OneString& ostr2);
-        bool operator<=(const char* ostr2);
-        bool operator<=(std::string ostr2);
+            /**Checks to see if the OneString is
+             * less or equal to the cooresponding text data object
+             * \param the text object to compare to
+             * \return whether or not the OneString is less than or equal*/
+            bool operator<=(const OneString& ostr2);
+            bool operator<=(const char* ostr2);
+            bool operator<=(const std::string& ostr2);
 
-        /**Checks to see if the OneString is
-         * greater than the cooresponding text data object
-         * \param the text object to compare to
-         * \return whether or not the OneString is greater than*/
-        bool operator>(const OneString& ostr2);
-        bool operator>(const char* ostr2);
-        bool operator>(std::string ostr2);
+            /**Checks to see if the OneString is
+             * greater than the cooresponding text data object
+             * \param the text object to compare to
+             * \return whether or not the OneString is greater than*/
+            bool operator>(const OneString& ostr2);
+            bool operator>(const char* ostr2);
+            bool operator>(const std::string& ostr2);
 
-        /**Checks to see if the OneString is
-         * greater or equal to  the cooresponding text data object
-         * \param the text object to compare to
-         * \return whether or not the OneString is greater than or equal*/
-        bool operator>=(const OneString& ostr2);
-        bool operator>=(const char* ostr2);
-        bool operator>=(std::string ostr2);
+            /**Checks to see if the OneString is
+             * greater or equal to  the cooresponding text data object
+             * \param the text object to compare to
+             * \return whether or not the OneString is greater than or equal*/
+            bool operator>=(const OneString& ostr2);
+            bool operator>=(const char* ostr2);
+            bool operator>=(const std::string& ostr2);
 
-        /**Adds the cooresponding type to
-         * the end of the OneString
-         * in the form of a OneChar.
-         * \param the characters to be added to the OneString
-         * \returns */
-        void operator+=(const OneString& ostr2);
-        void operator+=(const char* ostr2);
-        void operator+=(std::string ostr2);
-        void operator+=(char ochar);
-        void operator+=(const OneChar& ochar);
+            /**Adds the cooresponding type to
+             * the end of the OneString
+             * in the form of a OneChar.
+             * \param the characters to be added to the OneString
+             * \returns */
+            void operator+=(const OneString& ostr2);
+            void operator+=(const char* ostr2);
+            void operator+=(const std::string& ostr2);
+            void operator+=(char ochar);
+            void operator+=(const OneChar& ochar);
 
-        /*******************************************
-        * Friends
-        *******************************************/
+            /*******************************************
+            * Friends
+            *******************************************/
 
-        friend std::istream& operator>>(std::istream& in, OneString& ostr)
-        {
-            ostr.clear();
-            std::string temp;
-            std::getline(in, temp);
-            ostr.append(temp);
-            return in;
-        };
-
-        /**Operator to output a OneString
-        * \param the ostream to output on
-        * \param the OneString to output
-        * \return outputs the OneString as a cohesive string */
-        friend std::ostream& operator<<(std::ostream& os, const OneString& ostr)
-        {
-            for(int i = 0; i < ostr.length(); ++i)
+            friend std::istream& operator>>(std::istream& in, OneString& ostr)
             {
-                ostr.masterArray[i].print(os);
-            }
-            return os;
-        };
+                ostr.clear();
+                std::string temp;
+                std::getline(in, temp);
+                ostr.append(temp);
+                return in;
+            };
+
+            /**Operator to output a OneString
+            * \param the ostream to output on
+            * \param the OneString to output
+            * \return outputs the OneString as a cohesive string */
+            friend std::ostream& operator<<(std::ostream& os, const OneString& ostr)
+            {
+                for(size_t i = 0; i < ostr.length(); ++i)
+                {
+                    ostr.masterArray[i].print(os);
+                }
+                return os;
+            };
 
         private:
-        const int BASE_SIZE = 4; // the size the OneString is initialized at
-        const float RESIZE_FACTOR = 1.5;
-        int capacity;   // the current size of the array
-        int currElements = 0; // the number of elements in the array
-        OneChar* masterArray; // the array of OneChars
+            const int BASE_SIZE = 4; // the size the OneString is initialized at
+            const float RESIZE_FACTOR = 1.5;
+            size_t _capacity;   // the current size of the array
+            size_t _elements; // the number of elements in the array
+            OneChar* masterArray; // the array of OneChars
     };
 }
 #endif // PAWLIB_ONESTRING_HPP

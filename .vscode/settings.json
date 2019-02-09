@@ -19,7 +19,7 @@
         "information": "Information"
     },
 
-    "cmake.configureOnOpen": false,
+    /*"cmake.configureOnOpen": false,*/
 
     /*"cppcheck.standard": [
       "c11",
@@ -154,4 +154,5 @@
         "vlas",
         "volwiler"
     ],
+    "restructuredtext.confPath": "${workspaceFolder}/docs/source",
 }
