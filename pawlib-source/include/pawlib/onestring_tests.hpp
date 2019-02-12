@@ -128,18 +128,21 @@ namespace pawlib
                 {
                     case NO_UNICODE:
                     {
-                        return (noUnicode1 == noUnicode1 && noUnicode2 == noUnicode2);
+                        PL_ASSERT_EQUAL(noUnicode1, noUnicode1);
+                        PL_ASSERT_EQUAL(noUnicode2, noUnicode2);
                     }
                     case SOME_UNICODE:
                     {
-                        return (someUnicode1 == someUnicode1 && someUnicode2 == someUnicode2);
+                        PL_ASSERT_EQUAL(someUnicode1, someUnicode1);
+                        PL_ASSERT_EQUAL(someUnicode2, someUnicode2);
                     }
                     case JUST_UNICODE:
                     {
-                        return (justUnicode1 == justUnicode1 && justUnicode2 == justUnicode2);
+                        PL_ASSERT_EQUAL(justUnicode1, justUnicode1);
+                        PL_ASSERT_EQUAL(justUnicode2, justUnicode2);
                     }
                 }
-                return false;
+                return true;
             }
     };
 
@@ -166,21 +169,21 @@ namespace pawlib
                 {
                     case NO_UNICODE:
                     {
-                        // cppcheck-suppress duplicateExpression
-                        return (noUnicode1 == noUnicode2 || noUnicode2 == noUnicode1) ? false : true;
+                        PL_ANTIASSERT_EQUAL(noUnicode1, noUnicode2);
+                        PL_ANTIASSERT_EQUAL(noUnicode2, noUnicode1);
                     }
                     case SOME_UNICODE:
                     {
-                        // cppcheck-suppress duplicateExpression
-                        return (someUnicode1 == someUnicode2 || someUnicode2 == someUnicode1) ? false : true;
+                        PL_ANTIASSERT_EQUAL(someUnicode1, someUnicode2);
+                        PL_ANTIASSERT_EQUAL(someUnicode2, someUnicode1);
                     }
                     case JUST_UNICODE:
                     {
-                        // cppcheck-suppress duplicateExpression
-                        return (justUnicode1 == justUnicode2 || justUnicode2 == justUnicode1) ? false : true;
+                        PL_ANTIASSERT_EQUAL(justUnicode1, justUnicode2);
+                        PL_ANTIASSERT_EQUAL(justUnicode2, justUnicode1);
                     }
                 }
-                return false;
+                return true;
             }
     };
 
@@ -207,21 +210,21 @@ namespace pawlib
                 {
                     case NO_UNICODE:
                     {
-                        // cppcheck-suppress duplicateExpression
-                        return (noUnicode1 != noUnicode2 && noUnicode2 != noUnicode1);
+                        PL_ASSERT_NOT_EQUAL(noUnicode1, noUnicode2);
+                        PL_ASSERT_NOT_EQUAL(noUnicode2, noUnicode1);
                     }
                     case SOME_UNICODE:
                     {
-                        // cppcheck-suppress duplicateExpression
-                        return (someUnicode1 != someUnicode2 && someUnicode2 != someUnicode1);
+                        PL_ASSERT_NOT_EQUAL(someUnicode1, someUnicode2);
+                        PL_ASSERT_NOT_EQUAL(someUnicode2, someUnicode1);
                     }
                     case JUST_UNICODE:
                     {
-                        // cppcheck-suppress duplicateExpression
-                        return (justUnicode1 != justUnicode2 && justUnicode2 != justUnicode1);
+                        PL_ASSERT_NOT_EQUAL(justUnicode1, justUnicode2);
+                        PL_ASSERT_NOT_EQUAL(justUnicode2, justUnicode1);
                     }
                 }
-                return false;
+                return true;
             }
     };
 
@@ -235,7 +238,7 @@ namespace pawlib
 
             testdoc_t get_title() override
             {
-                return "OneString: != Operator " + title;
+                return "OneString: != Operator Fail " + title;
             }
 
             testdoc_t get_docs() override
@@ -248,18 +251,21 @@ namespace pawlib
                 {
                     case NO_UNICODE:
                     {
-                        return (noUnicode1 != noUnicode1 || noUnicode2 != noUnicode2) ? false : true;
+                        PL_ANTIASSERT_NOT_EQUAL(noUnicode1, noUnicode1);
+                        PL_ANTIASSERT_NOT_EQUAL(noUnicode2, noUnicode2);
                     }
                     case SOME_UNICODE:
                     {
-                        return (someUnicode1 != someUnicode1 || someUnicode2 != someUnicode2) ? false : true;
+                        PL_ANTIASSERT_NOT_EQUAL(someUnicode1, someUnicode1);
+                        PL_ANTIASSERT_NOT_EQUAL(someUnicode2, someUnicode2);
                     }
                     case JUST_UNICODE:
                     {
-                        return (justUnicode1 != justUnicode1 || justUnicode2 != justUnicode2) ? false : true;
+                        PL_ANTIASSERT_NOT_EQUAL(justUnicode1, justUnicode1);
+                        PL_ANTIASSERT_NOT_EQUAL(justUnicode2, justUnicode2);
                     }
                 }
-                return false;
+                return true;
             }
     };
 
@@ -286,18 +292,21 @@ namespace pawlib
                 {
                     case NO_UNICODE:
                     {
-                        return (noUnicode1.equals(noUnicode1) && noUnicode2.equals(noUnicode2));
+                        PL_ASSERT_TRUE(noUnicode1.equals(noUnicode1));
+                        PL_ASSERT_TRUE(noUnicode2.equals(noUnicode2));
                     }
                     case SOME_UNICODE:
                     {
-                        return (someUnicode1.equals(someUnicode1) && someUnicode2.equals(someUnicode2));
+                        PL_ASSERT_TRUE(someUnicode1.equals(someUnicode1));
+                        PL_ASSERT_TRUE(someUnicode2.equals(someUnicode2));
                     }
                     case JUST_UNICODE:
                     {
-                        return (justUnicode1.equals(justUnicode1) && justUnicode2.equals(justUnicode2));
+                        PL_ASSERT_TRUE(justUnicode1.equals(justUnicode1));
+                        PL_ASSERT_TRUE(justUnicode2.equals(justUnicode2));
                     }
                 }
-                return false;
+                return true;
             }
     };
 
@@ -324,18 +333,21 @@ namespace pawlib
                 {
                     case NO_UNICODE:
                     {
-                        return (noUnicode1.equals(noUnicode2) || noUnicode2.equals(noUnicode1)) ? false : true;
+                        PL_ASSERT_FALSE(noUnicode1.equals(noUnicode2));
+                        PL_ASSERT_FALSE(noUnicode2.equals(noUnicode1));
                     }
                     case SOME_UNICODE:
                     {
-                        return (someUnicode1.equals(someUnicode2) || someUnicode2.equals(someUnicode1)) ? false : true;
+                        PL_ASSERT_FALSE(someUnicode1.equals(someUnicode2));
+                        PL_ASSERT_FALSE(someUnicode2.equals(someUnicode1));
                     }
                     case JUST_UNICODE:
                     {
-                        return (justUnicode1.equals(justUnicode2) || justUnicode2.equals(justUnicode1)) ? false : true;
+                        PL_ASSERT_FALSE(justUnicode1.equals(justUnicode2));
+                        PL_ASSERT_FALSE(justUnicode2.equals(justUnicode1));
                     }
                 }
-                return false;
+                return true;
             }
     };
 
@@ -375,17 +387,11 @@ namespace pawlib
             {
                 // Append a C char
                 test.append('a');
-                if(test != target1)
-                {
-                    return false;
-                }
+                PL_ASSERT_EQUAL(test, target1);
 
                 // Append a Unicode character string literal
                 test.append("ऐ");
-                if(test != target2)
-                {
-                    return false;
-                }
+                PL_ASSERT_EQUAL(test, target2);
 
                 return true;
             }
@@ -426,7 +432,8 @@ namespace pawlib
             bool run() override
             {
                 test.pop_back();
-                return (test == target);
+                PL_ASSERT_EQUAL(test, target);
+                return true;
             }
     };
 
@@ -463,18 +470,9 @@ namespace pawlib
 
             bool run() override
             {
-                if (test.length() != 14)
-                {
-                    return false;
-                }
-
+                PL_ASSERT_EQUAL(test.length(), 14U);
                 test.pop_back();
-
-                if (test.length() != 13)
-                {
-                    return false;
-                }
-
+                PL_ASSERT_EQUAL(test.length(), 13U);
                 return true;
             }
     };
@@ -500,7 +498,8 @@ namespace pawlib
 
             bool run() override
             {
-                return test.empty();
+                PL_ASSERT_TRUE(test.empty());
+                return true;
             }
     };
 
@@ -525,7 +524,8 @@ namespace pawlib
 
             bool run() override
             {
-                return (!test.empty());
+                PL_ASSERT_FALSE(test.empty());
+                return true;
             }
     };
 
@@ -568,19 +568,9 @@ namespace pawlib
                 toCheck = "÷";
                 test.insert(3, toInsert);
 
-                if(test[3] != toInsert)
-                {
-                    return false;
-                }
-                if(test[2] != toCheck)
-                {
-                    return false;
-                }
-                if(test[4] != toCheck)
-                {
-                    return false;
-                }
-
+                PL_ASSERT_EQUAL(test[3], toInsert);
+                PL_ASSERT_EQUAL(test[2], toCheck);
+                PL_ASSERT_EQUAL(test[4], toCheck);
                 return true;
             }
     };
@@ -618,7 +608,8 @@ namespace pawlib
             bool run() override
             {
                 test.clear();
-                return test.empty();
+                PL_ASSERT_TRUE(test.empty());
+                return true;
             }
     };
 
@@ -661,16 +652,8 @@ namespace pawlib
             bool run() override
             {
                 beforeOne.swap(beforeTwo);
-
-                if(beforeOne != afterTwo)
-                {
-                    return false;
-                }
-                if(beforeTwo != afterOne)
-                {
-                    return false;
-                }
-
+                PL_ASSERT_EQUAL(beforeOne, afterTwo);
+                PL_ASSERT_EQUAL(beforeTwo, afterOne);
                 return true;
             }
     };
@@ -697,7 +680,8 @@ namespace pawlib
             bool run() override
             {
                 OneString partial = start.substr(12,4);
-                return (partial == "horn");
+                PL_ASSERT_EQUAL(partial, "horn");
+                return true;
             }
     };
 
@@ -724,7 +708,8 @@ namespace pawlib
             {
                 OneChar toCheck;
                 toCheck = "⛰";
-                return (before.at(17) == toCheck);
+                PL_ASSERT_EQUAL(before.at(17), toCheck);
+                return true;
             }
     };
 
@@ -753,7 +738,8 @@ namespace pawlib
                 {
                     test.append("🐉");
                 }
-                return (test == target);
+                PL_ASSERT_EQUAL(test, target);
+                return true;
             }
     };
 
