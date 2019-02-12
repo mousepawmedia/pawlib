@@ -139,6 +139,23 @@ namespace pawlib
         return _elements;
     }
 
+    const char* OneString::c_str() const
+    {
+        // TODO: Eliminate overallocation!
+        size_t size = _elements * 4 + 1;
+        char* r = new char[size];
+        for(size_t i = 0; i < _elements; ++i)
+        {
+            const char* c = masterArray[i].c_str();
+            // TODO: Make more efficient
+            for(size_t j = 0; j < 4 && c[j] != '\0'; ++j) {
+                r[i+j] = c[j];
+            }
+        }
+        r[size-1] = '\0';
+        return r;
+    }
+
     /*******************************************
     * Adding + Inserting
     ********************************************/
@@ -415,8 +432,8 @@ namespace pawlib
     {
         if(_elements == 0)
         {
-            ioc << cat_error << ta_bold << fg_red <<
-            "OneString Error: Can't POP an empty OneString" << io_end;
+            //ioc << cat_error << ta_bold << fg_red <<
+            //"OneString Error: Can't POP an empty OneString" << io_end;
             // TODO: Exception instead
         }
         else

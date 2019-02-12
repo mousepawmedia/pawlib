@@ -147,6 +147,26 @@ namespace pawlib
         return *this;
     }
 
+    iochannel& iochannel::operator<<(const OneChar& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        //Inject the C string form of the string into the iochannel.
+        inject(rhs.c_str());
+        return *this;
+    }
+
+    iochannel& iochannel::operator<<(const OneString& rhs)
+    {
+        //If we cannot parse because of `shutup()` settings, abort.
+        if(!can_parse()){return *this;}
+
+        //Inject the C string form of the string into the iochannel.
+        inject(rhs.c_str());
+        return *this;
+    }
+
     iochannel& iochannel::operator<<(const std::exception& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
@@ -503,6 +523,8 @@ namespace pawlib
     template iochannel& iochannel::resolve_pointer<double>(const double*);
     template iochannel& iochannel::resolve_pointer<long double>(const long double*);
     template iochannel& iochannel::resolve_pointer<std::string>(const std::string*);
+    template iochannel& iochannel::resolve_pointer<OneChar>(const OneChar*);
+    template iochannel& iochannel::resolve_pointer<OneString>(const OneString*);
 
     template <typename T>
     iochannel& iochannel::resolve_integer(const T& rhs)

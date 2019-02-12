@@ -45,7 +45,6 @@
 #ifndef PAWLIB_BASEFLEXARRAY_HPP
 #define PAWLIB_BASEFLEXARRAY_HPP
 
-#include <cstdint>
 #include <math.h>
 #include <stdexcept>
 #include <stdlib.h>

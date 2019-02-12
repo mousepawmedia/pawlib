@@ -108,10 +108,15 @@ namespace pawlib
 
     void OneChar::print(std:: ostream& os) const
     {
-        for (int index = 0; index < 5 || miniChar[index] == '\0'; index++)
+        for (int index = 0; index < 5 || miniChar[index] == '\0'; ++index)
         {
             os << miniChar[index];
         }
+    }
+
+    const char* OneChar::c_str() const
+    {
+        return miniChar;
     }
 
     bool OneChar::lessOneChar(const OneChar& compChar)

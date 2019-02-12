@@ -49,12 +49,10 @@
 #ifndef PAWLIB_ONESTRING_HPP
 #define PAWLIB_ONESTRING_HPP
 
-#include <cstdint>
 #include <cstring>
 #include <iomanip>
 #include <iostream>
 
-#include "pawlib/iochannel.hpp"
 #include "pawlib/onechar.hpp"
 
 namespace pawlib
@@ -172,6 +170,8 @@ namespace pawlib
              * \param
              * \return the number of elements */
             size_t length() const;
+
+            const char* c_str() const;
 
             /*******************************************
             * Adding + Inserting

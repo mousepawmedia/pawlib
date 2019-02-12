@@ -53,8 +53,6 @@
  #include <iomanip>
  #include <iostream>
 
- #include "pawlib/iochannel.hpp"
-
  namespace pawlib
  {
      /* OneChar class, now our main and only class. It contains all
@@ -125,6 +123,8 @@
         * \param std::ostream to put output on */
         // NOTE: Was previously pure
         virtual void print(std:: ostream& os) const;
+
+        const char* c_str() const;
 
         /** Helper function for operator<
         * \param the OneChar to be compared to
