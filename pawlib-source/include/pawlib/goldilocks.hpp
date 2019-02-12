@@ -1,5 +1,5 @@
 /** Goldilocks Test System [PawLIB]
- * Version: 1.1
+ * Version: 1.2
  *
  * Goldilocks stores, manages, and calls tests.
  * It also contains a runtime benchmarker which
@@ -66,11 +66,14 @@
 // Sorting
 #include "pawlib/pawsort.hpp"
 
+#include "pawlib/goldilocks_assertions.hpp"
+
 using namespace pawlib;
 using namespace pawlib::ioformat;
 
 namespace pawlib
 {
+
     class Test;
     class TestSuite;
     class TestManager;
@@ -436,56 +439,107 @@ namespace pawlib
         struct BenchmarkResult
         {
             /// The accumulated count.
+            // cppcheck-suppress unusedStructMember
             uint64_t acc = 0;
+
             /// The adjusted accumulated count.
+            // cppcheck-suppress unusedStructMember
             uint64_t acc_adj = 0;
+
             /// The number of repetitions (size).
+            // cppcheck-suppress unusedStructMember
             uint64_t repeat = 0;
+
             /// The average (mean).
+            // cppcheck-suppress unusedStructMember
             uint64_t mean = 0;
+
             /// The adjusted average (mean).
+            // cppcheck-suppress unusedStructMember
             uint64_t mean_adj = 0;
+
             /// The median value.
+            // cppcheck-suppress unusedStructMember
             uint64_t median = 0;
+
             /// The lower quartile value.
+            // cppcheck-suppress unusedStructMember
             uint64_t q1 = 0;
+
             /// The upper quartile value.
+            // cppcheck-suppress unusedStructMember
             uint64_t q3 = 0;
+
             /// The range.
+            // cppcheck-suppress unusedStructMember
             uint64_t range = 0;
+
             /// The adjusted range.
+            // cppcheck-suppress unusedStructMember
             uint64_t range_adj = 0;
+
             /// The minimum value.
+            // cppcheck-suppress unusedStructMember
             uint64_t min_val = 0;
+
             /// The minimum non-outlier value.
+            // cppcheck-suppress unusedStructMember
             uint64_t min_adj_val = 0;
+
             /// The maximum value.
+            // cppcheck-suppress unusedStructMember
             uint64_t max_val = 0;
+
             /// The maximum non-outlier value.
+            // cppcheck-suppress unusedStructMember
             uint64_t max_adj_val = 0;
+
             /// Lower inner fence value.
+            // cppcheck-suppress unusedStructMember
             uint64_t lif = 0;
+
             /// Lower outer fence value
+            // cppcheck-suppress unusedStructMember
             uint64_t lof = 0;
+
             /// Upper inner fence value.
+            // cppcheck-suppress unusedStructMember
             uint64_t uif = 0;
+
             /// Upper outer fence value.
+            // cppcheck-suppress unusedStructMember
             uint64_t uof = 0;
+
             /// The number of low minor outliers
+            // cppcheck-suppress unusedStructMember
             uint64_t low_out_minor = 0;
+
             /// The number of low major outliers
+            // cppcheck-suppress unusedStructMember
             uint64_t low_out_major = 0;
+
             /// The number of upper minor outliers
+            // cppcheck-suppress unusedStructMember
             uint64_t upp_out_minor = 0;
+
             /// The number of upper major outliers
+            // cppcheck-suppress unusedStructMember
             uint64_t upp_out_major = 0;
+
             /// The standard deviance
+            // cppcheck-suppress unusedStructMember
             double std_dev = 0;
+
             /// The adjusted standard deviance
+            // cppcheck-suppress unusedStructMember
             double std_dev_adj = 0;
+
             /// The relative standard deviation (coefficient of variation)
+            // cppcheck-suppress unusedStructMember
             uint8_t rsd = 0;
+
             /// The adjusted relative standard deviation
+            // cppcheck-suppress unusedStructMember
             uint8_t rsd_adj = 0;
         };
 

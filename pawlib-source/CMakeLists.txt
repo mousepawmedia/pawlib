@@ -153,6 +153,7 @@ add_library(${TARGET_NAME} STATIC
     include/pawlib/flex_stack.hpp
     include/pawlib/flex_stack_tests.hpp
     include/pawlib/goldilocks.hpp
+    include/pawlib/goldilocks_assertions.hpp
     include/pawlib/goldilocks_shell.hpp
     include/pawlib/iochannel.hpp
     include/pawlib/onechar.hpp
