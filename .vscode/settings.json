@@ -155,4 +155,5 @@
         "volwiler"
     ],
     "restructuredtext.confPath": "${workspaceFolder}/docs/source",
+    "workbench.colorCustomizations": {},
 }

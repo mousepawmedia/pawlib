@@ -46,115 +46,163 @@
  */
 
 
- #ifndef ONECHAR_HPP
- #define ONECHAR_HPP
+#ifndef ONECHAR_HPP
+#define ONECHAR_HPP
 
- #include <cstring>
- #include <iomanip>
- #include <iostream>
+#include <cstdint>
+#include <cstring>
+#include <iomanip>
+#include <iostream>
 
  namespace pawlib
  {
      /* OneChar class, now our main and only class. It contains all
         functions needed to handle both ASCII character and Unicode
         characters.*/
-     class OneChar
-     {
-     public:
+    class OneChar
+    {
+        private:
+            static const uint_least8_t MAX_SIZE = 4;
 
-        /** Default constructor*/
-        // cppcheck-suppress noExplicitConstructor
-        OneChar(char* newChar);
+            /// The number of bytes stored.
+            uint_least8_t size;
+            /// The character array
+            char internal[MAX_SIZE];
 
-        /** Blank constructor
-        *  Neccesary for declaring an
-        *  array of OneChars */
-        OneChar();
+            void copy(const OneChar&);
+            void parse(const char);
+            void parse(const char*);
 
-        /** Destructor */
-        ~OneChar(){};
+            static uint_least8_t evaluateLength(const char* cstr)
+            {
+                switch (cstr[0] & 0xF0)
+                {
+                    case 0xF0:
+                    {
+                        return 4;
+                    }
+                    case 0xE0:
+                    {
+                        return 3;
+                    }
+                    case 0xC0:
+                    {
+                        return 2;
+                    }
+                    default:
+                    {
+                        return 1;
+                    }
+                }
+            }
 
-        /** Retrieve char from OneChar
-        * This takes care of the setting part of the index operator
-        * \param the desired position within the OneChar
-        * \return returns that reference of the char located at pos*/
-        char operator[](int pos) const;
+        public:
+            /** Blank constructor
+            *  Neccesary for declaring an
+            *  array of OneChars */
+            OneChar();
 
-        /** Assignment operator for char
-        * \param the char to be initialized from
-        * \return an initialized OneChar*/
-        OneChar& operator=(char newChar);
+            // cppcheck-suppress noExplicitConstructor
+            OneChar(const char*);
 
-        /** Assignment operator for const char*
-        * \param the const char* to be initialized from
-        * \return an initialized OneChar*/
-        OneChar& operator=(const char* newChar);
+            // cppcheck-suppress noExplicitConstructor
+            OneChar(const char);
 
-        /** Assignment operator for OneChar
-        * \param the base class OneChar to be initialized from
-        * \return an initialized OneChar*/
-        OneChar& operator=(const OneChar& newChar);
+            /** Copy constructor */
+            OneChar(const OneChar&);
 
-        /** Equals operator for char
-        * \param the char to be compared to
-        * \return true if the param is equal to the current OneChar
-            otherwise return false*/
-        bool operator==(char newChar);
+            /** Destructor */
+            ~OneChar(){};
 
-        /** Equals operator for OneChar
-        * \param the base class OneChar to be compared to
-        * \return true if the param is equal to the current OneChar
-            otherwise return false*/
-        virtual bool operator==(OneChar& newChar) const;
+            /** Retrieve char from OneChar
+            * This takes care of the setting part of the index operator
+            * \param the desired position within the OneChar
+            * \return returns that reference of the char located at pos*/
+            char operator[](int pos) const;
 
-        /** Not equals operator for OneChar
-        * \param the base class OneChar to be compared to
-        * \return true if the param is equal to the current OneChar
-            otherwise return false*/
-        bool operator!=(char newChar) const;
+            /** Assignment operator for char
+            * \param the char to be initialized from
+            * \return an initialized OneChar*/
+            OneChar& operator=(char newChar);
 
-        /** Not equals operator for OneChar
-        * \param the base class OneChar to be compared to
-        * \return true if the param is equal to the current OneChar
-            otherwise return false*/
-        bool operator!=(OneChar& newChar) const;
+            /** Assignment operator for const char*
+            * \param the const char* to be initialized from
+            * \return an initialized OneChar*/
+            OneChar& operator=(const char* newChar);
 
-        /** Helper function for operator<<
-        * \param std::ostream to put output on */
-        // NOTE: Was previously pure
-        virtual void print(std:: ostream& os) const;
+            /** Assignment operator for OneChar
+            * \param the base class OneChar to be initialized from
+            * \return an initialized OneChar*/
+            OneChar& operator=(const OneChar& newChar);
 
-        const char* c_str() const;
+            bool equals(const char) const;
+            bool equals(const char*) const;
+            bool equals(const OneChar&) const;
 
-        /** Helper function for operator<
-        * \param the OneChar to be compared to
-        * \return true if the OneChar is equal to the current class */
-        bool lessOneChar(const OneChar& compChar);
+            /** Equals operator for char
+            * \param the char to be compared to
+            * \return true if the param is equal to the current OneChar
+                otherwise return false*/
+            bool operator==(const char) const;
 
-        /** Function to allow direct access to MiniChar array
-         * \param miniChar array exists to add */
-        void addDirectly(char newChar, int pos);
+            bool operator==(const char*) const;
 
-        /** Determines if a OneChar is less than another OneChar
-        * \param the OneChar being compared to.
-        \ return true if ochr's value is less than newChar */
-        bool operator<(const OneChar& compChar)
-        {
-            return lessOneChar(compChar);
-        }
+            /** Equals operator for OneChar
+            * \param the base class OneChar to be compared to
+            * \return true if the param is equal to the current OneChar
+                otherwise return false*/
+            bool operator==(const OneChar&) const;
 
-        /** Output operator
-        * \param std::ostream to display output on
-        * \param the OneChar that is the output
-        * \return the std::ostream to output */
-        friend std::ostream& operator<<(std:: ostream& os, const OneChar& ostr)
-        {
-            ostr.print(os);
-            return os;
-        }
+            /** Not equals operator for OneChar
+            * \param the base class OneChar to be compared to
+            * \return true if the param is equal to the current OneChar
+                otherwise return false*/
+            bool operator!=(const char) const;
 
-     private:
-       char miniChar[5];
-     };
+            bool operator!=(const char*) const;
+
+            /** Not equals operator for OneChar
+            * \param the base class OneChar to be compared to
+            * \return true if the param is equal to the current OneChar
+                otherwise return false*/
+            bool operator!=(const OneChar&) const;
+
+            /** Helper function for operator<<
+            * \param std::ostream to put output on */
+            // NOTE: Was previously pure
+            virtual void print(std:: ostream& os) const;
+
+            const char* c_str() const;
+
+            uint8_t compare(const char) const;
+            uint8_t compare(const char*) const;
+
+            /** Helper function for operator<
+            * \param the OneChar to be compared to
+            * \return true if the OneChar is equal to the current class */
+            uint8_t compare(const OneChar&) const;
+
+            /** Function to allow direct access to internal array
+             * \param internal array exists to add */
+            void addDirectly(char newChar, int pos);
+
+            /** Determines if a OneChar is less than another OneChar
+            * \param the OneChar being compared to.
+            \ return true if ochr's value is less than newChar */
+            bool operator<(const OneChar& cmp)
+            {
+                return (compare(cmp) < 0);
+            }
+
+            /** Output operator
+            * \param std::ostream to display output on
+            * \param the OneChar that is the output
+            * \return the std::ostream to output */
+            friend std::ostream& operator<<(std:: ostream& os, const OneChar& ostr)
+            {
+                ostr.print(os);
+                return os;
+            }
+    };
  }
  #endif // ONECHAR_HPP

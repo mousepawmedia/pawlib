@@ -58,31 +58,39 @@ namespace pawlib
     * Helpers
     *******************************************/
 
+   //TODO: Rethink and rewrite.
+
     void OneString::parseChar(const char* str, size_t index, uint_fast8_t bytes)
     {
-        for(uint_fast8_t i = 0; i < bytes; ++i)
+        (void)bytes;
+        /*for(uint_fast8_t i = 0; i < bytes; ++i)
         {
             masterArray[this->_elements].addDirectly(str[index + i], i);
         }
-       masterArray[this->_elements].addDirectly('\0', bytes);
+        masterArray[this->_elements].addDirectly('\0', bytes);*/
+        masterArray[this->_elements] = &str[index];
     }
 
     void OneString::parseChar(const std::string& str, size_t index, uint_fast8_t bytes)
     {
-        for(uint_fast8_t i = 0; i < bytes; ++i)
+        (void)bytes;
+        /*for(uint_fast8_t i = 0; i < bytes; ++i)
         {
             masterArray[this->_elements].addDirectly(str[index + i], i);
         }
-       masterArray[this->_elements].addDirectly('\0', bytes);
+       masterArray[this->_elements].addDirectly('\0', bytes);*/
+       masterArray[this->_elements] = &str[index];
     }
 
     void OneString::parseChar(const char str, uint_fast8_t bytes)
     {
-        for(uint_fast8_t i = 0; i < bytes; ++i)
+        (void)bytes;
+        /*for(uint_fast8_t i = 0; i < bytes; ++i)
         {
             masterArray[this->_elements].addDirectly(str, i);
         }
-       masterArray[this->_elements].addDirectly('\0', bytes);
+       masterArray[this->_elements].addDirectly('\0', bytes);*/
+       masterArray[this->_elements] = str;
     }
 
     void OneString::resize()
