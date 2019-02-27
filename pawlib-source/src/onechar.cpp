@@ -55,6 +55,7 @@ namespace pawlib
 
     void OneChar::copy(const OneChar& cpy)
     {
+        this->size = cpy.size;
         memcpy(this->internal, cpy.internal, cpy.size);
     }
 

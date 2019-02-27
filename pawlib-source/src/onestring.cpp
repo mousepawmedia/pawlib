@@ -68,7 +68,7 @@ namespace pawlib
             masterArray[this->_elements].addDirectly(str[index + i], i);
         }
         masterArray[this->_elements].addDirectly('\0', bytes);*/
-        masterArray[this->_elements] = &str[index];
+        masterArray[this->_elements] = &(str[index]);
     }
 
     void OneString::parseChar(const std::string& str, size_t index, uint_fast8_t bytes)
@@ -79,7 +79,7 @@ namespace pawlib
             masterArray[this->_elements].addDirectly(str[index + i], i);
         }
        masterArray[this->_elements].addDirectly('\0', bytes);*/
-       masterArray[this->_elements] = &str[index];
+       masterArray[this->_elements] = &(str[index]);
     }
 
     void OneString::parseChar(const char str, uint_fast8_t bytes)
@@ -154,11 +154,7 @@ namespace pawlib
         char* r = new char[size];
         for(size_t i = 0; i < _elements; ++i)
         {
-            const char* c = masterArray[i].c_str();
-            // TODO: Make more efficient
-            for(size_t j = 0; j < 4 && c[j] != '\0'; ++j) {
-                r[i+j] = c[j];
-            }
+            strcat(r, masterArray[i].c_str());
         }
         r[size-1] = '\0';
         return r;
@@ -213,7 +209,7 @@ namespace pawlib
         // Insert a 1-byte ASCII char
         parseChar(ch, 1);
 
-        _elements++;
+        ++_elements;
         masterArray[_elements] = '\0';
     }
 
