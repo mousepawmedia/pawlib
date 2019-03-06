@@ -3,54 +3,28 @@
 namespace pawlib
 {
     OneChar::OneChar()
-    : size(0)
-    {}
+    : size(1)
+    {
+        internal[0] = '\0';
+    }
 
     /** Default constructor*/
     OneChar::OneChar(const char* cstr)
-    : size(0)
+    : size(1)
     {
-        /*int index = 0;
-        // Add each non-terminating character to the char array.
-        while (newChar[index] != '\0')
-        {
-            this->internal[index] = newChar[index];
-            ++index;
-        }
-
-        // Add a null terminator to the end of the char array
-        this->internal[index] = '\0';*/
-
-        // Same as OneChar::parse(const char*);
-        this->size = evaluateLength(cstr);
-        memcpy(this->internal, cstr, sizeof(char) * this->size);
+        parse(cstr);
     }
 
     OneChar::OneChar(const char ch)
-    :size(1)
+    : size(1)
     {
-        // Same as OneChar::parse(char)
-        memcpy(this->internal, &ch, sizeof(char));
+        parse(ch);
     }
 
     OneChar::OneChar(const OneChar& cpy)
-    : size(cpy.size)
+    : size(1)
     {
-        // Same as OneChar::copy(OneChar&)
-        memcpy(this->internal, cpy.internal, this->size);
-    }
-
-    void OneChar::parse(const char ch)
-    {
-        this->size = 1;
-        // TODO: Is this actually faster or more reliable than raw assignment?
-        memcpy(this->internal, &ch, sizeof(char));
-    }
-
-    void OneChar::parse(const char* cstr)
-    {
-        this->size = evaluateLength(cstr);
-        memcpy(this->internal, cstr, sizeof(char) * this->size);
+        copy(cpy);
     }
 
     void OneChar::copy(const OneChar& cpy)
@@ -59,47 +33,58 @@ namespace pawlib
         memcpy(this->internal, cpy.internal, cpy.size);
     }
 
+
+    void OneChar::parse(const char ch)
+    {
+        this->size = 1;
+        this->internal[0] = ch;
+    }
+
+    void OneChar::parse(const char* cstr)
+    {
+        this->size = evaluateLength(cstr);
+        memcpy(this->internal, cstr, sizeof(char) * this->size);
+    }
+
+    void OneChar::parse(const std::string& str)
+    {
+        const char* cstr = str.c_str();
+        this->size = evaluateLength(cstr);
+        memcpy(this->internal, cstr, sizeof(char) * this->size);
+    }
+
+    size_t OneChar::parseFromString(const char* cstr, size_t index)
+    {
+        this->size = evaluateLength(cstr + index);
+        memcpy(this->internal, cstr + index, sizeof(char) * this->size);
+        return this->size;
+    }
+
+    size_t OneChar::parseFromString(const std::string str, size_t index)
+    {
+        return parseFromString(str.c_str(), index);
+    }
+
     OneChar& OneChar::operator=(char ch)
     {
-        /*this->internal[0] = newChar;
-        this->internal[1] = '\0';
-        */
         parse(ch);
         return *this;
     }
 
     OneChar& OneChar::operator=(const char* cstr)
     {
-        /*int index = 0;
-
-        // Add each non-terminating character to the char array.
-        while (newChar[index] != '\0')
-        {
-            this->internal[index] = newChar[index];
-            index++;
-        }
-
-        // Add a null terminator to the end of the char array
-        this->internal[index] = '\0';*/
-
         parse(cstr);
+        return *this;
+    }
+
+    OneChar& OneChar::operator=(const std::string& str)
+    {
+        parse(str);
         return *this;
     }
 
     OneChar& OneChar::operator=(const OneChar& cpy)
     {
-        /*int index = 0;
-
-        // Add each non-terminating character to the char array.
-        while (newChar[index] != '\0')
-        {
-            this->internal[index] = newChar[index];
-            index++;
-        }
-
-        // Add a null terminator to the end of the char array
-        this->internal[index] = '\0';*/
-
         copy(cpy);
         return *this;
     }
@@ -119,6 +104,11 @@ namespace pawlib
         return (memcmp(this->internal, cmp, cmpSize) == 0);
     }
 
+    bool OneChar::equals(const std::string& cmp) const
+    {
+        return equals(cmp.c_str());
+    }
+
     bool OneChar::equals(const OneChar& cmp) const
     {
         if (this->size != cmp.size)
@@ -132,7 +122,6 @@ namespace pawlib
     // TODO: Relocate all of the following operator (aliases) to onechar.hpp
     bool OneChar::operator==(const char cmp) const
     {
-        //return ((newChar == this->internal[0]) && (this->internal[1] == '\0'));
         return equals(cmp);
     }
 
@@ -141,48 +130,39 @@ namespace pawlib
         return equals(cmp);
     }
 
+    bool OneChar::operator==(const std::string& cmp) const
+    {
+        return equals(cmp);
+    }
+
     bool OneChar::operator==(const OneChar& cmp) const
     {
-        /*for (int index = 0; index != '\0'; index++)
-        {
-            if (this->internal[index] != newChar[index])
-            {
-                return false;
-            }
-        }
-        return true;*/
         return equals(cmp);
     }
 
     bool OneChar::operator!=(const char cmp) const
     {
-        //return !((newChar == this->internal[0]) && (this->internal[1] == '\0'));
         return !equals(cmp);
     }
 
     bool OneChar::operator!=(const char* cmp) const
     {
-        //return !((newChar == this->internal[0]) && (this->internal[1] == '\0'));
+        return !equals(cmp);
+    }
+
+    bool OneChar::operator!=(const std::string& cmp) const
+    {
         return !equals(cmp);
     }
 
     bool OneChar::operator!=(const OneChar& cmp) const
     {
-        /*for (int index = 0; index != '\0'; index++)
-        {
-            if (this->internal[index] != newChar[index])
-            {
-                return true;
-            }
-        }
-
-        return false;*/
         return !equals(cmp);
     }
 
     char OneChar::operator[](int pos) const
     {
-        // TODO: Why do we need this?
+        // TODO: Do we need this?
         return this->internal[pos];
     }
 
@@ -197,11 +177,17 @@ namespace pawlib
     const char* OneChar::c_str() const
     {
         // TODO: Will this cause memory leaks?
-        char* r = new char[this->size+1];
-        strcat(r, this->internal);
-        strcat(r, "\0");
+        char* r = new char[size+1];
+        for (size_t i = 0; i < size; ++i)
+        {
+            r[i] = internal[i];
+        }
+        // memcpy(r, this->internal, sizeof(char)*this->size);
+        r[size] = '\0';
         return r;
     }
+
+    // TODO: Add c_str(char*)
 
     uint8_t OneChar::compare(const char cmp) const
     {
@@ -245,13 +231,4 @@ namespace pawlib
             return sizeDiff;
         }
     }
-
-    /*void OneChar::addDirectly(char newChar, int pos)
-    {
-        if (pos < 4)
-        {
-            this->internal[pos] = newChar;
-            this->internal[pos + 1] = '\0';
-        }
-    }*/
 }

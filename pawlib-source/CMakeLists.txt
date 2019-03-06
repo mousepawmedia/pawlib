@@ -157,6 +157,7 @@ add_library(${TARGET_NAME} STATIC
     include/pawlib/goldilocks_shell.hpp
     include/pawlib/iochannel.hpp
     include/pawlib/onechar.hpp
+    include/pawlib/onechar_tests.hpp
     include/pawlib/onestring.hpp
     include/pawlib/onestring_tests.hpp
     include/pawlib/pawsort.hpp
@@ -177,6 +178,7 @@ add_library(${TARGET_NAME} STATIC
     src/goldilocks_shell.cpp
     src/iochannel.cpp
     src/onechar.cpp
+    src/onechar_tests.cpp
     src/onestring.cpp
     src/onestring_tests.cpp
     src/pawsort_tests.cpp

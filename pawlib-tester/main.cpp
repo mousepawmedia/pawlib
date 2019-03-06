@@ -52,6 +52,7 @@
 #include "pawlib/flex_stack_tests.hpp"
 #include "pawlib/pawsort_tests.hpp"
 #include "pawlib/onestring_tests.hpp"
+#include "pawlib/onechar_tests.hpp"
 #include "pawlib/pool_tests.hpp"
 
 using pawlib::iochannel;
@@ -86,6 +87,7 @@ int main(int argc, char* argv[])
     shell->register_suite<TestSuite_Pool>("P-sB16");
     shell->register_suite<TestSuite_Pawsort>("P-sB30");
     shell->register_suite<TestSuite_OneString>("P-sB40");
+    shell->register_suite<TestSuite_OneChar>("P-sB41");
 
 
     //(void) shell;

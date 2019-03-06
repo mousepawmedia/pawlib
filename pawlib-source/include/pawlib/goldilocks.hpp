@@ -125,14 +125,17 @@ namespace pawlib
 
         /**Set up for the test. Called only once, even if test is
          * repeated multiple times.
+         * If undefined, calls janitor()
          * \return true if successful, false if it fails.*/
-        virtual bool pre() { return true; }
+        virtual bool pre() { return this->janitor(); }
 
         /**Clean up from a failed pre-test.
+         * If undefined, always returns true.
          * \return true if successful, false if it fails.*/
         virtual bool prefail() { return true; }
 
         /**Clean up between successful runs, in preparation for a repeat.
+         * If undefined, always returns true.
          * \return true if successful, false if it fails.*/
         virtual bool janitor() { return true; }
 
@@ -142,19 +145,23 @@ namespace pawlib
 
         /** Benchmark-optimized form of the test. May be needed if the
           * validity testing will throw off the benchmark.
+          * If undefined, always returns true.
           * \return true if successful, false if it fails (error). */
         virtual bool run_optimized() { return run(); }
 
         /** Verify test success.
+         * If undefined, always returns true.
           * \return true if successful, false if the test fails.
           */
         virtual bool verify() { return true; }
 
         /**Clean up after successful test.
+         * If undefined, always returns true.
          * \return true if successful, false if it fails.*/
         virtual bool post() { return true; }
 
         /**Clean up after a failed test.
+         * If undefined, calls post()
          * \return true if successful, false if it fails.*/
         virtual bool postmortem() { return this->post(); }
 

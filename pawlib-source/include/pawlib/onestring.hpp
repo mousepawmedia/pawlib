@@ -1,5 +1,5 @@
 /** OneString [PawLIB]
-  * Version: 0.3
+  * Version: 0.4
   *
   * OneString is a multi-sized, Unicode-compatible replacement
   * for std::string. OneString contains all the
@@ -110,37 +110,6 @@ namespace pawlib
 
             /**Destructor*/
             ~OneString();
-
-            /*******************************************
-            * Helpers
-            *******************************************/
-
-            /**Parses char* into OneString based on size
-                 * Used primarily for Unicode Characters within OneString(const char*)
-                 * \param the const char* to be parsed
-                 * \param an int to represent the index to parse the char* at
-                 * \param an int to represent the number of bytes in the char* */
-            void parseChar(const char* str, size_t index, uint_fast8_t bytes);
-
-            /**Parses char* into OneString based on size
-                 * Used primarily for Unicode Characters within OneString(const std::string*)
-                 * \param the const string to be parsed
-                 * \param an int to represent the index to parse the string at
-                 * \param an int to represent the number of bytes in the string */
-            void parseChar(const std::string& str, size_t index, uint_fast8_t bytes);
-
-            /**Parses char into OneString based on size
-                 * Used primarily for Unicode Characters within OneString(const std::string*)
-                 * \param the const string to be parsed
-                 * \param an int to represent the index to parse the string at
-                 * \param an int to represent the number of bytes in the string */
-            void parseChar(const char str, uint_fast8_t bytes);
-
-            /**Handles resizing the array
-             * when capacity is reached
-             * \param
-             * \returns */
-            void resize();
 
             /*******************************************
             * Access
@@ -363,7 +332,7 @@ namespace pawlib
             {
                 for(size_t i = 0; i < ostr.length(); ++i)
                 {
-                    ostr.masterArray[i].print(os);
+                    ostr.internal[i].print(os);
                 }
                 return os;
             };
@@ -373,7 +342,20 @@ namespace pawlib
             const float RESIZE_FACTOR = 1.5;
             size_t _capacity;   // the current size of the array
             size_t _elements; // the number of elements in the array
-            OneChar* masterArray; // the array of OneChars
+            OneChar* internal; // the array of OneChars
+
+            /**Handles resizing the array
+             * when capacity is reached
+             */
+            void resize();
+
+            void checkResize(size_t expansion)
+            {
+                if(this->_elements + expansion >= this->_capacity)
+                {
+                    resize();
+                }
+            }
     };
 }
 #endif // PAWLIB_ONESTRING_HPP

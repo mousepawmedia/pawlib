@@ -1,5 +1,5 @@
 /** OneChar [PawLIB]
-  * Version: 0.3
+  * Version: 0.4
   *
 
   * OneChar is an array of character that can be used to represent both
@@ -54,47 +54,31 @@
 #include <iomanip>
 #include <iostream>
 
- namespace pawlib
- {
+namespace pawlib
+{
+    class OneString;
+
      /* OneChar class, now our main and only class. It contains all
         functions needed to handle both ASCII character and Unicode
         characters.*/
     class OneChar
     {
+        friend OneString;
         private:
-            static const uint_least8_t MAX_SIZE = 4;
+            static const size_t MAX_SIZE = 4;
 
             /// The number of bytes stored.
-            uint_least8_t size;
+            size_t size;
             /// The character array
             char internal[MAX_SIZE];
 
             void copy(const OneChar&);
             void parse(const char);
             void parse(const char*);
+            void parse(const std::string&);
 
-            static uint_least8_t evaluateLength(const char* cstr)
-            {
-                switch (cstr[0] & 0xF0)
-                {
-                    case 0xF0:
-                    {
-                        return 4;
-                    }
-                    case 0xE0:
-                    {
-                        return 3;
-                    }
-                    case 0xC0:
-                    {
-                        return 2;
-                    }
-                    default:
-                    {
-                        return 1;
-                    }
-                }
-            }
+            size_t parseFromString(const char*, size_t index);
+            size_t parseFromString(const std::string, size_t index);
 
         public:
             /** Blank constructor
@@ -103,10 +87,13 @@
             OneChar();
 
             // cppcheck-suppress noExplicitConstructor
+            OneChar(const char);
+
+            // cppcheck-suppress noExplicitConstructor
             OneChar(const char*);
 
             // cppcheck-suppress noExplicitConstructor
-            OneChar(const char);
+            OneChar(const std::string&);
 
             /** Copy constructor */
             OneChar(const OneChar&);
@@ -120,23 +107,29 @@
             * \return returns that reference of the char located at pos*/
             char operator[](int pos) const;
 
-            /** Assignment operator for char
-            * \param the char to be initialized from
+            /** Assignment operator with char
+            * \param the char to initialize from
             * \return an initialized OneChar*/
             OneChar& operator=(char newChar);
 
-            /** Assignment operator for const char*
-            * \param the const char* to be initialized from
+            /** Assignment operator with const char*
+            * \param the const char* to initialize from
             * \return an initialized OneChar*/
             OneChar& operator=(const char* newChar);
 
-            /** Assignment operator for OneChar
-            * \param the base class OneChar to be initialized from
+            /** Assignment operator with std::string
+            * \param the std::string to initialize from
+            * \return an initialized OneChar*/
+            OneChar& operator=(const std::string& newChar);
+
+            /** Assignment operator with OneChar
+            * \param the OneChar to initialize from
             * \return an initialized OneChar*/
             OneChar& operator=(const OneChar& newChar);
 
             bool equals(const char) const;
             bool equals(const char*) const;
+            bool equals(const std::string&) const;
             bool equals(const OneChar&) const;
 
             /** Equals operator for char
@@ -146,6 +139,8 @@
             bool operator==(const char) const;
 
             bool operator==(const char*) const;
+
+            bool operator==(const std::string&) const;
 
             /** Equals operator for OneChar
             * \param the base class OneChar to be compared to
@@ -160,6 +155,8 @@
             bool operator!=(const char) const;
 
             bool operator!=(const char*) const;
+
+            bool operator!=(const std::string&) const;
 
             /** Not equals operator for OneChar
             * \param the base class OneChar to be compared to
@@ -182,9 +179,34 @@
             * \return true if the OneChar is equal to the current class */
             uint8_t compare(const OneChar&) const;
 
-            /** Function to allow direct access to internal array
-             * \param internal array exists to add */
-            void addDirectly(char newChar, int pos);
+            static size_t evaluateLength(const char* cstr)
+            {
+                switch (cstr[0] & 0xF0)
+                {
+                    case 0xF0:
+                    {
+                        // Unicode code points U+10000 to U+10FFFF
+                        return 4;
+                    }
+                    case 0xE0:
+                    {
+                        // Unicode code points U+0800 to U+FFFF
+                        return 3;
+                    }
+                    case 0xC0:
+                    {
+                        // Unicode code points U+0080 to U+07FF
+                        return 2;
+                    }
+                    default:
+                    {
+                        // Unicode code points U+0000 to U+007F
+                        return 1;
+                    }
+                }
+                // Can't happen
+                return 0;
+            }
 
             /** Determines if a OneChar is less than another OneChar
             * \param the OneChar being compared to.

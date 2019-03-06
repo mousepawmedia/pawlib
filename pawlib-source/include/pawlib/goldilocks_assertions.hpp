@@ -1,13 +1,13 @@
 /** Goldilocks Test System: Assertions [PawLIB]
- * Version: 1.0
+ * Version: 1.2
  *
- * Assertion functions and macros for Goldilocks…
+ * Assertion functions and macros for Goldilocks.
  *
  * Author(s): Jason C. McDonald
  */
 
 /* LICENSE
- * Copyright (c) 2018 MousePaw Media.
+ * Copyright (c) 2019 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,6 +77,8 @@ using namespace pawlib::ioformat;
 #define PL_ASSERT_GREATER_EQUAL(lhs, rhs) \
     do { if (!do_assert_greater_equal(lhs, rhs)) { return false; } } while(0)
 
+// TODO: Antiassert <, >, <=, >=
+
 // TODO: Predicate [P, v... => P(v...)], Throws, NaN, INF, no-throw, fail w/ message, skip, report, warn
 
 namespace pawlib {
@@ -86,6 +88,20 @@ namespace pawlib {
         if (!(val)) {
             ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
                 << ta_bold << val
+                << io_endline
+                << "Yields " << false << ", expected " << true << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T>
+    bool do_assert_true(T* val)
+    {
+        if (!(*val)) {
+            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << val << ptr_value << "] " << val
                 << io_endline
                 << "Yields " << false << ", expected " << true << "\n"
                 << io_end;
@@ -108,14 +124,44 @@ namespace pawlib {
         return true;
     }
 
+    template <typename T>
+    bool do_assert_false(T* val)
+    {
+        if (*val) {
+            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << val << ptr_value << "] " << val
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
     template <typename T, typename U>
     bool do_assert_equal(T lhs, U rhs)
     {
         if (!(lhs == rhs)) {
             ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
                 << ta_bold << lhs
-                << io_send << " == "
+                << io_endline << "==" << io_endline
                 << ta_bold << rhs
+                << io_endline
+                << "Yields " << false << ", expected " << true << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_assert_equal(T* lhs, U* rhs)
+    {
+        if (!(*lhs == *rhs)) {
+            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << "==" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << false << ", expected " << true << "\n"
                 << io_end;
@@ -127,11 +173,27 @@ namespace pawlib {
     template <typename T, typename U>
     bool do_antiassert_equal(T lhs, U rhs)
     {
-        if ((lhs == rhs)) {
+        if (lhs == rhs) {
             ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
                 << ta_bold << lhs
-                << io_send << " == "
+                << io_endline << "==" << io_endline
                 << ta_bold << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_antiassert_equal(T* lhs, U* rhs)
+    {
+        if (*lhs == *rhs) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << "==" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << true << ", expected " << false << "\n"
                 << io_end;
@@ -146,8 +208,24 @@ namespace pawlib {
         if (!(lhs != rhs)) {
             ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
                 << ta_bold << lhs
-                << io_send << " != "
+                << io_endline << "!=" << io_endline
                 << ta_bold << rhs
+                << io_endline
+                << "Yields " << false << ", expected " << true << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_assert_not_equal(T* lhs, U* rhs)
+    {
+        if (!(*lhs != *rhs)) {
+            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << "!=" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << false << ", expected " << true << "\n"
                 << io_end;
@@ -162,8 +240,24 @@ namespace pawlib {
         if ((lhs != rhs)) {
             ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
                 << ta_bold << lhs
-                << io_send << " != "
+                << io_endline << "!=" << io_endline
                 << ta_bold << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_antiassert_not_equal(T* lhs, U* rhs)
+    {
+        if ((*lhs != *rhs)) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << "!=" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << true << ", expected " << false << "\n"
                 << io_end;
@@ -178,8 +272,24 @@ namespace pawlib {
         if (!(lhs < rhs)) {
             ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
                 << ta_bold << lhs
-                << io_send << " < "
+                << io_endline << "<" << io_endline
                 << ta_bold << rhs
+                << io_endline
+                << "Yields " << false << ", expected " << true << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_assert_less(T* lhs, U* rhs)
+    {
+        if (!(*lhs < *rhs)) {
+            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << "<" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << false << ", expected " << true << "\n"
                 << io_end;
@@ -194,8 +304,24 @@ namespace pawlib {
         if (!(lhs <= rhs)) {
             ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
                 << ta_bold << lhs
-                << io_send << " <= "
+                << io_endline << "<=" << io_endline
                 << ta_bold << rhs
+                << io_endline
+                << "Yields " << false << ", expected " << true << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_assert_less_equal(T* lhs, U* rhs)
+    {
+        if (!(*lhs <= *rhs)) {
+            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << "<=" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << false << ", expected " << true << "\n"
                 << io_end;
@@ -210,8 +336,24 @@ namespace pawlib {
         if (!(lhs > rhs)) {
             ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
                 << ta_bold << lhs
-                << io_send << " > "
+                << io_endline << ">" << io_endline
                 << ta_bold << rhs
+                << io_endline
+                << "Yields " << false << ", expected " << true << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_assert_greater(T* lhs, U* rhs)
+    {
+        if (!(*lhs > *rhs)) {
+            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << ">" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << false << ", expected " << true << "\n"
                 << io_end;
@@ -226,8 +368,24 @@ namespace pawlib {
         if (!(lhs < rhs)) {
             ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
                 << ta_bold << lhs
-                << io_send << " >= "
+                << io_endline << ">=" << io_endline
                 << ta_bold << rhs
+                << io_endline
+                << "Yields " << false << ", expected " << true << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_assert_greater_equal(T* lhs, U* rhs)
+    {
+        if (!(*lhs < *rhs)) {
+            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << ">=" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << false << ", expected " << true << "\n"
                 << io_end;

@@ -1,11 +1,11 @@
-/** Tests for OneString[PawLIB]
-  * Version: 0.3
+/** Tests for OneString [PawLIB]
+  * Version: 0.4
   *
   * Author(s): Scott Taylor, Bo Volwiler, Jason C. McDonald
   */
 
 /* LICENSE
- * Copyright (c) 2016 MousePaw Media.
+ * Copyright (c) 2018 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,6 @@
 
 #include "pawlib/goldilocks.hpp"
 #include "pawlib/onestring.hpp"
-#include "iochannel.hpp"
-#include "goldilocks.hpp"
 
 using namespace pawlib::ioformat;
 using namespace pawlib;
