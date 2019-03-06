@@ -51,6 +51,7 @@
 
 namespace pawlib
 {
+    // cppcheck-suppress copyCtorAndEqOperator
     class DummyClass
     {
         private:
@@ -135,6 +136,7 @@ namespace pawlib
 
             bool pre()
             {
+                //cppcheck-suppress publicAllocationError
                 refs = new pool_ref<DummyClass>[iters];
                 pool = new Pool<DummyClass>(iters);
                 if(pool == nullptr)
@@ -261,6 +263,7 @@ namespace pawlib
 
             bool pre()
             {
+                //cppcheck-suppress publicAllocationError
                 pool = new Pool<DummyClass>(1, failsafe);
                 if(pool == nullptr)
                 {
@@ -349,6 +352,7 @@ namespace pawlib
 
             bool pre()
             {
+                //cppcheck-suppress publicAllocationError
                 pool = new Pool<DummyClass>(1);
                 if(pool == nullptr)
                 {
@@ -420,6 +424,7 @@ namespace pawlib
 
             bool pre()
             {
+                //cppcheck-suppress publicAllocationError
                 pool = new Pool<DummyClass>(1);
                 if(pool == nullptr)
                 {
@@ -543,6 +548,7 @@ namespace pawlib
 
             bool pre()
             {
+                //cppcheck-suppress publicAllocationError
                 pool = new Pool<DummyClass>(1);
                 if(pool == nullptr)
                 {
