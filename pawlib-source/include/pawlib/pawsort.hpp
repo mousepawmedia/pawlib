@@ -8,7 +8,7 @@
   */
 
 /* LICENSE
- * Copyright (c) 2016 MousePaw Media.
+ * Copyright (c) 2016-2019 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -262,13 +262,13 @@ namespace pawlib
             template <typename T>
             static void introsort(T arr[], int left, int right, int maxdepth=-1)
             {
-                /* If the right index is smaller than the left, 
+                /* If the right index is smaller than the left,
                 no matter, swap the indexes.*/
                 if(right <= left) { swap(arr[left], arr[right]); }
-                
+
                 //threshold, if reached end recursive algo with insertion sort
                 const int TINY_SIZE = 17;
-                
+
                 const int LEN = (right-left+1);
 
                 /* If this is the first run (maxdepth == -1), run through
@@ -295,7 +295,7 @@ namespace pawlib
                     }
 
                     /* If we have no specified maximum depth, calculate it. */
-                    maxdepth = (log2(right-left+1)) * 2; 
+                    maxdepth = (log2(right-left+1)) * 2;
                     /* NOTE: maxdepth value is empirical (see
                      * http://www.cs.rpi.edu/~musser/gp/introsort.ps*/
                 }
@@ -306,14 +306,14 @@ namespace pawlib
                     insertion_sort(arr, left, right);
                     return;
                 }
-                
+
                 //if number of levels reached, end with heap_sort
                 if(maxdepth == 0)
                 {
                     heap_sort(arr, left, right);
                     return;
                 }
-   
+
                  /* Introsort typically uses median-of-three to find its
                  * pivot value. However, because we need TWO pivot values,
                  * we need a variant :
@@ -324,18 +324,18 @@ namespace pawlib
                  * Given three values a, b, c from each subarray, where a < b < c...
                  * pivot_subarray = b
                  */
-                
+
                 int middle(left + LEN/4);
                 sort_three(arr[left], arr[middle], arr[left + LEN/2]);
                 swap(arr[left], arr[middle]);
-                
+
                 middle = right - LEN/4;
                 sort_three(arr[left + LEN/2], arr[middle], arr[right]);
                 swap(arr[right], arr[middle]);
-                
+
                 /* Swap values at left and right indices to ensure pivots are selected properly*/
                 if(arr[right] < arr[left]) { swap(arr[right], arr[left]); }
-                
+
                 T pivot1 = arr[left];
                 T pivot2 = arr[right];
 
@@ -363,7 +363,7 @@ namespace pawlib
                  * Note that these markers move as we sort to prevent swapping
                  * values out of correct positions, therefore the range that
                  * we are sorting on will shrink as we go. */
-                int i;               
+                int i;
                 for(i = lower; i <= upper; ++i)
                 {
                     // arr[i] is in section IV
@@ -398,7 +398,7 @@ namespace pawlib
                           }
                           /* if not < pivot 1, then leave it where it is, in section III*/
                         }
-                }              
+                }
 
                 /* Swap the leftmost position (same as pivot1) with the value
                  * at the inner boundary of partition I. */
@@ -443,7 +443,7 @@ namespace pawlib
         private:
             template <typename T>
 
-            /** A component of introsort. 
+            /** A component of introsort.
               * Sorts three params.
               *
               * \param element to be sorted.
