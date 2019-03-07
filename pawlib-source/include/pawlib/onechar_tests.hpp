@@ -253,6 +253,79 @@ namespace pawlib
 
             testdoc_t get_title() override
             {
+                return "OneChar: Equals " + this->title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the equals() function.";
+            }
+
+            bool run() override
+            {
+                OneChar test;
+                switch(this->charType)
+                {
+                    case CHAR:
+                    {
+                        char ch = 'M';
+                        char ch_bad = 'X';
+                        test = 'M';
+                        PL_ASSERT_TRUE(test.equals(ch));
+                        PL_ASSERT_FALSE(test.equals(ch_bad));
+                        return true;
+                    }
+                    case CSTR:
+                    {
+                        const char* cstr = "🐭";
+                        const char* cstr_double = "🐭🐭";
+                        const char* cstr_bad = "©";
+                        test = "🐭";
+                        PL_ASSERT_TRUE(test.equals(cstr));
+                        PL_ASSERT_FALSE(test.equals(cstr_double));
+                        PL_ASSERT_FALSE(test.equals(cstr_bad));
+                        return true;
+                    }
+                    case STRING:
+                    {
+                        std::string str = "🐭";
+                        std::string str_double = "🐭🐭";
+                        std::string str_bad = "©";
+                        test = "🐭";
+                        PL_ASSERT_TRUE(test.equals(str));
+                        PL_ASSERT_FALSE(test.equals(str_double));
+                        PL_ASSERT_FALSE(test.equals(str_bad));
+                        return true;
+                    }
+                    case ONECHAR:
+                    {
+                        OneChar ochr = "🐭";
+                        OneChar ochr_bad = "©";
+                        test = "🐭";
+                        PL_ASSERT_TRUE(test.equals(ochr));
+                        PL_ASSERT_FALSE(test.equals(ochr_bad));
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach.
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4105[a-d]
+    class TestOneChar_OpEquals : public TestOneChar
+    {
+        public:
+            // cppcheck-suppress noExplicitConstructor
+            TestOneChar_OpEquals(TestCharType type)
+            : TestOneChar(type)
+            {}
+
+            testdoc_t get_title() override
+            {
                 return "OneChar: Equals (==) " + this->title;
             }
 
@@ -315,12 +388,12 @@ namespace pawlib
             }
     };
 
-    // P-tB4105[a-d]
-    class TestOneChar_NotEquals : public TestOneChar
+    // P-tB4106[a-d]
+    class TestOneChar_OpNotEquals : public TestOneChar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_NotEquals(TestCharType type)
+            TestOneChar_OpNotEquals(TestCharType type)
             : TestOneChar(type)
             {}
 
@@ -388,7 +461,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4101[a-d]
+    // P-tB4107[a-d]
     class TestOneChar_Compare : public TestOneChar
     {
         public:
@@ -486,6 +559,386 @@ namespace pawlib
                         PL_ASSERT_GREATER(test.compare(ochr_less), 0);
                         PL_ANTIASSERT_GREATER(test.compare(ochr_eq), 0);
                         PL_ANTIASSERT_GREATER(test.compare(ochr_more), 0);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach.
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4108[a-d]
+    class TestOneChar_OpLess : public TestOneChar
+    {
+        public:
+            // cppcheck-suppress noExplicitConstructor
+            TestOneChar_OpLess(TestCharType type)
+            : TestOneChar(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneChar: Less Than (<) " + this->title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the < operator.";
+            }
+
+            bool run() override
+            {
+                OneChar test;
+                switch(this->charType)
+                {
+                    case CHAR:
+                    {
+                        char ch_eq = 'M';
+                        char ch_less = 'D';
+                        char ch_more = 'm';
+                        test = 'M';
+
+                        PL_ASSERT_TRUE(test < ch_more);
+                        PL_ASSERT_TRUE(ch_less < test);
+
+                        PL_ASSERT_FALSE(test < ch_eq);
+                        PL_ASSERT_FALSE(ch_eq < test);
+                        return true;
+                    }
+                    case CSTR:
+                    {
+                        const char* cstr_eq = "🐭";
+                        const char* cstr_less = "🐁";
+                        const char* cstr_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test < cstr_more);
+                        PL_ASSERT_TRUE(cstr_less < test);
+
+                        PL_ASSERT_FALSE(test < cstr_eq);
+                        PL_ASSERT_FALSE(cstr_eq < test);
+                        return true;
+                    }
+                    case STRING:
+                    {
+                        std::string str_eq = "🐭";
+                        std::string str_less = "🐁";
+                        std::string str_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test < str_more);
+                        PL_ASSERT_TRUE(str_less < test);
+
+                        PL_ASSERT_FALSE(test < str_eq);
+                        PL_ASSERT_FALSE(str_eq < test);
+                        return true;
+                    }
+                    case ONECHAR:
+                    {
+                        OneChar ochr_eq = "🐭";
+                        OneChar ochr_less = "🐁";
+                        OneChar ochr_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test < ochr_more);
+                        PL_ASSERT_TRUE(ochr_less < test);
+
+                        PL_ASSERT_FALSE(test < ochr_eq);
+                        PL_ASSERT_FALSE(ochr_eq < test);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach.
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4109[a-d]
+    class TestOneChar_OpLessEqual : public TestOneChar
+    {
+        public:
+            // cppcheck-suppress noExplicitConstructor
+            TestOneChar_OpLessEqual(TestCharType type)
+            : TestOneChar(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneChar: Less/Equal (<=) " + this->title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the <= operator.";
+            }
+
+            bool run() override
+            {
+                OneChar test;
+                switch(this->charType)
+                {
+                    case CHAR:
+                    {
+                        char ch_eq = 'M';
+                        char ch_less = 'D';
+                        char ch_more = 'm';
+                        test = 'M';
+
+                        PL_ASSERT_TRUE(test <= ch_more);
+                        PL_ASSERT_TRUE(ch_less <= test);
+
+                        PL_ASSERT_TRUE(test <= ch_eq);
+                        PL_ASSERT_TRUE(ch_eq <= test);
+
+                        PL_ASSERT_FALSE(test <= ch_less);
+                        PL_ASSERT_FALSE(ch_more <= test);
+                        return true;
+                    }
+                    case CSTR:
+                    {
+                        const char* cstr_eq = "🐭";
+                        const char* cstr_less = "🐁";
+                        const char* cstr_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test <= cstr_more);
+                        PL_ASSERT_TRUE(cstr_less <= test);
+
+                        PL_ASSERT_TRUE(test <= cstr_eq);
+                        PL_ASSERT_TRUE(cstr_eq <= test);
+
+                        PL_ASSERT_FALSE(test <= cstr_less);
+                        PL_ASSERT_FALSE(cstr_more <= test);
+                        return true;
+                    }
+                    case STRING:
+                    {
+                        std::string str_eq = "🐭";
+                        std::string str_less = "🐁";
+                        std::string str_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test <= str_more);
+                        PL_ASSERT_TRUE(str_less <= test);
+
+                        PL_ASSERT_TRUE(test <= str_eq);
+                        PL_ASSERT_TRUE(str_eq <= test);
+
+                        PL_ASSERT_FALSE(test <= str_less);
+                        PL_ASSERT_FALSE(str_more <= test);
+                        return true;
+                    }
+                    case ONECHAR:
+                    {
+                        OneChar ochr_eq = "🐭";
+                        OneChar ochr_less = "🐁";
+                        OneChar ochr_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test <= ochr_more);
+                        PL_ASSERT_TRUE(ochr_less <= test);
+
+                        PL_ASSERT_TRUE(test <= ochr_eq);
+                        PL_ASSERT_TRUE(ochr_eq <= test);
+
+                        PL_ASSERT_FALSE(test <= ochr_less);
+                        PL_ASSERT_FALSE(ochr_more <= test);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach.
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4110[a-d]
+    class TestOneChar_OpGreater : public TestOneChar
+    {
+        public:
+            // cppcheck-suppress noExplicitConstructor
+            TestOneChar_OpGreater(TestCharType type)
+            : TestOneChar(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneChar: Greater Than (>) " + this->title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the > operator.";
+            }
+
+            bool run() override
+            {
+                OneChar test;
+                switch(this->charType)
+                {
+                    case CHAR:
+                    {
+                        char ch_eq = 'M';
+                        char ch_less = 'D';
+                        char ch_more = 'm';
+                        test = 'M';
+
+                        PL_ASSERT_TRUE(test > ch_less);
+                        PL_ASSERT_TRUE(ch_more > test);
+
+                        PL_ASSERT_FALSE(test > ch_eq);
+                        PL_ASSERT_FALSE(ch_eq > test);
+                        return true;
+                    }
+                    case CSTR:
+                    {
+                        const char* cstr_eq = "🐭";
+                        const char* cstr_less = "🐁";
+                        const char* cstr_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test > cstr_less);
+                        PL_ASSERT_TRUE(cstr_more > test);
+
+                        PL_ASSERT_FALSE(test > cstr_eq);
+                        PL_ASSERT_FALSE(cstr_eq > test);
+                        return true;
+                    }
+                    case STRING:
+                    {
+                        std::string str_eq = "🐭";
+                        std::string str_less = "🐁";
+                        std::string str_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test > str_less);
+                        PL_ASSERT_TRUE(str_more > test);
+
+                        PL_ASSERT_FALSE(test > str_eq);
+                        PL_ASSERT_FALSE(str_eq > test);
+                        return true;
+                    }
+                    case ONECHAR:
+                    {
+                        OneChar ochr_eq = "🐭";
+                        OneChar ochr_less = "🐁";
+                        OneChar ochr_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test > ochr_less);
+                        PL_ASSERT_TRUE(ochr_more > test);
+
+                        PL_ASSERT_FALSE(test > ochr_eq);
+                        PL_ASSERT_FALSE(ochr_eq > test);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach.
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4111[a-d]
+    class TestOneChar_OpGreaterEqual : public TestOneChar
+    {
+        public:
+            // cppcheck-suppress noExplicitConstructor
+            TestOneChar_OpGreaterEqual(TestCharType type)
+            : TestOneChar(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneChar: Greater/Equal (>=) " + this->title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the >= operator.";
+            }
+
+            bool run() override
+            {
+                OneChar test;
+                switch(this->charType)
+                {
+                    case CHAR:
+                    {
+                        char ch_eq = 'M';
+                        char ch_less = 'D';
+                        char ch_more = 'm';
+                        test = 'M';
+
+                        PL_ASSERT_TRUE(test >= ch_less);
+                        PL_ASSERT_TRUE(ch_more >= test);
+
+                        PL_ASSERT_TRUE(test >= ch_eq);
+                        PL_ASSERT_TRUE(ch_eq >= test);
+
+                        PL_ASSERT_FALSE(test >= ch_more);
+                        PL_ASSERT_FALSE(ch_less >= test);
+                        return true;
+                    }
+                    case CSTR:
+                    {
+                        const char* cstr_eq = "🐭";
+                        const char* cstr_less = "🐁";
+                        const char* cstr_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test >= cstr_less);
+                        PL_ASSERT_TRUE(cstr_more >= test);
+
+                        PL_ASSERT_TRUE(test >= cstr_eq);
+                        PL_ASSERT_TRUE(cstr_eq >= test);
+
+                        PL_ASSERT_FALSE(test >= cstr_more);
+                        PL_ASSERT_FALSE(cstr_less >= test);
+                        return true;
+                    }
+                    case STRING:
+                    {
+                        std::string str_eq = "🐭";
+                        std::string str_less = "🐁";
+                        std::string str_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test >= str_less);
+                        PL_ASSERT_TRUE(str_more >= test);
+
+                        PL_ASSERT_TRUE(test >= str_eq);
+                        PL_ASSERT_TRUE(str_eq >= test);
+
+                        PL_ASSERT_FALSE(test >= str_more);
+                        PL_ASSERT_FALSE(str_less >= test);
+                        return true;
+                    }
+                    case ONECHAR:
+                    {
+                        OneChar ochr_eq = "🐭";
+                        OneChar ochr_less = "🐁";
+                        OneChar ochr_more = "🦊";
+                        test = "🐭";
+
+                        PL_ASSERT_TRUE(test >= ochr_less);
+                        PL_ASSERT_TRUE(ochr_more >= test);
+
+                        PL_ASSERT_TRUE(test >= ochr_eq);
+                        PL_ASSERT_TRUE(ochr_eq >= test);
+
+                        PL_ASSERT_FALSE(test >= ochr_more);
+                        PL_ASSERT_FALSE(ochr_less >= test);
                         return true;
                     }
                     default:

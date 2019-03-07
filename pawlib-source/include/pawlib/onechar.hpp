@@ -117,31 +117,6 @@ namespace pawlib
             bool equals(const std::string&) const;
             bool equals(const OneChar&) const;
 
-            /** Equals operator for char
-            * \param the char to be compared to
-            * \return true if the param is equal to the current OneChar
-                otherwise return false*/
-            bool operator==(const char) const;
-            bool operator==(const char*) const;
-            bool operator==(const std::string&) const;
-            bool operator==(const OneChar&) const;
-
-            /** Not equals operator for OneChar
-            * \param the base class OneChar to be compared to
-            * \return true if the param is equal to the current OneChar
-                otherwise return false*/
-            bool operator!=(const char) const;
-
-            bool operator!=(const char*) const;
-
-            bool operator!=(const std::string&) const;
-
-            /** Not equals operator for OneChar
-            * \param the base class OneChar to be compared to
-            * \return true if the param is equal to the current OneChar
-                otherwise return false*/
-            bool operator!=(const OneChar&) const;
-
             const char* c_str() const;
 
             int compare(const char) const;
@@ -179,87 +154,61 @@ namespace pawlib
             }
 
 
-            bool operator<(const char cmp) const
-            {
-                return (compare(cmp) < 0);
-            }
+            bool operator==(const char cmp) const { return equals(cmp); }
+            bool operator==(const char* cmp) const { return equals(cmp); }
+            bool operator==(const std::string& cmp) const { return equals(cmp); }
+            bool operator==(const OneChar& cmp) const { return equals(cmp); }
 
-            bool operator<(const char* cmp) const
-            {
-                return (compare(cmp) < 0);
-            }
+            bool operator!=(const char cmp) const { return !equals(cmp); }
+            bool operator!=(const char* cmp) const { return !equals(cmp); }
+            bool operator!=(const std::string& cmp) const { return !equals(cmp); }
+            bool operator!=(const OneChar& cmp) const { return !equals(cmp); }
 
-            bool operator<(const std::string& cmp) const
-            {
-                return (compare(cmp) < 0);
-            }
+            bool operator<(const char cmp) const { return (compare(cmp) < 0); }
+            bool operator<(const char* cmp) const { return (compare(cmp) < 0); }
+            bool operator<(const std::string& cmp) const { return (compare(cmp) < 0); }
+            bool operator<(const OneChar& cmp) const { return (compare(cmp) < 0); }
 
-            bool operator<(const OneChar& cmp) const
-            {
-                return (compare(cmp) < 0);
-            }
+            bool operator<=(const char cmp) const { return (compare(cmp) <= 0); }
+            bool operator<=(const char* cmp) const { return (compare(cmp) <= 0); }
+            bool operator<=(const std::string& cmp) const { return (compare(cmp) <= 0); }
+            bool operator<=(const OneChar& cmp) const { return (compare(cmp) <= 0); }
 
-            bool operator<=(const char cmp) const
-            {
-                return (compare(cmp) <= 0);
-            }
+            bool operator>(const char cmp) const { return (compare(cmp) > 0); }
+            bool operator>(const char* cmp) const { return (compare(cmp) > 0); }
+            bool operator>(const std::string& cmp) const { return (compare(cmp) > 0); }
+            bool operator>(const OneChar& cmp) const { return (compare(cmp) > 0); }
 
-            bool operator<=(const char* cmp) const
-            {
-                return (compare(cmp) <= 0);
-            }
+            bool operator>=(const char cmp) const { return (compare(cmp) >= 0); }
+            bool operator>=(const char* cmp) const { return (compare(cmp) >= 0); }
+            bool operator>=(const std::string& cmp) const { return (compare(cmp) >= 0); }
+            bool operator>=(const OneChar& cmp) const { return (compare(cmp) >= 0); }
 
-            bool operator<=(const std::string& cmp) const
-            {
-                return (compare(cmp) <= 0);
-            }
+            friend bool operator==(const char lhs, const OneChar& rhs) { return rhs.equals(lhs); }
+            friend bool operator==(const char* lhs, const OneChar& rhs) { return rhs.equals(lhs); }
+            friend bool operator==(const std::string& lhs, const OneChar& rhs) { return rhs.equals(lhs); }
 
-            bool operator<=(const OneChar& cmp) const
-            {
-                return (compare(cmp) <= 0);
-            }
+            friend bool operator!=(const char lhs, const OneChar& rhs) { return !rhs.equals(lhs); }
+            friend bool operator!=(const char* lhs, const OneChar& rhs) { return !rhs.equals(lhs); }
+            friend bool operator!=(const std::string& lhs, const OneChar& rhs) { return !rhs.equals(lhs); }
 
-            bool operator>(const char cmp) const
-            {
-                return (compare(cmp) > 0);
-            }
+            // Notice that we have to invert the comparison in the function body.
+            friend bool operator<(const char lhs, const OneChar& rhs) { return (rhs.compare(lhs) > 0); }
+            friend bool operator<(const char* lhs, const OneChar& rhs) { return (rhs.compare(lhs) > 0); }
+            friend bool operator<(const std::string& lhs, const OneChar& rhs) { return (rhs.compare(lhs) > 0); }
 
-            bool operator>(const char* cmp) const
-            {
-                return (compare(cmp) > 0);
-            }
+            friend bool operator<=(const char lhs, const OneChar& rhs) { return (rhs.compare(lhs) >= 0); }
+            friend bool operator<=(const char* lhs, const OneChar& rhs) { return (rhs.compare(lhs) >= 0); }
+            friend bool operator<=(const std::string& lhs, const OneChar& rhs) { return (rhs.compare(lhs) >= 0); }
 
-            bool operator>(const std::string& cmp) const
-            {
-                return (compare(cmp) > 0);
-            }
+            friend bool operator>(const char lhs, const OneChar& rhs) { return (rhs.compare(lhs) < 0); }
+            friend bool operator>(const char* lhs, const OneChar& rhs) { return (rhs.compare(lhs) < 0); }
+            friend bool operator>(const std::string& lhs, const OneChar& rhs) { return (rhs.compare(lhs) < 0); }
 
-            bool operator>(const OneChar& cmp) const
-            {
-                return (compare(cmp) > 0);
-            }
+            friend bool operator>=(const char lhs, const OneChar& rhs) { return (rhs.compare(lhs) <= 0); }
+            friend bool operator>=(const char* lhs, const OneChar& rhs) { return (rhs.compare(lhs) <= 0); }
+            friend bool operator>=(const std::string& lhs, const OneChar& rhs) { return (rhs.compare(lhs) <= 0); }
 
-            bool operator>=(const char cmp) const
-            {
-                return (compare(cmp) >= 0);
-            }
-
-            bool operator>=(const char* cmp) const
-            {
-                return (compare(cmp) >= 0);
-            }
-
-            bool operator>=(const std::string& cmp) const
-            {
-                return (compare(cmp) >= 0);
-            }
-
-            bool operator>=(const OneChar& cmp) const
-            {
-                return (compare(cmp) >= 0);
-            }
-
-            // TODO: Add friend versions of <, >, <=, >=
 
             // TODO: Revisit/rewrite these
 

@@ -119,47 +119,6 @@ namespace pawlib
         return (memcmp(this->internal, cmp.internal, this->size) == 0);
     }
 
-    // TODO: Relocate all of the following operator (aliases) to onechar.hpp
-    bool OneChar::operator==(const char cmp) const
-    {
-        return equals(cmp);
-    }
-
-    bool OneChar::operator==(const char* cmp) const
-    {
-        return equals(cmp);
-    }
-
-    bool OneChar::operator==(const std::string& cmp) const
-    {
-        return equals(cmp);
-    }
-
-    bool OneChar::operator==(const OneChar& cmp) const
-    {
-        return equals(cmp);
-    }
-
-    bool OneChar::operator!=(const char cmp) const
-    {
-        return !equals(cmp);
-    }
-
-    bool OneChar::operator!=(const char* cmp) const
-    {
-        return !equals(cmp);
-    }
-
-    bool OneChar::operator!=(const std::string& cmp) const
-    {
-        return !equals(cmp);
-    }
-
-    bool OneChar::operator!=(const OneChar& cmp) const
-    {
-        return !equals(cmp);
-    }
-
     char OneChar::operator[](int pos) const
     {
         // TODO: Do we need this?
