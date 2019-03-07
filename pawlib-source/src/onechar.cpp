@@ -166,69 +166,47 @@ namespace pawlib
         return this->internal[pos];
     }
 
-    void OneChar::print(std:: ostream& os) const
-    {
-        for (int index = 0; index < 5 || this->internal[index] == '\0'; ++index)
-        {
-            os << this->internal[index];
-        }
-    }
-
     const char* OneChar::c_str() const
     {
-        // TODO: Will this cause memory leaks?
         char* r = new char[size+1];
-        for (size_t i = 0; i < size; ++i)
-        {
-            r[i] = internal[i];
-        }
-        // memcpy(r, this->internal, sizeof(char)*this->size);
+        memcpy(r, this->internal, sizeof(char)*this->size);
         r[size] = '\0';
         return r;
     }
 
-    // TODO: Add c_str(char*)
-
-    uint8_t OneChar::compare(const char cmp) const
+    int OneChar::compare(const char cmp) const
     {
-        // TODO: See notes in OneString::compare(const OneChar&)
-        uint8_t sizeDiff = this->size - 1;
+        int sizeDiff = this->size - 1;
         if (sizeDiff == 0)
         {
             return memcmp(this->internal, &cmp, 1);
         }
-        else
-        {
-            return sizeDiff;
-        }
+        return sizeDiff;
     }
 
-    uint8_t OneChar::compare(const char* cmp) const
+    int OneChar::compare(const char* cmp) const
     {
-        // TODO: See notes in OneString::compare(const OneChar&)
-        uint8_t sizeDiff = this->size - evaluateLength(cmp);
+        int sizeDiff = this->size - evaluateLength(cmp);
         if (sizeDiff == 0)
         {
-            return memcmp(this->internal, &cmp, this->size);
+            return memcmp(this->internal, cmp, this->size);
         }
-        else
-        {
-            return sizeDiff;
-        }
+        return sizeDiff;
     }
 
-    uint8_t OneChar::compare(const OneChar& cmp) const
+    int OneChar::compare(const std::string& cmp) const
     {
-        uint8_t sizeDiff = this->size - cmp.size;
+        return compare(cmp.c_str());
+    }
+
+    int OneChar::compare(const OneChar& cmp) const
+    {
+        int sizeDiff = this->size - cmp.size;
         if (sizeDiff == 0)
         {
-            // TODO: Should we use strcmp instead?
             return memcmp(this->internal, cmp.internal, this->size);
         }
-        else
-        {
-            // TODO: I'd rather we return which character is different.
-            return sizeDiff;
-        }
+        return sizeDiff;
     }
+
 }

@@ -129,7 +129,7 @@ namespace pawlib
             ~TestOneChar_EvaluateLength(){}
     };
 
-    // c_str()
+    // P-tB4102
     class TestOneChar_CStr : public Test
     {
         protected:
@@ -153,14 +153,27 @@ namespace pawlib
 
             bool run() override
             {
-                PL_ASSERT_EQUAL(ch1.c_str(), "M");
-                PL_ASSERT_EQUAL(ch2.c_str(), "©");
-                PL_ASSERT_EQUAL(ch3.c_str(), "‽");
-                PL_ASSERT_EQUAL(ch4.c_str(), "🐭");
+                const char* cstr = ch1.c_str();
+                PL_ASSERT_EQUAL(cstr, "M");
+                delete[] cstr;
+
+                cstr = ch2.c_str();
+                PL_ASSERT_EQUAL(cstr, "©");
+                delete[] cstr;
+
+                cstr = ch3.c_str();
+                PL_ASSERT_EQUAL(cstr, "‽");
+                delete[] cstr;
+
+                cstr = ch4.c_str();
+                PL_ASSERT_EQUAL(cstr, "🐭");
+                delete[] cstr;
+
                 return true;
             }
     };
 
+    // P-tB4103[a-d]
     class TestOneChar_Assign : public TestOneChar
     {
         public:
@@ -188,28 +201,36 @@ namespace pawlib
                     {
                         char ch = 'M';
                         test = ch;
-                        PL_ASSERT_EQUAL(test.c_str(), "M");
+                        const char* test_cstr = test.c_str();
+                        PL_ASSERT_EQUAL(test_cstr, "M");
+                        delete[] test_cstr;
                         return true;
                     }
                     case CSTR:
                     {
                         const char* cstr = "🐭";
                         test = cstr;
-                        PL_ASSERT_EQUAL(test.c_str(), "🐭");
+                        const char* test_cstr = test.c_str();
+                        PL_ASSERT_EQUAL(test_cstr, "🐭");
+                        delete[] test_cstr;
                         return true;
                     }
                     case STRING:
                     {
                         std::string str = "🐭";
                         test = str;
-                        PL_ASSERT_EQUAL(test.c_str(), "🐭");
+                        const char* test_cstr = test.c_str();
+                        PL_ASSERT_EQUAL(test_cstr, "🐭");
+                        delete[] test_cstr;
                         return true;
                     }
                     case ONECHAR:
                     {
                         OneChar ochr = "🐭";
                         test = ochr;
-                        PL_ASSERT_EQUAL(test.c_str(), "🐭");
+                        const char* test_cstr = test.c_str();
+                        PL_ASSERT_EQUAL(test_cstr, "🐭");
+                        delete[] test_cstr;
                         return true;
                     }
                     default:
@@ -221,6 +242,7 @@ namespace pawlib
             }
     };
 
+    // P-tB4104[a-d]
     class TestOneChar_Equals : public TestOneChar
     {
         public:
@@ -293,6 +315,7 @@ namespace pawlib
             }
     };
 
+    // P-tB4105[a-d]
     class TestOneChar_NotEquals : public TestOneChar
     {
         public:
@@ -365,10 +388,114 @@ namespace pawlib
             }
     };
 
-    // compare char
-    // compare char*
-    // compare std::string
-    // compare OneString
+    // P-tB4101[a-d]
+    class TestOneChar_Compare : public TestOneChar
+    {
+        public:
+            // cppcheck-suppress noExplicitConstructor
+            TestOneChar_Compare(TestCharType type)
+            : TestOneChar(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneChar: Compare " + this->title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the compare() function.";
+            }
+
+            bool run() override
+            {
+                OneChar test;
+                switch(this->charType)
+                {
+                    case CHAR:
+                    {
+                        char ch_eq = 'M';
+                        char ch_less = 'D';
+                        char ch_more = 'm';
+                        test = 'M';
+                        PL_ASSERT_EQUAL(test.compare(ch_eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(ch_less), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(ch_more), 0);
+
+                        PL_ASSERT_LESS(test.compare(ch_more), 0);
+                        PL_ANTIASSERT_LESS(test.compare(ch_eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(ch_less), 0);
+
+                        PL_ASSERT_GREATER(test.compare(ch_less), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(ch_eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(ch_more), 0);
+                        return true;
+                    }
+                    case CSTR:
+                    {
+                        const char* cstr_eq = "🐭";
+                        const char* cstr_less = "🐁";
+                        const char* cstr_more = "🦊";
+                        test = "🐭";
+                        PL_ASSERT_EQUAL(test.compare(cstr_eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(cstr_less), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(cstr_more), 0);
+
+                        PL_ASSERT_LESS(test.compare(cstr_more), 0);
+                        PL_ANTIASSERT_LESS(test.compare(cstr_eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(cstr_less), 0);
+
+                        PL_ASSERT_GREATER(test.compare(cstr_less), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(cstr_eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(cstr_more), 0);
+                        return true;
+                    }
+                    case STRING:
+                    {
+                        std::string str_eq = "🐭";
+                        std::string str_less = "🐁";
+                        std::string str_more = "🦊";
+                        test = "🐭";
+                        PL_ASSERT_EQUAL(test.compare(str_eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(str_less), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(str_more), 0);
+
+                        PL_ASSERT_LESS(test.compare(str_more), 0);
+                        PL_ANTIASSERT_LESS(test.compare(str_eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(str_less), 0);
+
+                        PL_ASSERT_GREATER(test.compare(str_less), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(str_eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(str_more), 0);
+                        return true;
+                    }
+                    case ONECHAR:
+                    {
+                        OneChar ochr_eq = "🐭";
+                        OneChar ochr_less = "🐁";
+                        OneChar ochr_more = "🦊";
+                        test = "🐭";
+                        PL_ASSERT_EQUAL(test.compare(ochr_eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(ochr_less), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(ochr_more), 0);
+
+                        PL_ASSERT_LESS(test.compare(ochr_more), 0);
+                        PL_ANTIASSERT_LESS(test.compare(ochr_eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(ochr_less), 0);
+
+                        PL_ASSERT_GREATER(test.compare(ochr_less), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(ochr_eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(ochr_more), 0);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach.
+                        return false;
+                    }
+                }
+            }
+    };
 
     class TestSuite_OneChar : public TestSuite
     {

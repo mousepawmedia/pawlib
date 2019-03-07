@@ -18,6 +18,10 @@ namespace pawlib
         register_test("P-tB4105b", new TestOneChar_NotEquals(TestOneChar::CSTR));
         register_test("P-tB4105c", new TestOneChar_NotEquals(TestOneChar::STRING));
         register_test("P-tB4105d", new TestOneChar_NotEquals(TestOneChar::ONECHAR));
+        register_test("P-tB4106a", new TestOneChar_Compare(TestOneChar::CHAR));
+        register_test("P-tB4106b", new TestOneChar_Compare(TestOneChar::CSTR));
+        register_test("P-tB4106c", new TestOneChar_Compare(TestOneChar::STRING));
+        register_test("P-tB4106d", new TestOneChar_Compare(TestOneChar::ONECHAR));
     }
 
 }

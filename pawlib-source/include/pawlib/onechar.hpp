@@ -107,24 +107,9 @@ namespace pawlib
             * \return returns that reference of the char located at pos*/
             char operator[](int pos) const;
 
-            /** Assignment operator with char
-            * \param the char to initialize from
-            * \return an initialized OneChar*/
             OneChar& operator=(char newChar);
-
-            /** Assignment operator with const char*
-            * \param the const char* to initialize from
-            * \return an initialized OneChar*/
             OneChar& operator=(const char* newChar);
-
-            /** Assignment operator with std::string
-            * \param the std::string to initialize from
-            * \return an initialized OneChar*/
             OneChar& operator=(const std::string& newChar);
-
-            /** Assignment operator with OneChar
-            * \param the OneChar to initialize from
-            * \return an initialized OneChar*/
             OneChar& operator=(const OneChar& newChar);
 
             bool equals(const char) const;
@@ -137,15 +122,8 @@ namespace pawlib
             * \return true if the param is equal to the current OneChar
                 otherwise return false*/
             bool operator==(const char) const;
-
             bool operator==(const char*) const;
-
             bool operator==(const std::string&) const;
-
-            /** Equals operator for OneChar
-            * \param the base class OneChar to be compared to
-            * \return true if the param is equal to the current OneChar
-                otherwise return false*/
             bool operator==(const OneChar&) const;
 
             /** Not equals operator for OneChar
@@ -164,20 +142,12 @@ namespace pawlib
                 otherwise return false*/
             bool operator!=(const OneChar&) const;
 
-            /** Helper function for operator<<
-            * \param std::ostream to put output on */
-            // NOTE: Was previously pure
-            virtual void print(std:: ostream& os) const;
-
             const char* c_str() const;
 
-            uint8_t compare(const char) const;
-            uint8_t compare(const char*) const;
-
-            /** Helper function for operator<
-            * \param the OneChar to be compared to
-            * \return true if the OneChar is equal to the current class */
-            uint8_t compare(const OneChar&) const;
+            int compare(const char) const;
+            int compare(const char*) const;
+            int compare(const std::string&) const;
+            int compare(const OneChar&) const;
 
             static size_t evaluateLength(const char* cstr)
             {
@@ -208,12 +178,96 @@ namespace pawlib
                 return 0;
             }
 
-            /** Determines if a OneChar is less than another OneChar
-            * \param the OneChar being compared to.
-            \ return true if ochr's value is less than newChar */
-            bool operator<(const OneChar& cmp)
+
+            bool operator<(const char cmp) const
             {
                 return (compare(cmp) < 0);
+            }
+
+            bool operator<(const char* cmp) const
+            {
+                return (compare(cmp) < 0);
+            }
+
+            bool operator<(const std::string& cmp) const
+            {
+                return (compare(cmp) < 0);
+            }
+
+            bool operator<(const OneChar& cmp) const
+            {
+                return (compare(cmp) < 0);
+            }
+
+            bool operator<=(const char cmp) const
+            {
+                return (compare(cmp) <= 0);
+            }
+
+            bool operator<=(const char* cmp) const
+            {
+                return (compare(cmp) <= 0);
+            }
+
+            bool operator<=(const std::string& cmp) const
+            {
+                return (compare(cmp) <= 0);
+            }
+
+            bool operator<=(const OneChar& cmp) const
+            {
+                return (compare(cmp) <= 0);
+            }
+
+            bool operator>(const char cmp) const
+            {
+                return (compare(cmp) > 0);
+            }
+
+            bool operator>(const char* cmp) const
+            {
+                return (compare(cmp) > 0);
+            }
+
+            bool operator>(const std::string& cmp) const
+            {
+                return (compare(cmp) > 0);
+            }
+
+            bool operator>(const OneChar& cmp) const
+            {
+                return (compare(cmp) > 0);
+            }
+
+            bool operator>=(const char cmp) const
+            {
+                return (compare(cmp) >= 0);
+            }
+
+            bool operator>=(const char* cmp) const
+            {
+                return (compare(cmp) >= 0);
+            }
+
+            bool operator>=(const std::string& cmp) const
+            {
+                return (compare(cmp) >= 0);
+            }
+
+            bool operator>=(const OneChar& cmp) const
+            {
+                return (compare(cmp) >= 0);
+            }
+
+            // TODO: Add friend versions of <, >, <=, >=
+
+            // TODO: Revisit/rewrite these
+
+            /** Helper function for operator<<
+            * \param std::ostream to put output on */
+            void print(std::ostream& os) const
+            {
+                os << this->internal << '\0';
             }
 
             /** Output operator

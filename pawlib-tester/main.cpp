@@ -89,11 +89,6 @@ int main(int argc, char* argv[])
     shell->register_suite<TestSuite_OneString>("P-sB40");
     shell->register_suite<TestSuite_OneChar>("P-sB41");
 
-
-    //(void) shell;
-    //(void) argc;
-    //(void) argv;
-
     // If we got command-line arguments.
     if(argc > 1)
     {
