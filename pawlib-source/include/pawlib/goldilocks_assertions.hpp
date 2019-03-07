@@ -68,16 +68,26 @@ using namespace pawlib::ioformat;
 #define PL_ASSERT_LESS(lhs, rhs) \
     do { if (!do_assert_less(lhs, rhs)) { return false; } } while(0)
 
+#define PL_ANTIASSERT_LESS(lhs, rhs) \
+    do { if (!do_antiassert_less(lhs, rhs)) { return false; } } while(0)
+
 #define PL_ASSERT_LESS_EQUAL(lhs, rhs) \
     do { if (!do_assert_less_equal(lhs, rhs)) { return false; } } while(0)
+
+#define PL_ANTIASSERT_LESS_EQUAL(lhs, rhs) \
+    do { if (!do_antiassert_less_equal(lhs, rhs)) { return false; } } while(0)
 
 #define PL_ASSERT_GREATER(lhs, rhs) \
     do { if (!do_assert_greater(lhs, rhs)) { return false; } } while(0)
 
+#define PL_ANTIASSERT_GREATER(lhs, rhs) \
+    do { if (!do_antiassert_greater(lhs, rhs)) { return false; } } while(0)
+
 #define PL_ASSERT_GREATER_EQUAL(lhs, rhs) \
     do { if (!do_assert_greater_equal(lhs, rhs)) { return false; } } while(0)
 
-// TODO: Antiassert <, >, <=, >=
+#define PL_ANTIASSERT_GREATER_EQUAL(lhs, rhs) \
+    do { if (!do_antiassert_greater_equal(lhs, rhs)) { return false; } } while(0)
 
 // TODO: Predicate [P, v... => P(v...)], Throws, NaN, INF, no-throw, fail w/ message, skip, report, warn
 
@@ -299,6 +309,38 @@ namespace pawlib {
     }
 
     template <typename T, typename U>
+    bool do_antiassert_less(T lhs, U rhs)
+    {
+        if (lhs < rhs) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << lhs
+                << io_endline << "<" << io_endline
+                << ta_bold << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_antiassert_less(T* lhs, U* rhs)
+    {
+        if (*lhs < *rhs) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << "<" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
     bool do_assert_less_equal(T lhs, U rhs)
     {
         if (!(lhs <= rhs)) {
@@ -324,6 +366,38 @@ namespace pawlib {
                 << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << false << ", expected " << true << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_antiassert_less_equal(T lhs, U rhs)
+    {
+        if (lhs <= rhs) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << lhs
+                << io_endline << "<=" << io_endline
+                << ta_bold << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_antiassert_less_equal(T* lhs, U* rhs)
+    {
+        if (*lhs <= *rhs) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << "<=" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
                 << io_end;
             return false;
         }
@@ -363,6 +437,38 @@ namespace pawlib {
     }
 
     template <typename T, typename U>
+    bool do_antiassert_greater(T lhs, U rhs)
+    {
+        if (lhs > rhs) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << lhs
+                << io_endline << ">" << io_endline
+                << ta_bold << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_antiassert_greater(T* lhs, U* rhs)
+    {
+        if (*lhs > *rhs) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << ">" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
     bool do_assert_greater_equal(T lhs, U rhs)
     {
         if (!(lhs < rhs)) {
@@ -388,6 +494,38 @@ namespace pawlib {
                 << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
                 << io_endline
                 << "Yields " << false << ", expected " << true << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_antiassert_greater_equal(T lhs, U rhs)
+    {
+        if (lhs >= rhs) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << lhs
+                << io_endline << ">=" << io_endline
+                << ta_bold << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
+                << io_end;
+            return false;
+        }
+        return true;
+    }
+
+    template <typename T, typename U>
+    bool do_antiassert_greater_equal(T* lhs, U* rhs)
+    {
+        if (*lhs >= *rhs) {
+            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
+                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
+                << io_endline << ">=" << io_endline
+                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
+                << io_endline
+                << "Yields " << true << ", expected " << false << "\n"
                 << io_end;
             return false;
         }
