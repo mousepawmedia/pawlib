@@ -58,72 +58,134 @@ namespace pawlib
 {
     class OneString;
 
-     /* OneChar class, now our main and only class. It contains all
-        functions needed to handle both ASCII character and Unicode
-        characters.*/
+    /** Stores a single unicode character */
     class OneChar
     {
         friend OneString;
         private:
+            /* We never store more than 4 bytes of data.
+             * We do not store the null terminator. */
             static const size_t MAX_SIZE = 4;
 
             /// The number of bytes stored.
             size_t size;
-            /// The character array
+
+            /// The character array.
             char internal[MAX_SIZE];
 
+            /** Copy the contents of another OneChar to this one.
+              * \param the OneChar to copy */
             void copy(const OneChar&);
+
+            /** Store an ASCII character in this OneChar
+              * \param the char to copy */
             void parse(const char);
+
+            /** Extract and store a Unicode character from a c-string.
+              * If more than one character is present in the c-string, only the
+              * first will be parsed out; the rest will be ignored.
+              * \param the c-string to extract the character from */
             void parse(const char*);
+
+            /** Extract and store a Unicode character from a std::string.
+              * If more than one character is present in the std::string, only
+              * the first will be parsed out; the rest will be ignored.
+              * \param the std::string to extract the character from */
             void parse(const std::string&);
 
+            /** Extract and store a Unicode character from a c-string at the
+              * given index. Returns the number of characters in the extracted
+              * Unicode character, to aid in external parsing algorithms.
+              * \param the c-string to extract the character from
+              * \param the index of the start of the Unicode character
+              * \return the number of elements (chars) parsed out */
             size_t parseFromString(const char*, size_t index);
+
+            /** Extract and store a Unicode character from a std::string at the
+              * given index. Returns the number of characters in the extracted
+              * Unicode character, to aid in external parsing algorithms.
+              * \param the std::string to extract the character from
+              * \param the index of the start of the Unicode character
+              * \return the number of elements (chars) parsed out */
             size_t parseFromString(const std::string, size_t index);
 
         public:
-            /** Blank constructor
-            *  Neccesary for declaring an
-            *  array of OneChars */
+            /** Initialize a OneChar as a null terminator */
             OneChar();
 
+            /** Initialize a OneChar with an ASCII character */
             // cppcheck-suppress noExplicitConstructor
             OneChar(const char);
 
+            /** Initialize a OneChar with an ASCII or Unicode character
+              * in a c-string. */
             // cppcheck-suppress noExplicitConstructor
             OneChar(const char*);
 
+            /** Initialize a OneChar with an ASCII or Unicode character
+              * in a std::string. */
             // cppcheck-suppress noExplicitConstructor
             OneChar(const std::string&);
 
-            /** Copy constructor */
+            /** Initialize a OneChar as a copy of another. */
             OneChar(const OneChar&);
 
             /** Destructor */
             ~OneChar(){};
 
-            /** Retrieve char from OneChar
-            * This takes care of the setting part of the index operator
-            * \param the desired position within the OneChar
-            * \return returns that reference of the char located at pos*/
-            char operator[](int pos) const;
-
-            OneChar& operator=(char newChar);
-            OneChar& operator=(const char* newChar);
-            OneChar& operator=(const std::string& newChar);
-            OneChar& operator=(const OneChar& newChar);
-
+            /** Test for equality against a character
+              * \param the char to test against
+              * \return true if equal, else false*/
             bool equals(const char) const;
+
+            /** Test for equality against a c-string.
+              * Does NOT ignore extraneous characters in the c-string
+              * \param the c-string to test against
+              * \return true if equal, else false */
             bool equals(const char*) const;
+
+            /** Test for equality against a std::string
+              * Does NOT ignore extraneous characters in the std::string
+              * \param the std::string to test against
+              * \return true if equal, else false */
             bool equals(const std::string&) const;
+
+            /** Test for equality against another OneChar
+              * \param the OneChar to test against
+              * \return true if equal, else false */
             bool equals(const OneChar&) const;
 
+            /** Returns the c-string representation of the OneChar.
+              * Appends a null terminator.
+              * \return c-string of the character */
             const char* c_str() const;
 
+            /** Compare against a character.
+              * \param the char to test against
+              * \return 0 if equal to argument, negative if less, positive if greater */
             int compare(const char) const;
+
+            /** Compare against a c-string.
+              * Does NOT ignore extraneous characters in the c-string
+              * \param the c-string to test against
+              * \return 0 if equal to argument, negative if less, positive if greater */
             int compare(const char*) const;
+
+            /** Compare against a std::string.
+              * Does NOT ignore extraneous characters in the std::string
+              * \param the std::string to test against
+              * \return 0 if equal to argument, negative if less, positive if greater */
             int compare(const std::string&) const;
+
+            /** Compare against another OneChar
+              * \param the OneChar to test against
+              * \return 0 if equal to argument, negative if less, positive if greater */
             int compare(const OneChar&) const;
 
+            /** Evaluate the number of bytes in a Unicode character.
+              * Ignores all subsequent characters.
+              * \param the pointer to the Unicode character (c-string)
+              * \return the number of bytes in the Unicode character */
             static size_t evaluateLength(const char* cstr)
             {
                 switch (cstr[0] & 0xF0)
@@ -153,6 +215,33 @@ namespace pawlib
                 return 0;
             }
 
+            // Assignment Operators
+
+            OneChar& operator=(char ch)
+            {
+                parse(ch);
+                return *this;
+            }
+
+            OneChar& operator=(const char* cstr)
+            {
+                parse(cstr);
+                return *this;
+            }
+
+            OneChar& operator=(const std::string& str)
+            {
+                parse(str);
+                return *this;
+            }
+
+            OneChar& operator=(const OneChar& cpy)
+            {
+                copy(cpy);
+                return *this;
+            }
+
+            // Comparison Operators
 
             bool operator==(const char cmp) const { return equals(cmp); }
             bool operator==(const char* cmp) const { return equals(cmp); }
@@ -208,6 +297,13 @@ namespace pawlib
             friend bool operator>=(const char lhs, const OneChar& rhs) { return (rhs.compare(lhs) <= 0); }
             friend bool operator>=(const char* lhs, const OneChar& rhs) { return (rhs.compare(lhs) <= 0); }
             friend bool operator>=(const std::string& lhs, const OneChar& rhs) { return (rhs.compare(lhs) <= 0); }
+
+
+            // HACK: Here only to ensure compiling. Remove the need for this from onestring
+            char operator[](int pos) const
+            {
+                return this->internal[pos];
+            }
 
 
             // TODO: Revisit/rewrite these
