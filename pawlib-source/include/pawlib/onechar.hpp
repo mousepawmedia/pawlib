@@ -1,13 +1,10 @@
 /** OneChar [PawLIB]
   * Version: 0.4
   *
-
   * OneChar is an array of character that can be used to represent both
-  * Unicode character along with ASCII characters. We decided to go with
-  * one class instead of the original two to cut out the problems that
-  * arise when dealing with class hierarchies.
+  * Unicode character along with ASCII characters.
   *
-  * Author(s): Scott Taylor, Jarek Thomas, Bowen Volwiler
+  * Author(s): Jason C. McDonald, Scott Taylor, Jarek Thomas, Bowen Volwiler
   */
 
 /* LICENSE

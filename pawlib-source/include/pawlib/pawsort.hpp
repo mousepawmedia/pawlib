@@ -4,7 +4,7 @@
   * A collection of common and original sorting algorithms, some of which
   * rivals std::sort in performance.
   *
-  * Author(s): Jason C. McDonald
+  * Author(s): Jason C. McDonald, lulu731
   */
 
 /* LICENSE

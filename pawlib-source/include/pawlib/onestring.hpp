@@ -8,7 +8,7 @@
   * To handle Unicode, each OneString is made of OneChars,
   * which are enhanced characters.
   *
-  * Author(s): Scott Taylor, Jarek Thomas, Bowen Volwiler, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Scott Taylor, Jarek Thomas, Bowen Volwiler
   */
 
 /* LICENSE

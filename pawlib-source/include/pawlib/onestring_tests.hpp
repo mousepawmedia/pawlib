@@ -1,7 +1,7 @@
 /** Tests for OneString [PawLIB]
   * Version: 0.4
   *
-  * Author(s): Scott Taylor, Bo Volwiler, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Scott Taylor, Bo Volwiler
   */
 
 /* LICENSE

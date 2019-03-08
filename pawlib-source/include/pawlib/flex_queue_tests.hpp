@@ -1,7 +1,7 @@
 /** Tests for FlexQueue[PawLIB]
   * Version: 1.0
   *
-  * Author(s): Jonathan Theodore, Jason C. McDonald
+  * Author(s): Jason C. McDonald, Jonathan Theodore
   */
 
 /* LICENSE
