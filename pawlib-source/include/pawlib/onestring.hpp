@@ -66,6 +66,22 @@ namespace pawlib
 
     class OneString
     {
+        private:
+            /// The default size the OneString is initialized at
+            const int BASE_SIZE = 4;
+
+            /// The factor the capacity is multiplied by to resize
+            const float RESIZE_FACTOR = 1.5;
+
+            /// The maximum number of elements that can be stored without resize
+            size_t _capacity;
+
+            /// The number of elements currently stored
+            size_t _elements;
+
+            /// The array of OneChars
+            OneChar* internal;
+
         public:
             /*******************************************
             * Constructors + Destructor
@@ -74,42 +90,99 @@ namespace pawlib
             /**Default Constructor*/
             OneString();
 
-            /**Create a OneString from string literal
-            * Note: Double quotes default to const char*
-            * \param the string literal to be converted to OneString
-            * \return a OneString containing the character literal
-            */
+            /**Create a OneString from c-string (string literal)
+            * \param the c-string to be converted to OneString */
             // cppcheck-suppress noExplicitConstructor
             OneString(const char* str);
 
             /**Create a OneString from std::string
-            * Note: Double quotes default to const char*
-            * \param the string to be converted to OneString
-            * \return a OneString representation of str.
-            */
+            * \param the string to be converted to OneString */
             // cppcheck-suppress noExplicitConstructor
             OneString(const std::string& str);
 
             /**Create a OneString from another OneString
-            * \param the OneString to be copied
-            * \return a OneString representation of str.
-            */
+            * \param the OneString to be copied */
             OneString(const OneString& str);
 
             /**Create a OneString from a char
-             *  \param the char to be added
-             *  \return a OneString containing that char */
+             *  \param the char to be added */
             // cppcheck-suppress noExplicitConstructor
             OneString(char ch);
 
-            /**Create a OneString from a char
-             *  \param the OneChar to be added
-             *  \return a OneString containing that OneChar */
+            /**Create a OneString from a OneChar
+             *  \param the OneChar to be added */
             // cppcheck-suppress noExplicitConstructor
             OneString(const OneChar& ch);
 
             /**Destructor*/
             ~OneString();
+
+            /*******************************************
+            * Memory Management
+            ********************************************/
+
+            /** Requests that the string capacity be expanded to accomidate
+             * the given number of additional characters.
+             * `s.expand(n)` is equivalent to `s.reserve(s.length() + n)`
+             * \param the number of additional elements to reserve space for */
+            void expand(size_t expansion)
+            {
+                reserve(this->_elements + expansion);
+            }
+
+            /** Requests that the string capacity be expanded to accomidate
+             * the given number of characters.
+             * This is the primary function responsible for allocation.
+             * \param the number of elements to reserve space for */
+            void reserve(size_t elements)
+            {
+                // If we're already large enough, don't reallocate.
+                if (this->_capacity >= elements) { return; }
+
+                // Expand until we have enough space.
+                while (this->_capacity < elements)
+                {
+                    this->_capacity *= RESIZE_FACTOR;
+                }
+
+                // TODO: Would it be better to use realloc? (If so, be sure to throw bad_alloc as needed)
+
+                // Allocate a new array with the new size.
+                OneChar* newArr = new OneChar[this->_capacity];
+
+                // If an old array exists...
+                if(this->internal != nullptr)
+                {
+                    // Move the contents over
+                    memmove(
+                        newArr,
+                        this->internal,
+                        sizeof(OneChar) * this->_elements
+                    );
+
+                    // Delete the old structure
+                    delete[] internal;
+                    this->internal = nullptr;
+                }
+
+                // Store the new structure.
+                this->internal = newArr;
+            }
+
+            /** Evaluate the number of Unicode characters in a c-string
+              * \param the c-string to evaluate
+              * \return the character count */
+            static size_t characterCount(const char* cstr)
+            {
+                size_t index = 0;
+                size_t count = 0;
+                while (cstr[index] != '\0')
+                {
+                    index += OneChar::evaluateLength(cstr + index);
+                    ++count;
+                }
+                return count;
+            }
 
             /*******************************************
             * Access
@@ -118,76 +191,100 @@ namespace pawlib
             /**Gets the OneChar at a given position
              * \param the index of the OneChar to return
              * \return cooresponding OneChar */
-            OneChar at(size_t pos) const;
+            OneChar& at(size_t pos) const;
 
-            /**Checks to see if a OneString
-             * contains any OneChars
-             * \param
-             * \returns true/false depending on if the OneString
-             *          contains OneChars */
-            bool empty() const;
-
-            /**Gets the current capacity of
-             * the OneString. Used primarily internally
-             * for resizing purposes.
-             * \param
-             * \returns the size of the OneString */
+            /**Gets the current capacity of the OneString.
+             * Used primarily internally for resizing purposes.
+             * \return the size of the OneString */
             size_t capacity() const;
 
-            /**Gets the current number of
-             * elements in the OneString
-             * \param
+            /** Returns a c-string equivalent of a OneString
+              * \return the c-string (remember to free[]) */
+            const char* c_str() const;
+
+            /** Returns a c-string equivalent of a OneString
+              * Alias for OneString::c_str()
+              * \return the c-string (remember to free[]) */
+            const char* data() const { return c_str(); }
+
+            /**Checks to see if a OneString contains any data
+             * \returns true if empty, else false */
+            bool empty() const;
+
+            /**Gets the current number of elements in the OneString
              * \return the number of elements */
             size_t length() const;
 
-            const char* c_str() const;
+            /**Gets the byte size of the equivalent c-string.
+              * WARNING: Given a OneString 's', s.size() < sizeof(s)
+              * \return the number of bytes in the OneString */
+            size_t size() const;
 
             /*******************************************
             * Adding + Inserting
             ********************************************/
 
-            /**Adds the cooresponding type to
+            void assign(const char);
+            void assign(const char*);
+            void assign(const std::string&);
+            void assign(const OneChar&);
+            void assign(const OneString&);
+
+            /*******************************************
+            * Removing
+            ********************************************/
+
+            /** Clears a OneString and reallocates it back to BASE_SIZE */
+            void clear();
+
+            /*******************************************
+            * Operators
+            ********************************************/
+
+            OneChar& operator[](size_t pos) const { return at(pos); }
+
+            OneString& operator=(char ch) { assign(ch); return *this; }
+            OneString& operator=(const char* cstr) { assign(cstr); return *this; }
+            OneString& operator=(const std::string& str) { assign(str); return *this; }
+            OneString& operator=(const OneChar& ochr) { assign(ochr); return *this; }
+            OneString& operator=(OneString& ostr) { assign(ostr); return *this; }
+
+
+
+            ////////////// REVIEW /////////////////
+
+            /**Adds the corresponding type to
              * the end of the OneString
              * in the form of a OneChar.
-             * \param the characters to be added to the OneString
-             * \returns */
-            void append(const OneString& ostr);
-            void append(char ochar);
-            void append(const char* ostr);
-            void append(const std::string& ostr);
-            void append(const OneChar& ochar);
+             * \param the characters to be added to the OneString */
+            void append(const char);
+            void append(const char*);
+            void append(const std::string&);
+            void append(const OneChar&);
+            void append(const OneString&);
 
             /**Inserts a series of characters
              * Into a OneString at a given position
              * \param the position to be added
              * \param the characters to be added
              * \returns */
-            void insert(size_t pos, const OneString& ostr);
-            void insert(size_t pos, std::string ostr);
             void insert(size_t pos, char* ostr);
             void insert(size_t pos, char ochar);
-            //void insert(int pos, OneChar* ochar);
+            void insert(size_t pos, std::string ostr);
             void insert(size_t pos, OneChar& ochar);
+            void insert(size_t pos, const OneString& ostr);
 
             /*An alias for append, adds characters
             * to the end of a OneString
             * \param the characters to be added
             * \returns */
-            void push_back(const OneString& ostr);
             void push_back(char ochar);
             void push_back(const char* ostr);
             void push_back(const std::string& ostr);
             void push_back(const OneChar& ochar);
+            void push_back(const OneString& ostr);
 
-            /*******************************************
-            * Removing
-            ********************************************/
 
-            /**Clears a OneString and
-             * Reallocates it back to BASE_SIZE
-             * \param
-             * \returns */
-            void clear();
 
             /**Removes the last element
              * in a OneString
@@ -232,28 +329,7 @@ namespace pawlib
              * \return the created string */
             OneString substr(size_t pos, size_t sublen);
 
-            /*******************************************
-            * Operators
-            ********************************************/
 
-            /**Retrieve OneChar from OneString
-             * This takes care of the "setting" part of the index operator
-             * \param the desired position within in the OneString
-             * \return returns the OneChar located at pos */
-            OneChar& operator[](size_t pos) const;
-
-            /**Assignment operators
-             * Assigns the OneString to the given
-             * parameter. All unicode will be parsed appropriately
-             * \param the data type with characters
-             *        to be copied to a OneString
-             * \return the OneString containing those characters*/
-            OneString& operator=(const std::string& str);
-            OneString& operator=(const char* str);
-            OneString& operator=(const OneChar& str);
-            OneString& operator=(OneChar* ch);
-            OneString& operator=(char ch);
-            OneString& operator=(OneString& ostr);
 
             /**Compares the OneString to another
              * text data type to check for equivalence
@@ -336,26 +412,6 @@ namespace pawlib
                 }
                 return os;
             };
-
-        private:
-            const int BASE_SIZE = 4; // the size the OneString is initialized at
-            const float RESIZE_FACTOR = 1.5;
-            size_t _capacity;   // the current size of the array
-            size_t _elements; // the number of elements in the array
-            OneChar* internal; // the array of OneChars
-
-            /**Handles resizing the array
-             * when capacity is reached
-             */
-            void resize();
-
-            void checkResize(size_t expansion)
-            {
-                if(this->_elements + expansion >= this->_capacity)
-                {
-                    resize();
-                }
-            }
     };
 }
 #endif // PAWLIB_ONESTRING_HPP

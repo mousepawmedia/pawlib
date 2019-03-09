@@ -8,14 +8,19 @@ namespace pawlib
     OneString::OneString()
     :_capacity(BASE_SIZE), _elements(0)
     {
-        this->internal = new OneChar[_capacity];
+        assign('\0');
     }
 
-    OneString::OneString(const char* str)
+    OneString::OneString(char ch)
     :_capacity(BASE_SIZE), _elements(0)
     {
-        this->internal = new OneChar[_capacity];
-        append(str);
+        assign(ch);
+    }
+
+    OneString::OneString(const char* cstr)
+    :_capacity(BASE_SIZE), _elements(0)
+    {
+        assign(cstr);
     }
 
     OneString::OneString(const std::string& str)
@@ -25,65 +30,31 @@ namespace pawlib
         append(str);
     }
 
-    OneString::OneString(const OneString& str)
+    OneString::OneString(const OneChar& ochr)
     :_capacity(BASE_SIZE), _elements(0)
     {
-        this->internal = new OneChar[_capacity];
-        append(str);
+        assign(ochr);
     }
 
-    OneString::OneString(char ch)
+    OneString::OneString(const OneString& ostr)
     :_capacity(BASE_SIZE), _elements(0)
     {
-        this->internal = new OneChar[_capacity];
-        append(ch);
-    }
-
-    OneString::OneString(const OneChar& ch)
-    :_capacity(BASE_SIZE), _elements(0)
-    {
-        this->internal = new OneChar[_capacity];
-        append(ch);
+        assign(ostr);
     }
 
     OneString::~OneString()
     {
         if (internal != nullptr)
         {
-            delete [] internal;
-        }
-    }
-
-    void OneString::resize()
-    {
-        _capacity *= RESIZE_FACTOR;
-
-        OneChar* tempArray = new OneChar[_capacity];
-
-        // If an old array exists...
-        if(this->internal != nullptr)
-        {
-            // TODO: Valgrind test thoroughly
-            memmove(
-                (void*) tempArray,
-                (void*) this -> internal,
-                sizeof(OneChar) * this->_elements
-            );
-
-            // Delete the old structure.
             delete[] internal;
-            this->internal = nullptr;
         }
-
-        // Store the new structure.
-        this->internal = tempArray;
     }
 
     /*******************************************
     * Access
     *******************************************/
 
-    OneChar OneString::at(size_t pos) const
+    OneChar& OneString::at(size_t pos) const
     {
         if (pos > _elements)
         {
@@ -103,61 +74,111 @@ namespace pawlib
         return _capacity;
     }
 
+    const char* OneString::c_str() const
+    {
+        size_t n = size();
+        char* r = new char[n];
+        char* dest = r;
+        for(size_t i = 0; i < _elements; ++i)
+        {
+            memcpy(dest, internal[i].internal, internal[i].size);
+            dest += internal[i].size;
+        }
+        r[n-1] = '\0';
+        return r;
+    }
+
     size_t OneString::length() const
     {
         return _elements;
     }
 
-    const char* OneString::c_str() const
+    size_t OneString::size() const
     {
-        // TODO: Eliminate overallocation!
-        size_t size = _elements * 5 + 1;
-        char* r = new char[size];
+        size_t bytes = 0;
+        // Sum all of the byte lengths of the OneChars.
         for(size_t i = 0; i < _elements; ++i)
         {
-            strcat(r, internal[i].c_str());
+            bytes += this->internal[i].size;
         }
-        r[size-1] = '\0';
-        return r;
+        // Add one extra byte for the null terminator
+        return bytes+1;
     }
 
     /*******************************************
     * Adding + Inserting
     ********************************************/
 
-    void OneString::append(const OneString& ostr)
+    void OneString::assign(const char ch)
     {
-        checkResize(ostr.length() + 1);
+        clear();
+        reserve(1);
+        this->internal[_elements] = ch;
+    }
 
+    void OneString::assign(const char* cstr)
+    {
+        clear();
+
+        size_t len = characterCount(cstr);
+        reserve(len);
+
+        // Loop through each character in the string literal
         size_t index = 0;
-        while(!(ostr[index] == '\0'))
+        while(cstr[index] != '\0')
         {
-            internal[index + _elements] = ostr[index];
-            index++;
+            // Parse and store the character.
+            index += internal[_elements].parseFromString(cstr, index);
+            ++_elements;
         }
-
-        _elements += ostr.length();
-        internal[_elements] = '\0';
     }
 
-    void OneString::append(const OneChar& ochar)
+    void OneString::assign(const std::string& str)
     {
-        checkResize(1);
-
-        internal[_elements] = ochar;
-        _elements++;
-        internal[_elements] = '\0';
+        assign(str.c_str());
     }
 
-    void OneString::append(char ch)
+    void OneString::assign(const OneChar& ochr)
     {
-        checkResize(1);
+        clear();
+        reserve(1);
+        this->internal[_elements] = ochr;
+    }
+
+    void OneString::assign(const OneString& ostr)
+    {
+        clear();
+        reserve(ostr._elements);
+        memcpy(ostr.internal, this->internal, sizeof(OneChar)*this->_elements);
+    }
+
+    /*******************************************
+    * Removing
+    ********************************************/
+
+    void OneString::clear()
+    {
+        if (_elements > 0)
+        {
+            delete[] this->internal;
+            internal = nullptr;
+            _capacity = BASE_SIZE;
+            reserve(BASE_SIZE);
+            _elements = 0;
+        }
+    }
+
+    ///////////////////// REVIEW //////////////////////
+
+    void OneString::append(const char ch)
+    {
+        expand(1);
 
         // Insert a 1-byte ASCII char
-        internal[_elements].parse(ch);
+        internal[_elements] = ch;
 
         ++_elements;
-        // TODO: Ensure this is the default value of a OneChar()!
+
         internal[_elements] = '\0';
     }
 
@@ -168,12 +189,12 @@ namespace pawlib
         // Loop through each character in the string literal
         while(str[index] != '\0')
         {
-            checkResize(1);
+            expand(1);
 
             index += internal[_elements].parseFromString(str, index);
             ++_elements;
         }
-        // Insert the null terminator at the end of the string.
+
         internal[_elements] = '\0';
     }
 
@@ -181,6 +202,30 @@ namespace pawlib
     {
         // Parse the internal c string directly.
         append(str.c_str());
+    }
+
+    void OneString::append(const OneChar& ochar)
+    {
+        expand(1);
+
+        internal[_elements] = ochar;
+        _elements++;
+        internal[_elements] = '\0';
+    }
+
+    void OneString::append(const OneString& ostr)
+    {
+        expand(ostr.length() + 1);
+
+        size_t index = 0;
+        while(!(ostr[index] == '\0'))
+        {
+            internal[index + _elements] = ostr[index];
+            index++;
+        }
+
+        _elements += ostr.length();
+        internal[_elements] = '\0';
     }
 
     void OneString::insert(size_t pos, const OneString& ostr)
@@ -314,18 +359,8 @@ namespace pawlib
         append(ochar);
     }
 
-    /*******************************************
-    * Removing
-    ********************************************/
 
-    void OneString::clear()
-    {
-        delete [] internal;
-        internal = nullptr;
-        _capacity = BASE_SIZE;
-        internal = new OneChar[_capacity];
-        _elements = 0;
-    }
+
 
     void OneString::pop_back()
     {
@@ -471,60 +506,6 @@ namespace pawlib
     /*******************************************
     * Operators
     ********************************************/
-
-    OneChar& OneString::operator[](size_t pos) const
-    {
-        if((pos <= _elements) && (pos >= 0))
-        {
-            return internal[pos];
-        }
-        else
-        {
-            throw std::out_of_range("OneString: Index out of bounds.");
-        }
-    }
-
-    OneString& OneString::operator=(const std::string& str)
-    {
-        clear();
-        append(str);
-        return *this;
-    }
-
-    OneString& OneString::operator=(const char* str)
-    {
-        clear();
-        append(str);
-        return *this;
-    }
-
-    OneString& OneString::operator=(const OneChar& str)
-    {
-        clear();
-        append(str);
-        return *this;
-    }
-
-    OneString& OneString::operator=(char ch)
-    {
-        clear();
-        append(ch);
-        return *this;
-    }
-
-    OneString& OneString::operator=(OneChar* ch)
-    {
-        clear();
-        append(*ch);
-        return *this;
-    }
-
-    OneString& OneString::operator=(OneString& ostr)
-    {
-        clear();
-        append(ostr);
-        return *this;
-    }
 
     bool OneString::operator==(const OneString& ostr)
     {
