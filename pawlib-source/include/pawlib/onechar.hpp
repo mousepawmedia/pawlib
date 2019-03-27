@@ -104,7 +104,7 @@ namespace pawlib
               * \param the std::string to extract the character from
               * \param the index of the start of the Unicode character
               * \return the number of elements (chars) parsed out */
-            size_t parseFromString(const std::string, size_t index);
+            size_t parseFromString(const std::string&, size_t index);
 
         public:
             /** Initialize a OneChar as a null terminator */

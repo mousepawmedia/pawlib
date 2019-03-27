@@ -6,8 +6,7 @@
                 "/usr/include",
                 "/usr/local/include",
                 "${workspaceRoot}/../libdeps/libs/include",
-                "${workspaceRoot}/pawlib-source/include",
-                "${workspaceRoot}/pawlib-tester/include"
+                "${workspaceRoot}/pawlib-source/include"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
@@ -42,8 +41,7 @@
                 "/usr/include",
                 "${workspaceRoot}/../libdeps/libs/include",
                 "${workspaceRoot}/pawlib-source/include/pawlib",
-                "${workspaceRoot}/pawlib-source/include",
-                "${workspaceRoot}/pawlib-tester/include"
+                "${workspaceRoot}/pawlib-source/include"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
@@ -63,7 +61,7 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
             },
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": "/usr/bin/clang-6.0",
             "cStandard": "c11",
             "cppStandard": "c++17"
         },

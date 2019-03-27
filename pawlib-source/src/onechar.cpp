@@ -79,7 +79,7 @@ namespace pawlib
         return this->size;
     }
 
-    size_t OneChar::parseFromString(const std::string str, size_t index)
+    size_t OneChar::parseFromString(const std::string& str, size_t index)
     {
         // Extract the c-string from the std::string and parse it
         return parseFromString(str.c_str(), index);

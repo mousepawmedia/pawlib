@@ -15,11 +15,11 @@ docs/build
 tester
 tester_debug
 *.config
-*.kdev4
 !default.config
 codealike.json
 .codelite/
 Pawlib.workspace
 pawlib.project
 .DS_Store
-.kdev4
+*.kdev4
+.vscode/ipch
