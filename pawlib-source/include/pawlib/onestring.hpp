@@ -221,6 +221,16 @@ namespace pawlib
             size_t size() const;
 
             /*******************************************
+            * Comparison
+            ********************************************/
+
+           bool equals(const char) const;
+           bool equals(const char*) const;
+           bool equals(const std::string&) const;
+           bool equals(const OneChar&) const;
+           bool equals(const OneString&) const;
+
+            /*******************************************
             * Adding + Inserting
             ********************************************/
 
@@ -249,7 +259,17 @@ namespace pawlib
             OneString& operator=(const OneChar& ochr) { assign(ochr); return *this; }
             OneString& operator=(OneString& ostr) { assign(ostr); return *this; }
 
+            bool operator==(const char ch) const { return equals(ch); }
+            bool operator==(const char* cstr) const { return equals(cstr); }
+            bool operator==(const std::string& str) const { return equals(str); }
+            bool operator==(const OneChar& ochr) const { return equals(ochr); }
+            bool operator==(const OneString& ostr) const { return equals(ostr); }
 
+            bool operator!=(const char ch) const { return !equals(ch); }
+            bool operator!=(const char* cstr) const { return !equals(cstr); }
+            bool operator!=(const std::string& str) const { return !equals(str); }
+            bool operator!=(const OneChar& ochr) const { return !equals(ochr); }
+            bool operator!=(const OneString& ostr) const { return !equals(ostr); }
 
             ////////////// REVIEW /////////////////
 
@@ -296,14 +316,6 @@ namespace pawlib
             * Comparison
             ********************************************/
 
-            /**Compares the OneString to another
-             * character data type
-             * \param the characters to compare to
-             * \returns whether or not they are equivalent */
-            bool equals(const OneString& ostr) const;
-            bool equals(std::string ostr) const;
-            bool equals(const char* ostr) const;
-
             /**Helper functions for < and > operators
              * Parse through a OneString or char*
              * to determine greater than or less than
@@ -330,18 +342,6 @@ namespace pawlib
             OneString substr(size_t pos, size_t sublen);
 
 
-
-            /**Compares the OneString to another
-             * text data type to check for equivalence
-             * \param the text object to compare to
-             * \return whether or not they are equivalent*/
-            bool operator==(const OneString& ostr);
-            bool operator==(const char* ostr);
-            bool operator==(const std::string& ostr);
-            bool operator==(const OneChar& ostr);
-            bool operator!=(const OneString& ostr);
-            bool operator!=(const char* ostr);
-            bool operator!=(const std::string& ostr);
 
 
             /**Checks to see if the OneString is

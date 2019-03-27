@@ -6,39 +6,44 @@ namespace pawlib
     * Constructors + Destructor
     *******************************************/
     OneString::OneString()
-    :_capacity(BASE_SIZE), _elements(0)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
+        this->internal = new OneChar[this->_capacity];
         assign('\0');
     }
 
     OneString::OneString(char ch)
-    :_capacity(BASE_SIZE), _elements(0)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
+        this->internal = new OneChar[this->_capacity];
         assign(ch);
     }
 
     OneString::OneString(const char* cstr)
-    :_capacity(BASE_SIZE), _elements(0)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
+        this->internal = new OneChar[this->_capacity];
         assign(cstr);
     }
 
     OneString::OneString(const std::string& str)
-    :_capacity(BASE_SIZE), _elements(0)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
-        this->internal = new OneChar[_capacity];
+        this->internal = new OneChar[this->_capacity];
         append(str);
     }
 
     OneString::OneString(const OneChar& ochr)
-    :_capacity(BASE_SIZE), _elements(0)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
+        this->internal = new OneChar[this->_capacity];
         assign(ochr);
     }
 
     OneString::OneString(const OneString& ostr)
-    :_capacity(BASE_SIZE), _elements(0)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
+        this->internal = new OneChar[this->_capacity];
         assign(ostr);
     }
 
@@ -64,11 +69,6 @@ namespace pawlib
         return internal[pos];
     }
 
-    bool OneString::empty() const
-    {
-        return (_elements == 0);
-    }
-
     size_t OneString::capacity() const
     {
         return _capacity;
@@ -86,6 +86,11 @@ namespace pawlib
         }
         r[n-1] = '\0';
         return r;
+    }
+
+    bool OneString::empty() const
+    {
+        return (_elements == 0);
     }
 
     size_t OneString::length() const
@@ -106,6 +111,50 @@ namespace pawlib
     }
 
     /*******************************************
+    * Comparison
+    ********************************************/
+
+    bool OneString::equals(const char ch) const
+    {
+        return (this->_elements == 1 && this->internal[0] == ch);
+    }
+
+    bool OneString::equals(const char* cstr) const
+    {
+        size_t index = 0;
+        size_t compare_to = 0;
+        while(cstr[index] != '\0')
+        {
+            if (!this->internal[compare_to].equals(cstr + index)) { return false; }
+            index += OneChar::evaluateLength(cstr + index);
+            if(compare_to++ > this->_elements) { return false; }
+        }
+
+        return true;
+    }
+
+    bool OneString::equals(const std::string& str) const
+    {
+        return equals(str.c_str());
+    }
+
+    bool OneString::equals(const OneChar& ochr) const
+    {
+        return (this->_elements == 1 && this->internal[0] == ochr);
+    }
+
+    bool OneString::equals(const OneString& ostr) const
+    {
+        if (this->_elements != ostr._elements) { return false; }
+
+        for (size_t index = 0; index < this->_elements; ++index)
+        {
+            if (this->internal[index] != ostr.internal[index]) { return false; }
+        }
+        return true;
+    }
+
+    /*******************************************
     * Adding + Inserting
     ********************************************/
 
@@ -113,7 +162,7 @@ namespace pawlib
     {
         clear();
         reserve(1);
-        this->internal[_elements] = ch;
+        this->internal[_elements++] = ch;
     }
 
     void OneString::assign(const char* cstr)
@@ -128,8 +177,7 @@ namespace pawlib
         while(cstr[index] != '\0')
         {
             // Parse and store the character.
-            index += internal[_elements].parseFromString(cstr, index);
-            ++_elements;
+            index += internal[_elements++].parseFromString(cstr, index);
         }
     }
 
@@ -142,7 +190,7 @@ namespace pawlib
     {
         clear();
         reserve(1);
-        this->internal[_elements] = ochr;
+        this->internal[_elements++] = ochr;
     }
 
     void OneString::assign(const OneString& ostr)
@@ -150,6 +198,54 @@ namespace pawlib
         clear();
         reserve(ostr._elements);
         memcpy(ostr.internal, this->internal, sizeof(OneChar)*this->_elements);
+        _elements = ostr._elements;
+    }
+
+    void OneString::append(const char ch)
+    {
+        expand(1);
+
+        // Insert a 1-byte ASCII char
+        internal[_elements++] = ch;
+    }
+
+    void OneString::append(const char* cstr)
+    {
+        size_t index = 0;
+        size_t len = characterCount(cstr);
+        expand(len);
+
+        // Loop through each character in the string literal
+        while(cstr[index] != '\0')
+        {
+            index += internal[_elements++].parseFromString(cstr, index);
+        }
+    }
+
+    void OneString::append(const std::string& str)
+    {
+        // Parse the internal c string directly.
+        append(str.c_str());
+    }
+
+    void OneString::append(const OneChar& ochar)
+    {
+        expand(1);
+        internal[_elements++] = ochar;
+    }
+
+    void OneString::append(const OneString& ostr)
+    {
+        expand(ostr.length());
+
+        size_t index = 0;
+        while(!(ostr[index] == '\0'))
+        {
+            internal[index + _elements] = ostr[index];
+            ++index;
+        }
+
+        _elements += ostr.length();
     }
 
     /*******************************************
@@ -169,64 +265,6 @@ namespace pawlib
     }
 
     ///////////////////// REVIEW //////////////////////
-
-    void OneString::append(const char ch)
-    {
-        expand(1);
-
-        // Insert a 1-byte ASCII char
-        internal[_elements] = ch;
-
-        ++_elements;
-
-        internal[_elements] = '\0';
-    }
-
-    void OneString::append(const char* str)
-    {
-        size_t index = 0;
-
-        // Loop through each character in the string literal
-        while(str[index] != '\0')
-        {
-            expand(1);
-
-            index += internal[_elements].parseFromString(str, index);
-            ++_elements;
-        }
-
-        internal[_elements] = '\0';
-    }
-
-    void OneString::append(const std::string& str)
-    {
-        // Parse the internal c string directly.
-        append(str.c_str());
-    }
-
-    void OneString::append(const OneChar& ochar)
-    {
-        expand(1);
-
-        internal[_elements] = ochar;
-        _elements++;
-        internal[_elements] = '\0';
-    }
-
-    void OneString::append(const OneString& ostr)
-    {
-        expand(ostr.length() + 1);
-
-        size_t index = 0;
-        while(!(ostr[index] == '\0'))
-        {
-            internal[index + _elements] = ostr[index];
-            index++;
-        }
-
-        _elements += ostr.length();
-        internal[_elements] = '\0';
-    }
 
     void OneString::insert(size_t pos, const OneString& ostr)
     {
@@ -375,47 +413,6 @@ namespace pawlib
         }
     }
 
-    /*******************************************
-    * Comparison
-    ********************************************/
-
-    bool OneString::equals(const OneString& ostr) const
-    {
-        if(_elements == ostr._elements)
-        {
-            for(size_t i = 0; i < _elements; ++i)
-            {
-                if(!(ostr[i] == internal[i]))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    bool OneString::equals(std::string ostr) const
-    {
-        return equals(ostr.c_str());
-    }
-
-    bool OneString::equals(const char* ostr) const
-    {
-        OneString compareStr(ostr);
-
-        if(this->_elements == compareStr.length())
-        {
-            for (size_t i = 0; i < this->_elements; ++i)
-            {
-                if(!(OneString::internal[i] == compareStr[i]))
-                    return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
     bool OneString::lessThanCharP(const char* ostr)
     {
         size_t mainIndex = 0;
@@ -506,36 +503,6 @@ namespace pawlib
     /*******************************************
     * Operators
     ********************************************/
-
-    bool OneString::operator==(const OneString& ostr)
-    {
-        return equals(ostr);
-    }
-
-    bool OneString::operator==(const char* ostr)
-    {
-        return equals(ostr);
-    }
-
-    bool OneString::operator==(const std::string& ostr)
-    {
-        return equals(ostr);
-    }
-
-    bool OneString::operator!=(const OneString& ostr)
-    {
-        return !(equals(ostr));
-    }
-
-    bool OneString::operator!=(const char* ostr)
-    {
-        return !(equals(ostr));
-    }
-
-    bool OneString::operator!=(const std::string& ostr)
-    {
-        return !(equals(ostr));
-    }
 
     bool OneString::operator<(const char* ostr2)
     {
