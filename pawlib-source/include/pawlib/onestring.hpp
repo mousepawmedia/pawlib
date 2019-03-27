@@ -57,13 +57,6 @@
 
 namespace pawlib
 {
-     /* The purpose of OneString is to provide the functionality of std::string
-      * but with better allocation of memory along with increased support for Unicode
-      * characters. OneString works just like std::string only when the max size of the
-      * current string is hit, the size is automatically doubled. The size starts with 4
-      * and is then immediately increased to 8. Each OneString class contains a master
-      * array of OneChars.*/
-
     class OneString
     {
         private:
@@ -138,6 +131,12 @@ namespace pawlib
             {
                 // If we're already large enough, don't reallocate.
                 if (this->_capacity >= elements) { return; }
+
+                // A capacity of 0 will trigger a complete reallocation
+                if (this->_capacity == 0)
+                {
+                    this->_capacity = BASE_SIZE;
+                }
 
                 // Expand until we have enough space.
                 while (this->_capacity < elements)

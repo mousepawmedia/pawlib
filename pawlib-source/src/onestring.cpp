@@ -197,7 +197,7 @@ namespace pawlib
     {
         clear();
         reserve(ostr._elements);
-        memcpy(ostr.internal, this->internal, sizeof(OneChar)*this->_elements);
+        memcpy(ostr.internal, this->internal, sizeof(OneChar) * ostr._elements);
         _elements = ostr._elements;
     }
 
@@ -258,7 +258,7 @@ namespace pawlib
         {
             delete[] this->internal;
             internal = nullptr;
-            _capacity = BASE_SIZE;
+            _capacity = 0;
             reserve(BASE_SIZE);
             _elements = 0;
         }
