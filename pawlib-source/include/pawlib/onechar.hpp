@@ -315,16 +315,16 @@ namespace pawlib
             * \param std::ostream to put output on */
             void print(std::ostream& os) const
             {
-                os << this->internal << '\0';
+                os << this->c_str();
             }
 
             /** Output operator
             * \param std::ostream to display output on
             * \param the OneChar that is the output
             * \return the std::ostream to output */
-            friend std::ostream& operator<<(std:: ostream& os, const OneChar& ostr)
+            friend std::ostream& operator<<(std::ostream& os, const OneChar& ostr)
             {
-                ostr.print(os);
+                os << ostr.c_str();
                 return os;
             }
     };

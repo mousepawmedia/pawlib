@@ -551,6 +551,952 @@ namespace pawlib
             }
     };
 
+    // P-tB4005[a-i]
+    class TestOneString_Compare : public TestOneString
+    {
+        protected:
+            OneString test;
+
+        public:
+            explicit TestOneString_Compare(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Compare " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the compare() function.";
+            }
+
+            bool janitor() override {
+                OneString test = "";
+                return true;
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        char eq = 'B';
+                        char lt = 'A';
+                        char gt = 'C';
+
+                        test = eq;
+                        PL_ASSERT_EQUAL(test.compare(eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(lt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(gt), 0);
+
+                        PL_ASSERT_LESS(test.compare(gt), 0);
+                        PL_ANTIASSERT_LESS(test.compare(eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(lt), 0);
+
+                        PL_ASSERT_GREATER(test.compare(lt), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(gt), 0);
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        OneChar eq = "B";
+                        OneChar lt = "A";
+                        OneChar gt = "C";
+
+                        test = eq;
+                        PL_ASSERT_EQUAL(test.compare(eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(lt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(gt), 0);
+
+                        PL_ASSERT_LESS(test.compare(gt), 0);
+                        PL_ANTIASSERT_LESS(test.compare(eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(lt), 0);
+
+                        PL_ASSERT_GREATER(test.compare(lt), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(gt), 0);
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        OneChar eq = "🐭";
+                        OneChar lt = "🐁";
+                        OneChar gt = "🦊";
+
+                        test = eq;
+                        PL_ASSERT_EQUAL(test.compare(eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(lt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(gt), 0);
+
+                        PL_ASSERT_LESS(test.compare(gt), 0);
+                        PL_ANTIASSERT_LESS(test.compare(eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(lt), 0);
+
+                        PL_ASSERT_GREATER(test.compare(lt), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(gt), 0);
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_EQUAL(test.compare(eq.c_str()), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(lt.c_str()), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(gt.c_str()), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(shorter.c_str()), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(longer.c_str()), 0);
+
+                        PL_ASSERT_LESS(test.compare(gt.c_str()), 0);
+                        PL_ASSERT_LESS(test.compare(longer.c_str()), 0);
+                        PL_ANTIASSERT_LESS(test.compare(eq.c_str()), 0);
+                        PL_ANTIASSERT_LESS(test.compare(lt.c_str()), 0);
+                        PL_ANTIASSERT_LESS(test.compare(shorter.c_str()), 0);
+
+                        PL_ASSERT_GREATER(test.compare(lt.c_str()), 0);
+                        PL_ASSERT_GREATER(test.compare(shorter.c_str()), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(eq.c_str()), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(gt.c_str()), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(longer.c_str()), 0);
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_EQUAL(test.compare(eq.c_str()), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(lt.c_str()), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(gt.c_str()), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(shorter.c_str()), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(longer.c_str()), 0);
+
+                        PL_ASSERT_LESS(test.compare(gt.c_str()), 0);
+                        PL_ASSERT_LESS(test.compare(longer.c_str()), 0);
+                        PL_ANTIASSERT_LESS(test.compare(eq.c_str()), 0);
+                        PL_ANTIASSERT_LESS(test.compare(lt.c_str()), 0);
+                        PL_ANTIASSERT_LESS(test.compare(shorter.c_str()), 0);
+
+                        PL_ASSERT_GREATER(test.compare(lt.c_str()), 0);
+                        PL_ASSERT_GREATER(test.compare(shorter.c_str()), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(eq.c_str()), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(gt.c_str()), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(longer.c_str()), 0);
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_EQUAL(test.compare(eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(lt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(gt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(shorter), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(longer), 0);
+
+                        PL_ASSERT_LESS(test.compare(gt), 0);
+                        PL_ASSERT_LESS(test.compare(longer), 0);
+                        PL_ANTIASSERT_LESS(test.compare(eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(lt), 0);
+                        PL_ANTIASSERT_LESS(test.compare(shorter), 0);
+
+                        PL_ASSERT_GREATER(test.compare(lt), 0);
+                        PL_ASSERT_GREATER(test.compare(shorter), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(gt), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(longer), 0);
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "🐭ab";
+                        std::string longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_EQUAL(test.compare(eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(lt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(gt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(shorter), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(longer), 0);
+
+                        PL_ASSERT_LESS(test.compare(gt), 0);
+                        PL_ASSERT_LESS(test.compare(longer), 0);
+                        PL_ANTIASSERT_LESS(test.compare(eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(lt), 0);
+                        PL_ANTIASSERT_LESS(test.compare(shorter), 0);
+
+                        PL_ASSERT_GREATER(test.compare(lt), 0);
+                        PL_ASSERT_GREATER(test.compare(shorter), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(gt), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(longer), 0);
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        OneString eq = "abcB";
+                        OneString lt = "abcA";
+                        OneString gt = "abcC";
+                        OneString shorter = "ab";
+                        OneString longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_EQUAL(test.compare(eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(lt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(gt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(shorter), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(longer), 0);
+
+                        PL_ASSERT_LESS(test.compare(gt), 0);
+                        PL_ASSERT_LESS(test.compare(longer), 0);
+                        PL_ANTIASSERT_LESS(test.compare(eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(lt), 0);
+                        PL_ANTIASSERT_LESS(test.compare(shorter), 0);
+
+                        PL_ASSERT_GREATER(test.compare(lt), 0);
+                        PL_ASSERT_GREATER(test.compare(shorter), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(gt), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(longer), 0);
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        OneString eq = "🐭abc🐭";
+                        OneString lt = "🐭abc🐁";
+                        OneString gt = "🐭abc🦊";
+                        OneString shorter = "🐭ab";
+                        OneString longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_EQUAL(test.compare(eq), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(lt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(gt), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(shorter), 0);
+                        PL_ANTIASSERT_EQUAL(test.compare(longer), 0);
+
+                        PL_ASSERT_LESS(test.compare(gt), 0);
+                        PL_ASSERT_LESS(test.compare(longer), 0);
+                        PL_ANTIASSERT_LESS(test.compare(eq), 0);
+                        PL_ANTIASSERT_LESS(test.compare(lt), 0);
+                        PL_ANTIASSERT_LESS(test.compare(shorter), 0);
+
+                        PL_ASSERT_GREATER(test.compare(lt), 0);
+                        PL_ASSERT_GREATER(test.compare(shorter), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(eq), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(gt), 0);
+                        PL_ANTIASSERT_GREATER(test.compare(longer), 0);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4006[a-i]
+    class TestOneString_OpLess : public TestOneString
+    {
+        protected:
+            OneString test;
+
+        public:
+            explicit TestOneString_OpLess(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Less Than (<) " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the < operator.";
+            }
+
+            bool janitor() override {
+                OneString test = "";
+                return true;
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        char eq = 'B';
+                        char lt = 'A';
+                        char gt = 'C';
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test < gt);
+                        PL_ASSERT_FALSE(test < eq);
+                        PL_ASSERT_FALSE(test < lt);
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        OneChar eq = "B";
+                        OneChar lt = "A";
+                        OneChar gt = "C";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test < gt);
+                        PL_ASSERT_FALSE(test < eq);
+                        PL_ASSERT_FALSE(test < lt);
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        OneChar eq = "🐭";
+                        OneChar lt = "🐁";
+                        OneChar gt = "🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test < gt);
+                        PL_ASSERT_FALSE(test < eq);
+                        PL_ASSERT_FALSE(test < lt);
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test < gt.c_str());
+                        PL_ASSERT_TRUE(test < longer.c_str());
+                        PL_ASSERT_FALSE(test < eq.c_str());
+                        PL_ASSERT_FALSE(test < lt.c_str());
+                        PL_ASSERT_FALSE(test < shorter.c_str());
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test < gt.c_str());
+                        PL_ASSERT_TRUE(test < longer.c_str());
+                        PL_ASSERT_FALSE(test < eq.c_str());
+                        PL_ASSERT_FALSE(test < lt.c_str());
+                        PL_ASSERT_FALSE(test < shorter.c_str());
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test < gt);
+                        PL_ASSERT_TRUE(test < longer);
+                        PL_ASSERT_FALSE(test < eq);
+                        PL_ASSERT_FALSE(test < lt);
+                        PL_ASSERT_FALSE(test < shorter);
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "🐭ab";
+                        std::string longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test < gt);
+                        PL_ASSERT_TRUE(test < longer);
+                        PL_ASSERT_FALSE(test < eq);
+                        PL_ASSERT_FALSE(test < lt);
+                        PL_ASSERT_FALSE(test < shorter);
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        OneString eq = "abcB";
+                        OneString lt = "abcA";
+                        OneString gt = "abcC";
+                        OneString shorter = "ab";
+                        OneString longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test < gt);
+                        PL_ASSERT_TRUE(test < longer);
+                        PL_ASSERT_FALSE(test < eq);
+                        PL_ASSERT_FALSE(test < lt);
+                        PL_ASSERT_FALSE(test < shorter);
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        OneString eq = "🐭abc🐭";
+                        OneString lt = "🐭abc🐁";
+                        OneString gt = "🐭abc🦊";
+                        OneString shorter = "🐭ab";
+                        OneString longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test < gt);
+                        PL_ASSERT_TRUE(test < longer);
+                        PL_ASSERT_FALSE(test < eq);
+                        PL_ASSERT_FALSE(test < lt);
+                        PL_ASSERT_FALSE(test < shorter);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4007[a-i]
+    class TestOneString_OpLessEqual : public TestOneString
+    {
+        protected:
+            OneString test;
+
+        public:
+            explicit TestOneString_OpLessEqual(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Less/Equal (<=) " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the <= operator.";
+            }
+
+            bool janitor() override {
+                OneString test = "";
+                return true;
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        char eq = 'B';
+                        char lt = 'A';
+                        char gt = 'C';
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test <= gt);
+                        PL_ASSERT_TRUE(test <= eq);
+                        PL_ASSERT_FALSE(test <= lt);
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        OneChar eq = "B";
+                        OneChar lt = "A";
+                        OneChar gt = "C";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test <= gt);
+                        PL_ASSERT_TRUE(test <= eq);
+                        PL_ASSERT_FALSE(test <= lt);
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        OneChar eq = "🐭";
+                        OneChar lt = "🐁";
+                        OneChar gt = "🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test <= gt);
+                        PL_ASSERT_TRUE(test <= eq);
+                        PL_ASSERT_FALSE(test <= lt);
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test <= gt.c_str());
+                        PL_ASSERT_TRUE(test <= longer.c_str());
+                        PL_ASSERT_TRUE(test <= eq.c_str());
+                        PL_ASSERT_FALSE(test <= lt.c_str());
+                        PL_ASSERT_FALSE(test <= shorter.c_str());
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test <= gt.c_str());
+                        PL_ASSERT_TRUE(test <= longer.c_str());
+                        PL_ASSERT_TRUE(test <= eq.c_str());
+                        PL_ASSERT_FALSE(test <= lt.c_str());
+                        PL_ASSERT_FALSE(test <= shorter.c_str());
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test <= gt);
+                        PL_ASSERT_TRUE(test <= longer);
+                        PL_ASSERT_TRUE(test <= eq);
+                        PL_ASSERT_FALSE(test <= lt);
+                        PL_ASSERT_FALSE(test <= shorter);
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "🐭ab";
+                        std::string longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test <= gt);
+                        PL_ASSERT_TRUE(test <= longer);
+                        PL_ASSERT_TRUE(test <= eq);
+                        PL_ASSERT_FALSE(test <= lt);
+                        PL_ASSERT_FALSE(test <= shorter);
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        OneString eq = "abcB";
+                        OneString lt = "abcA";
+                        OneString gt = "abcC";
+                        OneString shorter = "ab";
+                        OneString longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test <= gt);
+                        PL_ASSERT_TRUE(test <= longer);
+                        PL_ASSERT_TRUE(test <= eq);
+                        PL_ASSERT_FALSE(test <= lt);
+                        PL_ASSERT_FALSE(test <= shorter);
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        OneString eq = "🐭abc🐭";
+                        OneString lt = "🐭abc🐁";
+                        OneString gt = "🐭abc🦊";
+                        OneString shorter = "🐭ab";
+                        OneString longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test <= gt);
+                        PL_ASSERT_TRUE(test <= longer);
+                        PL_ASSERT_TRUE(test <= eq);
+                        PL_ASSERT_FALSE(test <= lt);
+                        PL_ASSERT_FALSE(test <= shorter);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4008[a-i]
+    class TestOneString_OpGreater : public TestOneString
+    {
+        protected:
+            OneString test;
+
+        public:
+            explicit TestOneString_OpGreater(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Less Than (>) " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the > operator.";
+            }
+
+            bool janitor() override {
+                OneString test = "";
+                return true;
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        char eq = 'B';
+                        char lt = 'A';
+                        char gt = 'C';
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test > lt);
+                        PL_ASSERT_FALSE(test > eq);
+                        PL_ASSERT_FALSE(test > gt);
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        OneChar eq = "B";
+                        OneChar lt = "A";
+                        OneChar gt = "C";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test > lt);
+                        PL_ASSERT_FALSE(test > eq);
+                        PL_ASSERT_FALSE(test > gt);
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        OneChar eq = "🐭";
+                        OneChar lt = "🐁";
+                        OneChar gt = "🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test > lt);
+                        PL_ASSERT_FALSE(test > eq);
+                        PL_ASSERT_FALSE(test > gt);
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test > lt.c_str());
+                        PL_ASSERT_TRUE(test > shorter.c_str());
+                        PL_ASSERT_FALSE(test > eq.c_str());
+                        PL_ASSERT_FALSE(test > gt.c_str());
+                        PL_ASSERT_FALSE(test > longer.c_str());
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test > lt.c_str());
+                        PL_ASSERT_TRUE(test > shorter.c_str());
+                        PL_ASSERT_FALSE(test > eq.c_str());
+                        PL_ASSERT_FALSE(test > gt.c_str());
+                        PL_ASSERT_FALSE(test > longer.c_str());
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test > lt);
+                        PL_ASSERT_TRUE(test > shorter);
+                        PL_ASSERT_FALSE(test > eq);
+                        PL_ASSERT_FALSE(test > gt);
+                        PL_ASSERT_FALSE(test > longer);
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "🐭ab";
+                        std::string longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test > lt);
+                        PL_ASSERT_TRUE(test > shorter);
+                        PL_ASSERT_FALSE(test > eq);
+                        PL_ASSERT_FALSE(test > gt);
+                        PL_ASSERT_FALSE(test > longer);
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        OneString eq = "abcB";
+                        OneString lt = "abcA";
+                        OneString gt = "abcC";
+                        OneString shorter = "ab";
+                        OneString longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test > lt);
+                        PL_ASSERT_TRUE(test > shorter);
+                        PL_ASSERT_FALSE(test > eq);
+                        PL_ASSERT_FALSE(test > gt);
+                        PL_ASSERT_FALSE(test > longer);
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        OneString eq = "🐭abc🐭";
+                        OneString lt = "🐭abc🐁";
+                        OneString gt = "🐭abc🦊";
+                        OneString shorter = "🐭ab";
+                        OneString longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test > lt);
+                        PL_ASSERT_TRUE(test > shorter);
+                        PL_ASSERT_FALSE(test > eq);
+                        PL_ASSERT_FALSE(test > gt);
+                        PL_ASSERT_FALSE(test > longer);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4009[a-i]
+    class TestOneString_OpGreaterEqual : public TestOneString
+    {
+        protected:
+            OneString test;
+
+        public:
+            explicit TestOneString_OpGreaterEqual(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Greater/Equal (>=) " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test comparison with the >= operator.";
+            }
+
+            bool janitor() override {
+                OneString test = "";
+                return true;
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        char eq = 'B';
+                        char lt = 'A';
+                        char gt = 'C';
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test >= lt);
+                        PL_ASSERT_TRUE(test >= eq);
+                        PL_ASSERT_FALSE(test >= gt);
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        OneChar eq = "B";
+                        OneChar lt = "A";
+                        OneChar gt = "C";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test >= lt);
+                        PL_ASSERT_TRUE(test >= eq);
+                        PL_ASSERT_FALSE(test >= gt);
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        OneChar eq = "🐭";
+                        OneChar lt = "🐁";
+                        OneChar gt = "🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test >= lt);
+                        PL_ASSERT_TRUE(test >= eq);
+                        PL_ASSERT_FALSE(test >= gt);
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test >= lt.c_str());
+                        PL_ASSERT_TRUE(test >= shorter.c_str());
+                        PL_ASSERT_TRUE(test >= eq.c_str());
+                        PL_ASSERT_FALSE(test >= gt.c_str());
+                        PL_ASSERT_FALSE(test >= longer.c_str());
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test >= lt.c_str());
+                        PL_ASSERT_TRUE(test >= shorter.c_str());
+                        PL_ASSERT_TRUE(test >= eq.c_str());
+                        PL_ASSERT_FALSE(test >= gt.c_str());
+                        PL_ASSERT_FALSE(test >= longer.c_str());
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        std::string eq = "abcB";
+                        std::string lt = "abcA";
+                        std::string gt = "abcC";
+                        std::string shorter = "ab";
+                        std::string longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test >= lt);
+                        PL_ASSERT_TRUE(test >= shorter);
+                        PL_ASSERT_TRUE(test >= eq);
+                        PL_ASSERT_FALSE(test >= gt);
+                        PL_ASSERT_FALSE(test >= longer);
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        std::string eq = "🐭abc🐭";
+                        std::string lt = "🐭abc🐁";
+                        std::string gt = "🐭abc🦊";
+                        std::string shorter = "🐭ab";
+                        std::string longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test >= lt);
+                        PL_ASSERT_TRUE(test >= shorter);
+                        PL_ASSERT_TRUE(test >= eq);
+                        PL_ASSERT_FALSE(test >= gt);
+                        PL_ASSERT_FALSE(test >= longer);
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        OneString eq = "abcB";
+                        OneString lt = "abcA";
+                        OneString gt = "abcC";
+                        OneString shorter = "ab";
+                        OneString longer = "abcabc";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test >= lt);
+                        PL_ASSERT_TRUE(test >= shorter);
+                        PL_ASSERT_TRUE(test >= eq);
+                        PL_ASSERT_FALSE(test >= gt);
+                        PL_ASSERT_FALSE(test >= longer);
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        OneString eq = "🐭abc🐭";
+                        OneString lt = "🐭abc🐁";
+                        OneString gt = "🐭abc🦊";
+                        OneString shorter = "🐭ab";
+                        OneString longer = "🐭abc🦊🦊";
+
+                        test = eq;
+                        PL_ASSERT_TRUE(test >= lt);
+                        PL_ASSERT_TRUE(test >= shorter);
+                        PL_ASSERT_TRUE(test >= eq);
+                        PL_ASSERT_FALSE(test >= gt);
+                        PL_ASSERT_FALSE(test >= longer);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
+            }
+    };
+
     ///////////// REUSABLE /////////////
 
     class TestOneString_PopBack : public Test

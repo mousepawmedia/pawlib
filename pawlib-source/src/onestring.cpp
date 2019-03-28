@@ -154,6 +154,73 @@ namespace pawlib
         return true;
     }
 
+    int OneString::compare(const char ch) const
+    {
+        int sizeDiff = this->_elements - 1;
+        if (sizeDiff == 0)
+        {
+            return this->internal[0].compare(ch);
+        }
+        return sizeDiff;
+    }
+
+    int OneString::compare(const char* cstr) const
+    {
+        /* This algorithm will not return a meaningful integer; only its
+         * relation to 0 will be useful */
+
+        int sizeDiff = this->_elements - characterCount(cstr);
+
+        if (sizeDiff == 0)
+        {
+            size_t j = 0;
+            // If the strings are the same length, compare each character...
+            for(size_t i = 0; i < this->_elements; ++i)
+            {
+                // Return the compare result of the first character mismatch
+                int r = this->internal[i].compare(cstr+j);
+                if ( r != 0) { return r; }
+
+                j += OneChar::evaluateLength(cstr+j);
+            }
+        }
+        return sizeDiff;
+    }
+
+    int OneString::compare(const std::string& str) const
+    {
+        return compare(str.c_str());
+    }
+
+    int OneString::compare(const OneChar& ochr) const
+    {
+        int sizeDiff = this->_elements - 1;
+        if (sizeDiff == 0)
+        {
+            return this->internal[0].compare(ochr);
+        }
+        return sizeDiff;
+    }
+
+    int OneString::compare(const OneString& ostr) const
+    {
+        /* This algorithm will not return a meaningful integer; only its
+         * relation to 0 will be useful */
+
+        int sizeDiff = this->_elements - ostr._elements;
+        if (sizeDiff == 0)
+        {
+            // If the strings are the same length, compare each character...
+            for(size_t i = 0; i < this->_elements; ++i)
+            {
+                // Return the compare result of the first character mismatch
+                int r = this->internal[i].compare(ostr.internal[i]);
+                if ( r != 0) { return r; }
+            }
+        }
+        return sizeDiff;
+    }
+
     /*******************************************
     * Adding + Inserting
     ********************************************/
@@ -197,7 +264,7 @@ namespace pawlib
     {
         clear();
         reserve(ostr._elements);
-        memcpy(ostr.internal, this->internal, sizeof(OneChar) * ostr._elements);
+        memcpy(this->internal, ostr.internal, sizeof(OneChar) * ostr._elements);
         _elements = ostr._elements;
     }
 
@@ -503,66 +570,6 @@ namespace pawlib
     /*******************************************
     * Operators
     ********************************************/
-
-    bool OneString::operator<(const char* ostr2)
-    {
-        return lessThanCharP(ostr2);
-    }
-
-    bool OneString::operator<(const std::string& ostr2)
-    {
-        return lessThanCharP(ostr2.c_str());
-    }
-
-    bool OneString::operator<(const OneString& ostr2)
-    {
-        return lessThanStr(ostr2);
-    }
-
-    bool OneString::operator<=(const OneString& ostr2)
-    {
-        return (((*this) < ostr2) || ((*this) == ostr2));
-    }
-
-    bool OneString::operator<=(const char* ostr2)
-    {
-        return (((*this) < ostr2)|| ((*this) == ostr2));
-    }
-
-    bool OneString::operator<=(const std::string& ostr2)
-    {
-        return (((*this) < ostr2)|| ((*this) == ostr2));
-    }
-
-    bool OneString::operator>(const OneString& ostr2)
-    {
-        return(!((*this) <= ostr2));
-    }
-
-    bool OneString::operator>(const char* ostr2)
-    {
-        return(!((*this) <= ostr2));
-    }
-
-    bool OneString::operator>(const std::string& ostr2)
-    {
-        return(!((*this) <= ostr2));
-    }
-
-    bool OneString::operator>=(const OneString& ostr2)
-    {
-        return(!((*this) < ostr2));
-    }
-
-    bool OneString::operator>=(const char* ostr2)
-    {
-        return(!((*this) < ostr2));
-    }
-
-    bool OneString::operator>=(const std::string& ostr2)
-    {
-        return(!((*this) < ostr2));
-    }
 
     void OneString::operator+=(const OneString& ostr2)
     {

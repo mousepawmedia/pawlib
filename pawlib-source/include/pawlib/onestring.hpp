@@ -223,11 +223,17 @@ namespace pawlib
             * Comparison
             ********************************************/
 
-           bool equals(const char) const;
-           bool equals(const char*) const;
-           bool equals(const std::string&) const;
-           bool equals(const OneChar&) const;
-           bool equals(const OneString&) const;
+            bool equals(const char) const;
+            bool equals(const char*) const;
+            bool equals(const std::string&) const;
+            bool equals(const OneChar&) const;
+            bool equals(const OneString&) const;
+
+            int compare(const char) const;
+            int compare(const char*) const;
+            int compare(const std::string&) const;
+            int compare(const OneChar&) const;
+            int compare(const OneString&) const;
 
             /*******************************************
             * Adding + Inserting
@@ -269,6 +275,30 @@ namespace pawlib
             bool operator!=(const std::string& str) const { return !equals(str); }
             bool operator!=(const OneChar& ochr) const { return !equals(ochr); }
             bool operator!=(const OneString& ostr) const { return !equals(ostr); }
+
+            bool operator<(const char ch) const { return (compare(ch) < 0); }
+            bool operator<(const char* cstr) const { return (compare(cstr) < 0); }
+            bool operator<(const std::string& str) const { return (compare(str) < 0); }
+            bool operator<(const OneChar& ochr) const { return (compare(ochr) < 0); }
+            bool operator<(const OneString& ostr) const { return (compare(ostr) < 0); }
+
+            bool operator<=(const char ch) const { return (compare(ch) <= 0); }
+            bool operator<=(const char* cstr) const { return (compare(cstr) <= 0); }
+            bool operator<=(const std::string& str) const { return (compare(str) <= 0); }
+            bool operator<=(const OneChar& ochr) const { return (compare(ochr) <= 0); }
+            bool operator<=(const OneString& ostr) const { return (compare(ostr) <= 0); }
+
+            bool operator>(const char ch) const { return (compare(ch) > 0); }
+            bool operator>(const char* cstr) const { return (compare(cstr) > 0); }
+            bool operator>(const std::string& str) const { return (compare(str) > 0); }
+            bool operator>(const OneChar& ochr) const { return (compare(ochr) > 0); }
+            bool operator>(const OneString& ostr) const { return (compare(ostr) > 0); }
+
+            bool operator>=(const char ch) const { return (compare(ch) >= 0); }
+            bool operator>=(const char* cstr) const { return (compare(cstr) >= 0); }
+            bool operator>=(const std::string& str) const { return (compare(str) >= 0); }
+            bool operator>=(const OneChar& ochr) const { return (compare(ochr) >= 0); }
+            bool operator>=(const OneString& ostr) const { return (compare(ostr) >= 0); }
 
             ////////////// REVIEW /////////////////
 
@@ -339,41 +369,6 @@ namespace pawlib
              * \param the length of the string to be created
              * \return the created string */
             OneString substr(size_t pos, size_t sublen);
-
-
-
-
-            /**Checks to see if the OneString is
-             * less than the cooresponding text data object
-             * \param the text object to compare to
-             * \return whether or not the OneString is less than*/
-            bool operator<(const char* ostr2);
-            bool operator<(const std::string& ostr2);
-            bool operator<(const OneString& ostr2);
-
-            /**Checks to see if the OneString is
-             * less or equal to the cooresponding text data object
-             * \param the text object to compare to
-             * \return whether or not the OneString is less than or equal*/
-            bool operator<=(const OneString& ostr2);
-            bool operator<=(const char* ostr2);
-            bool operator<=(const std::string& ostr2);
-
-            /**Checks to see if the OneString is
-             * greater than the cooresponding text data object
-             * \param the text object to compare to
-             * \return whether or not the OneString is greater than*/
-            bool operator>(const OneString& ostr2);
-            bool operator>(const char* ostr2);
-            bool operator>(const std::string& ostr2);
-
-            /**Checks to see if the OneString is
-             * greater or equal to  the cooresponding text data object
-             * \param the text object to compare to
-             * \return whether or not the OneString is greater than or equal*/
-            bool operator>=(const OneString& ostr2);
-            bool operator>=(const char* ostr2);
-            bool operator>=(const std::string& ostr2);
 
             /**Adds the cooresponding type to
              * the end of the OneString
