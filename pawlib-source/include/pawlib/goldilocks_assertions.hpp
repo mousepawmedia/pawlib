@@ -95,440 +95,572 @@ namespace pawlib {
     template <typename T>
     bool do_assert_true(T val)
     {
+        bool r = true;
         if (!(val)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << val
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << val << " is " << true << io_end;
+        return r;
     }
 
     template <typename T>
     bool do_assert_true(T* val)
     {
+        bool r = true;
         if (!(*val)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << val << ptr_value << "] " << val
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << val << " [@" << ptr_address << val << ptr_value << "] is " << true << io_end;
+        return r;
     }
 
     template <typename T>
     bool do_assert_false(T val)
     {
+        bool r = true;
         if (val) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << val
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << val << " is " << false << io_end;
+        return r;
     }
 
     template <typename T>
     bool do_assert_false(T* val)
     {
+       bool r = true;
         if (*val) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << val << ptr_value << "] " << val
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << val << " [@" << ptr_address << val << ptr_value << "] is " << false << io_end;
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_equal(T lhs, U rhs)
     {
+        bool r = true;
         if (!(lhs == rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << "==" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs
+            << " == "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_equal(T* lhs, U* rhs)
     {
+        bool r = true;
         if (!(*lhs == *rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << "==" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " == "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_equal(T lhs, U rhs)
     {
+        bool r = true;
         if (lhs == rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << "==" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs
+            << " == "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_equal(T* lhs, U* rhs)
     {
+        bool r = true;
         if (*lhs == *rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << "==" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " == "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_not_equal(T lhs, U rhs)
     {
+        bool r = true;
         if (!(lhs != rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << "!=" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs
+            << " != "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_not_equal(T* lhs, U* rhs)
     {
+        bool r = true;
         if (!(*lhs != *rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << "!=" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " != "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_not_equal(T lhs, U rhs)
     {
-        if ((lhs != rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << "!=" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+        bool r = true;
+        if (lhs != rhs) {
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs
+            << " != "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_not_equal(T* lhs, U* rhs)
     {
-        if ((*lhs != *rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << "!=" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+        bool r = true;
+        if (*lhs != *rhs) {
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " != "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_less(T lhs, U rhs)
     {
+        bool r = true;
         if (!(lhs < rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << "<" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs
+            << " < "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_less(T* lhs, U* rhs)
     {
+        bool r = true;
         if (!(*lhs < *rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << "<" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " < "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_less(T lhs, U rhs)
     {
+        bool r = true;
         if (lhs < rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << "<" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs
+            << " < "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_less(T* lhs, U* rhs)
     {
+        bool r = true;
         if (*lhs < *rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << "<" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " < "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_less_equal(T lhs, U rhs)
     {
+        bool r = true;
         if (!(lhs <= rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << "<=" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs
+            << " <= "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_less_equal(T* lhs, U* rhs)
     {
+        bool r = true;
         if (!(*lhs <= *rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << "<=" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " <= "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_less_equal(T lhs, U rhs)
     {
+        bool r = true;
         if (lhs <= rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << "<=" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs
+            << " <= "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_less_equal(T* lhs, U* rhs)
     {
+        bool r = true;
         if (*lhs <= *rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << "<=" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " <= "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_greater(T lhs, U rhs)
     {
+        bool r = true;
         if (!(lhs > rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << ">" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs
+            << " > "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_greater(T* lhs, U* rhs)
     {
+        bool r = true;
         if (!(*lhs > *rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << ">" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " > "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_greater(T lhs, U rhs)
     {
+        bool r = true;
         if (lhs > rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << ">" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs
+            << " > "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_greater(T* lhs, U* rhs)
     {
+        bool r = true;
         if (*lhs > *rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << ">" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " > "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_greater_equal(T lhs, U rhs)
     {
-        if (!(lhs < rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << ">=" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+        bool r = true;
+        if (!(lhs >= rhs)) {
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs
+            << " >= "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_assert_greater_equal(T* lhs, U* rhs)
     {
-        if (!(*lhs < *rhs)) {
-            ioc << cat_error << fg_red << ta_bold << "Assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << ">=" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << false << ", expected " << true << "\n"
-                << io_end;
-            return false;
+        bool r = true;
+        if (!(*lhs >= *rhs)) {
+            ioc << cat_error << fg_red << ta_bold << "[!] Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " >= "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_greater_equal(T lhs, U rhs)
     {
+        bool r = true;
         if (lhs >= rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << lhs
-                << io_endline << ">=" << io_endline
-                << ta_bold << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs
+            << " >= "
+            << rhs
+            << io_end;
+
+        return r;
     }
 
     template <typename T, typename U>
     bool do_antiassert_greater_equal(T* lhs, U* rhs)
     {
+        bool r = true;
         if (*lhs >= *rhs) {
-            ioc << cat_error << fg_red << ta_bold << "Anti-assertion Failed!" << io_endline
-                << ta_bold << "[@" << ptr_address << lhs << ptr_value << "] " << lhs
-                << io_endline << ">=" << io_endline
-                << ta_bold << "[@" << ptr_address << rhs << ptr_value << "] " << rhs
-                << io_endline
-                << "Yields " << true << ", expected " << false << "\n"
-                << io_end;
-            return false;
+            ioc << cat_error << fg_red << ta_bold << "[!] Anti-Assert ";
+            r = false;
         }
-        return true;
+        else
+        {
+            ioc << cat_debug << fg_green << ta_bold << "Anti-Assert ";
+        }
+
+        ioc << lhs << " [@" << ptr_address << lhs << ptr_value << "] "
+            << " >= "
+            << rhs << " [@" << ptr_address << rhs << ptr_value << "] "
+            << io_end;
+
+        return r;
     }
 }
