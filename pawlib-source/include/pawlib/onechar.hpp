@@ -141,6 +141,12 @@ namespace pawlib
               * \return true if equal, else false */
             bool equals(const char*) const;
 
+            /** Test for equality against the first character in a c-string.
+              * Unlike equals(), DOES ignore extraneous characters
+              * \param the c-string to test against
+              * \return true in equal, else false */
+            bool equals_at(const char*) const;
+
             /** Test for equality against a std::string
               * Does NOT ignore extraneous characters in the std::string
               * \param the std::string to test against

@@ -125,7 +125,7 @@ namespace pawlib
         size_t compare_to = 0;
         while(cstr[index] != '\0')
         {
-            if (!this->internal[compare_to].equals(cstr + index)) { return false; }
+            if (!(this->internal[compare_to].equals_at(cstr + index))) { return false; }
             index += OneChar::evaluateLength(cstr + index);
             if(compare_to++ > this->_elements) { return false; }
         }

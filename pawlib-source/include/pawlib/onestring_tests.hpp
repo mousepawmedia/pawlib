@@ -56,18 +56,41 @@ namespace pawlib
     {
         public:
             enum TestStringType {
-                NO_UNICODE,
-                SOME_UNICODE,
-                JUST_UNICODE
+                CHAR,
+                OCHAR_ASCII,
+                OCHAR_UNICODE,
+                CSTR_ASCII,
+                CSTR_UNICODE,
+                STR_ASCII,
+                STR_UNICODE,
+                OSTR_ASCII,
+                OSTR_UNICODE
             };
 
-            OneString noUnicode1 = "The quick brown fox jumped over the lazy dog.";
-            OneString someUnicode1 = "The quick brown 🦊 jumped over the lazy 🐶.";
-            OneString justUnicode1 = "Ø÷ℌ№Ⅳ↉₲ↇ↕↹↱";
+            char ch_1 = 'M';
+            char ch_2 = 'm';
 
-            OneString noUnicode2 = "Jackdaws love my big sphinx of quartz.";
-            OneString someUnicode2 = "🐦 ❤️ my big sphinx of 💎.";
-            OneString justUnicode2 = "℀ℂ℟ℚⅦↂℬΩ℡";
+            OneChar ochr_ascii_1 = "M";
+            OneChar ochr_ascii_2 = "m";
+
+            OneChar ochr_unicode_1 = "🐭";
+            OneChar ochr_unicode_2 = "🦊";
+
+            OneString ostr_ch_ascii_1 = "M";
+            OneString ostr_ch_ascii_2 = "m";
+            OneString ostr_ch_unicode_1 = "🐭";
+            OneString ostr_ch_unicode_2 = "🦊";
+
+            // We'll extract the c-strings from these as needed.
+            std::string str_ascii_1 = "The quick brown fox jumped over the lazy dog.";
+            std::string str_unicode_1 = "The quick brown 🦊 jumped over the lazy 🐶.";
+            std::string str_ascii_2 = "Jackdaws love my big sphinx of quartz.";
+            std::string str_unicode_2 = "🐦 ❤️ my big sphinx of 💎.";
+
+            OneString ostr_ascii_1 = "The quick brown fox jumped over the lazy dog.";
+            OneString ostr_unicode_1 = "The quick brown 🦊 jumped over the lazy 🐶.";
+            OneString ostr_ascii_2 = "Jackdaws love my big sphinx of quartz.";
+            OneString ostr_unicode_2 = "🐦 ❤️ my big sphinx of 💎.";
 
         protected:
             TestStringType stringType;
@@ -80,19 +103,49 @@ namespace pawlib
             {
                 switch(stringType)
                 {
-                    case NO_UNICODE:
+                    case CHAR:
                     {
-                        title = "(No Unicode)";
+                        title = "(char)";
                         break;
                     }
-                    case SOME_UNICODE:
+                    case OCHAR_ASCII:
                     {
-                        title = "(Some Unicode)";
+                        title = "(OneChar, ASCII)";
                         break;
                     }
-                    case JUST_UNICODE:
+                    case OCHAR_UNICODE:
                     {
-                        title = "(Just Unicode)";
+                        title = "(OneChar, Unicode)";
+                        break;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        title = "(c-string, ASCII)";
+                        break;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        title = "(c-string, Unicode)";
+                        break;
+                    }
+                    case STR_ASCII:
+                    {
+                        title = "(std::string, ASCII)";
+                        break;
+                    }
+                    case STR_UNICODE:
+                    {
+                        title = "(std::string, Unicode)";
+                        break;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        title = "(OneString, ASCII)";
+                        break;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        title = "(OneString, Unicode)";
                         break;
                     }
                 }
@@ -103,173 +156,104 @@ namespace pawlib
             virtual testdoc_t get_docs() override = 0;
     };
 
-    // P-tB4001[a-c]
-    class TestOneString_Equal : public TestOneString
+    // P-tB4001[a-i]
+    class TestOneString_Assign : public TestOneString
     {
+        protected:
+            OneString test;
+
         public:
-            explicit TestOneString_Equal(TestStringType type)
+            explicit TestOneString_Assign(TestStringType type)
             :TestOneString(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: == Operator " + title;
+                return "OneString: Assign " + title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test that the == operator returns true between like strings.";
+                return "Test assignment to a OneString.";
+            }
+
+            bool janitor() override {
+                OneString test = "";
+                return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case NO_UNICODE:
+                    case CHAR:
                     {
-                        PL_ASSERT_EQUAL(noUnicode1, noUnicode1);
-                        PL_ASSERT_EQUAL(noUnicode2, noUnicode2);
+                        test.assign(ch_1);
+                        PL_ASSERT_EQUAL(test, ostr_ch_ascii_1);
+                        return true;
                     }
-                    case SOME_UNICODE:
+                    case OCHAR_ASCII:
                     {
-                        PL_ASSERT_EQUAL(someUnicode1, someUnicode1);
-                        PL_ASSERT_EQUAL(someUnicode2, someUnicode2);
+                        test.assign(ochr_ascii_1);
+                        PL_ASSERT_EQUAL(test, ostr_ch_ascii_1);
+                        return true;
                     }
-                    case JUST_UNICODE:
+                    case OCHAR_UNICODE:
                     {
-                        PL_ASSERT_EQUAL(justUnicode1, justUnicode1);
-                        PL_ASSERT_EQUAL(justUnicode2, justUnicode2);
+                        test.assign(ochr_unicode_1);
+                        PL_ASSERT_EQUAL(test, ostr_ch_unicode_1);
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        test.assign(str_ascii_1.c_str());
+                        PL_ASSERT_EQUAL(test, ostr_ascii_1);
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        test.assign(str_unicode_1.c_str());
+                        PL_ASSERT_EQUAL(test, ostr_unicode_1);
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        test.assign(str_ascii_1);
+                        PL_ASSERT_EQUAL(test, ostr_ascii_1);
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        test.assign(str_unicode_1);
+                        PL_ASSERT_EQUAL(test, ostr_unicode_1);
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        test.assign(ostr_ascii_1);
+                        PL_ASSERT_EQUAL(test, ostr_ascii_1);
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        test.assign(ostr_unicode_1);
+                        PL_ASSERT_EQUAL(test, ostr_unicode_1);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
                     }
                 }
-                return true;
             }
     };
 
-    // P-tB4002[a-c]
-    class TestOneString_EqualFail : public TestOneString
-    {
-        public:
-            explicit TestOneString_EqualFail(TestStringType type)
-            :TestOneString(type)
-            {}
-
-            testdoc_t get_title() override
-            {
-                return "OneString: == Operator Fail " + title;
-            }
-
-            testdoc_t get_docs() override
-            {
-                return "Test that the == operator returns false between non-like strings.";
-            }
-
-            bool run() override {
-                switch(stringType)
-                {
-                    case NO_UNICODE:
-                    {
-                        PL_ANTIASSERT_EQUAL(noUnicode1, noUnicode2);
-                        PL_ANTIASSERT_EQUAL(noUnicode2, noUnicode1);
-                    }
-                    case SOME_UNICODE:
-                    {
-                        PL_ANTIASSERT_EQUAL(someUnicode1, someUnicode2);
-                        PL_ANTIASSERT_EQUAL(someUnicode2, someUnicode1);
-                    }
-                    case JUST_UNICODE:
-                    {
-                        PL_ANTIASSERT_EQUAL(justUnicode1, justUnicode2);
-                        PL_ANTIASSERT_EQUAL(justUnicode2, justUnicode1);
-                    }
-                }
-                return true;
-            }
-    };
-
-    // P-tB4003[a-c]
-    class TestOneString_NotEqual : public TestOneString
-    {
-        public:
-            explicit TestOneString_NotEqual(TestStringType type)
-            :TestOneString(type)
-            {}
-
-            testdoc_t get_title() override
-            {
-                return "OneString: != Operator " + title;
-            }
-
-            testdoc_t get_docs() override
-            {
-                return "Test that the != operator returns true between non-like strings.";
-            }
-
-            bool run() override {
-                switch(stringType)
-                {
-                    case NO_UNICODE:
-                    {
-                        PL_ASSERT_NOT_EQUAL(noUnicode1, noUnicode2);
-                        PL_ASSERT_NOT_EQUAL(noUnicode2, noUnicode1);
-                    }
-                    case SOME_UNICODE:
-                    {
-                        PL_ASSERT_NOT_EQUAL(someUnicode1, someUnicode2);
-                        PL_ASSERT_NOT_EQUAL(someUnicode2, someUnicode1);
-                    }
-                    case JUST_UNICODE:
-                    {
-                        PL_ASSERT_NOT_EQUAL(justUnicode1, justUnicode2);
-                        PL_ASSERT_NOT_EQUAL(justUnicode2, justUnicode1);
-                    }
-                }
-                return true;
-            }
-    };
-
-    // P-tB4004[a-c]
-    class TestOneString_NotEqualFail : public TestOneString
-    {
-        public:
-            explicit TestOneString_NotEqualFail(TestStringType type)
-            :TestOneString(type)
-            {}
-
-            testdoc_t get_title() override
-            {
-                return "OneString: != Operator Fail " + title;
-            }
-
-            testdoc_t get_docs() override
-            {
-                return "Test that the != operator returns false between like strings.";
-            }
-
-            bool run() override {
-                switch(stringType)
-                {
-                    case NO_UNICODE:
-                    {
-                        PL_ANTIASSERT_NOT_EQUAL(noUnicode1, noUnicode1);
-                        PL_ANTIASSERT_NOT_EQUAL(noUnicode2, noUnicode2);
-                    }
-                    case SOME_UNICODE:
-                    {
-                        PL_ANTIASSERT_NOT_EQUAL(someUnicode1, someUnicode1);
-                        PL_ANTIASSERT_NOT_EQUAL(someUnicode2, someUnicode2);
-                    }
-                    case JUST_UNICODE:
-                    {
-                        PL_ANTIASSERT_NOT_EQUAL(justUnicode1, justUnicode1);
-                        PL_ANTIASSERT_NOT_EQUAL(justUnicode2, justUnicode2);
-                    }
-                }
-                return true;
-            }
-    };
-
-    // P-tB4005[a-c]
+    // P-tB4002[a-i]
     class TestOneString_Equals : public TestOneString
     {
+        protected:
+            OneString test;
+
         public:
             explicit TestOneString_Equals(TestStringType type)
             :TestOneString(type)
@@ -277,125 +261,298 @@ namespace pawlib
 
             testdoc_t get_title() override
             {
-                return "OneString: equals() " + title;
+                return "OneString: Equals " + title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test that the equal() function returns true between like strings.";
+                return "Test comparison with the equals() function.";
+            }
+
+            bool janitor() override {
+                OneString test = "";
+                return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case NO_UNICODE:
+                    case CHAR:
                     {
-                        PL_ASSERT_TRUE(noUnicode1.equals(noUnicode1));
-                        PL_ASSERT_TRUE(noUnicode2.equals(noUnicode2));
+                        test = ch_1;
+                        PL_ASSERT_TRUE(test.equals(ch_1));
+                        PL_ASSERT_FALSE(test.equals(ch_2));
+                        return true;
                     }
-                    case SOME_UNICODE:
+                    case OCHAR_ASCII:
                     {
-                        PL_ASSERT_TRUE(someUnicode1.equals(someUnicode1));
-                        PL_ASSERT_TRUE(someUnicode2.equals(someUnicode2));
+                        test = ochr_ascii_1;
+                        PL_ASSERT_TRUE(test.equals(ochr_ascii_1));
+                        PL_ASSERT_FALSE(test.equals(ochr_ascii_2));
+                        return true;
                     }
-                    case JUST_UNICODE:
+                    case OCHAR_UNICODE:
                     {
-                        PL_ASSERT_TRUE(justUnicode1.equals(justUnicode1));
-                        PL_ASSERT_TRUE(justUnicode2.equals(justUnicode2));
+                        test = ochr_unicode_1;
+                        PL_ASSERT_TRUE(test.equals(ochr_unicode_1));
+                        PL_ASSERT_FALSE(test.equals(ochr_unicode_2));
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        test = str_ascii_1;
+                        PL_ASSERT_TRUE(test.equals(str_ascii_1.c_str()));
+                        PL_ASSERT_FALSE(test.equals(str_ascii_2.c_str()));
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        test = str_unicode_1;
+                        PL_ASSERT_TRUE(test.equals(str_unicode_1.c_str()));
+                        PL_ASSERT_FALSE(test.equals(str_unicode_2.c_str()));
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        test = str_ascii_1;
+                        PL_ASSERT_TRUE(test.equals(str_ascii_1));
+                        PL_ASSERT_FALSE(test.equals(str_ascii_2));
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        test = str_unicode_1;
+                        PL_ASSERT_TRUE(test.equals(str_unicode_1));
+                        PL_ASSERT_FALSE(test.equals(str_unicode_2));
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        test = ostr_ascii_1;
+                        PL_ASSERT_TRUE(test.equals(ostr_ascii_1));
+                        PL_ASSERT_FALSE(test.equals(ostr_ascii_2));
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        test = ostr_unicode_1;
+                        PL_ASSERT_TRUE(test.equals(ostr_unicode_1));
+                        PL_ASSERT_FALSE(test.equals(ostr_unicode_2));
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
                     }
                 }
-                return true;
             }
     };
 
-    // P-tB4006[a-c]
-    class TestOneString_EqualsFail : public TestOneString
+    // P-tB4003[a-i]
+    class TestOneString_OpEquals : public TestOneString
     {
+        protected:
+            OneString test;
+
         public:
-            explicit TestOneString_EqualsFail(TestStringType type)
+            explicit TestOneString_OpEquals(TestStringType type)
             :TestOneString(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: equals() Fail " + title;
+                return "OneString: Equals (==) " + title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test that the equals() function returns false between non-like strings.";
+                return "Test comparison with the == operator.";
+            }
+
+            bool janitor() override {
+                OneString test = "";
+                return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case NO_UNICODE:
+                    case CHAR:
                     {
-                        PL_ASSERT_FALSE(noUnicode1.equals(noUnicode2));
-                        PL_ASSERT_FALSE(noUnicode2.equals(noUnicode1));
+                        test = ch_1;
+                        PL_ASSERT_TRUE(test == ch_1);
+                        PL_ASSERT_FALSE(test == ch_2);
+                        return true;
                     }
-                    case SOME_UNICODE:
+                    case OCHAR_ASCII:
                     {
-                        PL_ASSERT_FALSE(someUnicode1.equals(someUnicode2));
-                        PL_ASSERT_FALSE(someUnicode2.equals(someUnicode1));
+                        test = ochr_ascii_1;
+                        PL_ASSERT_TRUE(test == ochr_ascii_1);
+                        PL_ASSERT_FALSE(test == ochr_ascii_2);
+                        return true;
                     }
-                    case JUST_UNICODE:
+                    case OCHAR_UNICODE:
                     {
-                        PL_ASSERT_FALSE(justUnicode1.equals(justUnicode2));
-                        PL_ASSERT_FALSE(justUnicode2.equals(justUnicode1));
+                        test = ochr_unicode_1;
+                        PL_ASSERT_TRUE(test == ochr_unicode_1);
+                        PL_ASSERT_FALSE(test == ochr_unicode_2);
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        test = str_ascii_1;
+                        PL_ASSERT_TRUE(test == str_ascii_1.c_str());
+                        PL_ASSERT_FALSE(test == str_ascii_2.c_str());
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        test = str_unicode_1;
+                        PL_ASSERT_TRUE(test == str_unicode_1.c_str());
+                        PL_ASSERT_FALSE(test == str_unicode_2.c_str());
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        test = str_ascii_1;
+                        PL_ASSERT_TRUE(test == str_ascii_1);
+                        PL_ASSERT_FALSE(test == str_ascii_2);
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        test = str_unicode_1;
+                        PL_ASSERT_TRUE(test == str_unicode_1);
+                        PL_ASSERT_FALSE(test == str_unicode_2);
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        test = ostr_ascii_1;
+                        PL_ASSERT_TRUE(test == ostr_ascii_1);
+                        PL_ASSERT_FALSE(test == ostr_ascii_2);
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        test = ostr_unicode_1;
+                        PL_ASSERT_TRUE(test == ostr_unicode_1);
+                        PL_ASSERT_FALSE(test == ostr_unicode_2);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
                     }
                 }
-                return true;
             }
     };
 
-    // P-tB4007
-    class TestOneString_Append : public Test
+    // P-tB4004[a-i]
+    class TestOneString_OpNotEquals : public TestOneString
     {
         protected:
-            OneString start = "Ø÷";
-            OneString target1 = "Ø÷a";
-            OneString target2 = "Ø÷aऐ";
             OneString test;
+
         public:
-            TestOneString_Append(){}
+            explicit TestOneString_OpNotEquals(TestStringType type)
+            :TestOneString(type)
+            {}
 
             testdoc_t get_title() override
             {
-                return "OneString: append()";
+                return "OneString: Not Equals (!=) " + title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test for adding characters to a OneString with append()";
+                return "Test comparison with the != operator.";
             }
 
-            bool pre() override
-            {
-                return janitor();
-            }
-
-            bool janitor() override
-            {
-                test = start;
-                return (test == start);
-            }
-
-            bool run() override
-            {
-                // Append a C char
-                test.append('a');
-                PL_ASSERT_EQUAL(test, target1);
-
-                // Append a Unicode character string literal
-                test.append("ऐ");
-                PL_ASSERT_EQUAL(test, target2);
-
+            bool janitor() override {
+                OneString test = "";
                 return true;
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        test = ch_1;
+                        PL_ASSERT_TRUE(test != ch_2);
+                        PL_ASSERT_FALSE(test != ch_1);
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        test = ochr_ascii_1;
+                        PL_ASSERT_TRUE(test != ochr_ascii_2);
+                        PL_ASSERT_FALSE(test != ochr_ascii_1);
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        test = ochr_unicode_1;
+                        PL_ASSERT_TRUE(test != ochr_unicode_2);
+                        PL_ASSERT_FALSE(test != ochr_unicode_1);
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        test = str_ascii_1;
+                        PL_ASSERT_TRUE(test != str_ascii_2.c_str());
+                        PL_ASSERT_FALSE(test != str_ascii_1.c_str());
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        test = str_unicode_1;
+                        PL_ASSERT_TRUE(test != str_unicode_2.c_str());
+                        PL_ASSERT_FALSE(test != str_unicode_1.c_str());
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        test = str_ascii_1;
+                        PL_ASSERT_TRUE(test != str_ascii_2);
+                        PL_ASSERT_FALSE(test != str_ascii_1);
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        test = str_unicode_1;
+                        PL_ASSERT_TRUE(test != str_unicode_2);
+                        PL_ASSERT_FALSE(test != str_unicode_1);
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        test = ostr_ascii_1;
+                        PL_ASSERT_TRUE(test != ostr_ascii_2);
+                        PL_ASSERT_FALSE(test != ostr_ascii_1);
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        test = ostr_unicode_1;
+                        PL_ASSERT_TRUE(test != ostr_unicode_2);
+                        PL_ASSERT_FALSE(test != ostr_unicode_1);
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
             }
     };
 
-    // P-tB4008
+    ///////////// REUSABLE /////////////
+
     class TestOneString_PopBack : public Test
     {
         protected:
@@ -435,7 +592,6 @@ namespace pawlib
             }
     };
 
-    // P-tB4009
     class TestOneString_Length : public Test
     {
         protected:
@@ -475,11 +631,11 @@ namespace pawlib
             }
     };
 
-    // P-tB4010
     class TestOneString_Empty : public Test
     {
         protected:
-            OneString test = "";
+            OneString test1 = "";
+            OneString test2 = "a";
 
         public:
             TestOneString_Empty(){}
@@ -496,84 +652,12 @@ namespace pawlib
 
             bool run() override
             {
-                PL_ASSERT_TRUE(test.empty());
+                PL_ASSERT_TRUE(test1.empty());
+                PL_ASSERT_FALSE(test2.empty());
                 return true;
             }
     };
 
-    // P-tB4011
-    class TestOneString_EmptyFail : public Test
-    {
-        protected:
-            OneString test = "a";
-
-        public:
-            TestOneString_EmptyFail(){}
-
-            testdoc_t get_title() override
-            {
-                return "OneString: empty() Fail";
-            }
-
-            testdoc_t get_docs() override
-            {
-                return "Test that the empty() function returns false on a non-empty string.";
-            }
-
-            bool run() override
-            {
-                PL_ASSERT_FALSE(test.empty());
-                return true;
-            }
-    };
-
-    // P-tB4012
-    class TestOneString_Insert : public Test
-    {
-        protected:
-            OneString start = "Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷";
-            OneString test;
-
-        public:
-            TestOneString_Insert(){}
-
-            testdoc_t get_title() override
-            {
-                return "OneString: insert()";
-            }
-
-            testdoc_t get_docs() override
-            {
-                return "Test inserting characters in the middle of a OneString using insert().";
-            }
-
-            bool pre() override
-            {
-                return janitor();
-            }
-
-            bool janitor() override
-            {
-                test = start;
-                return (test == start);
-            }
-
-            bool run() override
-            {
-                OneChar toInsert;
-                toInsert = "Ø";
-                OneChar toCheck;
-                toCheck = "÷";
-                test.insert(3, toInsert);
-
-                PL_ASSERT_EQUAL(test[3], toInsert);
-                PL_ASSERT_EQUAL(test[2], toCheck);
-                PL_ASSERT_EQUAL(test[4], toCheck);
-                return true;
-            }
-    };
-
-    // P-tB4013
     class TestOneString_Clear : public Test
     {
         protected:
@@ -611,7 +695,6 @@ namespace pawlib
             }
     };
 
-    // P-tB4014
     class TestOneString_Swap : public Test
     {
         protected:
@@ -656,7 +739,6 @@ namespace pawlib
             }
     };
 
-    // P-tB4015
     class TestOneString_Substr : public Test
     {
         protected:
@@ -683,7 +765,6 @@ namespace pawlib
             }
     };
 
-    // P-tB4016
     class TestOneString_At : public Test
     {
         protected:
@@ -711,7 +792,6 @@ namespace pawlib
             }
     };
 
-    // P-tB4017
     class TestOneString_ForceResize : public Test
     {
         protected:

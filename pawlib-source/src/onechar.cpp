@@ -105,9 +105,17 @@ namespace pawlib
 
     bool OneChar::equals(const char* cmp) const
     {
-        uint_least8_t cmpSize = evaluateLength(cmp);
+        size_t cmpSize = evaluateLength(cmp);
         // If the string doesn't null-terminate after one character, mismatch.
         if (cmp[cmpSize] != '\0') {return false;}
+        // Ensure the character size matches
+        if (cmpSize != this->size) {return false;}
+        return (memcmp(this->internal, cmp, cmpSize) == 0);
+    }
+
+    bool OneChar::equals_at(const char* cmp) const
+    {
+        size_t cmpSize = evaluateLength(cmp);
         // Ensure the character size matches
         if (cmpSize != this->size) {return false;}
         return (memcmp(this->internal, cmp, cmpSize) == 0);
