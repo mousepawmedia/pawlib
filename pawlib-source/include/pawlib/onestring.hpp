@@ -49,6 +49,7 @@
 #ifndef PAWLIB_ONESTRING_HPP
 #define PAWLIB_ONESTRING_HPP
 
+#include <algorithm>
 #include <cstring>
 #include <iomanip>
 #include <iostream>
@@ -59,13 +60,14 @@ namespace pawlib
 {
     class OneString
     {
-        private:
+        public:
             /// The default size the OneString is initialized at
-            const int BASE_SIZE = 4;
+            inline static const int BASE_SIZE = 4;
 
             /// The factor the capacity is multiplied by to resize
-            const float RESIZE_FACTOR = 1.5;
+            inline static const float RESIZE_FACTOR = 1.5;
 
+        private:
             /// The maximum number of elements that can be stored without resize
             size_t _capacity;
 
@@ -187,15 +189,28 @@ namespace pawlib
             * Access
             *******************************************/
 
-            /**Gets the OneChar at a given position
-             * \param the index of the OneChar to return
-             * \return cooresponding OneChar */
+            /** Gets the OneChar at a given position
+              * \param the index of the OneChar to return
+              * \return cooresponding OneChar */
             OneChar& at(size_t pos) const;
 
-            /**Gets the current capacity of the OneString.
-             * Used primarily internally for resizing purposes.
-             * \return the size of the OneString */
+            /** Gets the current capacity of the OneString.
+              * Used primarily internally for resizing purposes.
+              * \return the size of the OneString */
             size_t capacity() const;
+
+            /** Copies a substring from the OneString to the given array.
+              * Guaranteed to copy the entirety of any Unicode character,
+              * or else skip it.
+              * \param pointer to an array of characters (c-string)
+              * \param the maximum number of char elements in the c-string
+              * \param the number of Unicode characters to copy. Defaults to 0,
+              * which will copy the maximum number of characters that will fit
+              * into the c-string.
+              * \param the position of the first character to be copied (optional)
+              * If this is greater than the string length, it throws out_of_range
+              * \return the number of char elements copied to the array*/
+            size_t copy(char* arr, size_t max, size_t len = 0, size_t pos = 0) const;
 
             /** Returns a c-string equivalent of a OneString
               * \return the c-string (remember to free[]) */
@@ -218,6 +233,15 @@ namespace pawlib
               * WARNING: Given a OneString 's', s.size() < sizeof(s)
               * \return the number of bytes in the OneString */
             size_t size() const;
+
+            /** Gets the byte size of the equivalent c-string for the
+              * specified substring.
+              * \param the number of Unicode characters in the substring.
+              * \param the position of the first character in the substring.
+              * Defaults to 0.
+              * If this is greater than the string length, it throws out_of_range
+              */
+            size_t size(size_t, size_t = 0) const;
 
             /*******************************************
             * Comparison
@@ -244,6 +268,18 @@ namespace pawlib
             void assign(const std::string&);
             void assign(const OneChar&);
             void assign(const OneString&);
+
+            void append(const char);
+            void append(const char*);
+            void append(const std::string&);
+            void append(const OneChar&);
+            void append(const OneString&);
+
+            void push_back(char ch) { append(ch); }
+            void push_back(const char* cstr) { append(cstr); }
+            void push_back(const std::string& str) { append(str); }
+            void push_back(const OneChar& ochr) { append(ochr); }
+            void push_back(const OneString& ostr) { append(ostr); }
 
             /*******************************************
             * Removing
@@ -302,16 +338,6 @@ namespace pawlib
 
             ////////////// REVIEW /////////////////
 
-            /**Adds the corresponding type to
-             * the end of the OneString
-             * in the form of a OneChar.
-             * \param the characters to be added to the OneString */
-            void append(const char);
-            void append(const char*);
-            void append(const std::string&);
-            void append(const OneChar&);
-            void append(const OneString&);
-
             /**Inserts a series of characters
              * Into a OneString at a given position
              * \param the position to be added
@@ -322,16 +348,6 @@ namespace pawlib
             void insert(size_t pos, std::string ostr);
             void insert(size_t pos, OneChar& ochar);
             void insert(size_t pos, const OneString& ostr);
-
-            /*An alias for append, adds characters
-            * to the end of a OneString
-            * \param the characters to be added
-            * \returns */
-            void push_back(char ochar);
-            void push_back(const char* ostr);
-            void push_back(const std::string& ostr);
-            void push_back(const OneChar& ochar);
-            void push_back(const OneString& ostr);
 
 
 

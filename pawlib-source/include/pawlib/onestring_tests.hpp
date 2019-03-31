@@ -1497,8 +1497,95 @@ namespace pawlib
             }
     };
 
-    ///////////// REUSABLE /////////////
+    // P-tB4010
+    class TestOneString_At : public Test
+    {
+        protected:
+            OneString test = "⛰ The Matterhorn ⛰";
 
+        public:
+            TestOneString_At(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: at()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test accessing one character of a OneString with at()";
+            }
+
+            bool run() override
+            {
+                OneChar toCheck;
+                toCheck = "⛰";
+                PL_ASSERT_EQUAL(test.at(17), toCheck);
+                return true;
+            }
+    };
+
+    // P-tB4011
+    class TestOneString_OpAt : public Test
+    {
+        protected:
+            OneString test = "⛰ The Matterhorn ⛰";
+
+        public:
+            TestOneString_OpAt(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: at ([])";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test accessing one character of a OneString with the [] operator.";
+            }
+
+            bool run() override
+            {
+                OneChar toCheck;
+                toCheck = "⛰";
+                PL_ASSERT_EQUAL(test[17], toCheck);
+                return true;
+            }
+    };
+
+    // P-tB4012
+    class TestOneString_Capacity : public Test
+    {
+        protected:
+            OneString test = "🐦 ❤️ my big sphinx of 💎.";
+
+        public:
+            TestOneString_Capacity(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: at ([])";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test accessing one character of a OneString with the [] operator.";
+            }
+
+            bool run() override
+            {
+                size_t expected_capacity = OneString::BASE_SIZE;
+                size_t string_length = test.length();
+                while (expected_capacity < string_length)
+                {
+                    expected_capacity *= OneString::RESIZE_FACTOR;
+                }
+                PL_ASSERT_EQUAL(test.capacity(), expected_capacity);
+                return true;
+            }
+    };
+
+    // P-tB4013
     class TestOneString_PopBack : public Test
     {
         protected:
@@ -1538,6 +1625,7 @@ namespace pawlib
             }
     };
 
+    // P-tB4014
     class TestOneString_Length : public Test
     {
         protected:
@@ -1576,6 +1664,106 @@ namespace pawlib
                 return true;
             }
     };
+
+    // P-tB4015
+    class TestOneString_Size : public Test
+    {
+        protected:
+            OneString start = "M©‽🐭‽©M";
+            OneString test;
+
+        public:
+            TestOneString_Size(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: size()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test the size() function.";
+            }
+
+            bool pre() override
+            {
+                return janitor();
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override
+            {
+                PL_ASSERT_EQUAL(test.size(4), 11u);
+                PL_ASSERT_EQUAL(test.size(4, 3), 11u);
+
+                PL_ASSERT_EQUAL(test.size(), 17u);
+                // Remove last 'M' (1 byte)
+                test.pop_back();
+                PL_ASSERT_EQUAL(test.size(), 16u);
+                // Remove last '©' (2 bytes)
+                test.pop_back();
+                PL_ASSERT_EQUAL(test.size(), 14u);
+                // Remove last '‽' (3 bytes)
+                test.pop_back();
+                PL_ASSERT_EQUAL(test.size(), 11u);
+                // Remove last '🐭' (4 bytes)
+                test.pop_back();
+                PL_ASSERT_EQUAL(test.size(), 7u);
+                return true;
+            }
+    };
+
+    // P-tB4016
+    class TestOneString_Copy : public Test
+    {
+        protected:
+            OneString test = "🐦 ❤ my big sphinx of 💎.";
+            OneString sub1 = "🐦 ❤"; //3, 0
+            OneString sub2 = "of 💎"; //4, 18
+
+        public:
+            TestOneString_Copy(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: copy()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test copying to a c-string with copy().";
+            }
+
+            bool run() override
+            {
+                // Test copying the entire string.
+                char* cstr = new char[test.size()];
+                test.copy(cstr, test.size());
+                PL_ASSERT_TRUE(test.equals(cstr));
+                delete[] cstr;
+
+                // Test copying substring 1
+                cstr = new char[test.size(3, 0)];
+                test.copy(cstr, test.size(3, 0), 3, 0);
+                PL_ASSERT_TRUE(sub1.equals(cstr));
+                delete[] cstr;
+
+                // Test copying substring 2
+                cstr = new char[test.size(4, 18)];
+                test.copy(cstr, test.size(4, 18), 4, 18);
+                PL_ASSERT_TRUE(sub2.equals(cstr));
+                delete[] cstr;
+
+                return true;
+            }
+    };
+
+    ///////////// REUSABLE /////////////
 
     class TestOneString_Empty : public Test
     {
@@ -1707,33 +1895,6 @@ namespace pawlib
             {
                 OneString partial = start.substr(12,4);
                 PL_ASSERT_EQUAL(partial, "horn");
-                return true;
-            }
-    };
-
-    class TestOneString_At : public Test
-    {
-        protected:
-            OneString before = "⛰ The Matterhorn ⛰";
-
-        public:
-            TestOneString_At(){}
-
-            testdoc_t get_title() override
-            {
-                return "OneString: at()";
-            }
-
-            testdoc_t get_docs() override
-            {
-                return "Test accessing one character of a OneString with at()";
-            }
-
-            bool run() override
-            {
-                OneChar toCheck;
-                toCheck = "⛰";
-                PL_ASSERT_EQUAL(before.at(17), toCheck);
                 return true;
             }
     };

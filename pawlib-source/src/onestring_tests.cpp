@@ -94,43 +94,44 @@ namespace pawlib
         register_test("P-tB4009h", new TestOneString_OpGreaterEqual(TestOneString::OSTR_ASCII));
         register_test("P-tB4009i", new TestOneString_OpGreaterEqual(TestOneString::OSTR_UNICODE));
 
-        // tB4010[a-i]: append
-        // tB4011[a-i]: opAppend
-        // tB4012: clear
-        // tB4013: erase
-        // tB4014[a-i]: insert
-        // tB4015: push_back
-        // tB4016: replace
-        // tB4017: reverse
-        // tB4018: swap
+        register_test("P-tB4010", new TestOneString_At());
+        register_test("P-tB4011", new TestOneString_OpAt());
+        register_test("P-tB4012", new TestOneString_Capacity());
+        register_test("P-tB4013", new TestOneString_PopBack());
+        register_test("P-tB4014", new TestOneString_Length());
+        register_test("P-tB4015", new TestOneString_Size());
+        register_test("P-tB4016", new TestOneString_Copy());
+        // tB4017: c_str (data)
+        // tB4018: empty
+        // tB4019: getline
+        // tB4020: length
+        // tB4021: max_size
+        // tB4022: substr
 
-        // tB4019: at
-        // tB4020: opAt ([])
-        // tB4021: back
-        // tB4022: capacity
-        // tB4023: copy
-        // tB4024: c_str (data)
-        // tB4025: empty
-        // tB4026: front
-        // tB4027: getline
-        // tB4028: length
-        // tB4029: max_size
-        // tB4030: pop_back
-        // tB4031: substr
+        // tB4023[a-i]: append
+        // tB4024[a-i]: opAppend
+        // tB4025: back
+        // tB4026: clear
+        // tB4027: erase
+        // tB4028: front
+        // tB4029[a-i]: insert
+        // tB4030: replace
+        // tB4031: reverse
+        // tB4032: swap
 
-        // tB4032: opStreamInsert (<<)
-        // tB4033: opStreamExtract (>>)
+        // tB4033: opStreamInsert (<<)
+        // tB4034: opStreamExtract (>>)
 
-        // tB4034: find
-        // tB4035: find_first_not_of
-        // tB4036: find_first_of
-        // tB4037: find_last_not_of
-        // tB4038: rfind
+        // tB4035: find
+        // tB4036: find_first_not_of
+        // tB4037: find_first_of
+        // tB4038: find_last_not_of
+        // tB4039: rfind
 
-        // tB4039: expand
-        // tB4040: reserve
-        // tB4041: shrink_to_fit
-        // tB4042: force resize
+        // tB4040: expand
+        // tB4041: reserve
+        // tB4042: shrink_to_fit
+        // tB4043: "force resize"
 
         //TODO: Comparative tests against std::string
     }

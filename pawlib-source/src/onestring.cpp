@@ -74,6 +74,40 @@ namespace pawlib
         return _capacity;
     }
 
+    size_t OneString::copy(char* arr, size_t max, size_t len, size_t pos) const
+    {
+        // Reminder: len and pos default to 0
+
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::copy(): specified pos out of range");
+        }
+
+        // Remove one char from the max to account for the null terminator.
+        --max;
+
+        // The indices for the c-string and (this) onestring.
+        size_t cstr_i = 0;
+        size_t ostr_i = pos;
+
+        // Account for unspecified len, or adjust so it doesn't blow past the end.
+        if (len == 0 || len + pos > this->_elements)
+        {
+            len = this->_elements - pos;
+        }
+
+        while (cstr_i < max && ostr_i < len)
+        {
+            memcpy(arr + cstr_i, this->internal[ostr_i].internal, this->internal[ostr_i].size);
+            cstr_i += this->internal[ostr_i].size;
+            ++ostr_i;
+        }
+
+        arr[cstr_i] = '\0';
+
+        return cstr_i;
+    }
+
     const char* OneString::c_str() const
     {
         size_t n = size();
@@ -100,14 +134,35 @@ namespace pawlib
 
     size_t OneString::size() const
     {
-        size_t bytes = 0;
+        // Start counting at 1 to account for the null terminator.
+        size_t bytes = 1;
         // Sum all of the byte lengths of the OneChars.
         for(size_t i = 0; i < _elements; ++i)
         {
             bytes += this->internal[i].size;
         }
-        // Add one extra byte for the null terminator
-        return bytes+1;
+        return bytes;
+    }
+
+    size_t OneString::size(size_t len, size_t pos) const
+    {
+        // Reminder: pos defaults to 0
+
+        // Ensure the starting position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::size(): specified pos out of range");
+        }
+
+        // Start counting at 1 to account for the null terminator.
+        size_t bytes = 1;
+
+        // Sum all of the byte lengths of the OneChars in the range
+        for(size_t i = pos; i < (pos + len) && i < _elements; ++i)
+        {
+            bytes += this->internal[i].size;
+        }
+        return bytes;
     }
 
     /*******************************************
@@ -331,6 +386,16 @@ namespace pawlib
         }
     }
 
+    void OneString::pop_back()
+    {
+        if(_elements > 0)
+        {
+            /* We don't actually need to delete anything. The space will be
+            * reused or deallocated as needed by other functions. */
+            --_elements;
+        }
+    }
+
     ///////////////////// REVIEW //////////////////////
 
     void OneString::insert(size_t pos, const OneString& ostr)
@@ -442,42 +507,6 @@ namespace pawlib
         this -> append(left);
         this -> append(ochar);
         this -> append(right);
-    }
-
-    void OneString::push_back(char ochar)
-    {
-        append(ochar);
-    }
-
-    void OneString::push_back(const char* ostr)
-    {
-        append(ostr);
-    }
-
-    void OneString::push_back(const std::string& ostr)
-    {
-        append(ostr);
-    }
-
-    void OneString::push_back(const OneChar& ochar)
-    {
-        append(ochar);
-    }
-
-
-
-
-    void OneString::pop_back()
-    {
-        if(_elements == 0)
-        {
-            throw std::out_of_range("OneString: Cannot pop from an empty string.");
-        }
-        else
-        {
-            internal[_elements - 1] = '\0';
-            --_elements;
-        }
     }
 
     bool OneString::lessThanCharP(const char* ostr)
