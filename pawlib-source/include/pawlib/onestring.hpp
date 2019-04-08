@@ -53,6 +53,7 @@
 #include <cstring>
 #include <iomanip>
 #include <iostream>
+#include <istream>
 
 #include "pawlib/onechar.hpp"
 
@@ -336,6 +337,20 @@ namespace pawlib
             bool operator>=(const OneChar& ochr) const { return (compare(ochr) >= 0); }
             bool operator>=(const OneString& ostr) const { return (compare(ostr) >= 0); }
 
+            /*******************************************
+            * Friend Functions
+            ********************************************/
+
+            static std::istream& getline(std::istream& is, OneString& ostr, char delim = '\n')
+            {
+                char ch;
+                while (is.get(ch) && ch != delim)
+                {
+                    ostr.append(ch);
+                }
+                return is;
+            }
+
             ////////////// REVIEW /////////////////
 
             /**Inserts a series of characters
@@ -400,6 +415,8 @@ namespace pawlib
             /*******************************************
             * Friends
             *******************************************/
+
+
 
             friend std::istream& operator>>(std::istream& in, OneString& ostr)
             {
