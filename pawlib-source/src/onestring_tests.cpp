@@ -101,9 +101,8 @@ namespace pawlib
         register_test("P-tB4014", new TestOneString_Length());
         register_test("P-tB4015", new TestOneString_Size());
         register_test("P-tB4016", new TestOneString_Copy());
-        // tB4017: c_str (data)
-        // tB4018: empty
-        // tB4019: getline
+        register_test("P-tB4017", new TestOneString_CStr());
+        register_test("P-tB4018", new TestOneString_Empty());
         // tB4020: length
         // tB4021: max_size
         // tB4022: substr

@@ -1763,8 +1763,32 @@ namespace pawlib
             }
     };
 
-    ///////////// REUSABLE /////////////
+    // P-tB4017
+    class TestOneString_CStr : public Test
+    {
+        public:
+            TestOneString_CStr(){}
 
+            testdoc_t get_title() override
+            {
+                return "OneString: c_str()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test the c-string returned by the c_str() function.";
+            }
+
+            bool run() override
+            {
+                const char* cstr = "The quick brown 🦊 jumped over the lazy 🐶.";
+                OneString test = cstr;
+                PL_ASSERT_EQUAL(strcmp(cstr, test.c_str()), 0);
+                return true;
+            }
+    };
+
+    // P-tB4018
     class TestOneString_Empty : public Test
     {
         protected:
@@ -1791,6 +1815,9 @@ namespace pawlib
                 return true;
             }
     };
+
+
+    ///////////// REUSABLE /////////////
 
     class TestOneString_Clear : public Test
     {
