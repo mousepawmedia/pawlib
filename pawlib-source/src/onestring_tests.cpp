@@ -96,39 +96,39 @@ namespace pawlib
 
         register_test("P-tB4010", new TestOneString_At());
         register_test("P-tB4011", new TestOneString_OpAt());
-        register_test("P-tB4012", new TestOneString_Capacity());
-        register_test("P-tB4013", new TestOneString_PopBack());
-        register_test("P-tB4014", new TestOneString_Length());
-        register_test("P-tB4015", new TestOneString_Size());
-        register_test("P-tB4016", new TestOneString_Copy());
-        register_test("P-tB4017", new TestOneString_CStr());
-        register_test("P-tB4018", new TestOneString_Empty());
-        register_test("P-tB4019", new TestOneString_Substr());
+        register_test("P-tB4012", new TestOneString_Back());
+        register_test("P-tB4013", new TestOneString_Front());
+        register_test("P-tB4014", new TestOneString_Capacity());
+        register_test("P-tB4015", new TestOneString_PopBack());
+        register_test("P-tB4016", new TestOneString_Length());
+        register_test("P-tB4017", new TestOneString_Size());
+        register_test("P-tB4018", new TestOneString_Copy());
+        register_test("P-tB4019", new TestOneString_CStr());
+        register_test("P-tB4020", new TestOneString_Empty());
+        register_test("P-tB4021", new TestOneString_Substr());
 
-        register_test("P-tB4020a", new TestOneString_Append(TestOneString::CHAR));
-        register_test("P-tB4020b", new TestOneString_Append(TestOneString::OCHAR_ASCII));
-        register_test("P-tB4020c", new TestOneString_Append(TestOneString::OCHAR_UNICODE));
-        register_test("P-tB4020d", new TestOneString_Append(TestOneString::CSTR_ASCII));
-        register_test("P-tB4020e", new TestOneString_Append(TestOneString::CSTR_UNICODE));
-        register_test("P-tB4020f", new TestOneString_Append(TestOneString::STR_ASCII));
-        register_test("P-tB4020g", new TestOneString_Append(TestOneString::STR_UNICODE));
-        register_test("P-tB4020h", new TestOneString_Append(TestOneString::OSTR_ASCII));
-        register_test("P-tB4020i", new TestOneString_Append(TestOneString::OSTR_UNICODE));
+        register_test("P-tB4022a", new TestOneString_Append(TestOneString::CHAR));
+        register_test("P-tB4022b", new TestOneString_Append(TestOneString::OCHAR_ASCII));
+        register_test("P-tB4022c", new TestOneString_Append(TestOneString::OCHAR_UNICODE));
+        register_test("P-tB4022d", new TestOneString_Append(TestOneString::CSTR_ASCII));
+        register_test("P-tB4022e", new TestOneString_Append(TestOneString::CSTR_UNICODE));
+        register_test("P-tB4022f", new TestOneString_Append(TestOneString::STR_ASCII));
+        register_test("P-tB4022g", new TestOneString_Append(TestOneString::STR_UNICODE));
+        register_test("P-tB4022h", new TestOneString_Append(TestOneString::OSTR_ASCII));
+        register_test("P-tB4022i", new TestOneString_Append(TestOneString::OSTR_UNICODE));
 
-        register_test("P-tB4021a", new TestOneString_OpAppend(TestOneString::CHAR));
-        register_test("P-tB4021b", new TestOneString_OpAppend(TestOneString::OCHAR_ASCII));
-        register_test("P-tB4021c", new TestOneString_OpAppend(TestOneString::OCHAR_UNICODE));
-        register_test("P-tB4021d", new TestOneString_OpAppend(TestOneString::CSTR_ASCII));
-        register_test("P-tB4021e", new TestOneString_OpAppend(TestOneString::CSTR_UNICODE));
-        register_test("P-tB4021f", new TestOneString_OpAppend(TestOneString::STR_ASCII));
-        register_test("P-tB4021g", new TestOneString_OpAppend(TestOneString::STR_UNICODE));
-        register_test("P-tB4021h", new TestOneString_OpAppend(TestOneString::OSTR_ASCII));
-        register_test("P-tB4021i", new TestOneString_OpAppend(TestOneString::OSTR_UNICODE));
+        register_test("P-tB4023a", new TestOneString_OpAppend(TestOneString::CHAR));
+        register_test("P-tB4023b", new TestOneString_OpAppend(TestOneString::OCHAR_ASCII));
+        register_test("P-tB4023c", new TestOneString_OpAppend(TestOneString::OCHAR_UNICODE));
+        register_test("P-tB4023d", new TestOneString_OpAppend(TestOneString::CSTR_ASCII));
+        register_test("P-tB4023e", new TestOneString_OpAppend(TestOneString::CSTR_UNICODE));
+        register_test("P-tB4023f", new TestOneString_OpAppend(TestOneString::STR_ASCII));
+        register_test("P-tB4023g", new TestOneString_OpAppend(TestOneString::STR_UNICODE));
+        register_test("P-tB4023h", new TestOneString_OpAppend(TestOneString::OSTR_ASCII));
+        register_test("P-tB4023i", new TestOneString_OpAppend(TestOneString::OSTR_UNICODE));
 
-        // tB4022: back
-        // tB4023: clear
-        // tB4024: erase
-        // tB4025: front
+        // tB4024: clear
+        // tB4025: erase
         // tB4026[a-i]: insert
         // tB4027: replace
         // tB4028: reverse

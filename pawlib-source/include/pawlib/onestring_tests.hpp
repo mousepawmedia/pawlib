@@ -1554,6 +1554,86 @@ namespace pawlib
     };
 
     // P-tB4012
+    class TestOneString_Back : public Test
+    {
+        protected:
+            OneString start = "⛰ The Matterhorn ⛰";
+            OneString goal = "⛰ The Matterhorn !";
+            OneString test;
+
+        public:
+            TestOneString_Back(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: back()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test accessing the last character of a OneString with back()";
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override
+            {
+                OneChar& ochr = test.back();
+                PL_ASSERT_EQUAL(ochr, "⛰");
+
+                ochr = "!";
+                PL_ASSERT_EQUAL(ochr, "!");
+                PL_ASSERT_EQUAL(test, goal);
+
+                return true;
+            }
+    };
+
+    // P-tB4013
+    class TestOneString_Front : public Test
+    {
+        protected:
+            OneString start = "⛰ The Matterhorn ⛰";
+            OneString goal = "! The Matterhorn ⛰";
+            OneString test;
+
+        public:
+            TestOneString_Front(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: front()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test accessing the first character of a OneString with front()";
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override
+            {
+                OneChar& ochr = test.front();
+                PL_ASSERT_EQUAL(ochr, "⛰");
+
+                ochr = "!";
+                PL_ASSERT_EQUAL(ochr, "!");
+                PL_ASSERT_EQUAL(test, goal);
+
+                return true;
+            }
+    };
+
+    // P-tB4014
     class TestOneString_Capacity : public Test
     {
         protected:
@@ -1585,7 +1665,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4013
+    // P-tB4015
     class TestOneString_PopBack : public Test
     {
         protected:
@@ -1625,7 +1705,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4014
+    // P-tB4016
     class TestOneString_Length : public Test
     {
         protected:
@@ -1665,7 +1745,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4015
+    // P-tB4017
     class TestOneString_Size : public Test
     {
         protected:
@@ -1718,7 +1798,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4016
+    // P-tB4018
     class TestOneString_Copy : public Test
     {
         protected:
@@ -1763,7 +1843,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4017
+    // P-tB4019
     class TestOneString_CStr : public Test
     {
         public:
@@ -1788,7 +1868,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4018
+    // P-tB4020
     class TestOneString_Empty : public Test
     {
         protected:
@@ -1816,7 +1896,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4019
+    // P-tB4021
     class TestOneString_Substr : public Test
     {
         protected:
@@ -1852,7 +1932,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4020
+    // P-tB4022
     class TestOneString_Append : public TestOneString
     {
         protected:
@@ -1877,7 +1957,7 @@ namespace pawlib
 
             bool janitor() override {
                 OneString test = start;
-                return true;
+                return (test == start);
             }
 
             bool run() override {
@@ -1955,13 +2035,12 @@ namespace pawlib
             }
     };
 
-    // P-tB4021
+    // P-tB4023
     class TestOneString_OpAppend : public TestOneString
     {
         protected:
             OneString start = "TEST";
             OneString test = "TEST";
-            // ‽
 
         public:
             explicit TestOneString_OpAppend(TestStringType type)
@@ -1980,7 +2059,7 @@ namespace pawlib
 
             bool janitor() override {
                 OneString test = start;
-                return true;
+                return (test == start);
             }
 
             bool run() override {

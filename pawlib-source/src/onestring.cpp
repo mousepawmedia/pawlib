@@ -59,7 +59,7 @@ namespace pawlib
     * Access
     *******************************************/
 
-    OneChar& OneString::at(size_t pos) const
+    OneChar& OneString::at(size_t pos)
     {
         if (pos > _elements)
         {
@@ -67,6 +67,30 @@ namespace pawlib
         }
 
         return internal[pos];
+    }
+
+    const OneChar& OneString::at(size_t pos) const
+    {
+        if (pos > _elements)
+        {
+            throw std::out_of_range("OneString: Index out of bounds.");
+        }
+
+        return internal[pos];
+    }
+
+    OneChar& OneString::back()
+    {
+        // WARNING: If string is empty, this is undefined (but memory safe)
+        // Return a reference to the last element in the string.
+        return this->internal[_elements - 1];
+    }
+
+    const OneChar& OneString::back() const
+    {
+        // WARNING: If string is empty, this is undefined (but memory safe)
+        // Return a reference to the last element in the string.
+        return this->internal[_elements - 1];
     }
 
     size_t OneString::capacity() const
@@ -125,6 +149,20 @@ namespace pawlib
     bool OneString::empty() const
     {
         return (_elements == 0);
+    }
+
+    OneChar& OneString::front()
+    {
+        // WARNING: If string is empty, this is undefined (but memory safe)
+        // Return a reference to the first element in the string.
+        return this->internal[0];
+    }
+
+    const OneChar& OneString::front() const
+    {
+        // WARNING: If string is empty, this is undefined (but memory safe)
+        // Return a reference to the last element in the string.
+        return this->internal[0];
     }
 
     size_t OneString::length() const

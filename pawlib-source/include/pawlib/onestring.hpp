@@ -198,8 +198,17 @@ namespace pawlib
 
             /** Gets the OneChar at a given position
               * \param the index of the OneChar to return
-              * \return cooresponding OneChar */
-            OneChar& at(size_t pos) const;
+              * \return a reference to the corresponding OneChar */
+            OneChar& at(size_t pos);
+            const OneChar& at(size_t pos) const;
+
+            /** Gets the last OneChar in the string.
+              * If the string is empty, this has undefined behavior
+              * (although it is guaranteed memory safe.)
+              * \return a reference to the last OneChar in the string.
+              */
+            OneChar& back();
+            const OneChar& back() const;
 
             /** Gets the current capacity of the OneString.
               * Used primarily internally for resizing purposes.
@@ -232,17 +241,23 @@ namespace pawlib
              * \returns true if empty, else false */
             bool empty() const;
 
+            /** Gets the first OneChar in the string.
+              * If the string is empty, this has undefined behavior
+              * (although it is guaranteed memory safe.)
+              * \return a reference to the first OneChar in the string.
+              */
+            OneChar& front();
+            const OneChar& front() const;
+
             /**Gets the current number of elements in the OneString
              * \return the number of elements */
             size_t length() const;
 
-            static size_t max_size()
-            {
-                /* The largest theoretical index allowed in OneString is
-                 * the largest possible value of size_t.
-                 */
-                return npos;
-            }
+            /** Returns the largest possible index allowed in OneString.
+              * This is theoretical only, based on implementation. Allocation
+              * may fail well before this.
+              */
+            static size_t max_size() { return npos; }
 
             /**Creates a smaller string out of
              * a series of OneChars in the existing OneString
@@ -264,6 +279,7 @@ namespace pawlib
               * If this is greater than the string length, it throws out_of_range
               */
             size_t size(size_t, size_t = 0) const;
+
 
             /*******************************************
             * Comparison
@@ -314,7 +330,8 @@ namespace pawlib
             * Operators
             ********************************************/
 
-            OneChar& operator[](size_t pos) const { return at(pos); }
+            OneChar& operator[](size_t pos) { return at(pos); }
+            const OneChar& operator[](size_t pos) const { return at(pos); }
 
             OneString& operator=(char ch) { assign(ch); return *this; }
             OneString& operator=(const char* cstr) { assign(cstr); return *this; }
