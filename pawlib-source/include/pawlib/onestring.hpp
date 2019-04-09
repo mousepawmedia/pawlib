@@ -326,6 +326,15 @@ namespace pawlib
             /** Clears a OneString and reallocates it back to BASE_SIZE */
             void clear();
 
+            /** Erases part of a string, reducing its length.
+              * \param the first character to erase. Defaults to 0.
+              * If this is greater than the string length, it throws out_of_range
+              * \param the total number of characters to erase
+              * Defaults to all the characters from the given start position
+              * to the end of the string.
+              */
+            void erase(size_t pos = 0, size_t len = npos);
+
             /*******************************************
             * Operators
             ********************************************/
@@ -382,7 +391,7 @@ namespace pawlib
             void operator+=(const OneString& ostr) { append(ostr); }
 
             /*******************************************
-            * Friend Functions
+            * Static Functions
             ********************************************/
 
             static std::istream& getline(std::istream& is, OneString& ostr, char delim = '\n')

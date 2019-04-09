@@ -2137,8 +2137,7 @@ namespace pawlib
             }
     };
 
-    ///////////// REUSABLE /////////////
-
+    // P-tB4024
     class TestOneString_Clear : public Test
     {
         protected:
@@ -2158,10 +2157,6 @@ namespace pawlib
                 return "Tests for clearing all items in a OneString with clear().";
             }
 
-            bool pre() override {
-                return janitor();
-            }
-
             bool janitor() override
             {
                 test = start;
@@ -2175,6 +2170,50 @@ namespace pawlib
                 return true;
             }
     };
+
+    // P-tB4025
+    class TestOneString_Erase : public Test
+    {
+        protected:
+            OneString start = "The quick brown 🦊 jumped over the lazy 🐶.";
+            OneString outcome1 = "The lazy 🐶."; // pos = 4, len = 30
+            OneString outcome2 = "The quick brown 🦊 jumped"; // pos = 24, len = (undefined)
+            OneString test;
+        public:
+            TestOneString_Erase(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: erase()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test erasing part of a string with erase()";
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override
+            {
+                test.erase(4, 30);
+                PL_ASSERT_EQUAL(test, outcome1);
+
+                // Reset the test string
+                janitor();
+
+                test.erase(24);
+                PL_ASSERT_EQUAL(test, outcome2);
+
+                return true;
+            }
+    };
+
+    ///////////// REUSABLE /////////////
 
     class TestOneString_Swap : public Test
     {

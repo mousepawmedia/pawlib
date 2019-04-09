@@ -63,7 +63,7 @@ namespace pawlib
     {
         if (pos > _elements)
         {
-            throw std::out_of_range("OneString: Index out of bounds.");
+            throw std::out_of_range("OneString::at(): Index out of bounds.");
         }
 
         return internal[pos];
@@ -73,7 +73,7 @@ namespace pawlib
     {
         if (pos > _elements)
         {
-            throw std::out_of_range("OneString: Index out of bounds.");
+            throw std::out_of_range("OneString::at(): Index out of bounds.");
         }
 
         return internal[pos];
@@ -441,6 +441,26 @@ namespace pawlib
             reserve(BASE_SIZE);
             _elements = 0;
         }
+    }
+
+    void OneString::erase(size_t pos, size_t len)
+    {
+        if (pos > _elements)
+        {
+            throw std::out_of_range("OneString::erase(): Index out of bounds.");
+        }
+
+        // Calculate the number of elements we need to REMOVE
+        len = (len > _elements - pos) ? (_elements - pos) : len;
+
+        // Calculate the number of elements we need to move
+        size_t elements_to_move = _elements - pos - len;
+
+        // Overwrite the elements
+        memcpy(this->internal + pos, this->internal + pos + len, sizeof(OneChar) * elements_to_move);
+
+        // Update the number of elements
+        _elements = _elements - len;
     }
 
     void OneString::pop_back()

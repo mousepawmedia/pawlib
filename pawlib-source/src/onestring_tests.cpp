@@ -127,8 +127,8 @@ namespace pawlib
         register_test("P-tB4023h", new TestOneString_OpAppend(TestOneString::OSTR_ASCII));
         register_test("P-tB4023i", new TestOneString_OpAppend(TestOneString::OSTR_UNICODE));
 
-        // tB4024: clear
-        // tB4025: erase
+        register_test("P-tB4024", new TestOneString_Clear());
+        register_test("P-tB4025", new TestOneString_Erase());
         // tB4026[a-i]: insert
         // tB4027: replace
         // tB4028: reverse
