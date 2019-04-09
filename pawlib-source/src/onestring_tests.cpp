@@ -103,34 +103,32 @@ namespace pawlib
         register_test("P-tB4016", new TestOneString_Copy());
         register_test("P-tB4017", new TestOneString_CStr());
         register_test("P-tB4018", new TestOneString_Empty());
-        // tB4020: length
-        // tB4021: max_size
-        // tB4022: substr
+        register_test("P-tB4019", new TestOneString_Substr());
 
-        // tB4023[a-i]: append
-        // tB4024[a-i]: opAppend
-        // tB4025: back
-        // tB4026: clear
-        // tB4027: erase
-        // tB4028: front
-        // tB4029[a-i]: insert
-        // tB4030: replace
-        // tB4031: reverse
-        // tB4032: swap
+        // tB4020[a-i]: append
+        // tB4021[a-i]: opAppend
+        // tB4022: back
+        // tB4023: clear
+        // tB4024: erase
+        // tB4025: front
+        // tB4026[a-i]: insert
+        // tB4027: replace
+        // tB4028: reverse
+        // tB4029: swap
 
-        // tB4033: opStreamInsert (<<)
-        // tB4034: opStreamExtract (>>)
+        // tB4030: opStreamInsert (<<)
+        // tB4031: opStreamExtract (>>)
 
-        // tB4035: find
-        // tB4036: find_first_not_of
-        // tB4037: find_first_of
-        // tB4038: find_last_not_of
-        // tB4039: rfind
+        // tB4032: find
+        // tB4033: find_first_not_of
+        // tB4034: find_first_of
+        // tB4035: find_last_not_of
+        // tB4036: rfind
 
-        // tB4040: expand
-        // tB4041: reserve
-        // tB4042: shrink_to_fit
-        // tB4043: "force resize"
+        // tB4037: expand
+        // tB4038: reserve
+        // tB4039: shrink_to_fit
+        // tB4040: "force resize"
 
         //TODO: Comparative tests against std::string
     }

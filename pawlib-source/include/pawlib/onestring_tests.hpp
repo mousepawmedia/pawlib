@@ -1816,6 +1816,41 @@ namespace pawlib
             }
     };
 
+    // P-tB4019
+    class TestOneString_Substr : public Test
+    {
+        protected:
+            OneString start = "🐦 ❤ my big sphinx of 💎.";
+            OneString sub1 = "🐦 ❤"; //pos = 0, len = 3
+            OneString sub2 = "of 💎"; //pos = 18, len = 4
+            OneString sub3 = "x of 💎."; //pos = 16, len = (undefined)
+        public:
+            TestOneString_Substr(){}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: substr()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test creation of substrings with substr()";
+            }
+
+            bool run() override
+            {
+                OneString test1 = start.substr(0, 3);
+                PL_ASSERT_EQUAL(test1, sub1);
+
+                OneString test2 = start.substr(18, 4);
+                PL_ASSERT_EQUAL(test2, sub2);
+
+                OneString test3 = start.substr(16);
+                PL_ASSERT_EQUAL(test3, sub3);
+
+                return true;
+            }
+    };
 
     ///////////// REUSABLE /////////////
 
@@ -1896,32 +1931,6 @@ namespace pawlib
                 beforeOne.swap(beforeTwo);
                 PL_ASSERT_EQUAL(beforeOne, afterTwo);
                 PL_ASSERT_EQUAL(beforeTwo, afterOne);
-                return true;
-            }
-    };
-
-    class TestOneString_Substr : public Test
-    {
-        protected:
-            OneString start = "⛰ The Matterhorn ⛰";
-
-        public:
-            TestOneString_Substr(){}
-
-            testdoc_t get_title() override
-            {
-                return "OneString: substr()";
-            }
-
-            testdoc_t get_docs() override
-            {
-                return "Test creating a substring from a OneString.";
-            }
-
-            bool run() override
-            {
-                OneString partial = start.substr(12,4);
-                PL_ASSERT_EQUAL(partial, "horn");
                 return true;
             }
     };

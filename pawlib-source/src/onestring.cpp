@@ -132,6 +132,25 @@ namespace pawlib
         return _elements;
     }
 
+    OneString OneString::substr(size_t pos, size_t len) const
+    {
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::substr(): specified pos out of range");
+        }
+
+        OneString r;
+        // Calculate size of substr (number of elements)
+        size_t elements_to_copy = (len > _elements - pos) ? (_elements - pos) : len;
+        // Reserve necessary space in the new OneString
+        r.reserve(elements_to_copy);
+        // Copy the memory for the substring
+        memcpy(r.internal, this->internal + pos, sizeof(OneChar) * elements_to_copy);
+        // Record how many elements were copied.
+        r._elements = elements_to_copy;
+        return r;
+    }
+
     size_t OneString::size() const
     {
         // Start counting at 1 to account for the null terminator.
@@ -575,25 +594,6 @@ namespace pawlib
         OneString temp(*this);
         *this = str;
         str = temp;
-    }
-
-    OneString OneString::substr(size_t beginningIndex, size_t length)
-    {
-        OneString substr;
-
-        if (beginningIndex > 0 && beginningIndex + length < _elements)
-        {
-            for(size_t i = 0; i < length; i++)
-            {
-                // We're implicitly including the \0 because of the +1
-                substr.append(internal[beginningIndex + i]);
-            }
-        }
-        else
-        {
-            throw std::out_of_range("OneString: Index out of bounds.");
-        }
-        return substr;
     }
 
     /*******************************************

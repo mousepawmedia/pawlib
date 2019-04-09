@@ -63,7 +63,10 @@ namespace pawlib
     {
         public:
             /// The default size the OneString is initialized at
-            inline static const int BASE_SIZE = 4;
+            inline static const size_t BASE_SIZE = 4;
+
+            /// The greatest possible value for an element.
+            inline static const size_t npos = -1;
 
             /// The factor the capacity is multiplied by to resize
             inline static const float RESIZE_FACTOR = 1.5;
@@ -140,6 +143,9 @@ namespace pawlib
                 {
                     this->_capacity = BASE_SIZE;
                 }
+
+                // If we're about to blow past indexing, fail
+                if (elements >= npos) { return; }
 
                 // Expand until we have enough space.
                 while (this->_capacity < elements)
@@ -229,6 +235,21 @@ namespace pawlib
             /**Gets the current number of elements in the OneString
              * \return the number of elements */
             size_t length() const;
+
+            static size_t max_size()
+            {
+                /* The largest theoretical index allowed in OneString is
+                 * the largest possible value of size_t.
+                 */
+                return npos;
+            }
+
+            /**Creates a smaller string out of
+             * a series of OneChars in the existing OneString
+             * \param the position to begin the string to be created
+             * \param the length of the string to be created, optional.
+             * \return the created string */
+            OneString substr(size_t pos = 0, size_t len = npos) const;
 
             /**Gets the byte size of the equivalent c-string.
               * WARNING: Given a OneString 's', s.size() < sizeof(s)
@@ -393,13 +414,6 @@ namespace pawlib
              * \param the OneString to switch with
              * \return */
             void swap(OneString& str);
-
-            /**Creates a smaller string out of
-             * a series of OneChars in the existing OneString
-             * \param the position to begin the string to be created
-             * \param the length of the string to be created
-             * \return the created string */
-            OneString substr(size_t pos, size_t sublen);
 
             /**Adds the cooresponding type to
              * the end of the OneString
