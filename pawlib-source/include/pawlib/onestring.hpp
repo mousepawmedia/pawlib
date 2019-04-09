@@ -358,6 +358,12 @@ namespace pawlib
             bool operator>=(const OneChar& ochr) const { return (compare(ochr) >= 0); }
             bool operator>=(const OneString& ostr) const { return (compare(ostr) >= 0); }
 
+            void operator+=(const char ch) { append(ch); }
+            void operator+=(const char* cstr) { append(cstr); }
+            void operator+=(const std::string& str) { append(str); }
+            void operator+=(const OneChar& ochr) { append(ochr); }
+            void operator+=(const OneString& ostr) { append(ostr); }
+
             /*******************************************
             * Friend Functions
             ********************************************/
@@ -414,17 +420,6 @@ namespace pawlib
              * \param the OneString to switch with
              * \return */
             void swap(OneString& str);
-
-            /**Adds the cooresponding type to
-             * the end of the OneString
-             * in the form of a OneChar.
-             * \param the characters to be added to the OneString
-             * \returns */
-            void operator+=(const OneString& ostr2);
-            void operator+=(const char* ostr2);
-            void operator+=(const std::string& ostr2);
-            void operator+=(char ochar);
-            void operator+=(const OneChar& ochar);
 
             /*******************************************
             * Friends

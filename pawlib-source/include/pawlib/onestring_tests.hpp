@@ -1852,6 +1852,212 @@ namespace pawlib
             }
     };
 
+    // P-tB4020
+    class TestOneString_Append : public TestOneString
+    {
+        protected:
+            OneString start = "TEST";
+            OneString test = "TEST";
+            // ‽
+
+        public:
+            explicit TestOneString_Append(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Append " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test appending to a OneString with append().";
+            }
+
+            bool janitor() override {
+                OneString test = start;
+                return true;
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        char ch = '!';
+                        test.append(ch);
+                        PL_ASSERT_EQUAL(test, "TEST!");
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        OneChar ochr = "!";
+                        test.append(ochr);
+                        PL_ASSERT_EQUAL(test, "TEST!");
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        OneChar ochr = "‽";
+                        test.append(ochr);
+                        PL_ASSERT_EQUAL(test, "TEST‽");
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        std::string str = "!!!";
+                        test.append(str.c_str());
+                        PL_ASSERT_EQUAL(test, "TEST!!!");
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        std::string str = "‽‽‽";
+                        test.append(str.c_str());
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        std::string str = "!!!";
+                        test.append(str);
+                        PL_ASSERT_EQUAL(test, "TEST!!!");
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        std::string str = "‽‽‽";
+                        test.append(str);
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        OneString ostr = "!!!";
+                        test.append(ostr);
+                        PL_ASSERT_EQUAL(test, "TEST!!!");
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        OneString ostr = "‽‽‽";
+                        test.append(ostr);
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4021
+    class TestOneString_OpAppend : public TestOneString
+    {
+        protected:
+            OneString start = "TEST";
+            OneString test = "TEST";
+            // ‽
+
+        public:
+            explicit TestOneString_OpAppend(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Append (+=) " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test appending to a OneString with the += operator.";
+            }
+
+            bool janitor() override {
+                OneString test = start;
+                return true;
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        char ch = '!';
+                        test += ch;
+                        PL_ASSERT_EQUAL(test, "TEST!");
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        OneChar ochr = "!";
+                        test += ochr;
+                        PL_ASSERT_EQUAL(test, "TEST!");
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        OneChar ochr = "‽";
+                        test += ochr;
+                        PL_ASSERT_EQUAL(test, "TEST‽");
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        std::string str = "!!!";
+                        test += str.c_str();
+                        PL_ASSERT_EQUAL(test, "TEST!!!");
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        std::string str = "‽‽‽";
+                        test += str.c_str();
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        std::string str = "!!!";
+                        test += str;
+                        PL_ASSERT_EQUAL(test, "TEST!!!");
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        std::string str = "‽‽‽";
+                        test += str;
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        OneString ostr = "!!!";
+                        test += ostr;
+                        PL_ASSERT_EQUAL(test, "TEST!!!");
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        OneString ostr = "‽‽‽";
+                        test += ostr;
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
+            }
+    };
+
     ///////////// REUSABLE /////////////
 
     class TestOneString_Clear : public Test

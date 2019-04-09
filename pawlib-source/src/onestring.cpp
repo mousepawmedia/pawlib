@@ -595,33 +595,4 @@ namespace pawlib
         *this = str;
         str = temp;
     }
-
-    /*******************************************
-    * Operators
-    ********************************************/
-
-    void OneString::operator+=(const OneString& ostr2)
-    {
-        append(ostr2);
-    }
-
-    void OneString::operator+=(const char* ostr2)
-    {
-        append(ostr2);
-    }
-
-    void OneString::operator+=(const std::string& ostr2)
-    {
-        append(ostr2);
-    }
-
-    void OneString::operator+=(char ochar)
-    {
-        append(ochar);
-    }
-
-    void OneString::operator+=(const OneChar& ochar)
-    {
-        append(ochar);
-    }
 }

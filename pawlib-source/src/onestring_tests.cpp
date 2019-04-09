@@ -105,8 +105,26 @@ namespace pawlib
         register_test("P-tB4018", new TestOneString_Empty());
         register_test("P-tB4019", new TestOneString_Substr());
 
-        // tB4020[a-i]: append
-        // tB4021[a-i]: opAppend
+        register_test("P-tB4020a", new TestOneString_Append(TestOneString::CHAR));
+        register_test("P-tB4020b", new TestOneString_Append(TestOneString::OCHAR_ASCII));
+        register_test("P-tB4020c", new TestOneString_Append(TestOneString::OCHAR_UNICODE));
+        register_test("P-tB4020d", new TestOneString_Append(TestOneString::CSTR_ASCII));
+        register_test("P-tB4020e", new TestOneString_Append(TestOneString::CSTR_UNICODE));
+        register_test("P-tB4020f", new TestOneString_Append(TestOneString::STR_ASCII));
+        register_test("P-tB4020g", new TestOneString_Append(TestOneString::STR_UNICODE));
+        register_test("P-tB4020h", new TestOneString_Append(TestOneString::OSTR_ASCII));
+        register_test("P-tB4020i", new TestOneString_Append(TestOneString::OSTR_UNICODE));
+
+        register_test("P-tB4021a", new TestOneString_OpAppend(TestOneString::CHAR));
+        register_test("P-tB4021b", new TestOneString_OpAppend(TestOneString::OCHAR_ASCII));
+        register_test("P-tB4021c", new TestOneString_OpAppend(TestOneString::OCHAR_UNICODE));
+        register_test("P-tB4021d", new TestOneString_OpAppend(TestOneString::CSTR_ASCII));
+        register_test("P-tB4021e", new TestOneString_OpAppend(TestOneString::CSTR_UNICODE));
+        register_test("P-tB4021f", new TestOneString_OpAppend(TestOneString::STR_ASCII));
+        register_test("P-tB4021g", new TestOneString_OpAppend(TestOneString::STR_UNICODE));
+        register_test("P-tB4021h", new TestOneString_OpAppend(TestOneString::OSTR_ASCII));
+        register_test("P-tB4021i", new TestOneString_OpAppend(TestOneString::OSTR_UNICODE));
+
         // tB4022: back
         // tB4023: clear
         // tB4024: erase
