@@ -81,6 +81,8 @@ namespace pawlib
             /// The array of OneChars
             OneChar* internal;
 
+            void replace_setup(size_t pos, size_t len, size_t sublen);
+
         public:
             /*******************************************
             * Constructors + Destructor
@@ -301,29 +303,38 @@ namespace pawlib
             * Adding + Inserting
             ********************************************/
 
-            void assign(const char);
-            void assign(const char*);
-            void assign(const std::string&);
-            void assign(const OneChar&);
-            void assign(const OneString&);
+            OneString& assign(const char);
+            OneString& assign(const char*);
+            OneString& assign(const std::string&);
+            OneString& assign(const OneChar&);
+            OneString& assign(const OneString&);
 
-            void append(const char);
-            void append(const char*);
-            void append(const std::string&);
-            void append(const OneChar&);
-            void append(const OneString&);
+            OneString& append(const char);
+            OneString& append(const char*);
+            OneString& append(const std::string&);
+            OneString& append(const OneChar&);
+            OneString& append(const OneString&);
 
-            void insert(size_t pos, char ch);
-            void insert(size_t pos, char* cstr);
-            void insert(size_t pos, std::string& str);
-            void insert(size_t pos, OneChar& ochr);
-            void insert(size_t pos, const OneString& ostr);
+            OneString& insert(size_t pos, char ch);
+            OneString& insert(size_t pos, char* cstr);
+            OneString& insert(size_t pos, std::string& str);
+            OneString& insert(size_t pos, OneChar& ochr);
+            OneString& insert(size_t pos, const OneString& ostr);
 
-            void push_back(char ch) { append(ch); }
-            void push_back(const char* cstr) { append(cstr); }
-            void push_back(const std::string& str) { append(str); }
-            void push_back(const OneChar& ochr) { append(ochr); }
-            void push_back(const OneString& ostr) { append(ostr); }
+            OneString& push_back(char ch) { return append(ch); }
+            OneString& push_back(const char* cstr) { return append(cstr); }
+            OneString& push_back(const std::string& str) { return append(str); }
+            OneString& push_back(const OneChar& ochr) { return append(ochr); }
+            OneString& push_back(const OneString& ostr) { return append(ostr); }
+
+            OneString& replace(size_t pos, size_t len, const char ch);
+            OneString& replace(size_t pos, size_t len, const OneChar& ochr);
+            OneString& replace(size_t pos, size_t len, const char* cstr);
+            OneString& replace(size_t pos, size_t len, const std::string& str);
+            OneString& replace(size_t pos, size_t len, const OneString& ostr);
+            OneString& replace(size_t pos, size_t len, const char* cstr, size_t subpos, size_t sublen);
+            OneString& replace(size_t pos, size_t len, const std::string& str, size_t subpos, size_t sublen);
+            OneString& replace(size_t pos, size_t len, const OneString& ostr, size_t subpos, size_t sublen);
 
             /*******************************************
             * Removing
@@ -339,7 +350,7 @@ namespace pawlib
               * Defaults to all the characters from the given start position
               * to the end of the string.
               */
-            void erase(size_t pos = 0, size_t len = npos);
+            OneString& erase(size_t pos = 0, size_t len = npos);
 
             /*******************************************
             * Operators

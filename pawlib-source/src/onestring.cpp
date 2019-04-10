@@ -337,14 +337,15 @@ namespace pawlib
     * Adding + Inserting
     ********************************************/
 
-    void OneString::assign(const char ch)
+    OneString& OneString::assign(const char ch)
     {
         clear();
         reserve(1);
         this->internal[_elements++] = ch;
+        return *this;
     }
 
-    void OneString::assign(const char* cstr)
+    OneString& OneString::assign(const char* cstr)
     {
         clear();
 
@@ -358,37 +359,42 @@ namespace pawlib
             // Parse and store the character.
             index += internal[_elements++].parseFromString(cstr, index);
         }
+        return *this;
     }
 
-    void OneString::assign(const std::string& str)
+    OneString& OneString::assign(const std::string& str)
     {
         assign(str.c_str());
+        return *this;
     }
 
-    void OneString::assign(const OneChar& ochr)
+    OneString& OneString::assign(const OneChar& ochr)
     {
         clear();
         reserve(1);
         this->internal[_elements++] = ochr;
+        return *this;
     }
 
-    void OneString::assign(const OneString& ostr)
+    OneString& OneString::assign(const OneString& ostr)
     {
         clear();
         reserve(ostr._elements);
         memcpy(this->internal, ostr.internal, sizeof(OneChar) * ostr._elements);
         _elements = ostr._elements;
+        return *this;
     }
 
-    void OneString::append(const char ch)
+    OneString& OneString::append(const char ch)
     {
         expand(1);
 
         // Insert a 1-byte ASCII char
         internal[_elements++] = ch;
+        return *this;
     }
 
-    void OneString::append(const char* cstr)
+    OneString& OneString::append(const char* cstr)
     {
         size_t index = 0;
         size_t len = characterCount(cstr);
@@ -399,21 +405,24 @@ namespace pawlib
         {
             index += internal[_elements++].parseFromString(cstr, index);
         }
+        return *this;
     }
 
-    void OneString::append(const std::string& str)
+    OneString& OneString::append(const std::string& str)
     {
         // Parse the internal c string directly.
         append(str.c_str());
+        return *this;
     }
 
-    void OneString::append(const OneChar& ochar)
+    OneString& OneString::append(const OneChar& ochar)
     {
         expand(1);
         internal[_elements++] = ochar;
+        return *this;
     }
 
-    void OneString::append(const OneString& ostr)
+    OneString& OneString::append(const OneString& ostr)
     {
         expand(ostr.length());
 
@@ -425,9 +434,11 @@ namespace pawlib
         }
 
         _elements += ostr.length();
+
+        return *this;
     }
 
-    void OneString::insert(size_t pos, char ch)
+    OneString& OneString::insert(size_t pos, char ch)
     {
         // Ensure the insertion position is in range.
         if (pos >= this->_elements)
@@ -447,9 +458,11 @@ namespace pawlib
         this->internal[pos] = ch;
         // Increase the element count
         ++_elements;
+
+        return *this;
     }
 
-    void OneString::insert(size_t pos, char* cstr)
+    OneString& OneString::insert(size_t pos, char* cstr)
     {
         // Ensure the insertion position is in range.
         if (pos >= this->_elements)
@@ -476,14 +489,16 @@ namespace pawlib
         }
         // Increase the element count
         _elements += elements_to_insert;
+
+        return *this;
     }
 
-    void OneString::insert(size_t pos, std::string& str)
+    OneString& OneString::insert(size_t pos, std::string& str)
     {
-        insert(pos, str.c_str());
+        return insert(pos, str.c_str());
     }
 
-    void OneString::insert(size_t pos, OneChar& ochr)
+    OneString& OneString::insert(size_t pos, OneChar& ochr)
     {
         // Ensure the insertion position is in range.
         if (pos >= this->_elements)
@@ -503,9 +518,11 @@ namespace pawlib
         this->internal[pos] = ochr;
         // Increase the element count
         ++_elements;
+
+        return *this;
     }
 
-    void OneString::insert(size_t pos, const OneString& ostr)
+    OneString& OneString::insert(size_t pos, const OneString& ostr)
     {
         // Ensure the insertion position is in range.
         if (pos >= this->_elements)
@@ -529,6 +546,215 @@ namespace pawlib
                sizeof(OneChar) * elements_to_insert);
         // Increase the element count
         _elements += elements_to_insert;
+
+        return *this;
+    }
+
+    void OneString::replace_setup(size_t pos, size_t len, size_t sublen)
+    {
+        // WARNING: pos and len are not validated. That MUST be done externally!
+
+        // Calculate whether we're replacing 1:1, expanding, or erasing
+        size_t difference = sublen - len;
+        size_t pos_after = pos + len;
+        size_t elements_after = _elements - pos_after;
+
+        // If our replacement expands the string...
+        if (difference > 0)
+        {
+            // Reserve the needed space
+            expand(difference);
+
+            // Move the right partition to make room, if necessary
+            if (elements_after > 0)
+            {
+                memmove(this->internal + pos + len + difference,
+                        this->internal + pos_after,
+                        sizeof(OneChar) * elements_after);
+            }
+
+            // Update the element count
+            _elements += difference;
+        }
+        // Otherwise, if our replacement shrinks the string...
+        else if (difference < 0)
+        {
+            // Move the right partition back, erasing excess characters.
+            if (elements_after > 0)
+            {
+                memmove(this->internal + pos + len + difference,
+                        this->internal + pos_after,
+                        sizeof(OneChar) * elements_after);
+            }
+
+            // Update the element count
+            _elements += difference;
+        }
+
+        // If the string size won't change, we need no extra setup.
+    }
+
+    OneString& OneString::replace(size_t pos, size_t len, const char ch)
+    {
+        // Ensure the replacement position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::replace(): specified pos out of range");
+        }
+
+        // Adjust len so it doesn't run past the end of the string
+        len = (len > _elements - pos) ? (_elements - pos) : len;
+
+        // Rearrange the string memory to accommodate the new data
+        replace_setup(pos, len, 1);
+
+        // Write the data, using pos as our destination index.
+        this->internal[pos] = ch;
+
+        return *this;
+    }
+
+    OneString& OneString::replace(size_t pos, size_t len, const OneChar& ochr)
+    {
+        // Ensure the replacement position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::replace(): specified pos out of range");
+        }
+
+        // Adjust len so it doesn't run past the end of the string
+        len = (len > _elements - pos) ? (_elements - pos) : len;
+
+        // Rearrange the string memory to accommodate the new data
+        replace_setup(pos, len, 1);
+
+        // Write the data, using pos as our destination index.
+        this->internal[pos] = ochr;
+
+        return *this;
+    }
+
+    OneString& OneString::replace(size_t pos, size_t len, const char* cstr)
+    {
+        // Ensure the replacement position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::replace(): specified pos out of range");
+        }
+
+        // Adjust len so it doesn't run past the end of the string
+        len = (len > _elements - pos) ? (_elements - pos) : len;
+
+        // Rearrange the string memory to accommodate the new data
+        replace_setup(pos, len, characterCount(cstr));
+
+        // Write the data, using pos as our destination index.
+        size_t index = 0;
+        while(cstr[index] != '\0')
+        {
+            // Parse and store the character.
+            index += internal[pos++].parseFromString(cstr, index);
+        }
+
+        return *this;
+    }
+
+    OneString& OneString::replace(size_t pos, size_t len, const std::string& str)
+    {
+        return replace(pos, len, str.c_str());
+    }
+
+    OneString& OneString::replace(size_t pos, size_t len, const OneString& ostr)
+    {
+        // Ensure the replacement position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::replace(): specified pos out of range");
+        }
+
+        // Adjust len so it doesn't run past the end of the string
+        len = (len > _elements - pos) ? (_elements - pos) : len;
+
+        // Rearrange the string memory to accommodate the new data
+        replace_setup(pos, len, ostr._elements);
+
+        /* Replace the characters directly. We use memmove so we can safely
+         * use the same string as the destination AND the source.
+         */
+        memmove(this->internal + pos, ostr.internal, sizeof(OneChar) * ostr._elements);
+
+        return *this;
+    }
+
+    OneString& OneString::replace(size_t pos, size_t len, const char* cstr, size_t subpos, size_t sublen)
+    {
+        // Ensure the replacement position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::replace(): specified pos out of range");
+        }
+
+        size_t cstr_len = strlen(cstr);
+        if (subpos >= cstr_len)
+        {
+            throw std::out_of_range("OneString::replace(): specified subpos out of range");
+        }
+
+        // Adjust len so it doesn't run past the end of the string
+        len = (len > _elements - pos) ? (_elements - pos) : len;
+        // Adjust sublen so it doesn't run past the end of the c-string.
+        sublen = (sublen > cstr_len - subpos) ? (cstr_len - subpos) : sublen;
+
+        // Rearrange the string memory to accommodate the new data
+        replace_setup(pos, len, sublen);
+
+        // Repurpose sublen so it marks the end of the area we are to copy from
+        sublen += subpos;
+
+        // Replace the characters in the specified range, using pos and subpos as our indices.
+        while(subpos < sublen)
+        {
+            // Parse and store the character.
+            subpos += internal[pos++].parseFromString(cstr, subpos);
+        }
+
+        return *this;
+    }
+
+    OneString& OneString::replace(size_t pos, size_t len, const std::string& str, size_t subpos, size_t sublen)
+    {
+        return replace(pos, len, str.c_str(), subpos, sublen);
+    }
+
+    OneString& OneString::replace(size_t pos, size_t len, const OneString& ostr, size_t subpos, size_t sublen)
+    {
+        // Ensure the replacement position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::replace(): specified pos out of range");
+        }
+
+        if (subpos >= ostr._elements)
+        {
+            throw std::out_of_range("OneString::replace(): specified subpos out of range");
+        }
+
+        // Adjust len so it doesn't run past the end of the string
+        len = (len > _elements - pos) ? (_elements - pos) : len;
+        // Adjust sublen so it doesn't run past the end of the c-string.
+        sublen = (sublen > ostr._elements - subpos) ? (ostr._elements - subpos) : sublen;
+
+        // Rearrange the string memory to accommodate the new data
+        replace_setup(pos, len, sublen);
+
+        /* Replace the characters directly. We use memmove so we can safely
+         * use the same string as the destination AND the source.
+         */
+        memmove(this->internal + pos,
+                ostr.internal + subpos,
+                sizeof(OneChar) * sublen);
+
+        return *this;
     }
 
     /*******************************************
@@ -547,7 +773,7 @@ namespace pawlib
         }
     }
 
-    void OneString::erase(size_t pos, size_t len)
+    OneString& OneString::erase(size_t pos, size_t len)
     {
         if (pos > _elements)
         {
@@ -565,6 +791,8 @@ namespace pawlib
 
         // Update the number of elements
         _elements = _elements - len;
+
+        return *this;
     }
 
     void OneString::pop_back()

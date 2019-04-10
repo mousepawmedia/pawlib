@@ -129,6 +129,7 @@ namespace pawlib
 
         register_test("P-tB4024", new TestOneString_Clear());
         register_test("P-tB4025", new TestOneString_Erase());
+
         register_test("P-tB4026a", new TestOneString_Insert(TestOneString::CHAR));
         register_test("P-tB4026b", new TestOneString_Insert(TestOneString::OCHAR_ASCII));
         register_test("P-tB4026c", new TestOneString_Insert(TestOneString::OCHAR_UNICODE));
@@ -138,7 +139,17 @@ namespace pawlib
         register_test("P-tB4026g", new TestOneString_Insert(TestOneString::STR_UNICODE));
         register_test("P-tB4026h", new TestOneString_Insert(TestOneString::OSTR_ASCII));
         register_test("P-tB4026i", new TestOneString_Insert(TestOneString::OSTR_UNICODE));
-        // tB4027: replace
+
+        register_test("P-tB4027a", new TestOneString_Replace(TestOneString::CHAR));
+        register_test("P-tB4027b", new TestOneString_Replace(TestOneString::OCHAR_ASCII));
+        register_test("P-tB4027c", new TestOneString_Replace(TestOneString::OCHAR_UNICODE));
+        register_test("P-tB4027d", new TestOneString_Replace(TestOneString::CSTR_ASCII));
+        register_test("P-tB4027e", new TestOneString_Replace(TestOneString::CSTR_UNICODE));
+        register_test("P-tB4027f", new TestOneString_Replace(TestOneString::STR_ASCII));
+        register_test("P-tB4027g", new TestOneString_Replace(TestOneString::STR_UNICODE));
+        register_test("P-tB4027h", new TestOneString_Replace(TestOneString::OSTR_ASCII));
+        register_test("P-tB4027i", new TestOneString_Replace(TestOneString::OSTR_UNICODE));
+
         // tB4028: reverse
         // tB4029: swap
 

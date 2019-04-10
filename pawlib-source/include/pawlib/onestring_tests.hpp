@@ -2212,7 +2212,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4026
+    // P-tB4026[a-i]
     class TestOneString_Insert : public TestOneString
     {
         protected:
@@ -2267,15 +2267,15 @@ namespace pawlib
                     }
                     case CSTR_ASCII:
                     {
-                        std::string str = "ESS";
-                        test.insert(1, str.c_str());
+                        std::string cstr = "ESS";
+                        test.insert(1, cstr.c_str());
                         PL_ASSERT_EQUAL(test, "TESSSTING!!");
                         return true;
                     }
                     case CSTR_UNICODE:
                     {
-                        std::string str = "ЁSS";
-                        test.insert(1, str.c_str());
+                        std::string cstr = "ЁSS";
+                        test.insert(1, cstr.c_str());
                         PL_ASSERT_EQUAL(test, "TЁSSSTING!!");
                         return true;
                     }
@@ -2305,6 +2305,157 @@ namespace pawlib
                         OneString ostr = "ЁSS";
                         test.insert(1, ostr);
                         PL_ASSERT_EQUAL(test, "TЁSSSTING!!");
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
+            }
+    };
+
+    // P-tB4027[a-i]
+    class TestOneString_Replace : public TestOneString
+    {
+        protected:
+            OneString start = "The red fox jumped over the dog.";
+            //replace pos=31, len=1, '!'
+            OneString goal1 = "The red fox jumped over the dog!";
+            //replace pos=31, len=1, '…'
+            OneString goal1b = "The red fox jumped over the dog…";
+            //replace pos=8, len=3, '🦊'
+            OneString goal2 = "The red 🦊 jumped over the dog!";
+            //replace pos=26, len=3, "lazy 🐶"
+            OneString goal3 = "The red 🦊 jumped over the lazy 🐶!";
+            //replace pos=4, len=3, "quick brown"
+            OneString goal4 = "The quick brown 🦊 jumped over the lazy 🐶!";
+            OneString test;
+
+        public:
+            explicit TestOneString_Replace(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Replace " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test replacing part of a OneString with replace().";
+            }
+
+            bool janitor() override {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        char ch = '!';
+                        test.replace(31, 1, ch);
+                        PL_ASSERT_EQUAL(test, goal1);
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        OneChar ochr = "!";
+                        test.replace(31, 1, ochr);
+                        PL_ASSERT_EQUAL(test, goal1);
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        OneChar ochr = "…";
+                        test.replace(31, 1, ochr);
+                        PL_ASSERT_EQUAL(test, goal1b);
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        std::string cstr = "!";
+                        test.replace(31, 1, cstr.c_str());
+                        PL_ASSERT_EQUAL(test, goal1);
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        std::string cstr = "!";
+                        test.replace(31, 1, cstr.c_str());
+                        PL_ASSERT_EQUAL(test, goal1);
+
+                        cstr = "🦊";
+                        test.replace(8, 3, cstr.c_str());
+                        PL_ASSERT_EQUAL(test, goal2);
+
+                        cstr = "lazy 🐶";
+                        test.replace(26, 3, cstr.c_str());
+                        PL_ASSERT_EQUAL(test, goal3);
+
+                        cstr = "The quick brown fox";
+                        test.replace(4, 3, cstr.c_str(), 4, 11);
+                        PL_ASSERT_EQUAL(test, goal4);
+
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        std::string str = "!";
+                        test.replace(31, 1, str);
+                        PL_ASSERT_EQUAL(test, goal1);
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        std::string str = "!";
+                        test.replace(31, 1, str);
+                        PL_ASSERT_EQUAL(test, goal1);
+
+                        str = "🦊";
+                        test.replace(8, 3, str);
+                        PL_ASSERT_EQUAL(test, goal2);
+
+                        str = "lazy 🐶";
+                        test.replace(26, 3, str);
+                        PL_ASSERT_EQUAL(test, goal3);
+
+                        str = "The quick brown fox";
+                        test.replace(4, 3, str, 4, 11);
+                        PL_ASSERT_EQUAL(test, goal4);
+
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        OneString ostr = "!";
+                        test.replace(31, 1, ostr);
+                        PL_ASSERT_EQUAL(test, goal1);
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        OneString ostr = "!";
+                        test.replace(31, 1, ostr);
+                        PL_ASSERT_EQUAL(test, goal1);
+
+                        ostr = "🦊";
+                        test.replace(8, 3, ostr);
+                        PL_ASSERT_EQUAL(test, goal2);
+
+                        ostr = "lazy 🐶";
+                        test.replace(26, 3, ostr);
+                        PL_ASSERT_EQUAL(test, goal3);
+
+                        ostr = "The quick brown fox";
+                        test.replace(4, 3, ostr, 4, 11);
+                        PL_ASSERT_EQUAL(test, goal4);
+
                         return true;
                     }
                     default:
