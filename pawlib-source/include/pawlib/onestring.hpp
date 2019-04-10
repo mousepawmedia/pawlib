@@ -50,6 +50,7 @@
 #define PAWLIB_ONESTRING_HPP
 
 #include <algorithm>
+#include <cctype> // isspace()
 #include <cstring>
 #include <iomanip>
 #include <iostream>
@@ -437,12 +438,32 @@ namespace pawlib
             friend bool operator>=(const std::string& str, const onestring& ostr) { return (ostr.compare(str) <= 0); }
             friend bool operator>=(const onechar& ochr, const onestring& ostr) { return (ostr.compare(ochr) <= 0); }
 
+            friend std::istream& operator>>(std::istream& is, onestring& ostr)
+            {
+                ostr.clear();
+
+                char ch;
+                while (is.get(ch) && !isspace(ch))
+                {
+                    ostr.append(ch);
+                }
+                return is;
+            };
+
+            friend std::ostream& operator<<(std::ostream& os, const onestring& ostr)
+            {
+                os << ostr.c_str();
+                return os;
+            };
+
             /*******************************************
             * Static Functions
             ********************************************/
 
             static std::istream& getline(std::istream& is, onestring& ostr, char delim = '\n')
             {
+                ostr.clear();
+
                 char ch;
                 while (is.get(ch) && ch != delim)
                 {
@@ -488,34 +509,6 @@ namespace pawlib
              * \param the onestring to switch with
              * \return */
             void swap(onestring& str);
-
-            /*******************************************
-            * Friends
-            *******************************************/
-
-
-
-            friend std::istream& operator>>(std::istream& in, onestring& ostr)
-            {
-                ostr.clear();
-                std::string temp;
-                std::getline(in, temp);
-                ostr.append(temp);
-                return in;
-            };
-
-            /**Operator to output a onestring
-            * \param the ostream to output on
-            * \param the onestring to output
-            * \return outputs the onestring as a cohesive string */
-            friend std::ostream& operator<<(std::ostream& os, const onestring& ostr)
-            {
-                for(size_t i = 0; i < ostr.length(); ++i)
-                {
-                    ostr.internal[i].print(os);
-                }
-                return os;
-            };
     };
 }
 #endif // PAWLIB_ONESTRING_HPP
