@@ -129,7 +129,15 @@ namespace pawlib
 
         register_test("P-tB4024", new TestOneString_Clear());
         register_test("P-tB4025", new TestOneString_Erase());
-        // tB4026[a-i]: insert
+        register_test("P-tB4026a", new TestOneString_Insert(TestOneString::CHAR));
+        register_test("P-tB4026b", new TestOneString_Insert(TestOneString::OCHAR_ASCII));
+        register_test("P-tB4026c", new TestOneString_Insert(TestOneString::OCHAR_UNICODE));
+        register_test("P-tB4026d", new TestOneString_Insert(TestOneString::CSTR_ASCII));
+        register_test("P-tB4026e", new TestOneString_Insert(TestOneString::CSTR_UNICODE));
+        register_test("P-tB4026f", new TestOneString_Insert(TestOneString::STR_ASCII));
+        register_test("P-tB4026g", new TestOneString_Insert(TestOneString::STR_UNICODE));
+        register_test("P-tB4026h", new TestOneString_Insert(TestOneString::OSTR_ASCII));
+        register_test("P-tB4026i", new TestOneString_Insert(TestOneString::OSTR_UNICODE));
         // tB4027: replace
         // tB4028: reverse
         // tB4029: swap

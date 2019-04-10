@@ -313,6 +313,12 @@ namespace pawlib
             void append(const OneChar&);
             void append(const OneString&);
 
+            void insert(size_t pos, char ch);
+            void insert(size_t pos, char* cstr);
+            void insert(size_t pos, std::string& str);
+            void insert(size_t pos, OneChar& ochr);
+            void insert(size_t pos, const OneString& ostr);
+
             void push_back(char ch) { append(ch); }
             void push_back(const char* cstr) { append(cstr); }
             void push_back(const std::string& str) { append(str); }
@@ -411,11 +417,6 @@ namespace pawlib
              * \param the position to be added
              * \param the characters to be added
              * \returns */
-            void insert(size_t pos, char* ostr);
-            void insert(size_t pos, char ochar);
-            void insert(size_t pos, std::string ostr);
-            void insert(size_t pos, OneChar& ochar);
-            void insert(size_t pos, const OneString& ostr);
 
 
 

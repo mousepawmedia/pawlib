@@ -203,6 +203,7 @@ namespace pawlib
                         // Unicode code points U+0800 to U+FFFF
                         return 3;
                     }
+                    case 0xD0:
                     case 0xC0:
                     {
                         // Unicode code points U+0080 to U+07FF

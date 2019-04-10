@@ -1937,8 +1937,7 @@ namespace pawlib
     {
         protected:
             OneString start = "TEST";
-            OneString test = "TEST";
-            // ‽
+            OneString test;
 
         public:
             explicit TestOneString_Append(TestStringType type)
@@ -1956,7 +1955,7 @@ namespace pawlib
             }
 
             bool janitor() override {
-                OneString test = start;
+                test = start;
                 return (test == start);
             }
 
@@ -2210,6 +2209,110 @@ namespace pawlib
                 PL_ASSERT_EQUAL(test, outcome2);
 
                 return true;
+            }
+    };
+
+    // P-tB4026
+    class TestOneString_Insert : public TestOneString
+    {
+        protected:
+            // This string is designed to force a resize on a single insert.
+            OneString start = "TSTING!!";
+            OneString test;
+
+        public:
+            explicit TestOneString_Insert(TestStringType type)
+            :TestOneString(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return "OneString: Insert " + title;
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test adding to a OneString with insert().";
+            }
+
+            bool janitor() override {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override {
+                switch(stringType)
+                {
+                    case CHAR:
+                    {
+                        char ch = 'E';
+                        test.insert(1, ch);
+                        PL_ASSERT_EQUAL(test, "TESTING!!");
+                        return true;
+                    }
+                    case OCHAR_ASCII:
+                    {
+                        OneChar ochr = "E";
+                        test.insert(1, ochr);
+                        PL_ASSERT_EQUAL(test, "TESTING!!");
+                        return true;
+                    }
+                    case OCHAR_UNICODE:
+                    {
+                        OneChar ochr = "Ё";
+                        std::cout << ochr.c_str() << std::endl;
+                        test.insert(1, ochr);
+                        PL_ASSERT_EQUAL(test, "TЁSTING!!");
+                        return true;
+                    }
+                    case CSTR_ASCII:
+                    {
+                        std::string str = "ESS";
+                        test.insert(1, str.c_str());
+                        PL_ASSERT_EQUAL(test, "TESSSTING!!");
+                        return true;
+                    }
+                    case CSTR_UNICODE:
+                    {
+                        std::string str = "ЁSS";
+                        test.insert(1, str.c_str());
+                        PL_ASSERT_EQUAL(test, "TЁSSSTING!!");
+                        return true;
+                    }
+                    case STR_ASCII:
+                    {
+                        std::string str = "ESS";
+                        test.insert(1, str);
+                        PL_ASSERT_EQUAL(test, "TESSSTING!!");
+                        return true;
+                    }
+                    case STR_UNICODE:
+                    {
+                        std::string str = "ЁSS";
+                        test.insert(1, str);
+                        PL_ASSERT_EQUAL(test, "TЁSSSTING!!");
+                        return true;
+                    }
+                    case OSTR_ASCII:
+                    {
+                        OneString ostr = "ESS";
+                        test.insert(1, ostr);
+                        PL_ASSERT_EQUAL(test, "TESSSTING!!");
+                        return true;
+                    }
+                    case OSTR_UNICODE:
+                    {
+                        OneString ostr = "ЁSS";
+                        test.insert(1, ostr);
+                        PL_ASSERT_EQUAL(test, "TЁSSSTING!!");
+                        return true;
+                    }
+                    default:
+                    {
+                        // Can't reach
+                        return false;
+                    }
+                }
             }
     };
 

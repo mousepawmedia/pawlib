@@ -427,6 +427,110 @@ namespace pawlib
         _elements += ostr.length();
     }
 
+    void OneString::insert(size_t pos, char ch)
+    {
+        // Ensure the insertion position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::insert(): specified pos out of range");
+        }
+
+        // Calculate how many elements need to be shifted to make room (right partition)
+        size_t elements_to_move = _elements - pos;
+        // Reserve needed space
+        expand(1);
+        // Move the right partition to make room for the new element
+        memmove(this->internal + pos + 1,
+                this->internal + pos,
+                sizeof(OneChar) * elements_to_move);
+        // Insert the new element
+        this->internal[pos] = ch;
+        // Increase the element count
+        ++_elements;
+    }
+
+    void OneString::insert(size_t pos, char* cstr)
+    {
+        // Ensure the insertion position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::insert(): specified pos out of range");
+        }
+
+        size_t elements_to_insert = characterCount(cstr);
+        // Calculate how many elements need to be shifted to make room (right partition)
+        size_t elements_to_move = _elements - pos;
+        // Reserve needed space
+        expand(elements_to_insert);
+        // Move the right partition to make room for the new element
+        memmove(this->internal + pos + elements_to_insert,
+                this->internal + pos,
+                sizeof(OneChar) * elements_to_move);
+
+        // Insert the new elements
+        size_t index = 0;
+        while(cstr[index] != '\0')
+        {
+            // Parse and store the character.
+            index += internal[pos++].parseFromString(cstr, index);
+        }
+        // Increase the element count
+        _elements += elements_to_insert;
+    }
+
+    void OneString::insert(size_t pos, std::string& str)
+    {
+        insert(pos, str.c_str());
+    }
+
+    void OneString::insert(size_t pos, OneChar& ochr)
+    {
+        // Ensure the insertion position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::insert(): specified pos out of range");
+        }
+
+        // Calculate how many elements need to be shifted to make room (right partition)
+        size_t elements_to_move = _elements - pos;
+        // Reserve needed space
+        expand(1);
+        // Move the right partition to make room for the new element
+        memmove(this->internal + pos + 1,
+                this->internal + pos,
+                sizeof(OneChar) * elements_to_move);
+        // Insert the new element
+        this->internal[pos] = ochr;
+        // Increase the element count
+        ++_elements;
+    }
+
+    void OneString::insert(size_t pos, const OneString& ostr)
+    {
+        // Ensure the insertion position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("OneString::insert(): specified pos out of range");
+        }
+
+        size_t elements_to_insert = ostr._elements;
+        // Calculate how many elements need to be shifted to make room (right partition)
+        size_t elements_to_move = _elements - pos;
+        // Reserve needed space
+        expand(elements_to_insert);
+        // Move the right partition to make room for the new element
+        memmove(this->internal + pos + elements_to_insert,
+                this->internal + pos,
+                sizeof(OneChar) * elements_to_move);
+
+        // Insert the new elements
+        memcpy(this->internal + pos,
+               ostr.internal,
+               sizeof(OneChar) * elements_to_insert);
+        // Increase the element count
+        _elements += elements_to_insert;
+    }
+
     /*******************************************
     * Removing
     ********************************************/
@@ -474,117 +578,6 @@ namespace pawlib
     }
 
     ///////////////////// REVIEW //////////////////////
-
-    void OneString::insert(size_t pos, const OneString& ostr)
-    {
-        // TODO: Possible inefficiency. Potentially refactor.
-        OneString left;
-        OneString right;
-
-        for(size_t i = 0; i < pos; i++)
-        {
-            left.append(this -> internal[i]);
-        }
-
-        for(size_t i = pos; i < this -> _elements; i++)
-        {
-            right.append(this -> internal[i]);
-        }
-
-        this -> clear();
-
-        this -> append(left);
-        this -> append(ostr);
-        this -> append(right);
-    }
-
-    void OneString::insert(size_t pos, std::string ostr)
-    {
-        OneString left;
-        OneString right;
-
-        for(size_t i = 0; i < pos; i++)
-        {
-            left.append(this -> internal[i]);
-        }
-
-        for(size_t i = pos; i < this -> _elements; i++)
-        {
-            right.append(this -> internal[i]);
-        }
-
-        this -> clear();
-
-        this -> append(left);
-        this -> append(ostr);
-        this -> append(right);
-    }
-
-    void OneString::insert(size_t pos, char* ostr)
-    {
-        OneString left;
-        OneString right;
-
-        for(size_t i = 0; i < pos; i++)
-        {
-            left.append(this -> internal[i]);
-        }
-
-        for(size_t i = pos; i < this -> _elements; i++)
-        {
-            right.append(this -> internal[i]);
-        }
-
-        this -> clear();
-
-        this -> append(left);
-        this -> append(ostr);
-        this -> append(right);
-    }
-
-    void OneString::insert(size_t pos, char ochar)
-    {
-        OneString left;
-        OneString right;
-
-        for(size_t i = 0; i < pos; i++)
-        {
-            left.append(this -> internal[i]);
-        }
-
-        for(size_t i = pos; i < this -> _elements; i++)
-        {
-            right.append(this -> internal[i]);
-        }
-
-        this -> clear();
-
-        this -> append(left);
-        this -> append(ochar);
-        this -> append(right);
-    }
-
-    void OneString::insert(size_t pos, OneChar& ochar)
-    {
-        OneString left;
-        OneString right;
-
-        for(size_t i = 0; i < pos; i++)
-        {
-            left.append(this -> internal[i]);
-        }
-
-        for(size_t i = pos; i < this -> _elements; i++)
-        {
-            right.append(this -> internal[i]);
-        }
-
-        this -> clear();
-
-        this -> append(left);
-        this -> append(ochar);
-        this -> append(right);
-    }
 
     bool OneString::lessThanCharP(const char* ostr)
     {
