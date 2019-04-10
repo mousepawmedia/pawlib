@@ -555,7 +555,7 @@ namespace pawlib
         // WARNING: pos and len are not validated. That MUST be done externally!
 
         // Calculate whether we're replacing 1:1, expanding, or erasing
-        size_t difference = sublen - len;
+        int difference = sublen - len;
         size_t pos_after = pos + len;
         size_t elements_after = _elements - pos_after;
 

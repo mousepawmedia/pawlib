@@ -164,8 +164,10 @@ namespace pawlib
 
         // tB4037: expand
         // tB4038: reserve
-        // tB4039: shrink_to_fit
-        // tB4040: "force resize"
+        // tB4039: resize
+        // tB4040: shrink_to_fit
+
+        // tB4041: "force resize"
 
         //TODO: Comparative tests against std::string
     }

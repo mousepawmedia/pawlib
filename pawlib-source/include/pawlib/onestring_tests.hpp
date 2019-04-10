@@ -383,6 +383,9 @@ namespace pawlib
                         test = ch_1;
                         PL_ASSERT_TRUE(test == ch_1);
                         PL_ASSERT_FALSE(test == ch_2);
+
+                        PL_ASSERT_TRUE(ch_1 == test);
+                        PL_ASSERT_FALSE(ch_2 == test);
                         return true;
                     }
                     case OCHAR_ASCII:
@@ -390,6 +393,9 @@ namespace pawlib
                         test = ochr_ascii_1;
                         PL_ASSERT_TRUE(test == ochr_ascii_1);
                         PL_ASSERT_FALSE(test == ochr_ascii_2);
+
+                        PL_ASSERT_TRUE(ochr_ascii_1 == test);
+                        PL_ASSERT_FALSE(ochr_ascii_2 == test);
                         return true;
                     }
                     case OCHAR_UNICODE:
@@ -397,6 +403,9 @@ namespace pawlib
                         test = ochr_unicode_1;
                         PL_ASSERT_TRUE(test == ochr_unicode_1);
                         PL_ASSERT_FALSE(test == ochr_unicode_2);
+
+                        PL_ASSERT_TRUE(ochr_unicode_1 == test);
+                        PL_ASSERT_FALSE(ochr_unicode_2 == test);
                         return true;
                     }
                     case CSTR_ASCII:
@@ -404,6 +413,9 @@ namespace pawlib
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test == str_ascii_1.c_str());
                         PL_ASSERT_FALSE(test == str_ascii_2.c_str());
+
+                        PL_ASSERT_TRUE(str_ascii_1.c_str() == test);
+                        PL_ASSERT_FALSE(str_ascii_2.c_str() == test);
                         return true;
                     }
                     case CSTR_UNICODE:
@@ -411,6 +423,9 @@ namespace pawlib
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test == str_unicode_1.c_str());
                         PL_ASSERT_FALSE(test == str_unicode_2.c_str());
+
+                        PL_ASSERT_TRUE(str_unicode_1.c_str() == test);
+                        PL_ASSERT_FALSE(str_unicode_2.c_str() == test);
                         return true;
                     }
                     case STR_ASCII:
@@ -418,6 +433,9 @@ namespace pawlib
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test == str_ascii_1);
                         PL_ASSERT_FALSE(test == str_ascii_2);
+
+                        PL_ASSERT_TRUE(str_ascii_1 == test);
+                        PL_ASSERT_FALSE(str_ascii_2 == test);
                         return true;
                     }
                     case STR_UNICODE:
@@ -425,6 +443,9 @@ namespace pawlib
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test == str_unicode_1);
                         PL_ASSERT_FALSE(test == str_unicode_2);
+
+                        PL_ASSERT_TRUE(str_unicode_1 == test);
+                        PL_ASSERT_FALSE(str_unicode_2 == test);
                         return true;
                     }
                     case OSTR_ASCII:
@@ -432,6 +453,9 @@ namespace pawlib
                         test = ostr_ascii_1;
                         PL_ASSERT_TRUE(test == ostr_ascii_1);
                         PL_ASSERT_FALSE(test == ostr_ascii_2);
+
+                        PL_ASSERT_TRUE(ostr_ascii_1 == test);
+                        PL_ASSERT_FALSE(ostr_ascii_2 == test);
                         return true;
                     }
                     case OSTR_UNICODE:
@@ -439,6 +463,9 @@ namespace pawlib
                         test = ostr_unicode_1;
                         PL_ASSERT_TRUE(test == ostr_unicode_1);
                         PL_ASSERT_FALSE(test == ostr_unicode_2);
+
+                        PL_ASSERT_TRUE(ostr_unicode_1 == test);
+                        PL_ASSERT_FALSE(ostr_unicode_2 == test);
                         return true;
                     }
                     default:
@@ -484,6 +511,9 @@ namespace pawlib
                         test = ch_1;
                         PL_ASSERT_TRUE(test != ch_2);
                         PL_ASSERT_FALSE(test != ch_1);
+
+                        PL_ASSERT_TRUE(ch_2 != test);
+                        PL_ASSERT_FALSE(ch_1 != test);
                         return true;
                     }
                     case OCHAR_ASCII:
@@ -491,6 +521,9 @@ namespace pawlib
                         test = ochr_ascii_1;
                         PL_ASSERT_TRUE(test != ochr_ascii_2);
                         PL_ASSERT_FALSE(test != ochr_ascii_1);
+
+                        PL_ASSERT_TRUE(ochr_ascii_2 != test);
+                        PL_ASSERT_FALSE(ochr_ascii_1 != test);
                         return true;
                     }
                     case OCHAR_UNICODE:
@@ -498,6 +531,9 @@ namespace pawlib
                         test = ochr_unicode_1;
                         PL_ASSERT_TRUE(test != ochr_unicode_2);
                         PL_ASSERT_FALSE(test != ochr_unicode_1);
+
+                        PL_ASSERT_TRUE(ochr_unicode_2 != test);
+                        PL_ASSERT_FALSE(ochr_unicode_1 != test);
                         return true;
                     }
                     case CSTR_ASCII:
@@ -505,6 +541,9 @@ namespace pawlib
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test != str_ascii_2.c_str());
                         PL_ASSERT_FALSE(test != str_ascii_1.c_str());
+
+                        PL_ASSERT_TRUE(str_ascii_2.c_str() != test);
+                        PL_ASSERT_FALSE(str_ascii_1.c_str() != test);
                         return true;
                     }
                     case CSTR_UNICODE:
@@ -512,6 +551,9 @@ namespace pawlib
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test != str_unicode_2.c_str());
                         PL_ASSERT_FALSE(test != str_unicode_1.c_str());
+
+                        PL_ASSERT_TRUE(str_unicode_2.c_str() != test);
+                        PL_ASSERT_FALSE(str_unicode_1.c_str() != test);
                         return true;
                     }
                     case STR_ASCII:
@@ -519,6 +561,9 @@ namespace pawlib
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test != str_ascii_2);
                         PL_ASSERT_FALSE(test != str_ascii_1);
+
+                        PL_ASSERT_TRUE(str_ascii_2 != test);
+                        PL_ASSERT_FALSE(str_ascii_1 != test);
                         return true;
                     }
                     case STR_UNICODE:
@@ -526,6 +571,9 @@ namespace pawlib
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test != str_unicode_2);
                         PL_ASSERT_FALSE(test != str_unicode_1);
+
+                        PL_ASSERT_TRUE(str_unicode_2 != test);
+                        PL_ASSERT_FALSE(str_unicode_1 != test);
                         return true;
                     }
                     case OSTR_ASCII:
@@ -533,6 +581,9 @@ namespace pawlib
                         test = ostr_ascii_1;
                         PL_ASSERT_TRUE(test != ostr_ascii_2);
                         PL_ASSERT_FALSE(test != ostr_ascii_1);
+
+                        PL_ASSERT_TRUE(ostr_ascii_2 != test);
+                        PL_ASSERT_FALSE(ostr_ascii_1 != test);
                         return true;
                     }
                     case OSTR_UNICODE:
@@ -540,6 +591,9 @@ namespace pawlib
                         test = ostr_unicode_1;
                         PL_ASSERT_TRUE(test != ostr_unicode_2);
                         PL_ASSERT_FALSE(test != ostr_unicode_1);
+
+                        PL_ASSERT_TRUE(ostr_unicode_2 != test);
+                        PL_ASSERT_FALSE(ostr_unicode_1 != test);
                         return true;
                     }
                     default:
@@ -856,6 +910,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test < gt);
                         PL_ASSERT_FALSE(test < eq);
                         PL_ASSERT_FALSE(test < lt);
+
+                        PL_ASSERT_FALSE(gt < test);
+                        PL_ASSERT_FALSE(eq < test);
+                        PL_ASSERT_TRUE(lt < test);
                         return true;
                     }
                     case OCHAR_ASCII:
@@ -868,6 +926,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test < gt);
                         PL_ASSERT_FALSE(test < eq);
                         PL_ASSERT_FALSE(test < lt);
+
+                        PL_ASSERT_FALSE(gt < test);
+                        PL_ASSERT_FALSE(eq < test);
+                        PL_ASSERT_TRUE(lt < test);
                         return true;
                     }
                     case OCHAR_UNICODE:
@@ -880,6 +942,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test < gt);
                         PL_ASSERT_FALSE(test < eq);
                         PL_ASSERT_FALSE(test < lt);
+
+                        PL_ASSERT_FALSE(gt < test);
+                        PL_ASSERT_FALSE(eq < test);
+                        PL_ASSERT_TRUE(lt < test);
                         return true;
                     }
                     case CSTR_ASCII:
@@ -896,6 +962,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test < eq.c_str());
                         PL_ASSERT_FALSE(test < lt.c_str());
                         PL_ASSERT_FALSE(test < shorter.c_str());
+
+                        PL_ASSERT_FALSE(gt.c_str() < test);
+                        PL_ASSERT_FALSE(longer.c_str() < test);
+                        PL_ASSERT_FALSE(eq.c_str() < test);
+                        PL_ASSERT_TRUE(lt.c_str() < test);
+                        PL_ASSERT_TRUE(shorter.c_str() < test);
                         return true;
                     }
                     case CSTR_UNICODE:
@@ -912,6 +984,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test < eq.c_str());
                         PL_ASSERT_FALSE(test < lt.c_str());
                         PL_ASSERT_FALSE(test < shorter.c_str());
+
+                        PL_ASSERT_FALSE(gt.c_str() < test);
+                        PL_ASSERT_FALSE(longer.c_str() < test);
+                        PL_ASSERT_FALSE(eq.c_str() < test);
+                        PL_ASSERT_TRUE(lt.c_str() < test);
+                        PL_ASSERT_TRUE(shorter.c_str() < test);
                         return true;
                     }
                     case STR_ASCII:
@@ -928,6 +1006,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test < eq);
                         PL_ASSERT_FALSE(test < lt);
                         PL_ASSERT_FALSE(test < shorter);
+
+                        PL_ASSERT_FALSE(gt < test);
+                        PL_ASSERT_FALSE(longer < test);
+                        PL_ASSERT_FALSE(eq < test);
+                        PL_ASSERT_TRUE(lt < test);
+                        PL_ASSERT_TRUE(shorter < test);
                         return true;
                     }
                     case STR_UNICODE:
@@ -944,6 +1028,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test < eq);
                         PL_ASSERT_FALSE(test < lt);
                         PL_ASSERT_FALSE(test < shorter);
+
+                        PL_ASSERT_FALSE(gt < test);
+                        PL_ASSERT_FALSE(longer < test);
+                        PL_ASSERT_FALSE(eq < test);
+                        PL_ASSERT_TRUE(lt < test);
+                        PL_ASSERT_TRUE(shorter < test);
                         return true;
                     }
                     case OSTR_ASCII:
@@ -960,6 +1050,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test < eq);
                         PL_ASSERT_FALSE(test < lt);
                         PL_ASSERT_FALSE(test < shorter);
+
+                        PL_ASSERT_FALSE(gt < test);
+                        PL_ASSERT_FALSE(longer < test);
+                        PL_ASSERT_FALSE(eq < test);
+                        PL_ASSERT_TRUE(lt < test);
+                        PL_ASSERT_TRUE(shorter < test);
                         return true;
                     }
                     case OSTR_UNICODE:
@@ -976,6 +1072,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test < eq);
                         PL_ASSERT_FALSE(test < lt);
                         PL_ASSERT_FALSE(test < shorter);
+
+                        PL_ASSERT_FALSE(gt < test);
+                        PL_ASSERT_FALSE(longer < test);
+                        PL_ASSERT_FALSE(eq < test);
+                        PL_ASSERT_TRUE(lt < test);
+                        PL_ASSERT_TRUE(shorter < test);
                         return true;
                     }
                     default:
@@ -1026,6 +1128,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test <= gt);
                         PL_ASSERT_TRUE(test <= eq);
                         PL_ASSERT_FALSE(test <= lt);
+
+                        PL_ASSERT_FALSE(gt <= test);
+                        PL_ASSERT_TRUE(eq <= test);
+                        PL_ASSERT_TRUE(lt <= test);
                         return true;
                     }
                     case OCHAR_ASCII:
@@ -1038,6 +1144,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test <= gt);
                         PL_ASSERT_TRUE(test <= eq);
                         PL_ASSERT_FALSE(test <= lt);
+
+                        PL_ASSERT_FALSE(gt <= test);
+                        PL_ASSERT_TRUE(eq <= test);
+                        PL_ASSERT_TRUE(lt <= test);
                         return true;
                     }
                     case OCHAR_UNICODE:
@@ -1050,6 +1160,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test <= gt);
                         PL_ASSERT_TRUE(test <= eq);
                         PL_ASSERT_FALSE(test <= lt);
+
+                        PL_ASSERT_FALSE(gt <= test);
+                        PL_ASSERT_TRUE(eq <= test);
+                        PL_ASSERT_TRUE(lt <= test);
                         return true;
                     }
                     case CSTR_ASCII:
@@ -1066,6 +1180,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test <= eq.c_str());
                         PL_ASSERT_FALSE(test <= lt.c_str());
                         PL_ASSERT_FALSE(test <= shorter.c_str());
+
+                        PL_ASSERT_FALSE(gt.c_str() <= test);
+                        PL_ASSERT_FALSE(longer.c_str() <= test);
+                        PL_ASSERT_TRUE(eq.c_str() <= test);
+                        PL_ASSERT_TRUE(lt.c_str() <= test);
+                        PL_ASSERT_TRUE(shorter.c_str() <= test);
                         return true;
                     }
                     case CSTR_UNICODE:
@@ -1082,6 +1202,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test <= eq.c_str());
                         PL_ASSERT_FALSE(test <= lt.c_str());
                         PL_ASSERT_FALSE(test <= shorter.c_str());
+
+                        PL_ASSERT_FALSE(gt.c_str() <= test);
+                        PL_ASSERT_FALSE(longer.c_str() <= test);
+                        PL_ASSERT_TRUE(eq.c_str() <= test);
+                        PL_ASSERT_TRUE(lt.c_str() <= test);
+                        PL_ASSERT_TRUE(shorter.c_str() <= test);
                         return true;
                     }
                     case STR_ASCII:
@@ -1098,6 +1224,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test <= eq);
                         PL_ASSERT_FALSE(test <= lt);
                         PL_ASSERT_FALSE(test <= shorter);
+
+                        PL_ASSERT_FALSE(gt <= test);
+                        PL_ASSERT_FALSE(longer <= test);
+                        PL_ASSERT_TRUE(eq <= test);
+                        PL_ASSERT_TRUE(lt <= test);
+                        PL_ASSERT_TRUE(shorter <= test);
                         return true;
                     }
                     case STR_UNICODE:
@@ -1114,6 +1246,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test <= eq);
                         PL_ASSERT_FALSE(test <= lt);
                         PL_ASSERT_FALSE(test <= shorter);
+
+                        PL_ASSERT_FALSE(gt <= test);
+                        PL_ASSERT_FALSE(longer <= test);
+                        PL_ASSERT_TRUE(eq <= test);
+                        PL_ASSERT_TRUE(lt <= test);
+                        PL_ASSERT_TRUE(shorter <= test);
                         return true;
                     }
                     case OSTR_ASCII:
@@ -1130,6 +1268,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test <= eq);
                         PL_ASSERT_FALSE(test <= lt);
                         PL_ASSERT_FALSE(test <= shorter);
+
+                        PL_ASSERT_FALSE(gt <= test);
+                        PL_ASSERT_FALSE(longer <= test);
+                        PL_ASSERT_TRUE(eq <= test);
+                        PL_ASSERT_TRUE(lt <= test);
+                        PL_ASSERT_TRUE(shorter <= test);
                         return true;
                     }
                     case OSTR_UNICODE:
@@ -1146,6 +1290,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test <= eq);
                         PL_ASSERT_FALSE(test <= lt);
                         PL_ASSERT_FALSE(test <= shorter);
+
+                        PL_ASSERT_FALSE(gt <= test);
+                        PL_ASSERT_FALSE(longer <= test);
+                        PL_ASSERT_TRUE(eq <= test);
+                        PL_ASSERT_TRUE(lt <= test);
+                        PL_ASSERT_TRUE(shorter <= test);
                         return true;
                     }
                     default:
@@ -1196,6 +1346,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test > lt);
                         PL_ASSERT_FALSE(test > eq);
                         PL_ASSERT_FALSE(test > gt);
+
+                        PL_ASSERT_FALSE(lt > test);
+                        PL_ASSERT_FALSE(eq > test);
+                        PL_ASSERT_TRUE(gt > test);
                         return true;
                     }
                     case OCHAR_ASCII:
@@ -1208,6 +1362,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test > lt);
                         PL_ASSERT_FALSE(test > eq);
                         PL_ASSERT_FALSE(test > gt);
+
+                        PL_ASSERT_FALSE(lt > test);
+                        PL_ASSERT_FALSE(eq > test);
+                        PL_ASSERT_TRUE(gt > test);
                         return true;
                     }
                     case OCHAR_UNICODE:
@@ -1220,6 +1378,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test > lt);
                         PL_ASSERT_FALSE(test > eq);
                         PL_ASSERT_FALSE(test > gt);
+
+                        PL_ASSERT_FALSE(lt > test);
+                        PL_ASSERT_FALSE(eq > test);
+                        PL_ASSERT_TRUE(gt > test);
                         return true;
                     }
                     case CSTR_ASCII:
@@ -1236,6 +1398,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test > eq.c_str());
                         PL_ASSERT_FALSE(test > gt.c_str());
                         PL_ASSERT_FALSE(test > longer.c_str());
+
+                        PL_ASSERT_FALSE(lt.c_str() > test);
+                        PL_ASSERT_FALSE(shorter.c_str() > test);
+                        PL_ASSERT_FALSE(eq.c_str() > test);
+                        PL_ASSERT_TRUE(gt.c_str() > test);
+                        PL_ASSERT_TRUE(longer.c_str() > test);
                         return true;
                     }
                     case CSTR_UNICODE:
@@ -1252,6 +1420,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test > eq.c_str());
                         PL_ASSERT_FALSE(test > gt.c_str());
                         PL_ASSERT_FALSE(test > longer.c_str());
+
+                        PL_ASSERT_FALSE(lt.c_str() > test);
+                        PL_ASSERT_FALSE(shorter.c_str() > test);
+                        PL_ASSERT_FALSE(eq.c_str() > test);
+                        PL_ASSERT_TRUE(gt.c_str() > test);
+                        PL_ASSERT_TRUE(longer.c_str() > test);
                         return true;
                     }
                     case STR_ASCII:
@@ -1268,6 +1442,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test > eq);
                         PL_ASSERT_FALSE(test > gt);
                         PL_ASSERT_FALSE(test > longer);
+
+                        PL_ASSERT_FALSE(lt > test);
+                        PL_ASSERT_FALSE(shorter > test);
+                        PL_ASSERT_FALSE(eq > test);
+                        PL_ASSERT_TRUE(gt > test);
+                        PL_ASSERT_TRUE(longer > test);
                         return true;
                     }
                     case STR_UNICODE:
@@ -1284,6 +1464,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test > eq);
                         PL_ASSERT_FALSE(test > gt);
                         PL_ASSERT_FALSE(test > longer);
+
+                        PL_ASSERT_FALSE(lt > test);
+                        PL_ASSERT_FALSE(shorter > test);
+                        PL_ASSERT_FALSE(eq > test);
+                        PL_ASSERT_TRUE(gt > test);
+                        PL_ASSERT_TRUE(longer > test);
                         return true;
                     }
                     case OSTR_ASCII:
@@ -1300,6 +1486,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test > eq);
                         PL_ASSERT_FALSE(test > gt);
                         PL_ASSERT_FALSE(test > longer);
+
+                        PL_ASSERT_FALSE(lt > test);
+                        PL_ASSERT_FALSE(shorter > test);
+                        PL_ASSERT_FALSE(eq > test);
+                        PL_ASSERT_TRUE(gt > test);
+                        PL_ASSERT_TRUE(longer > test);
                         return true;
                     }
                     case OSTR_UNICODE:
@@ -1316,6 +1508,12 @@ namespace pawlib
                         PL_ASSERT_FALSE(test > eq);
                         PL_ASSERT_FALSE(test > gt);
                         PL_ASSERT_FALSE(test > longer);
+
+                        PL_ASSERT_FALSE(lt > test);
+                        PL_ASSERT_FALSE(shorter > test);
+                        PL_ASSERT_FALSE(eq > test);
+                        PL_ASSERT_TRUE(gt > test);
+                        PL_ASSERT_TRUE(longer > test);
                         return true;
                     }
                     default:
@@ -1366,6 +1564,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test >= lt);
                         PL_ASSERT_TRUE(test >= eq);
                         PL_ASSERT_FALSE(test >= gt);
+
+                        PL_ASSERT_FALSE(lt >= test);
+                        PL_ASSERT_TRUE(eq >= test);
+                        PL_ASSERT_TRUE(gt >= test);
                         return true;
                     }
                     case OCHAR_ASCII:
@@ -1378,6 +1580,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test >= lt);
                         PL_ASSERT_TRUE(test >= eq);
                         PL_ASSERT_FALSE(test >= gt);
+
+                        PL_ASSERT_FALSE(lt >= test);
+                        PL_ASSERT_TRUE(eq >= test);
+                        PL_ASSERT_TRUE(gt >= test);
                         return true;
                     }
                     case OCHAR_UNICODE:
@@ -1390,6 +1596,10 @@ namespace pawlib
                         PL_ASSERT_TRUE(test >= lt);
                         PL_ASSERT_TRUE(test >= eq);
                         PL_ASSERT_FALSE(test >= gt);
+
+                        PL_ASSERT_FALSE(lt >= test);
+                        PL_ASSERT_TRUE(eq >= test);
+                        PL_ASSERT_TRUE(gt >= test);
                         return true;
                     }
                     case CSTR_ASCII:
@@ -1406,6 +1616,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test >= eq.c_str());
                         PL_ASSERT_FALSE(test >= gt.c_str());
                         PL_ASSERT_FALSE(test >= longer.c_str());
+
+                        PL_ASSERT_FALSE(lt.c_str() >= test);
+                        PL_ASSERT_FALSE(shorter.c_str() >= test);
+                        PL_ASSERT_TRUE(eq.c_str() >= test);
+                        PL_ASSERT_TRUE(gt.c_str() >= test);
+                        PL_ASSERT_TRUE(longer.c_str() >= test);
                         return true;
                     }
                     case CSTR_UNICODE:
@@ -1422,6 +1638,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test >= eq.c_str());
                         PL_ASSERT_FALSE(test >= gt.c_str());
                         PL_ASSERT_FALSE(test >= longer.c_str());
+
+                        PL_ASSERT_FALSE(lt.c_str() >= test);
+                        PL_ASSERT_FALSE(shorter.c_str() >= test);
+                        PL_ASSERT_TRUE(eq.c_str() >= test);
+                        PL_ASSERT_TRUE(gt.c_str() >= test);
+                        PL_ASSERT_TRUE(longer.c_str() >= test);
                         return true;
                     }
                     case STR_ASCII:
@@ -1438,6 +1660,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test >= eq);
                         PL_ASSERT_FALSE(test >= gt);
                         PL_ASSERT_FALSE(test >= longer);
+
+                        PL_ASSERT_FALSE(lt >= test);
+                        PL_ASSERT_FALSE(shorter >= test);
+                        PL_ASSERT_TRUE(eq >= test);
+                        PL_ASSERT_TRUE(gt >= test);
+                        PL_ASSERT_TRUE(longer >= test);
                         return true;
                     }
                     case STR_UNICODE:
@@ -1454,6 +1682,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test >= eq);
                         PL_ASSERT_FALSE(test >= gt);
                         PL_ASSERT_FALSE(test >= longer);
+
+                        PL_ASSERT_FALSE(lt >= test);
+                        PL_ASSERT_FALSE(shorter >= test);
+                        PL_ASSERT_TRUE(eq >= test);
+                        PL_ASSERT_TRUE(gt >= test);
+                        PL_ASSERT_TRUE(longer >= test);
                         return true;
                     }
                     case OSTR_ASCII:
@@ -1470,6 +1704,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test >= eq);
                         PL_ASSERT_FALSE(test >= gt);
                         PL_ASSERT_FALSE(test >= longer);
+
+                        PL_ASSERT_FALSE(lt >= test);
+                        PL_ASSERT_FALSE(shorter >= test);
+                        PL_ASSERT_TRUE(eq >= test);
+                        PL_ASSERT_TRUE(gt >= test);
+                        PL_ASSERT_TRUE(longer >= test);
                         return true;
                     }
                     case OSTR_UNICODE:
@@ -1486,6 +1726,12 @@ namespace pawlib
                         PL_ASSERT_TRUE(test >= eq);
                         PL_ASSERT_FALSE(test >= gt);
                         PL_ASSERT_FALSE(test >= longer);
+
+                        PL_ASSERT_FALSE(lt >= test);
+                        PL_ASSERT_FALSE(shorter >= test);
+                        PL_ASSERT_TRUE(eq >= test);
+                        PL_ASSERT_TRUE(gt >= test);
+                        PL_ASSERT_TRUE(longer >= test);
                         return true;
                     }
                     default:

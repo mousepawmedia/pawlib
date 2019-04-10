@@ -365,11 +365,22 @@ namespace pawlib
             OneString& operator=(const OneChar& ochr) { assign(ochr); return *this; }
             OneString& operator=(OneString& ostr) { assign(ostr); return *this; }
 
+            void operator+=(const char ch) { append(ch); }
+            void operator+=(const char* cstr) { append(cstr); }
+            void operator+=(const std::string& str) { append(str); }
+            void operator+=(const OneChar& ochr) { append(ochr); }
+            void operator+=(const OneString& ostr) { append(ostr); }
+
             bool operator==(const char ch) const { return equals(ch); }
             bool operator==(const char* cstr) const { return equals(cstr); }
             bool operator==(const std::string& str) const { return equals(str); }
             bool operator==(const OneChar& ochr) const { return equals(ochr); }
             bool operator==(const OneString& ostr) const { return equals(ostr); }
+
+            friend bool operator==(const char ch, const OneString& ostr) { return ostr.equals(ch); }
+            friend bool operator==(const char* cstr, const OneString& ostr) { return ostr.equals(cstr); }
+            friend bool operator==(const std::string& str, const OneString& ostr) { return ostr.equals(str); }
+            friend bool operator==(const OneChar& ochr, const OneString& ostr) { return ostr.equals(ochr); }
 
             bool operator!=(const char ch) const { return !equals(ch); }
             bool operator!=(const char* cstr) const { return !equals(cstr); }
@@ -377,11 +388,21 @@ namespace pawlib
             bool operator!=(const OneChar& ochr) const { return !equals(ochr); }
             bool operator!=(const OneString& ostr) const { return !equals(ostr); }
 
+            friend bool operator!=(const char ch, const OneString& ostr) { return !ostr.equals(ch); }
+            friend bool operator!=(const char* cstr, const OneString& ostr) { return !ostr.equals(cstr); }
+            friend bool operator!=(const std::string& str, const OneString& ostr) { return !ostr.equals(str); }
+            friend bool operator!=(const OneChar& ochr, const OneString& ostr) { return !ostr.equals(ochr); }
+
             bool operator<(const char ch) const { return (compare(ch) < 0); }
             bool operator<(const char* cstr) const { return (compare(cstr) < 0); }
             bool operator<(const std::string& str) const { return (compare(str) < 0); }
             bool operator<(const OneChar& ochr) const { return (compare(ochr) < 0); }
             bool operator<(const OneString& ostr) const { return (compare(ostr) < 0); }
+
+            friend bool operator<(const char ch, const OneString& ostr) { return (ostr.compare(ch) > 0); }
+            friend bool operator<(const char* cstr, const OneString& ostr) { return (ostr.compare(cstr) > 0); }
+            friend bool operator<(const std::string& str, const OneString& ostr) { return (ostr.compare(str) > 0); }
+            friend bool operator<(const OneChar& ochr, const OneString& ostr) { return (ostr.compare(ochr) > 0); }
 
             bool operator<=(const char ch) const { return (compare(ch) <= 0); }
             bool operator<=(const char* cstr) const { return (compare(cstr) <= 0); }
@@ -389,11 +410,21 @@ namespace pawlib
             bool operator<=(const OneChar& ochr) const { return (compare(ochr) <= 0); }
             bool operator<=(const OneString& ostr) const { return (compare(ostr) <= 0); }
 
+            friend bool operator<=(const char ch, const OneString& ostr) { return (ostr.compare(ch) >= 0); }
+            friend bool operator<=(const char* cstr, const OneString& ostr) { return (ostr.compare(cstr) >= 0); }
+            friend bool operator<=(const std::string& str, const OneString& ostr) { return (ostr.compare(str) >= 0); }
+            friend bool operator<=(const OneChar& ochr, const OneString& ostr) { return (ostr.compare(ochr) >= 0); }
+
             bool operator>(const char ch) const { return (compare(ch) > 0); }
             bool operator>(const char* cstr) const { return (compare(cstr) > 0); }
             bool operator>(const std::string& str) const { return (compare(str) > 0); }
             bool operator>(const OneChar& ochr) const { return (compare(ochr) > 0); }
             bool operator>(const OneString& ostr) const { return (compare(ostr) > 0); }
+
+            friend bool operator>(const char ch, const OneString& ostr) { return (ostr.compare(ch) < 0); }
+            friend bool operator>(const char* cstr, const OneString& ostr) { return (ostr.compare(cstr) < 0); }
+            friend bool operator>(const std::string& str, const OneString& ostr) { return (ostr.compare(str) < 0); }
+            friend bool operator>(const OneChar& ochr, const OneString& ostr) { return (ostr.compare(ochr) < 0); }
 
             bool operator>=(const char ch) const { return (compare(ch) >= 0); }
             bool operator>=(const char* cstr) const { return (compare(cstr) >= 0); }
@@ -401,11 +432,10 @@ namespace pawlib
             bool operator>=(const OneChar& ochr) const { return (compare(ochr) >= 0); }
             bool operator>=(const OneString& ostr) const { return (compare(ostr) >= 0); }
 
-            void operator+=(const char ch) { append(ch); }
-            void operator+=(const char* cstr) { append(cstr); }
-            void operator+=(const std::string& str) { append(str); }
-            void operator+=(const OneChar& ochr) { append(ochr); }
-            void operator+=(const OneString& ostr) { append(ostr); }
+            friend bool operator>=(const char ch, const OneString& ostr) { return (ostr.compare(ch) <= 0); }
+            friend bool operator>=(const char* cstr, const OneString& ostr) { return (ostr.compare(cstr) <= 0); }
+            friend bool operator>=(const std::string& str, const OneString& ostr) { return (ostr.compare(str) <= 0); }
+            friend bool operator>=(const OneChar& ochr, const OneString& ostr) { return (ostr.compare(ochr) <= 0); }
 
             /*******************************************
             * Static Functions
