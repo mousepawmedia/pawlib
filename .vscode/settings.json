@@ -110,7 +110,8 @@
         "**/.git/**",
         ".vscode",
         "typings",
-        "**/build_temp/**"
+        "**/build_temp/**",
+        "**/onestring_tests.hpp"
     ],
 
     "cSpell.ignoreRegExpList": [
@@ -120,6 +121,8 @@
     "cSpell.ignoreWords": [
         "addop",
         "cpuid",
+        "echovrb",
+        "ftoa",
         "itos",
         "nisstyre",
         "ochr",
@@ -129,17 +132,20 @@
     ],
 
     "cSpell.words": [
+        "arun",
         "cout",
         "cpgf",
         "deinitialized",
         "deque",
         "golidlocks",
+        "heapify",
         "io",
         "iochannel",
         "ioformat",
         "item",
         "jarek",
         "mousepaw",
+        "musser",
         "pawlib",
         "rsds",
         "shutup",
@@ -152,7 +158,8 @@
         "type",
         "unshift",
         "vlas",
-        "volwiler"
+        "volwiler",
+        "yaroslavskiy"
     ],
     "restructuredtext.confPath": "${workspaceFolder}/docs/source",
     "workbench.colorCustomizations": {},

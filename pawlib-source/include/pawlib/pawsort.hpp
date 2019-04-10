@@ -166,6 +166,7 @@ namespace pawlib
                     swap(left, right);
                 }
 
+                // cppcheck-suppress variableScope
                 int i, j;
                 T newValue;
                 /* We go through the whole range (from 'left' to 'right')
@@ -211,7 +212,7 @@ namespace pawlib
             static void shell_sort(T arr[], int left, int right)
             {
                 /* If the right index is smaller than the left, the user has
-                 * provided an invalid (non-sensical) range. Exit.*/
+                 * provided an invalid (nonsensical) range. Exit.*/
                 if(right < left)
                 {
                     /* TODO: Revisit this behavior. */
@@ -388,7 +389,7 @@ namespace pawlib
                          * upper marker. */
                          swap(arr[i], arr[upper]);
                          upper--;
-                         /* new arr[i] should be checked before movong i.
+                         /* new arr[i] should be checked before moving i.
                           * We know it is not > pivot2, but is it < pivot1
                           */
                          if (arr[i] < pivot1)

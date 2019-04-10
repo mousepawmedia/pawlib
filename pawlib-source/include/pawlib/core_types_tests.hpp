@@ -513,6 +513,7 @@ namespace pawlib
                 tril a = false;
 
                 // If the check for false fails...
+                // cppcheck-suppress knownConditionTrueFalse
                 if((!a) == false)
                 {
                     // Fail the test.
@@ -526,6 +527,7 @@ namespace pawlib
                 }
 
                 a = true;
+                // cppcheck-suppress knownConditionTrueFalse
                 if((a) == false)
                 {
                     return false;
@@ -540,6 +542,7 @@ namespace pawlib
                 }
 
                 a = false;
+                // cppcheck-suppress knownConditionTrueFalse
                 if((!a) == false)
                 {
                     return false;
@@ -577,6 +580,7 @@ namespace pawlib
                 tril a = f;
 
                 // If the check for false fails...
+                // cppcheck-suppress knownConditionTrueFalse
                 if((!a) == false)
                 {
                     // Fail the test.
