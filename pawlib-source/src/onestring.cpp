@@ -6,42 +6,42 @@ namespace pawlib
     * Constructors + Destructor
     *******************************************/
     onestring::onestring()
-    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
         this->internal = new onechar[this->_capacity];
         assign('\0');
     }
 
     onestring::onestring(char ch)
-    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
         this->internal = new onechar[this->_capacity];
         assign(ch);
     }
 
     onestring::onestring(const char* cstr)
-    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
         this->internal = new onechar[this->_capacity];
         assign(cstr);
     }
 
     onestring::onestring(const std::string& str)
-    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
         this->internal = new onechar[this->_capacity];
         append(str);
     }
 
     onestring::onestring(const onechar& ochr)
-    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
         this->internal = new onechar[this->_capacity];
         assign(ochr);
     }
 
     onestring::onestring(const onestring& ostr)
-    :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
         this->internal = new onechar[this->_capacity];
         assign(ostr);
@@ -49,6 +49,11 @@ namespace pawlib
 
     onestring::~onestring()
     {
+        if (_c_str != nullptr)
+        {
+            delete[] _c_str;
+        }
+
         if (internal != nullptr)
         {
             delete[] internal;
@@ -134,16 +139,29 @@ namespace pawlib
 
     const char* onestring::c_str() const
     {
+        // If we have a c-string instance cached, deallocate it.
+        if (this->_c_str != nullptr)
+        {
+            delete[] this->_c_str;
+        }
+
+        // Allocate a new c-string.
         size_t n = size();
-        char* r = new char[n];
-        char* dest = r;
+        this->_c_str = new char[n];
+
+        // Convert and store each onechar's value in the c-string
+        char* dest = this->_c_str;
         for(size_t i = 0; i < _elements; ++i)
         {
             memcpy(dest, internal[i].internal, internal[i].size);
             dest += internal[i].size;
         }
-        r[n-1] = '\0';
-        return r;
+
+        // Append the null terminator to the end of the c-string
+        this->_c_str[n-1] = '\0';
+
+        // Return the pointer to the new cached c-string
+        return this->_c_str;
     }
 
     bool onestring::empty() const

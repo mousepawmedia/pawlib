@@ -7,6 +7,8 @@ namespace pawlib
     {
         // The default value of a onechar should be a null terminator
         internal[0] = '\0';
+        // Always end with a null terminator. We never touch [4] again
+        internal[4] = '\0';
     }
 
     onechar::onechar(const char* cstr)
@@ -14,6 +16,8 @@ namespace pawlib
     {
         // Extract the first ASCII or Unicode character from the c-string
         parse(cstr);
+        // Always end with a null terminator. We never touch [4] again
+        internal[4] = '\0';
     }
 
     onechar::onechar(const std::string& str)
@@ -21,6 +25,8 @@ namespace pawlib
     {
         // Extract the first ASCII or Unicode character from the std::string
         parse(str);
+        // Always end with a null terminator. We never touch [4] again
+        internal[4] = '\0';
     }
 
     onechar::onechar(const char ch)
@@ -28,6 +34,8 @@ namespace pawlib
     {
         // Store the ASCII character
         parse(ch);
+        // Always end with a null terminator. We never touch [4] again
+        internal[4] = '\0';
     }
 
     onechar::onechar(const onechar& cpy)
@@ -35,6 +43,8 @@ namespace pawlib
     {
         // Make this a copy of the onechar
         copy(cpy);
+        // Always end with a null terminator. We never touch [4] again
+        internal[4] = '\0';
     }
 
     void onechar::copy(const onechar& cpy)
@@ -87,15 +97,7 @@ namespace pawlib
 
     const char* onechar::c_str() const
     {
-        /* Allocate a c-string just large enough to accomidate the character
-         * and a null terminator. The end-user will need to deallocate this
-         * via delete[], the same way they would with std::string::c_str() */
-        char* r = new char[size+1];
-        // Directly copy the contents of the internal array to the c-string
-        memcpy(r, this->internal, sizeof(char)*this->size);
-        // End the c-string with a null terminator
-        r[size] = '\0';
-        return r;
+        return this->internal;
     }
 
     bool onechar::equals(const char cmp) const

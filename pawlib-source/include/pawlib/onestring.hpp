@@ -82,6 +82,9 @@ namespace pawlib
             /// The array of onechars
             onechar* internal;
 
+            /// The cached c-string. We store this pointer to ensure it is cleaned up properly.
+            mutable char* _c_str;
+
             void replace_setup(size_t pos, size_t len, size_t sublen);
 
         public:

@@ -67,8 +67,8 @@ namespace pawlib
             /// The number of bytes stored.
             size_t size;
 
-            /// The character array.
-            char internal[MAX_SIZE];
+            /// The character array as a c-string
+            char internal[MAX_SIZE + 1];
 
             /** Copy the contents of another onechar to this one.
               * \param the onechar to copy */
