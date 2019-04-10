@@ -512,8 +512,8 @@ namespace pawlib
             iochannel& operator<<(const tril&);
             iochannel& operator<<(const char&);
             iochannel& operator<<(const std::string&);
-            iochannel& operator<<(const OneChar&);
-            iochannel& operator<<(const OneString&);
+            iochannel& operator<<(const onechar&);
+            iochannel& operator<<(const onestring&);
 
             inline iochannel& operator<<(const unsigned char& rhs){return resolve_integer(rhs);}
             inline iochannel& operator<<(const int& rhs){return resolve_integer(rhs);}
@@ -548,8 +548,8 @@ namespace pawlib
             inline iochannel& operator<<(const double* rhs){return resolve_pointer(rhs);}
             inline iochannel& operator<<(const long double* rhs){return resolve_pointer(rhs);}
             inline iochannel& operator<<(const std::string* rhs){return resolve_pointer(rhs);}
-            inline iochannel& operator<<(const pawlib::OneChar* rhs){return resolve_pointer(rhs);}
-            inline iochannel& operator<<(const pawlib::OneString* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const pawlib::onechar* rhs){return resolve_pointer(rhs);}
+            inline iochannel& operator<<(const pawlib::onestring* rhs){return resolve_pointer(rhs);}
 
             iochannel& operator<<(const std::exception& rhs);
 
@@ -632,7 +632,7 @@ namespace pawlib
 
             ~iochannel();
         protected:
-            // TODO: Swap to OneString
+            // TODO: Swap to onestring
             std::string msg;
 
             // The bitfield storing which categories are permitted.
@@ -756,7 +756,7 @@ namespace pawlib
 
             //The string containing the format.
             std::string format = "";
-            //TODO: Swap to OneString
+            //TODO: Swap to onestring
 
             /**Flush the standard output.*/
             void flush();

@@ -1,11 +1,11 @@
-/** OneString [PawLIB]
+/** onestring [PawLIB]
   * Version: 0.4
   *
-  * OneString is a multi-sized, Unicode-compatible replacement
-  * for std::string. OneString contains all the
+  * onestring is a multi-sized, Unicode-compatible replacement
+  * for std::string. onestring contains all the
   * basic functions found in std::string. The size of the
-  * the OneString is doubled whenever the current size is maxed out.
-  * To handle Unicode, each OneString is made of OneChars,
+  * the onestring is doubled whenever the current size is maxed out.
+  * To handle Unicode, each onestring is made of onechars,
   * which are enhanced characters.
   *
   * Author(s): Jason C. McDonald, Scott Taylor, Jarek Thomas, Bowen Volwiler
@@ -59,10 +59,10 @@
 
 namespace pawlib
 {
-    class OneString
+    class onestring
     {
         public:
-            /// The default size the OneString is initialized at
+            /// The default size the onestring is initialized at
             inline static const size_t BASE_SIZE = 4;
 
             /// The greatest possible value for an element.
@@ -78,8 +78,8 @@ namespace pawlib
             /// The number of elements currently stored
             size_t _elements;
 
-            /// The array of OneChars
-            OneChar* internal;
+            /// The array of onechars
+            onechar* internal;
 
             void replace_setup(size_t pos, size_t len, size_t sublen);
 
@@ -89,34 +89,34 @@ namespace pawlib
             *******************************************/
 
             /**Default Constructor*/
-            OneString();
+            onestring();
 
-            /**Create a OneString from c-string (string literal)
-            * \param the c-string to be converted to OneString */
+            /**Create a onestring from c-string (string literal)
+            * \param the c-string to be converted to onestring */
             // cppcheck-suppress noExplicitConstructor
-            OneString(const char* str);
+            onestring(const char* str);
 
-            /**Create a OneString from std::string
-            * \param the string to be converted to OneString */
+            /**Create a onestring from std::string
+            * \param the string to be converted to onestring */
             // cppcheck-suppress noExplicitConstructor
-            OneString(const std::string& str);
+            onestring(const std::string& str);
 
-            /**Create a OneString from another OneString
-            * \param the OneString to be copied */
-            OneString(const OneString& str);
+            /**Create a onestring from another onestring
+            * \param the onestring to be copied */
+            onestring(const onestring& str);
 
-            /**Create a OneString from a char
+            /**Create a onestring from a char
              *  \param the char to be added */
             // cppcheck-suppress noExplicitConstructor
-            OneString(char ch);
+            onestring(char ch);
 
-            /**Create a OneString from a OneChar
-             *  \param the OneChar to be added */
+            /**Create a onestring from a onechar
+             *  \param the onechar to be added */
             // cppcheck-suppress noExplicitConstructor
-            OneString(const OneChar& ch);
+            onestring(const onechar& ch);
 
             /**Destructor*/
-            ~OneString();
+            ~onestring();
 
             /*******************************************
             * Memory Management
@@ -158,7 +158,7 @@ namespace pawlib
                 // TODO: Would it be better to use realloc? (If so, be sure to throw bad_alloc as needed)
 
                 // Allocate a new array with the new size.
-                OneChar* newArr = new OneChar[this->_capacity];
+                onechar* newArr = new onechar[this->_capacity];
 
                 // If an old array exists...
                 if(this->internal != nullptr)
@@ -167,7 +167,7 @@ namespace pawlib
                     memmove(
                         newArr,
                         this->internal,
-                        sizeof(OneChar) * this->_elements
+                        sizeof(onechar) * this->_elements
                     );
 
                     // Delete the old structure
@@ -188,7 +188,7 @@ namespace pawlib
                 size_t count = 0;
                 while (cstr[index] != '\0')
                 {
-                    index += OneChar::evaluateLength(cstr + index);
+                    index += onechar::evaluateLength(cstr + index);
                     ++count;
                 }
                 return count;
@@ -198,26 +198,26 @@ namespace pawlib
             * Access
             *******************************************/
 
-            /** Gets the OneChar at a given position
-              * \param the index of the OneChar to return
-              * \return a reference to the corresponding OneChar */
-            OneChar& at(size_t pos);
-            const OneChar& at(size_t pos) const;
+            /** Gets the onechar at a given position
+              * \param the index of the onechar to return
+              * \return a reference to the corresponding onechar */
+            onechar& at(size_t pos);
+            const onechar& at(size_t pos) const;
 
-            /** Gets the last OneChar in the string.
+            /** Gets the last onechar in the string.
               * If the string is empty, this has undefined behavior
               * (although it is guaranteed memory safe.)
-              * \return a reference to the last OneChar in the string.
+              * \return a reference to the last onechar in the string.
               */
-            OneChar& back();
-            const OneChar& back() const;
+            onechar& back();
+            const onechar& back() const;
 
-            /** Gets the current capacity of the OneString.
+            /** Gets the current capacity of the onestring.
               * Used primarily internally for resizing purposes.
-              * \return the size of the OneString */
+              * \return the size of the onestring */
             size_t capacity() const;
 
-            /** Copies a substring from the OneString to the given array.
+            /** Copies a substring from the onestring to the given array.
               * Guaranteed to copy the entirety of any Unicode character,
               * or else skip it.
               * \param pointer to an array of characters (c-string)
@@ -230,47 +230,47 @@ namespace pawlib
               * \return the number of char elements copied to the array*/
             size_t copy(char* arr, size_t max, size_t len = 0, size_t pos = 0) const;
 
-            /** Returns a c-string equivalent of a OneString
+            /** Returns a c-string equivalent of a onestring
               * \return the c-string (remember to free[]) */
             const char* c_str() const;
 
-            /** Returns a c-string equivalent of a OneString
-              * Alias for OneString::c_str()
+            /** Returns a c-string equivalent of a onestring
+              * Alias for onestring::c_str()
               * \return the c-string (remember to free[]) */
             const char* data() const { return c_str(); }
 
-            /**Checks to see if a OneString contains any data
+            /**Checks to see if a onestring contains any data
              * \returns true if empty, else false */
             bool empty() const;
 
-            /** Gets the first OneChar in the string.
+            /** Gets the first onechar in the string.
               * If the string is empty, this has undefined behavior
               * (although it is guaranteed memory safe.)
-              * \return a reference to the first OneChar in the string.
+              * \return a reference to the first onechar in the string.
               */
-            OneChar& front();
-            const OneChar& front() const;
+            onechar& front();
+            const onechar& front() const;
 
-            /**Gets the current number of elements in the OneString
+            /**Gets the current number of elements in the onestring
              * \return the number of elements */
             size_t length() const;
 
-            /** Returns the largest possible index allowed in OneString.
+            /** Returns the largest possible index allowed in onestring.
               * This is theoretical only, based on implementation. Allocation
               * may fail well before this.
               */
             static size_t max_size() { return npos; }
 
             /**Creates a smaller string out of
-             * a series of OneChars in the existing OneString
+             * a series of onechars in the existing onestring
              * \param the position to begin the string to be created
              * \param the length of the string to be created, optional.
              * \return the created string */
-            OneString substr(size_t pos = 0, size_t len = npos) const;
+            onestring substr(size_t pos = 0, size_t len = npos) const;
 
             /**Gets the byte size of the equivalent c-string.
-              * WARNING: Given a OneString 's', s.size() < sizeof(s)
-              * \return the number of bytes in the OneString */
+              * WARNING: Given a onestring 's', s.size() < sizeof(s)
+              * \return the number of bytes in the onestring */
             size_t size() const;
 
             /** Gets the byte size of the equivalent c-string for the
@@ -290,57 +290,57 @@ namespace pawlib
             bool equals(const char) const;
             bool equals(const char*) const;
             bool equals(const std::string&) const;
-            bool equals(const OneChar&) const;
-            bool equals(const OneString&) const;
+            bool equals(const onechar&) const;
+            bool equals(const onestring&) const;
 
             int compare(const char) const;
             int compare(const char*) const;
             int compare(const std::string&) const;
-            int compare(const OneChar&) const;
-            int compare(const OneString&) const;
+            int compare(const onechar&) const;
+            int compare(const onestring&) const;
 
             /*******************************************
             * Adding + Inserting
             ********************************************/
 
-            OneString& assign(const char);
-            OneString& assign(const char*);
-            OneString& assign(const std::string&);
-            OneString& assign(const OneChar&);
-            OneString& assign(const OneString&);
+            onestring& assign(const char);
+            onestring& assign(const char*);
+            onestring& assign(const std::string&);
+            onestring& assign(const onechar&);
+            onestring& assign(const onestring&);
 
-            OneString& append(const char);
-            OneString& append(const char*);
-            OneString& append(const std::string&);
-            OneString& append(const OneChar&);
-            OneString& append(const OneString&);
+            onestring& append(const char);
+            onestring& append(const char*);
+            onestring& append(const std::string&);
+            onestring& append(const onechar&);
+            onestring& append(const onestring&);
 
-            OneString& insert(size_t pos, char ch);
-            OneString& insert(size_t pos, char* cstr);
-            OneString& insert(size_t pos, std::string& str);
-            OneString& insert(size_t pos, OneChar& ochr);
-            OneString& insert(size_t pos, const OneString& ostr);
+            onestring& insert(size_t pos, char ch);
+            onestring& insert(size_t pos, char* cstr);
+            onestring& insert(size_t pos, std::string& str);
+            onestring& insert(size_t pos, onechar& ochr);
+            onestring& insert(size_t pos, const onestring& ostr);
 
-            OneString& push_back(char ch) { return append(ch); }
-            OneString& push_back(const char* cstr) { return append(cstr); }
-            OneString& push_back(const std::string& str) { return append(str); }
-            OneString& push_back(const OneChar& ochr) { return append(ochr); }
-            OneString& push_back(const OneString& ostr) { return append(ostr); }
+            onestring& push_back(char ch) { return append(ch); }
+            onestring& push_back(const char* cstr) { return append(cstr); }
+            onestring& push_back(const std::string& str) { return append(str); }
+            onestring& push_back(const onechar& ochr) { return append(ochr); }
+            onestring& push_back(const onestring& ostr) { return append(ostr); }
 
-            OneString& replace(size_t pos, size_t len, const char ch);
-            OneString& replace(size_t pos, size_t len, const OneChar& ochr);
-            OneString& replace(size_t pos, size_t len, const char* cstr);
-            OneString& replace(size_t pos, size_t len, const std::string& str);
-            OneString& replace(size_t pos, size_t len, const OneString& ostr);
-            OneString& replace(size_t pos, size_t len, const char* cstr, size_t subpos, size_t sublen);
-            OneString& replace(size_t pos, size_t len, const std::string& str, size_t subpos, size_t sublen);
-            OneString& replace(size_t pos, size_t len, const OneString& ostr, size_t subpos, size_t sublen);
+            onestring& replace(size_t pos, size_t len, const char ch);
+            onestring& replace(size_t pos, size_t len, const onechar& ochr);
+            onestring& replace(size_t pos, size_t len, const char* cstr);
+            onestring& replace(size_t pos, size_t len, const std::string& str);
+            onestring& replace(size_t pos, size_t len, const onestring& ostr);
+            onestring& replace(size_t pos, size_t len, const char* cstr, size_t subpos, size_t sublen);
+            onestring& replace(size_t pos, size_t len, const std::string& str, size_t subpos, size_t sublen);
+            onestring& replace(size_t pos, size_t len, const onestring& ostr, size_t subpos, size_t sublen);
 
             /*******************************************
             * Removing
             ********************************************/
 
-            /** Clears a OneString and reallocates it back to BASE_SIZE */
+            /** Clears a onestring and reallocates it back to BASE_SIZE */
             void clear();
 
             /** Erases part of a string, reducing its length.
@@ -350,98 +350,98 @@ namespace pawlib
               * Defaults to all the characters from the given start position
               * to the end of the string.
               */
-            OneString& erase(size_t pos = 0, size_t len = npos);
+            onestring& erase(size_t pos = 0, size_t len = npos);
 
             /*******************************************
             * Operators
             ********************************************/
 
-            OneChar& operator[](size_t pos) { return at(pos); }
-            const OneChar& operator[](size_t pos) const { return at(pos); }
+            onechar& operator[](size_t pos) { return at(pos); }
+            const onechar& operator[](size_t pos) const { return at(pos); }
 
-            OneString& operator=(char ch) { assign(ch); return *this; }
-            OneString& operator=(const char* cstr) { assign(cstr); return *this; }
-            OneString& operator=(const std::string& str) { assign(str); return *this; }
-            OneString& operator=(const OneChar& ochr) { assign(ochr); return *this; }
-            OneString& operator=(OneString& ostr) { assign(ostr); return *this; }
+            onestring& operator=(char ch) { assign(ch); return *this; }
+            onestring& operator=(const char* cstr) { assign(cstr); return *this; }
+            onestring& operator=(const std::string& str) { assign(str); return *this; }
+            onestring& operator=(const onechar& ochr) { assign(ochr); return *this; }
+            onestring& operator=(onestring& ostr) { assign(ostr); return *this; }
 
             void operator+=(const char ch) { append(ch); }
             void operator+=(const char* cstr) { append(cstr); }
             void operator+=(const std::string& str) { append(str); }
-            void operator+=(const OneChar& ochr) { append(ochr); }
-            void operator+=(const OneString& ostr) { append(ostr); }
+            void operator+=(const onechar& ochr) { append(ochr); }
+            void operator+=(const onestring& ostr) { append(ostr); }
 
             bool operator==(const char ch) const { return equals(ch); }
             bool operator==(const char* cstr) const { return equals(cstr); }
             bool operator==(const std::string& str) const { return equals(str); }
-            bool operator==(const OneChar& ochr) const { return equals(ochr); }
-            bool operator==(const OneString& ostr) const { return equals(ostr); }
+            bool operator==(const onechar& ochr) const { return equals(ochr); }
+            bool operator==(const onestring& ostr) const { return equals(ostr); }
 
-            friend bool operator==(const char ch, const OneString& ostr) { return ostr.equals(ch); }
-            friend bool operator==(const char* cstr, const OneString& ostr) { return ostr.equals(cstr); }
-            friend bool operator==(const std::string& str, const OneString& ostr) { return ostr.equals(str); }
-            friend bool operator==(const OneChar& ochr, const OneString& ostr) { return ostr.equals(ochr); }
+            friend bool operator==(const char ch, const onestring& ostr) { return ostr.equals(ch); }
+            friend bool operator==(const char* cstr, const onestring& ostr) { return ostr.equals(cstr); }
+            friend bool operator==(const std::string& str, const onestring& ostr) { return ostr.equals(str); }
+            friend bool operator==(const onechar& ochr, const onestring& ostr) { return ostr.equals(ochr); }
 
             bool operator!=(const char ch) const { return !equals(ch); }
             bool operator!=(const char* cstr) const { return !equals(cstr); }
             bool operator!=(const std::string& str) const { return !equals(str); }
-            bool operator!=(const OneChar& ochr) const { return !equals(ochr); }
-            bool operator!=(const OneString& ostr) const { return !equals(ostr); }
+            bool operator!=(const onechar& ochr) const { return !equals(ochr); }
+            bool operator!=(const onestring& ostr) const { return !equals(ostr); }
 
-            friend bool operator!=(const char ch, const OneString& ostr) { return !ostr.equals(ch); }
-            friend bool operator!=(const char* cstr, const OneString& ostr) { return !ostr.equals(cstr); }
-            friend bool operator!=(const std::string& str, const OneString& ostr) { return !ostr.equals(str); }
-            friend bool operator!=(const OneChar& ochr, const OneString& ostr) { return !ostr.equals(ochr); }
+            friend bool operator!=(const char ch, const onestring& ostr) { return !ostr.equals(ch); }
+            friend bool operator!=(const char* cstr, const onestring& ostr) { return !ostr.equals(cstr); }
+            friend bool operator!=(const std::string& str, const onestring& ostr) { return !ostr.equals(str); }
+            friend bool operator!=(const onechar& ochr, const onestring& ostr) { return !ostr.equals(ochr); }
 
             bool operator<(const char ch) const { return (compare(ch) < 0); }
             bool operator<(const char* cstr) const { return (compare(cstr) < 0); }
             bool operator<(const std::string& str) const { return (compare(str) < 0); }
-            bool operator<(const OneChar& ochr) const { return (compare(ochr) < 0); }
-            bool operator<(const OneString& ostr) const { return (compare(ostr) < 0); }
+            bool operator<(const onechar& ochr) const { return (compare(ochr) < 0); }
+            bool operator<(const onestring& ostr) const { return (compare(ostr) < 0); }
 
-            friend bool operator<(const char ch, const OneString& ostr) { return (ostr.compare(ch) > 0); }
-            friend bool operator<(const char* cstr, const OneString& ostr) { return (ostr.compare(cstr) > 0); }
-            friend bool operator<(const std::string& str, const OneString& ostr) { return (ostr.compare(str) > 0); }
-            friend bool operator<(const OneChar& ochr, const OneString& ostr) { return (ostr.compare(ochr) > 0); }
+            friend bool operator<(const char ch, const onestring& ostr) { return (ostr.compare(ch) > 0); }
+            friend bool operator<(const char* cstr, const onestring& ostr) { return (ostr.compare(cstr) > 0); }
+            friend bool operator<(const std::string& str, const onestring& ostr) { return (ostr.compare(str) > 0); }
+            friend bool operator<(const onechar& ochr, const onestring& ostr) { return (ostr.compare(ochr) > 0); }
 
             bool operator<=(const char ch) const { return (compare(ch) <= 0); }
             bool operator<=(const char* cstr) const { return (compare(cstr) <= 0); }
             bool operator<=(const std::string& str) const { return (compare(str) <= 0); }
-            bool operator<=(const OneChar& ochr) const { return (compare(ochr) <= 0); }
-            bool operator<=(const OneString& ostr) const { return (compare(ostr) <= 0); }
+            bool operator<=(const onechar& ochr) const { return (compare(ochr) <= 0); }
+            bool operator<=(const onestring& ostr) const { return (compare(ostr) <= 0); }
 
-            friend bool operator<=(const char ch, const OneString& ostr) { return (ostr.compare(ch) >= 0); }
-            friend bool operator<=(const char* cstr, const OneString& ostr) { return (ostr.compare(cstr) >= 0); }
-            friend bool operator<=(const std::string& str, const OneString& ostr) { return (ostr.compare(str) >= 0); }
-            friend bool operator<=(const OneChar& ochr, const OneString& ostr) { return (ostr.compare(ochr) >= 0); }
+            friend bool operator<=(const char ch, const onestring& ostr) { return (ostr.compare(ch) >= 0); }
+            friend bool operator<=(const char* cstr, const onestring& ostr) { return (ostr.compare(cstr) >= 0); }
+            friend bool operator<=(const std::string& str, const onestring& ostr) { return (ostr.compare(str) >= 0); }
+            friend bool operator<=(const onechar& ochr, const onestring& ostr) { return (ostr.compare(ochr) >= 0); }
 
             bool operator>(const char ch) const { return (compare(ch) > 0); }
             bool operator>(const char* cstr) const { return (compare(cstr) > 0); }
             bool operator>(const std::string& str) const { return (compare(str) > 0); }
-            bool operator>(const OneChar& ochr) const { return (compare(ochr) > 0); }
-            bool operator>(const OneString& ostr) const { return (compare(ostr) > 0); }
+            bool operator>(const onechar& ochr) const { return (compare(ochr) > 0); }
+            bool operator>(const onestring& ostr) const { return (compare(ostr) > 0); }
 
-            friend bool operator>(const char ch, const OneString& ostr) { return (ostr.compare(ch) < 0); }
-            friend bool operator>(const char* cstr, const OneString& ostr) { return (ostr.compare(cstr) < 0); }
-            friend bool operator>(const std::string& str, const OneString& ostr) { return (ostr.compare(str) < 0); }
-            friend bool operator>(const OneChar& ochr, const OneString& ostr) { return (ostr.compare(ochr) < 0); }
+            friend bool operator>(const char ch, const onestring& ostr) { return (ostr.compare(ch) < 0); }
+            friend bool operator>(const char* cstr, const onestring& ostr) { return (ostr.compare(cstr) < 0); }
+            friend bool operator>(const std::string& str, const onestring& ostr) { return (ostr.compare(str) < 0); }
+            friend bool operator>(const onechar& ochr, const onestring& ostr) { return (ostr.compare(ochr) < 0); }
 
             bool operator>=(const char ch) const { return (compare(ch) >= 0); }
             bool operator>=(const char* cstr) const { return (compare(cstr) >= 0); }
             bool operator>=(const std::string& str) const { return (compare(str) >= 0); }
-            bool operator>=(const OneChar& ochr) const { return (compare(ochr) >= 0); }
-            bool operator>=(const OneString& ostr) const { return (compare(ostr) >= 0); }
+            bool operator>=(const onechar& ochr) const { return (compare(ochr) >= 0); }
+            bool operator>=(const onestring& ostr) const { return (compare(ostr) >= 0); }
 
-            friend bool operator>=(const char ch, const OneString& ostr) { return (ostr.compare(ch) <= 0); }
-            friend bool operator>=(const char* cstr, const OneString& ostr) { return (ostr.compare(cstr) <= 0); }
-            friend bool operator>=(const std::string& str, const OneString& ostr) { return (ostr.compare(str) <= 0); }
-            friend bool operator>=(const OneChar& ochr, const OneString& ostr) { return (ostr.compare(ochr) <= 0); }
+            friend bool operator>=(const char ch, const onestring& ostr) { return (ostr.compare(ch) <= 0); }
+            friend bool operator>=(const char* cstr, const onestring& ostr) { return (ostr.compare(cstr) <= 0); }
+            friend bool operator>=(const std::string& str, const onestring& ostr) { return (ostr.compare(str) <= 0); }
+            friend bool operator>=(const onechar& ochr, const onestring& ostr) { return (ostr.compare(ochr) <= 0); }
 
             /*******************************************
             * Static Functions
             ********************************************/
 
-            static std::istream& getline(std::istream& is, OneString& ostr, char delim = '\n')
+            static std::istream& getline(std::istream& is, onestring& ostr, char delim = '\n')
             {
                 char ch;
                 while (is.get(ch) && ch != delim)
@@ -454,7 +454,7 @@ namespace pawlib
             ////////////// REVIEW /////////////////
 
             /**Inserts a series of characters
-             * Into a OneString at a given position
+             * Into a onestring at a given position
              * \param the position to be added
              * \param the characters to be added
              * \returns */
@@ -462,7 +462,7 @@ namespace pawlib
 
 
             /**Removes the last element
-             * in a OneString
+             * in a onestring
              * \param
              * \returns */
             void pop_back();
@@ -472,22 +472,22 @@ namespace pawlib
             ********************************************/
 
             /**Helper functions for < and > operators
-             * Parse through a OneString or char*
+             * Parse through a onestring or char*
              * to determine greater than or less than
-             * \param the OneString or char* to compare
-             * \return whether or not the OneString is
+             * \param the onestring or char* to compare
+             * \return whether or not the onestring is
              *         less than or equal to the item compared*/
-            bool lessThanStr(const OneString& ostr);
+            bool lessThanStr(const onestring& ostr);
             bool lessThanCharP(const char* ostr);
 
             /*******************************************
             * Other
             ********************************************/
 
-            /**Swaps one OneString with another
-             * \param the OneString to switch with
+            /**Swaps one onestring with another
+             * \param the onestring to switch with
              * \return */
-            void swap(OneString& str);
+            void swap(onestring& str);
 
             /*******************************************
             * Friends
@@ -495,7 +495,7 @@ namespace pawlib
 
 
 
-            friend std::istream& operator>>(std::istream& in, OneString& ostr)
+            friend std::istream& operator>>(std::istream& in, onestring& ostr)
             {
                 ostr.clear();
                 std::string temp;
@@ -504,11 +504,11 @@ namespace pawlib
                 return in;
             };
 
-            /**Operator to output a OneString
+            /**Operator to output a onestring
             * \param the ostream to output on
-            * \param the OneString to output
-            * \return outputs the OneString as a cohesive string */
-            friend std::ostream& operator<<(std::ostream& os, const OneString& ostr)
+            * \param the onestring to output
+            * \return outputs the onestring as a cohesive string */
+            friend std::ostream& operator<<(std::ostream& os, const onestring& ostr)
             {
                 for(size_t i = 0; i < ostr.length(); ++i)
                 {

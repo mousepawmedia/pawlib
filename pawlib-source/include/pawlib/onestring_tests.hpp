@@ -1,4 +1,4 @@
-/** Tests for OneString [PawLIB]
+/** Tests for onestring [PawLIB]
   * Version: 0.4
   *
   * Author(s): Jason C. McDonald, Scott Taylor, Bo Volwiler
@@ -52,7 +52,7 @@ using namespace pawlib;
 
 namespace pawlib
 {
-    class TestOneString : public Test
+    class TestOnestring : public Test
     {
         public:
             enum TestStringType {
@@ -70,16 +70,16 @@ namespace pawlib
             char ch_1 = 'M';
             char ch_2 = 'm';
 
-            OneChar ochr_ascii_1 = "M";
-            OneChar ochr_ascii_2 = "m";
+            onechar ochr_ascii_1 = "M";
+            onechar ochr_ascii_2 = "m";
 
-            OneChar ochr_unicode_1 = "🐭";
-            OneChar ochr_unicode_2 = "🦊";
+            onechar ochr_unicode_1 = "🐭";
+            onechar ochr_unicode_2 = "🦊";
 
-            OneString ostr_ch_ascii_1 = "M";
-            OneString ostr_ch_ascii_2 = "m";
-            OneString ostr_ch_unicode_1 = "🐭";
-            OneString ostr_ch_unicode_2 = "🦊";
+            onestring ostr_ch_ascii_1 = "M";
+            onestring ostr_ch_ascii_2 = "m";
+            onestring ostr_ch_unicode_1 = "🐭";
+            onestring ostr_ch_unicode_2 = "🦊";
 
             // We'll extract the c-strings from these as needed.
             std::string str_ascii_1 = "The quick brown fox jumped over the lazy dog.";
@@ -87,10 +87,10 @@ namespace pawlib
             std::string str_ascii_2 = "Jackdaws love my big sphinx of quartz.";
             std::string str_unicode_2 = "🐦 ❤️ my big sphinx of 💎.";
 
-            OneString ostr_ascii_1 = "The quick brown fox jumped over the lazy dog.";
-            OneString ostr_unicode_1 = "The quick brown 🦊 jumped over the lazy 🐶.";
-            OneString ostr_ascii_2 = "Jackdaws love my big sphinx of quartz.";
-            OneString ostr_unicode_2 = "🐦 ❤️ my big sphinx of 💎.";
+            onestring ostr_ascii_1 = "The quick brown fox jumped over the lazy dog.";
+            onestring ostr_unicode_1 = "The quick brown 🦊 jumped over the lazy 🐶.";
+            onestring ostr_ascii_2 = "Jackdaws love my big sphinx of quartz.";
+            onestring ostr_unicode_2 = "🐦 ❤️ my big sphinx of 💎.";
 
         protected:
             TestStringType stringType;
@@ -98,7 +98,7 @@ namespace pawlib
             testdoc_t title;
 
         public:
-            explicit TestOneString(TestStringType type)
+            explicit TestOnestring(TestStringType type)
             :stringType(type)
             {
                 switch(stringType)
@@ -110,12 +110,12 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        title = "(OneChar, ASCII)";
+                        title = "(onechar, ASCII)";
                         break;
                     }
                     case OCHAR_UNICODE:
                     {
-                        title = "(OneChar, Unicode)";
+                        title = "(onechar, Unicode)";
                         break;
                     }
                     case CSTR_ASCII:
@@ -140,12 +140,12 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        title = "(OneString, ASCII)";
+                        title = "(onestring, ASCII)";
                         break;
                     }
                     case OSTR_UNICODE:
                     {
-                        title = "(OneString, Unicode)";
+                        title = "(onestring, Unicode)";
                         break;
                     }
                 }
@@ -157,28 +157,28 @@ namespace pawlib
     };
 
     // P-tB4001[a-i]
-    class TestOneString_Assign : public TestOneString
+    class TestOnestring_Assign : public TestOnestring
     {
         protected:
-            OneString test;
+            onestring test;
 
         public:
-            explicit TestOneString_Assign(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_Assign(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Assign " + title;
+                return "Onestring: Assign " + title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test assignment to a OneString.";
+                return "Test assignment to a onestring.";
             }
 
             bool janitor() override {
-                OneString test = "";
+                onestring test = "";
                 return true;
             }
 
@@ -249,19 +249,19 @@ namespace pawlib
     };
 
     // P-tB4002[a-i]
-    class TestOneString_Equals : public TestOneString
+    class TestOnestring_Equals : public TestOnestring
     {
         protected:
-            OneString test;
+            onestring test;
 
         public:
-            explicit TestOneString_Equals(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_Equals(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Equals " + title;
+                return "Onestring: Equals " + title;
             }
 
             testdoc_t get_docs() override
@@ -270,7 +270,7 @@ namespace pawlib
             }
 
             bool janitor() override {
-                OneString test = "";
+                onestring test = "";
                 return true;
             }
 
@@ -350,19 +350,19 @@ namespace pawlib
     };
 
     // P-tB4003[a-i]
-    class TestOneString_OpEquals : public TestOneString
+    class TestOnestring_OpEquals : public TestOnestring
     {
         protected:
-            OneString test;
+            onestring test;
 
         public:
-            explicit TestOneString_OpEquals(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_OpEquals(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Equals (==) " + title;
+                return "Onestring: Equals (==) " + title;
             }
 
             testdoc_t get_docs() override
@@ -371,7 +371,7 @@ namespace pawlib
             }
 
             bool janitor() override {
-                OneString test = "";
+                onestring test = "";
                 return true;
             }
 
@@ -478,19 +478,19 @@ namespace pawlib
     };
 
     // P-tB4004[a-i]
-    class TestOneString_OpNotEquals : public TestOneString
+    class TestOnestring_OpNotEquals : public TestOnestring
     {
         protected:
-            OneString test;
+            onestring test;
 
         public:
-            explicit TestOneString_OpNotEquals(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_OpNotEquals(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Not Equals (!=) " + title;
+                return "Onestring: Not Equals (!=) " + title;
             }
 
             testdoc_t get_docs() override
@@ -499,7 +499,7 @@ namespace pawlib
             }
 
             bool janitor() override {
-                OneString test = "";
+                onestring test = "";
                 return true;
             }
 
@@ -606,19 +606,19 @@ namespace pawlib
     };
 
     // P-tB4005[a-i]
-    class TestOneString_Compare : public TestOneString
+    class TestOnestring_Compare : public TestOnestring
     {
         protected:
-            OneString test;
+            onestring test;
 
         public:
-            explicit TestOneString_Compare(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_Compare(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Compare " + title;
+                return "Onestring: Compare " + title;
             }
 
             testdoc_t get_docs() override
@@ -627,7 +627,7 @@ namespace pawlib
             }
 
             bool janitor() override {
-                OneString test = "";
+                onestring test = "";
                 return true;
             }
 
@@ -656,9 +656,9 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        OneChar eq = "B";
-                        OneChar lt = "A";
-                        OneChar gt = "C";
+                        onechar eq = "B";
+                        onechar lt = "A";
+                        onechar gt = "C";
 
                         test = eq;
                         PL_ASSERT_EQUAL(test.compare(eq), 0);
@@ -676,9 +676,9 @@ namespace pawlib
                     }
                     case OCHAR_UNICODE:
                     {
-                        OneChar eq = "🐭";
-                        OneChar lt = "🐁";
-                        OneChar gt = "🦊";
+                        onechar eq = "🐭";
+                        onechar lt = "🐁";
+                        onechar gt = "🦊";
 
                         test = eq;
                         PL_ASSERT_EQUAL(test.compare(eq), 0);
@@ -808,11 +808,11 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        OneString eq = "abcB";
-                        OneString lt = "abcA";
-                        OneString gt = "abcC";
-                        OneString shorter = "ab";
-                        OneString longer = "abcabc";
+                        onestring eq = "abcB";
+                        onestring lt = "abcA";
+                        onestring gt = "abcC";
+                        onestring shorter = "ab";
+                        onestring longer = "abcabc";
 
                         test = eq;
                         PL_ASSERT_EQUAL(test.compare(eq), 0);
@@ -836,11 +836,11 @@ namespace pawlib
                     }
                     case OSTR_UNICODE:
                     {
-                        OneString eq = "🐭abc🐭";
-                        OneString lt = "🐭abc🐁";
-                        OneString gt = "🐭abc🦊";
-                        OneString shorter = "🐭ab";
-                        OneString longer = "🐭abc🦊🦊";
+                        onestring eq = "🐭abc🐭";
+                        onestring lt = "🐭abc🐁";
+                        onestring gt = "🐭abc🦊";
+                        onestring shorter = "🐭ab";
+                        onestring longer = "🐭abc🦊🦊";
 
                         test = eq;
                         PL_ASSERT_EQUAL(test.compare(eq), 0);
@@ -872,19 +872,19 @@ namespace pawlib
     };
 
     // P-tB4006[a-i]
-    class TestOneString_OpLess : public TestOneString
+    class TestOnestring_OpLess : public TestOnestring
     {
         protected:
-            OneString test;
+            onestring test;
 
         public:
-            explicit TestOneString_OpLess(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_OpLess(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Less Than (<) " + title;
+                return "Onestring: Less Than (<) " + title;
             }
 
             testdoc_t get_docs() override
@@ -893,7 +893,7 @@ namespace pawlib
             }
 
             bool janitor() override {
-                OneString test = "";
+                onestring test = "";
                 return true;
             }
 
@@ -918,9 +918,9 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        OneChar eq = "B";
-                        OneChar lt = "A";
-                        OneChar gt = "C";
+                        onechar eq = "B";
+                        onechar lt = "A";
+                        onechar gt = "C";
 
                         test = eq;
                         PL_ASSERT_TRUE(test < gt);
@@ -934,9 +934,9 @@ namespace pawlib
                     }
                     case OCHAR_UNICODE:
                     {
-                        OneChar eq = "🐭";
-                        OneChar lt = "🐁";
-                        OneChar gt = "🦊";
+                        onechar eq = "🐭";
+                        onechar lt = "🐁";
+                        onechar gt = "🦊";
 
                         test = eq;
                         PL_ASSERT_TRUE(test < gt);
@@ -1038,11 +1038,11 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        OneString eq = "abcB";
-                        OneString lt = "abcA";
-                        OneString gt = "abcC";
-                        OneString shorter = "ab";
-                        OneString longer = "abcabc";
+                        onestring eq = "abcB";
+                        onestring lt = "abcA";
+                        onestring gt = "abcC";
+                        onestring shorter = "ab";
+                        onestring longer = "abcabc";
 
                         test = eq;
                         PL_ASSERT_TRUE(test < gt);
@@ -1060,11 +1060,11 @@ namespace pawlib
                     }
                     case OSTR_UNICODE:
                     {
-                        OneString eq = "🐭abc🐭";
-                        OneString lt = "🐭abc🐁";
-                        OneString gt = "🐭abc🦊";
-                        OneString shorter = "🐭ab";
-                        OneString longer = "🐭abc🦊🦊";
+                        onestring eq = "🐭abc🐭";
+                        onestring lt = "🐭abc🐁";
+                        onestring gt = "🐭abc🦊";
+                        onestring shorter = "🐭ab";
+                        onestring longer = "🐭abc🦊🦊";
 
                         test = eq;
                         PL_ASSERT_TRUE(test < gt);
@@ -1090,19 +1090,19 @@ namespace pawlib
     };
 
     // P-tB4007[a-i]
-    class TestOneString_OpLessEqual : public TestOneString
+    class TestOnestring_OpLessEqual : public TestOnestring
     {
         protected:
-            OneString test;
+            onestring test;
 
         public:
-            explicit TestOneString_OpLessEqual(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_OpLessEqual(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Less/Equal (<=) " + title;
+                return "Onestring: Less/Equal (<=) " + title;
             }
 
             testdoc_t get_docs() override
@@ -1111,7 +1111,7 @@ namespace pawlib
             }
 
             bool janitor() override {
-                OneString test = "";
+                onestring test = "";
                 return true;
             }
 
@@ -1136,9 +1136,9 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        OneChar eq = "B";
-                        OneChar lt = "A";
-                        OneChar gt = "C";
+                        onechar eq = "B";
+                        onechar lt = "A";
+                        onechar gt = "C";
 
                         test = eq;
                         PL_ASSERT_TRUE(test <= gt);
@@ -1152,9 +1152,9 @@ namespace pawlib
                     }
                     case OCHAR_UNICODE:
                     {
-                        OneChar eq = "🐭";
-                        OneChar lt = "🐁";
-                        OneChar gt = "🦊";
+                        onechar eq = "🐭";
+                        onechar lt = "🐁";
+                        onechar gt = "🦊";
 
                         test = eq;
                         PL_ASSERT_TRUE(test <= gt);
@@ -1256,11 +1256,11 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        OneString eq = "abcB";
-                        OneString lt = "abcA";
-                        OneString gt = "abcC";
-                        OneString shorter = "ab";
-                        OneString longer = "abcabc";
+                        onestring eq = "abcB";
+                        onestring lt = "abcA";
+                        onestring gt = "abcC";
+                        onestring shorter = "ab";
+                        onestring longer = "abcabc";
 
                         test = eq;
                         PL_ASSERT_TRUE(test <= gt);
@@ -1278,11 +1278,11 @@ namespace pawlib
                     }
                     case OSTR_UNICODE:
                     {
-                        OneString eq = "🐭abc🐭";
-                        OneString lt = "🐭abc🐁";
-                        OneString gt = "🐭abc🦊";
-                        OneString shorter = "🐭ab";
-                        OneString longer = "🐭abc🦊🦊";
+                        onestring eq = "🐭abc🐭";
+                        onestring lt = "🐭abc🐁";
+                        onestring gt = "🐭abc🦊";
+                        onestring shorter = "🐭ab";
+                        onestring longer = "🐭abc🦊🦊";
 
                         test = eq;
                         PL_ASSERT_TRUE(test <= gt);
@@ -1308,19 +1308,19 @@ namespace pawlib
     };
 
     // P-tB4008[a-i]
-    class TestOneString_OpGreater : public TestOneString
+    class TestOnestring_OpGreater : public TestOnestring
     {
         protected:
-            OneString test;
+            onestring test;
 
         public:
-            explicit TestOneString_OpGreater(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_OpGreater(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Less Than (>) " + title;
+                return "Onestring: Less Than (>) " + title;
             }
 
             testdoc_t get_docs() override
@@ -1329,7 +1329,7 @@ namespace pawlib
             }
 
             bool janitor() override {
-                OneString test = "";
+                onestring test = "";
                 return true;
             }
 
@@ -1354,9 +1354,9 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        OneChar eq = "B";
-                        OneChar lt = "A";
-                        OneChar gt = "C";
+                        onechar eq = "B";
+                        onechar lt = "A";
+                        onechar gt = "C";
 
                         test = eq;
                         PL_ASSERT_TRUE(test > lt);
@@ -1370,9 +1370,9 @@ namespace pawlib
                     }
                     case OCHAR_UNICODE:
                     {
-                        OneChar eq = "🐭";
-                        OneChar lt = "🐁";
-                        OneChar gt = "🦊";
+                        onechar eq = "🐭";
+                        onechar lt = "🐁";
+                        onechar gt = "🦊";
 
                         test = eq;
                         PL_ASSERT_TRUE(test > lt);
@@ -1474,11 +1474,11 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        OneString eq = "abcB";
-                        OneString lt = "abcA";
-                        OneString gt = "abcC";
-                        OneString shorter = "ab";
-                        OneString longer = "abcabc";
+                        onestring eq = "abcB";
+                        onestring lt = "abcA";
+                        onestring gt = "abcC";
+                        onestring shorter = "ab";
+                        onestring longer = "abcabc";
 
                         test = eq;
                         PL_ASSERT_TRUE(test > lt);
@@ -1496,11 +1496,11 @@ namespace pawlib
                     }
                     case OSTR_UNICODE:
                     {
-                        OneString eq = "🐭abc🐭";
-                        OneString lt = "🐭abc🐁";
-                        OneString gt = "🐭abc🦊";
-                        OneString shorter = "🐭ab";
-                        OneString longer = "🐭abc🦊🦊";
+                        onestring eq = "🐭abc🐭";
+                        onestring lt = "🐭abc🐁";
+                        onestring gt = "🐭abc🦊";
+                        onestring shorter = "🐭ab";
+                        onestring longer = "🐭abc🦊🦊";
 
                         test = eq;
                         PL_ASSERT_TRUE(test > lt);
@@ -1526,19 +1526,19 @@ namespace pawlib
     };
 
     // P-tB4009[a-i]
-    class TestOneString_OpGreaterEqual : public TestOneString
+    class TestOnestring_OpGreaterEqual : public TestOnestring
     {
         protected:
-            OneString test;
+            onestring test;
 
         public:
-            explicit TestOneString_OpGreaterEqual(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_OpGreaterEqual(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Greater/Equal (>=) " + title;
+                return "Onestring: Greater/Equal (>=) " + title;
             }
 
             testdoc_t get_docs() override
@@ -1547,7 +1547,7 @@ namespace pawlib
             }
 
             bool janitor() override {
-                OneString test = "";
+                onestring test = "";
                 return true;
             }
 
@@ -1572,9 +1572,9 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        OneChar eq = "B";
-                        OneChar lt = "A";
-                        OneChar gt = "C";
+                        onechar eq = "B";
+                        onechar lt = "A";
+                        onechar gt = "C";
 
                         test = eq;
                         PL_ASSERT_TRUE(test >= lt);
@@ -1588,9 +1588,9 @@ namespace pawlib
                     }
                     case OCHAR_UNICODE:
                     {
-                        OneChar eq = "🐭";
-                        OneChar lt = "🐁";
-                        OneChar gt = "🦊";
+                        onechar eq = "🐭";
+                        onechar lt = "🐁";
+                        onechar gt = "🦊";
 
                         test = eq;
                         PL_ASSERT_TRUE(test >= lt);
@@ -1692,11 +1692,11 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        OneString eq = "abcB";
-                        OneString lt = "abcA";
-                        OneString gt = "abcC";
-                        OneString shorter = "ab";
-                        OneString longer = "abcabc";
+                        onestring eq = "abcB";
+                        onestring lt = "abcA";
+                        onestring gt = "abcC";
+                        onestring shorter = "ab";
+                        onestring longer = "abcabc";
 
                         test = eq;
                         PL_ASSERT_TRUE(test >= lt);
@@ -1714,11 +1714,11 @@ namespace pawlib
                     }
                     case OSTR_UNICODE:
                     {
-                        OneString eq = "🐭abc🐭";
-                        OneString lt = "🐭abc🐁";
-                        OneString gt = "🐭abc🦊";
-                        OneString shorter = "🐭ab";
-                        OneString longer = "🐭abc🦊🦊";
+                        onestring eq = "🐭abc🐭";
+                        onestring lt = "🐭abc🐁";
+                        onestring gt = "🐭abc🦊";
+                        onestring shorter = "🐭ab";
+                        onestring longer = "🐭abc🦊🦊";
 
                         test = eq;
                         PL_ASSERT_TRUE(test >= lt);
@@ -1744,27 +1744,27 @@ namespace pawlib
     };
 
     // P-tB4010
-    class TestOneString_At : public Test
+    class TestOnestring_At : public Test
     {
         protected:
-            OneString test = "⛰ The Matterhorn ⛰";
+            onestring test = "⛰ The Matterhorn ⛰";
 
         public:
-            TestOneString_At(){}
+            TestOnestring_At(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: at()";
+                return "Onestring: at()";
             }
 
             testdoc_t get_docs() override
             {
-                return "Test accessing one character of a OneString with at()";
+                return "Test accessing one character of a onestring with at()";
             }
 
             bool run() override
             {
-                OneChar toCheck;
+                onechar toCheck;
                 toCheck = "⛰";
                 PL_ASSERT_EQUAL(test.at(17), toCheck);
                 return true;
@@ -1772,27 +1772,27 @@ namespace pawlib
     };
 
     // P-tB4011
-    class TestOneString_OpAt : public Test
+    class TestOnestring_OpAt : public Test
     {
         protected:
-            OneString test = "⛰ The Matterhorn ⛰";
+            onestring test = "⛰ The Matterhorn ⛰";
 
         public:
-            TestOneString_OpAt(){}
+            TestOnestring_OpAt(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: at ([])";
+                return "Onestring: at ([])";
             }
 
             testdoc_t get_docs() override
             {
-                return "Test accessing one character of a OneString with the [] operator.";
+                return "Test accessing one character of a onestring with the [] operator.";
             }
 
             bool run() override
             {
-                OneChar toCheck;
+                onechar toCheck;
                 toCheck = "⛰";
                 PL_ASSERT_EQUAL(test[17], toCheck);
                 return true;
@@ -1800,24 +1800,24 @@ namespace pawlib
     };
 
     // P-tB4012
-    class TestOneString_Back : public Test
+    class TestOnestring_Back : public Test
     {
         protected:
-            OneString start = "⛰ The Matterhorn ⛰";
-            OneString goal = "⛰ The Matterhorn !";
-            OneString test;
+            onestring start = "⛰ The Matterhorn ⛰";
+            onestring goal = "⛰ The Matterhorn !";
+            onestring test;
 
         public:
-            TestOneString_Back(){}
+            TestOnestring_Back(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: back()";
+                return "Onestring: back()";
             }
 
             testdoc_t get_docs() override
             {
-                return "Test accessing the last character of a OneString with back()";
+                return "Test accessing the last character of a onestring with back()";
             }
 
             bool janitor() override
@@ -1828,7 +1828,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar& ochr = test.back();
+                onechar& ochr = test.back();
                 PL_ASSERT_EQUAL(ochr, "⛰");
 
                 ochr = "!";
@@ -1840,24 +1840,24 @@ namespace pawlib
     };
 
     // P-tB4013
-    class TestOneString_Front : public Test
+    class TestOnestring_Front : public Test
     {
         protected:
-            OneString start = "⛰ The Matterhorn ⛰";
-            OneString goal = "! The Matterhorn ⛰";
-            OneString test;
+            onestring start = "⛰ The Matterhorn ⛰";
+            onestring goal = "! The Matterhorn ⛰";
+            onestring test;
 
         public:
-            TestOneString_Front(){}
+            TestOnestring_Front(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: front()";
+                return "Onestring: front()";
             }
 
             testdoc_t get_docs() override
             {
-                return "Test accessing the first character of a OneString with front()";
+                return "Test accessing the first character of a onestring with front()";
             }
 
             bool janitor() override
@@ -1868,7 +1868,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar& ochr = test.front();
+                onechar& ochr = test.front();
                 PL_ASSERT_EQUAL(ochr, "⛰");
 
                 ochr = "!";
@@ -1880,31 +1880,31 @@ namespace pawlib
     };
 
     // P-tB4014
-    class TestOneString_Capacity : public Test
+    class TestOnestring_Capacity : public Test
     {
         protected:
-            OneString test = "🐦 ❤️ my big sphinx of 💎.";
+            onestring test = "🐦 ❤️ my big sphinx of 💎.";
 
         public:
-            TestOneString_Capacity(){}
+            TestOnestring_Capacity(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: at ([])";
+                return "Onestring: at ([])";
             }
 
             testdoc_t get_docs() override
             {
-                return "Test accessing one character of a OneString with the [] operator.";
+                return "Test accessing one character of a onestring with the [] operator.";
             }
 
             bool run() override
             {
-                size_t expected_capacity = OneString::BASE_SIZE;
+                size_t expected_capacity = onestring::BASE_SIZE;
                 size_t string_length = test.length();
                 while (expected_capacity < string_length)
                 {
-                    expected_capacity *= OneString::RESIZE_FACTOR;
+                    expected_capacity *= onestring::RESIZE_FACTOR;
                 }
                 PL_ASSERT_EQUAL(test.capacity(), expected_capacity);
                 return true;
@@ -1912,24 +1912,24 @@ namespace pawlib
     };
 
     // P-tB4015
-    class TestOneString_PopBack : public Test
+    class TestOnestring_PopBack : public Test
     {
         protected:
-            OneString start = "The quick brown 🦊 jumped over the lazy 🐶📣";
-            OneString target = "The quick brown 🦊 jumped over the lazy 🐶";
-            OneString test;
+            onestring start = "The quick brown 🦊 jumped over the lazy 🐶📣";
+            onestring target = "The quick brown 🦊 jumped over the lazy 🐶";
+            onestring test;
 
         public:
-            TestOneString_PopBack(){}
+            TestOnestring_PopBack(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: pop_back()";
+                return "Onestring: pop_back()";
             }
 
             testdoc_t get_docs() override
             {
-                return "Tests for removing characters from a OneString using pop_back().";
+                return "Tests for removing characters from a onestring using pop_back().";
             }
 
             bool pre() override
@@ -1952,18 +1952,18 @@ namespace pawlib
     };
 
     // P-tB4016
-    class TestOneString_Length : public Test
+    class TestOnestring_Length : public Test
     {
         protected:
-            OneString start = "Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷";
-            OneString test;
+            onestring start = "Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷";
+            onestring test;
 
         public:
-            TestOneString_Length(){}
+            TestOnestring_Length(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: length()";
+                return "Onestring: length()";
             }
 
             testdoc_t get_docs() override
@@ -1992,18 +1992,18 @@ namespace pawlib
     };
 
     // P-tB4017
-    class TestOneString_Size : public Test
+    class TestOnestring_Size : public Test
     {
         protected:
-            OneString start = "M©‽🐭‽©M";
-            OneString test;
+            onestring start = "M©‽🐭‽©M";
+            onestring test;
 
         public:
-            TestOneString_Size(){}
+            TestOnestring_Size(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: size()";
+                return "Onestring: size()";
             }
 
             testdoc_t get_docs() override
@@ -2045,19 +2045,19 @@ namespace pawlib
     };
 
     // P-tB4018
-    class TestOneString_Copy : public Test
+    class TestOnestring_Copy : public Test
     {
         protected:
-            OneString test = "🐦 ❤ my big sphinx of 💎.";
-            OneString sub1 = "🐦 ❤"; //3, 0
-            OneString sub2 = "of 💎"; //4, 18
+            onestring test = "🐦 ❤ my big sphinx of 💎.";
+            onestring sub1 = "🐦 ❤"; //3, 0
+            onestring sub2 = "of 💎"; //4, 18
 
         public:
-            TestOneString_Copy(){}
+            TestOnestring_Copy(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: copy()";
+                return "Onestring: copy()";
             }
 
             testdoc_t get_docs() override
@@ -2090,14 +2090,14 @@ namespace pawlib
     };
 
     // P-tB4019
-    class TestOneString_CStr : public Test
+    class TestOnestring_CStr : public Test
     {
         public:
-            TestOneString_CStr(){}
+            TestOnestring_CStr(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: c_str()";
+                return "Onestring: c_str()";
             }
 
             testdoc_t get_docs() override
@@ -2108,25 +2108,25 @@ namespace pawlib
             bool run() override
             {
                 const char* cstr = "The quick brown 🦊 jumped over the lazy 🐶.";
-                OneString test = cstr;
+                onestring test = cstr;
                 PL_ASSERT_EQUAL(strcmp(cstr, test.c_str()), 0);
                 return true;
             }
     };
 
     // P-tB4020
-    class TestOneString_Empty : public Test
+    class TestOnestring_Empty : public Test
     {
         protected:
-            OneString test1 = "";
-            OneString test2 = "a";
+            onestring test1 = "";
+            onestring test2 = "a";
 
         public:
-            TestOneString_Empty(){}
+            TestOnestring_Empty(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: empty()";
+                return "Onestring: empty()";
             }
 
             testdoc_t get_docs() override
@@ -2143,19 +2143,19 @@ namespace pawlib
     };
 
     // P-tB4021
-    class TestOneString_Substr : public Test
+    class TestOnestring_Substr : public Test
     {
         protected:
-            OneString start = "🐦 ❤ my big sphinx of 💎.";
-            OneString sub1 = "🐦 ❤"; //pos = 0, len = 3
-            OneString sub2 = "of 💎"; //pos = 18, len = 4
-            OneString sub3 = "x of 💎."; //pos = 16, len = (undefined)
+            onestring start = "🐦 ❤ my big sphinx of 💎.";
+            onestring sub1 = "🐦 ❤"; //pos = 0, len = 3
+            onestring sub2 = "of 💎"; //pos = 18, len = 4
+            onestring sub3 = "x of 💎."; //pos = 16, len = (undefined)
         public:
-            TestOneString_Substr(){}
+            TestOnestring_Substr(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: substr()";
+                return "Onestring: substr()";
             }
 
             testdoc_t get_docs() override
@@ -2165,13 +2165,13 @@ namespace pawlib
 
             bool run() override
             {
-                OneString test1 = start.substr(0, 3);
+                onestring test1 = start.substr(0, 3);
                 PL_ASSERT_EQUAL(test1, sub1);
 
-                OneString test2 = start.substr(18, 4);
+                onestring test2 = start.substr(18, 4);
                 PL_ASSERT_EQUAL(test2, sub2);
 
-                OneString test3 = start.substr(16);
+                onestring test3 = start.substr(16);
                 PL_ASSERT_EQUAL(test3, sub3);
 
                 return true;
@@ -2179,25 +2179,25 @@ namespace pawlib
     };
 
     // P-tB4022
-    class TestOneString_Append : public TestOneString
+    class TestOnestring_Append : public TestOnestring
     {
         protected:
-            OneString start = "TEST";
-            OneString test;
+            onestring start = "TEST";
+            onestring test;
 
         public:
-            explicit TestOneString_Append(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_Append(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Append " + title;
+                return "Onestring: Append " + title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test appending to a OneString with append().";
+                return "Test appending to a onestring with append().";
             }
 
             bool janitor() override {
@@ -2217,14 +2217,14 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        OneChar ochr = "!";
+                        onechar ochr = "!";
                         test.append(ochr);
                         PL_ASSERT_EQUAL(test, "TEST!");
                         return true;
                     }
                     case OCHAR_UNICODE:
                     {
-                        OneChar ochr = "‽";
+                        onechar ochr = "‽";
                         test.append(ochr);
                         PL_ASSERT_EQUAL(test, "TEST‽");
                         return true;
@@ -2259,14 +2259,14 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        OneString ostr = "!!!";
+                        onestring ostr = "!!!";
                         test.append(ostr);
                         PL_ASSERT_EQUAL(test, "TEST!!!");
                         return true;
                     }
                     case OSTR_UNICODE:
                     {
-                        OneString ostr = "‽‽‽";
+                        onestring ostr = "‽‽‽";
                         test.append(ostr);
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽");
                         return true;
@@ -2281,29 +2281,29 @@ namespace pawlib
     };
 
     // P-tB4023
-    class TestOneString_OpAppend : public TestOneString
+    class TestOnestring_OpAppend : public TestOnestring
     {
         protected:
-            OneString start = "TEST";
-            OneString test = "TEST";
+            onestring start = "TEST";
+            onestring test = "TEST";
 
         public:
-            explicit TestOneString_OpAppend(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_OpAppend(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Append (+=) " + title;
+                return "Onestring: Append (+=) " + title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test appending to a OneString with the += operator.";
+                return "Test appending to a onestring with the += operator.";
             }
 
             bool janitor() override {
-                OneString test = start;
+                onestring test = start;
                 return (test == start);
             }
 
@@ -2319,14 +2319,14 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        OneChar ochr = "!";
+                        onechar ochr = "!";
                         test += ochr;
                         PL_ASSERT_EQUAL(test, "TEST!");
                         return true;
                     }
                     case OCHAR_UNICODE:
                     {
-                        OneChar ochr = "‽";
+                        onechar ochr = "‽";
                         test += ochr;
                         PL_ASSERT_EQUAL(test, "TEST‽");
                         return true;
@@ -2361,14 +2361,14 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        OneString ostr = "!!!";
+                        onestring ostr = "!!!";
                         test += ostr;
                         PL_ASSERT_EQUAL(test, "TEST!!!");
                         return true;
                     }
                     case OSTR_UNICODE:
                     {
-                        OneString ostr = "‽‽‽";
+                        onestring ostr = "‽‽‽";
                         test += ostr;
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽");
                         return true;
@@ -2383,23 +2383,23 @@ namespace pawlib
     };
 
     // P-tB4024
-    class TestOneString_Clear : public Test
+    class TestOnestring_Clear : public Test
     {
         protected:
-            OneString start = "Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷";
-            OneString test;
+            onestring start = "Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷Ø÷";
+            onestring test;
 
         public:
-            TestOneString_Clear(){}
+            TestOnestring_Clear(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: clear()";
+                return "Onestring: clear()";
             }
 
             testdoc_t get_docs() override
             {
-                return "Tests for clearing all items in a OneString with clear().";
+                return "Tests for clearing all items in a onestring with clear().";
             }
 
             bool janitor() override
@@ -2417,19 +2417,19 @@ namespace pawlib
     };
 
     // P-tB4025
-    class TestOneString_Erase : public Test
+    class TestOnestring_Erase : public Test
     {
         protected:
-            OneString start = "The quick brown 🦊 jumped over the lazy 🐶.";
-            OneString outcome1 = "The lazy 🐶."; // pos = 4, len = 30
-            OneString outcome2 = "The quick brown 🦊 jumped"; // pos = 24, len = (undefined)
-            OneString test;
+            onestring start = "The quick brown 🦊 jumped over the lazy 🐶.";
+            onestring outcome1 = "The lazy 🐶."; // pos = 4, len = 30
+            onestring outcome2 = "The quick brown 🦊 jumped"; // pos = 24, len = (undefined)
+            onestring test;
         public:
-            TestOneString_Erase(){}
+            TestOnestring_Erase(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: erase()";
+                return "Onestring: erase()";
             }
 
             testdoc_t get_docs() override
@@ -2459,26 +2459,26 @@ namespace pawlib
     };
 
     // P-tB4026[a-i]
-    class TestOneString_Insert : public TestOneString
+    class TestOnestring_Insert : public TestOnestring
     {
         protected:
             // This string is designed to force a resize on a single insert.
-            OneString start = "TSTING!!";
-            OneString test;
+            onestring start = "TSTING!!";
+            onestring test;
 
         public:
-            explicit TestOneString_Insert(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_Insert(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Insert " + title;
+                return "Onestring: Insert " + title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test adding to a OneString with insert().";
+                return "Test adding to a onestring with insert().";
             }
 
             bool janitor() override {
@@ -2498,14 +2498,14 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        OneChar ochr = "E";
+                        onechar ochr = "E";
                         test.insert(1, ochr);
                         PL_ASSERT_EQUAL(test, "TESTING!!");
                         return true;
                     }
                     case OCHAR_UNICODE:
                     {
-                        OneChar ochr = "Ё";
+                        onechar ochr = "Ё";
                         std::cout << ochr.c_str() << std::endl;
                         test.insert(1, ochr);
                         PL_ASSERT_EQUAL(test, "TЁSTING!!");
@@ -2541,14 +2541,14 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        OneString ostr = "ESS";
+                        onestring ostr = "ESS";
                         test.insert(1, ostr);
                         PL_ASSERT_EQUAL(test, "TESSSTING!!");
                         return true;
                     }
                     case OSTR_UNICODE:
                     {
-                        OneString ostr = "ЁSS";
+                        onestring ostr = "ЁSS";
                         test.insert(1, ostr);
                         PL_ASSERT_EQUAL(test, "TЁSSSTING!!");
                         return true;
@@ -2563,35 +2563,35 @@ namespace pawlib
     };
 
     // P-tB4027[a-i]
-    class TestOneString_Replace : public TestOneString
+    class TestOnestring_Replace : public TestOnestring
     {
         protected:
-            OneString start = "The red fox jumped over the dog.";
+            onestring start = "The red fox jumped over the dog.";
             //replace pos=31, len=1, '!'
-            OneString goal1 = "The red fox jumped over the dog!";
+            onestring goal1 = "The red fox jumped over the dog!";
             //replace pos=31, len=1, '…'
-            OneString goal1b = "The red fox jumped over the dog…";
+            onestring goal1b = "The red fox jumped over the dog…";
             //replace pos=8, len=3, '🦊'
-            OneString goal2 = "The red 🦊 jumped over the dog!";
+            onestring goal2 = "The red 🦊 jumped over the dog!";
             //replace pos=26, len=3, "lazy 🐶"
-            OneString goal3 = "The red 🦊 jumped over the lazy 🐶!";
+            onestring goal3 = "The red 🦊 jumped over the lazy 🐶!";
             //replace pos=4, len=3, "quick brown"
-            OneString goal4 = "The quick brown 🦊 jumped over the lazy 🐶!";
-            OneString test;
+            onestring goal4 = "The quick brown 🦊 jumped over the lazy 🐶!";
+            onestring test;
 
         public:
-            explicit TestOneString_Replace(TestStringType type)
-            :TestOneString(type)
+            explicit TestOnestring_Replace(TestStringType type)
+            :TestOnestring(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneString: Replace " + title;
+                return "Onestring: Replace " + title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test replacing part of a OneString with replace().";
+                return "Test replacing part of a onestring with replace().";
             }
 
             bool janitor() override {
@@ -2611,14 +2611,14 @@ namespace pawlib
                     }
                     case OCHAR_ASCII:
                     {
-                        OneChar ochr = "!";
+                        onechar ochr = "!";
                         test.replace(31, 1, ochr);
                         PL_ASSERT_EQUAL(test, goal1);
                         return true;
                     }
                     case OCHAR_UNICODE:
                     {
-                        OneChar ochr = "…";
+                        onechar ochr = "…";
                         test.replace(31, 1, ochr);
                         PL_ASSERT_EQUAL(test, goal1b);
                         return true;
@@ -2679,14 +2679,14 @@ namespace pawlib
                     }
                     case OSTR_ASCII:
                     {
-                        OneString ostr = "!";
+                        onestring ostr = "!";
                         test.replace(31, 1, ostr);
                         PL_ASSERT_EQUAL(test, goal1);
                         return true;
                     }
                     case OSTR_UNICODE:
                     {
-                        OneString ostr = "!";
+                        onestring ostr = "!";
                         test.replace(31, 1, ostr);
                         PL_ASSERT_EQUAL(test, goal1);
 
@@ -2715,25 +2715,25 @@ namespace pawlib
 
     ///////////// REUSABLE /////////////
 
-    class TestOneString_Swap : public Test
+    class TestOnestring_Swap : public Test
     {
         protected:
-            OneString beforeOne;
-            OneString beforeTwo;
-            OneString afterOne;
-            OneString afterTwo;
+            onestring beforeOne;
+            onestring beforeTwo;
+            onestring afterOne;
+            onestring afterTwo;
 
         public:
-            TestOneString_Swap(){}
+            TestOnestring_Swap(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: swap()";
+                return "Onestring: swap()";
             }
 
             testdoc_t get_docs() override
             {
-                return "Test swapping two OneStrings.";
+                return "Test swapping two onestrings.";
             }
 
             bool pre() override
@@ -2759,26 +2759,26 @@ namespace pawlib
             }
     };
 
-    class TestOneString_ForceResize : public Test
+    class TestOnestring_ForceResize : public Test
     {
         protected:
-            OneString target = "🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉";
+            onestring target = "🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉";
         public:
-            TestOneString_ForceResize(){}
+            TestOnestring_ForceResize(){}
 
             testdoc_t get_title() override
             {
-                return "OneString: Force Resize";
+                return "Onestring: Force Resize";
             }
 
             testdoc_t get_docs() override
             {
-                return "Append characters to force resizing of the OneString's internal structure.";
+                return "Append characters to force resizing of the onestring's internal structure.";
             }
 
             bool run() override
             {
-                OneString test;
+                onestring test;
                 for (size_t i = 0; i < target.length(); ++i)
                 {
                     test.append("🐉");
@@ -2788,16 +2788,16 @@ namespace pawlib
             }
     };
 
-    class TestSuite_OneString : public TestSuite
+    class TestSuite_Onestring : public TestSuite
     {
         public:
-            explicit TestSuite_OneString(){}
+            explicit TestSuite_Onestring(){}
 
             void load_tests() override;
 
             testdoc_t get_title() override
             {
-                return "PawLIB: OneString Tests";
+                return "PawLIB: Onestring Tests";
             }
     };
 }

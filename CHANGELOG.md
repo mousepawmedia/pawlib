@@ -42,7 +42,7 @@
     algorithm as the other Flex data structures.
 * RigidStack 0.1 [Experimental]
     * An efficient, fixed-size stack.
-* OneString 0.3 [Experimental]
+* Onestring 0.3 [Experimental]
     * Template-sized, Unicode-friendly string.
 * Pawsort 0.1 [Experimental]
     * NEW dual-pivot introsort (unstable sorting algorithm).

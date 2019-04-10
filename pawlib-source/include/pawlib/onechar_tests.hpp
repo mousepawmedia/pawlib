@@ -1,4 +1,4 @@
-/** Tests for OneChar [PawLIB]
+/** Tests for onechar [PawLIB]
   * Version: 0.4
   *
   * Author(s): Jason C. McDonald
@@ -51,7 +51,7 @@ using namespace pawlib;
 
 namespace pawlib
 {
-    class TestOneChar : public Test
+    class TestOnechar : public Test
     {
         public:
             enum TestCharType {
@@ -69,7 +69,7 @@ namespace pawlib
             testdoc_t title;
 
         public:
-            explicit TestOneChar(TestCharType type)
+            explicit TestOnechar(TestCharType type)
             :charType(type)
             {
                 switch(charType)
@@ -91,7 +91,7 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        title = "(OneChar)";
+                        title = "(onechar)";
                         break;
                     }
                 }
@@ -102,53 +102,53 @@ namespace pawlib
     };
 
     // P-tB4101
-    class TestOneChar_EvaluateLength : public Test
+    class TestOnechar_EvaluateLength : public Test
     {
         public:
-            TestOneChar_EvaluateLength(){}
+            TestOnechar_EvaluateLength(){}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Evaluate Length";
+                return "Onechar: Evaluate Length";
             }
 
             testdoc_t get_docs() override
             {
-                return "Test that the OneChar::evaluateLength() function works correctly.";
+                return "Test that the onechar::evaluateLength() function works correctly.";
             }
 
             bool run() override
             {
-                PL_ASSERT_EQUAL(OneChar::evaluateLength("M"), 1u);
-                PL_ASSERT_EQUAL(OneChar::evaluateLength("©"), 2u);
-                PL_ASSERT_EQUAL(OneChar::evaluateLength("‽"), 3u);
-                PL_ASSERT_EQUAL(OneChar::evaluateLength("🐭"), 4u);
+                PL_ASSERT_EQUAL(onechar::evaluateLength("M"), 1u);
+                PL_ASSERT_EQUAL(onechar::evaluateLength("©"), 2u);
+                PL_ASSERT_EQUAL(onechar::evaluateLength("‽"), 3u);
+                PL_ASSERT_EQUAL(onechar::evaluateLength("🐭"), 4u);
                 return true;
             }
 
-            ~TestOneChar_EvaluateLength(){}
+            ~TestOnechar_EvaluateLength(){}
     };
 
     // P-tB4102
-    class TestOneChar_CStr : public Test
+    class TestOnechar_CStr : public Test
     {
         protected:
-            OneChar ch1 = "M";
-            OneChar ch2 = "©";
-            OneChar ch3 = "‽";
-            OneChar ch4 = "🐭";
+            onechar ch1 = "M";
+            onechar ch2 = "©";
+            onechar ch3 = "‽";
+            onechar ch4 = "🐭";
 
         public:
-            TestOneChar_CStr(){}
+            TestOnechar_CStr(){}
 
             testdoc_t get_title() override
             {
-                return "OneChar: C String";
+                return "Onechar: C String";
             }
 
             testdoc_t get_docs() override
             {
-                return "Test the c-string returned from a OneChar is accurate.";
+                return "Test the c-string returned from a onechar is accurate.";
             }
 
             bool run() override
@@ -174,27 +174,27 @@ namespace pawlib
     };
 
     // P-tB4103[a-d]
-    class TestOneChar_Assign : public TestOneChar
+    class TestOnechar_Assign : public TestOnechar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_Assign(TestCharType type)
-            : TestOneChar(type)
+            TestOnechar_Assign(TestCharType type)
+            : TestOnechar(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Assign " + this->title;
+                return "Onechar: Assign " + this->title;
             }
 
             testdoc_t get_docs() override
             {
-                return "Test assigning data into a OneChar.";
+                return "Test assigning data into a onechar.";
             }
 
             bool run() override
             {
-                OneChar test;
+                onechar test;
                 switch(this->charType)
                 {
                     case CHAR:
@@ -226,7 +226,7 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        OneChar ochr = "🐭";
+                        onechar ochr = "🐭";
                         test = ochr;
                         const char* test_cstr = test.c_str();
                         PL_ASSERT_EQUAL(test_cstr, "🐭");
@@ -243,17 +243,17 @@ namespace pawlib
     };
 
     // P-tB4104[a-d]
-    class TestOneChar_Equals : public TestOneChar
+    class TestOnechar_Equals : public TestOnechar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_Equals(TestCharType type)
-            : TestOneChar(type)
+            TestOnechar_Equals(TestCharType type)
+            : TestOnechar(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Equals " + this->title;
+                return "Onechar: Equals " + this->title;
             }
 
             testdoc_t get_docs() override
@@ -263,7 +263,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar test;
+                onechar test;
                 switch(this->charType)
                 {
                     case CHAR:
@@ -299,8 +299,8 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        OneChar ochr = "🐭";
-                        OneChar ochr_bad = "©";
+                        onechar ochr = "🐭";
+                        onechar ochr_bad = "©";
                         test = "🐭";
                         PL_ASSERT_TRUE(test.equals(ochr));
                         PL_ASSERT_FALSE(test.equals(ochr_bad));
@@ -316,17 +316,17 @@ namespace pawlib
     };
 
     // P-tB4105[a-d]
-    class TestOneChar_OpEquals : public TestOneChar
+    class TestOnechar_OpEquals : public TestOnechar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_OpEquals(TestCharType type)
-            : TestOneChar(type)
+            TestOnechar_OpEquals(TestCharType type)
+            : TestOnechar(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Equals (==) " + this->title;
+                return "Onechar: Equals (==) " + this->title;
             }
 
             testdoc_t get_docs() override
@@ -336,7 +336,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar test;
+                onechar test;
                 switch(this->charType)
                 {
                     case CHAR:
@@ -372,8 +372,8 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        OneChar ochr = "🐭";
-                        OneChar ochr_bad = "©";
+                        onechar ochr = "🐭";
+                        onechar ochr_bad = "©";
                         test = "🐭";
                         PL_ASSERT_TRUE(test == ochr);
                         PL_ASSERT_FALSE(test == ochr_bad);
@@ -389,17 +389,17 @@ namespace pawlib
     };
 
     // P-tB4106[a-d]
-    class TestOneChar_OpNotEquals : public TestOneChar
+    class TestOnechar_OpNotEquals : public TestOnechar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_OpNotEquals(TestCharType type)
-            : TestOneChar(type)
+            TestOnechar_OpNotEquals(TestCharType type)
+            : TestOnechar(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Not Equals (!=) " + this->title;
+                return "Onechar: Not Equals (!=) " + this->title;
             }
 
             testdoc_t get_docs() override
@@ -409,7 +409,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar test;
+                onechar test;
                 switch(this->charType)
                 {
                     case CHAR:
@@ -445,8 +445,8 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        OneChar ochr = "🐭";
-                        OneChar ochr_bad = "©";
+                        onechar ochr = "🐭";
+                        onechar ochr_bad = "©";
                         test = "🐭";
                         PL_ASSERT_FALSE(test != ochr);
                         PL_ASSERT_TRUE(test != ochr_bad);
@@ -462,17 +462,17 @@ namespace pawlib
     };
 
     // P-tB4107[a-d]
-    class TestOneChar_Compare : public TestOneChar
+    class TestOnechar_Compare : public TestOnechar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_Compare(TestCharType type)
-            : TestOneChar(type)
+            TestOnechar_Compare(TestCharType type)
+            : TestOnechar(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Compare " + this->title;
+                return "Onechar: Compare " + this->title;
             }
 
             testdoc_t get_docs() override
@@ -482,7 +482,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar test;
+                onechar test;
                 switch(this->charType)
                 {
                     case CHAR:
@@ -544,9 +544,9 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        OneChar ochr_eq = "🐭";
-                        OneChar ochr_less = "🐁";
-                        OneChar ochr_more = "🦊";
+                        onechar ochr_eq = "🐭";
+                        onechar ochr_less = "🐁";
+                        onechar ochr_more = "🦊";
                         test = "🐭";
                         PL_ASSERT_EQUAL(test.compare(ochr_eq), 0);
                         PL_ANTIASSERT_EQUAL(test.compare(ochr_less), 0);
@@ -571,17 +571,17 @@ namespace pawlib
     };
 
     // P-tB4108[a-d]
-    class TestOneChar_OpLess : public TestOneChar
+    class TestOnechar_OpLess : public TestOnechar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_OpLess(TestCharType type)
-            : TestOneChar(type)
+            TestOnechar_OpLess(TestCharType type)
+            : TestOnechar(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Less Than (<) " + this->title;
+                return "Onechar: Less Than (<) " + this->title;
             }
 
             testdoc_t get_docs() override
@@ -591,7 +591,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar test;
+                onechar test;
                 switch(this->charType)
                 {
                     case CHAR:
@@ -638,9 +638,9 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        OneChar ochr_eq = "🐭";
-                        OneChar ochr_less = "🐁";
-                        OneChar ochr_more = "🦊";
+                        onechar ochr_eq = "🐭";
+                        onechar ochr_less = "🐁";
+                        onechar ochr_more = "🦊";
                         test = "🐭";
 
                         PL_ASSERT_TRUE(test < ochr_more);
@@ -660,17 +660,17 @@ namespace pawlib
     };
 
     // P-tB4109[a-d]
-    class TestOneChar_OpLessEqual : public TestOneChar
+    class TestOnechar_OpLessEqual : public TestOnechar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_OpLessEqual(TestCharType type)
-            : TestOneChar(type)
+            TestOnechar_OpLessEqual(TestCharType type)
+            : TestOnechar(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Less/Equal (<=) " + this->title;
+                return "Onechar: Less/Equal (<=) " + this->title;
             }
 
             testdoc_t get_docs() override
@@ -680,7 +680,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar test;
+                onechar test;
                 switch(this->charType)
                 {
                     case CHAR:
@@ -736,9 +736,9 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        OneChar ochr_eq = "🐭";
-                        OneChar ochr_less = "🐁";
-                        OneChar ochr_more = "🦊";
+                        onechar ochr_eq = "🐭";
+                        onechar ochr_less = "🐁";
+                        onechar ochr_more = "🦊";
                         test = "🐭";
 
                         PL_ASSERT_TRUE(test <= ochr_more);
@@ -761,17 +761,17 @@ namespace pawlib
     };
 
     // P-tB4110[a-d]
-    class TestOneChar_OpGreater : public TestOneChar
+    class TestOnechar_OpGreater : public TestOnechar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_OpGreater(TestCharType type)
-            : TestOneChar(type)
+            TestOnechar_OpGreater(TestCharType type)
+            : TestOnechar(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Greater Than (>) " + this->title;
+                return "Onechar: Greater Than (>) " + this->title;
             }
 
             testdoc_t get_docs() override
@@ -781,7 +781,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar test;
+                onechar test;
                 switch(this->charType)
                 {
                     case CHAR:
@@ -828,9 +828,9 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        OneChar ochr_eq = "🐭";
-                        OneChar ochr_less = "🐁";
-                        OneChar ochr_more = "🦊";
+                        onechar ochr_eq = "🐭";
+                        onechar ochr_less = "🐁";
+                        onechar ochr_more = "🦊";
                         test = "🐭";
 
                         PL_ASSERT_TRUE(test > ochr_less);
@@ -850,17 +850,17 @@ namespace pawlib
     };
 
     // P-tB4111[a-d]
-    class TestOneChar_OpGreaterEqual : public TestOneChar
+    class TestOnechar_OpGreaterEqual : public TestOnechar
     {
         public:
             // cppcheck-suppress noExplicitConstructor
-            TestOneChar_OpGreaterEqual(TestCharType type)
-            : TestOneChar(type)
+            TestOnechar_OpGreaterEqual(TestCharType type)
+            : TestOnechar(type)
             {}
 
             testdoc_t get_title() override
             {
-                return "OneChar: Greater/Equal (>=) " + this->title;
+                return "Onechar: Greater/Equal (>=) " + this->title;
             }
 
             testdoc_t get_docs() override
@@ -870,7 +870,7 @@ namespace pawlib
 
             bool run() override
             {
-                OneChar test;
+                onechar test;
                 switch(this->charType)
                 {
                     case CHAR:
@@ -926,9 +926,9 @@ namespace pawlib
                     }
                     case ONECHAR:
                     {
-                        OneChar ochr_eq = "🐭";
-                        OneChar ochr_less = "🐁";
-                        OneChar ochr_more = "🦊";
+                        onechar ochr_eq = "🐭";
+                        onechar ochr_less = "🐁";
+                        onechar ochr_more = "🦊";
                         test = "🐭";
 
                         PL_ASSERT_TRUE(test >= ochr_less);
@@ -950,16 +950,16 @@ namespace pawlib
             }
     };
 
-    class TestSuite_OneChar : public TestSuite
+    class TestSuite_Onechar : public TestSuite
     {
         public:
-            explicit TestSuite_OneChar(){}
+            explicit TestSuite_Onechar(){}
 
             void load_tests() override;
 
             testdoc_t get_title() override
             {
-                return "PawLIB: OneChar Tests";
+                return "PawLIB: Onechar Tests";
             }
     };
 }

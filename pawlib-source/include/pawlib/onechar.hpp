@@ -1,7 +1,7 @@
-/** OneChar [PawLIB]
+/** onechar [PawLIB]
   * Version: 0.4
   *
-  * OneChar is an array of character that can be used to represent both
+  * onechar is an array of character that can be used to represent both
   * Unicode character along with ASCII characters.
   *
   * Author(s): Jason C. McDonald, Scott Taylor, Jarek Thomas, Bowen Volwiler
@@ -53,12 +53,12 @@
 
 namespace pawlib
 {
-    class OneString;
+    class onestring;
 
     /** Stores a single unicode character */
-    class OneChar
+    class onechar
     {
-        friend OneString;
+        friend onestring;
         private:
             /* We never store more than 4 bytes of data.
              * We do not store the null terminator. */
@@ -70,11 +70,11 @@ namespace pawlib
             /// The character array.
             char internal[MAX_SIZE];
 
-            /** Copy the contents of another OneChar to this one.
-              * \param the OneChar to copy */
-            void copy(const OneChar&);
+            /** Copy the contents of another onechar to this one.
+              * \param the onechar to copy */
+            void copy(const onechar&);
 
-            /** Store an ASCII character in this OneChar
+            /** Store an ASCII character in this onechar
               * \param the char to copy */
             void parse(const char);
 
@@ -107,28 +107,28 @@ namespace pawlib
             size_t parseFromString(const std::string&, size_t index);
 
         public:
-            /** Initialize a OneChar as a null terminator */
-            OneChar();
+            /** Initialize a onechar as a null terminator */
+            onechar();
 
-            /** Initialize a OneChar with an ASCII character */
+            /** Initialize a onechar with an ASCII character */
             // cppcheck-suppress noExplicitConstructor
-            OneChar(const char);
+            onechar(const char);
 
-            /** Initialize a OneChar with an ASCII or Unicode character
+            /** Initialize a onechar with an ASCII or Unicode character
               * in a c-string. */
             // cppcheck-suppress noExplicitConstructor
-            OneChar(const char*);
+            onechar(const char*);
 
-            /** Initialize a OneChar with an ASCII or Unicode character
+            /** Initialize a onechar with an ASCII or Unicode character
               * in a std::string. */
             // cppcheck-suppress noExplicitConstructor
-            OneChar(const std::string&);
+            onechar(const std::string&);
 
-            /** Initialize a OneChar as a copy of another. */
-            OneChar(const OneChar&);
+            /** Initialize a onechar as a copy of another. */
+            onechar(const onechar&);
 
             /** Destructor */
-            ~OneChar(){};
+            ~onechar(){};
 
             /** Test for equality against a character
               * \param the char to test against
@@ -153,12 +153,12 @@ namespace pawlib
               * \return true if equal, else false */
             bool equals(const std::string&) const;
 
-            /** Test for equality against another OneChar
-              * \param the OneChar to test against
+            /** Test for equality against another onechar
+              * \param the onechar to test against
               * \return true if equal, else false */
-            bool equals(const OneChar&) const;
+            bool equals(const onechar&) const;
 
-            /** Returns the c-string representation of the OneChar.
+            /** Returns the c-string representation of the onechar.
               * Appends a null terminator.
               * \return c-string of the character */
             const char* c_str() const;
@@ -180,10 +180,10 @@ namespace pawlib
               * \return 0 if equal to argument, negative if less, positive if greater */
             int compare(const std::string&) const;
 
-            /** Compare against another OneChar
-              * \param the OneChar to test against
+            /** Compare against another onechar
+              * \param the onechar to test against
               * \return 0 if equal to argument, negative if less, positive if greater */
-            int compare(const OneChar&) const;
+            int compare(const onechar&) const;
 
             /** Evaluate the number of bytes in a Unicode character.
               * Ignores all subsequent characters.
@@ -221,25 +221,25 @@ namespace pawlib
 
             // Assignment Operators
 
-            OneChar& operator=(char ch)
+            onechar& operator=(char ch)
             {
                 parse(ch);
                 return *this;
             }
 
-            OneChar& operator=(const char* cstr)
+            onechar& operator=(const char* cstr)
             {
                 parse(cstr);
                 return *this;
             }
 
-            OneChar& operator=(const std::string& str)
+            onechar& operator=(const std::string& str)
             {
                 parse(str);
                 return *this;
             }
 
-            OneChar& operator=(const OneChar& cpy)
+            onechar& operator=(const onechar& cpy)
             {
                 copy(cpy);
                 return *this;
@@ -250,57 +250,57 @@ namespace pawlib
             bool operator==(const char cmp) const { return equals(cmp); }
             bool operator==(const char* cmp) const { return equals(cmp); }
             bool operator==(const std::string& cmp) const { return equals(cmp); }
-            bool operator==(const OneChar& cmp) const { return equals(cmp); }
+            bool operator==(const onechar& cmp) const { return equals(cmp); }
 
             bool operator!=(const char cmp) const { return !equals(cmp); }
             bool operator!=(const char* cmp) const { return !equals(cmp); }
             bool operator!=(const std::string& cmp) const { return !equals(cmp); }
-            bool operator!=(const OneChar& cmp) const { return !equals(cmp); }
+            bool operator!=(const onechar& cmp) const { return !equals(cmp); }
 
             bool operator<(const char cmp) const { return (compare(cmp) < 0); }
             bool operator<(const char* cmp) const { return (compare(cmp) < 0); }
             bool operator<(const std::string& cmp) const { return (compare(cmp) < 0); }
-            bool operator<(const OneChar& cmp) const { return (compare(cmp) < 0); }
+            bool operator<(const onechar& cmp) const { return (compare(cmp) < 0); }
 
             bool operator<=(const char cmp) const { return (compare(cmp) <= 0); }
             bool operator<=(const char* cmp) const { return (compare(cmp) <= 0); }
             bool operator<=(const std::string& cmp) const { return (compare(cmp) <= 0); }
-            bool operator<=(const OneChar& cmp) const { return (compare(cmp) <= 0); }
+            bool operator<=(const onechar& cmp) const { return (compare(cmp) <= 0); }
 
             bool operator>(const char cmp) const { return (compare(cmp) > 0); }
             bool operator>(const char* cmp) const { return (compare(cmp) > 0); }
             bool operator>(const std::string& cmp) const { return (compare(cmp) > 0); }
-            bool operator>(const OneChar& cmp) const { return (compare(cmp) > 0); }
+            bool operator>(const onechar& cmp) const { return (compare(cmp) > 0); }
 
             bool operator>=(const char cmp) const { return (compare(cmp) >= 0); }
             bool operator>=(const char* cmp) const { return (compare(cmp) >= 0); }
             bool operator>=(const std::string& cmp) const { return (compare(cmp) >= 0); }
-            bool operator>=(const OneChar& cmp) const { return (compare(cmp) >= 0); }
+            bool operator>=(const onechar& cmp) const { return (compare(cmp) >= 0); }
 
-            friend bool operator==(const char lhs, const OneChar& rhs) { return rhs.equals(lhs); }
-            friend bool operator==(const char* lhs, const OneChar& rhs) { return rhs.equals(lhs); }
-            friend bool operator==(const std::string& lhs, const OneChar& rhs) { return rhs.equals(lhs); }
+            friend bool operator==(const char lhs, const onechar& rhs) { return rhs.equals(lhs); }
+            friend bool operator==(const char* lhs, const onechar& rhs) { return rhs.equals(lhs); }
+            friend bool operator==(const std::string& lhs, const onechar& rhs) { return rhs.equals(lhs); }
 
-            friend bool operator!=(const char lhs, const OneChar& rhs) { return !rhs.equals(lhs); }
-            friend bool operator!=(const char* lhs, const OneChar& rhs) { return !rhs.equals(lhs); }
-            friend bool operator!=(const std::string& lhs, const OneChar& rhs) { return !rhs.equals(lhs); }
+            friend bool operator!=(const char lhs, const onechar& rhs) { return !rhs.equals(lhs); }
+            friend bool operator!=(const char* lhs, const onechar& rhs) { return !rhs.equals(lhs); }
+            friend bool operator!=(const std::string& lhs, const onechar& rhs) { return !rhs.equals(lhs); }
 
             // Notice that we have to invert the comparison in the function body.
-            friend bool operator<(const char lhs, const OneChar& rhs) { return (rhs.compare(lhs) > 0); }
-            friend bool operator<(const char* lhs, const OneChar& rhs) { return (rhs.compare(lhs) > 0); }
-            friend bool operator<(const std::string& lhs, const OneChar& rhs) { return (rhs.compare(lhs) > 0); }
+            friend bool operator<(const char lhs, const onechar& rhs) { return (rhs.compare(lhs) > 0); }
+            friend bool operator<(const char* lhs, const onechar& rhs) { return (rhs.compare(lhs) > 0); }
+            friend bool operator<(const std::string& lhs, const onechar& rhs) { return (rhs.compare(lhs) > 0); }
 
-            friend bool operator<=(const char lhs, const OneChar& rhs) { return (rhs.compare(lhs) >= 0); }
-            friend bool operator<=(const char* lhs, const OneChar& rhs) { return (rhs.compare(lhs) >= 0); }
-            friend bool operator<=(const std::string& lhs, const OneChar& rhs) { return (rhs.compare(lhs) >= 0); }
+            friend bool operator<=(const char lhs, const onechar& rhs) { return (rhs.compare(lhs) >= 0); }
+            friend bool operator<=(const char* lhs, const onechar& rhs) { return (rhs.compare(lhs) >= 0); }
+            friend bool operator<=(const std::string& lhs, const onechar& rhs) { return (rhs.compare(lhs) >= 0); }
 
-            friend bool operator>(const char lhs, const OneChar& rhs) { return (rhs.compare(lhs) < 0); }
-            friend bool operator>(const char* lhs, const OneChar& rhs) { return (rhs.compare(lhs) < 0); }
-            friend bool operator>(const std::string& lhs, const OneChar& rhs) { return (rhs.compare(lhs) < 0); }
+            friend bool operator>(const char lhs, const onechar& rhs) { return (rhs.compare(lhs) < 0); }
+            friend bool operator>(const char* lhs, const onechar& rhs) { return (rhs.compare(lhs) < 0); }
+            friend bool operator>(const std::string& lhs, const onechar& rhs) { return (rhs.compare(lhs) < 0); }
 
-            friend bool operator>=(const char lhs, const OneChar& rhs) { return (rhs.compare(lhs) <= 0); }
-            friend bool operator>=(const char* lhs, const OneChar& rhs) { return (rhs.compare(lhs) <= 0); }
-            friend bool operator>=(const std::string& lhs, const OneChar& rhs) { return (rhs.compare(lhs) <= 0); }
+            friend bool operator>=(const char lhs, const onechar& rhs) { return (rhs.compare(lhs) <= 0); }
+            friend bool operator>=(const char* lhs, const onechar& rhs) { return (rhs.compare(lhs) <= 0); }
+            friend bool operator>=(const std::string& lhs, const onechar& rhs) { return (rhs.compare(lhs) <= 0); }
 
 
             // HACK: Here only to ensure compiling. Remove the need for this from onestring
@@ -321,9 +321,9 @@ namespace pawlib
 
             /** Output operator
             * \param std::ostream to display output on
-            * \param the OneChar that is the output
+            * \param the onechar that is the output
             * \return the std::ostream to output */
-            friend std::ostream& operator<<(std::ostream& os, const OneChar& ostr)
+            friend std::ostream& operator<<(std::ostream& os, const onechar& ostr)
             {
                 os << ostr.c_str();
                 return os;

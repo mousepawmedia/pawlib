@@ -208,7 +208,7 @@ Split String By Tokens [``stdsplit``]
 This will split a ``std::string`` by a given token and store it in a
 ``std::vector``. The token will be stripped out in the process.
 
-Later versions of this will support OneString and FlexArray.
+Later versions of this will support Onestring and FlexArray.
 
 ..  code-block:: c++
 

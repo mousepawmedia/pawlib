@@ -2,42 +2,42 @@
 
 namespace pawlib
 {
-    OneChar::OneChar()
+    onechar::onechar()
     : size(1)
     {
-        // The default value of a OneChar should be a null terminator
+        // The default value of a onechar should be a null terminator
         internal[0] = '\0';
     }
 
-    OneChar::OneChar(const char* cstr)
+    onechar::onechar(const char* cstr)
     : size(1)
     {
         // Extract the first ASCII or Unicode character from the c-string
         parse(cstr);
     }
 
-    OneChar::OneChar(const std::string& str)
+    onechar::onechar(const std::string& str)
     : size(1)
     {
         // Extract the first ASCII or Unicode character from the std::string
         parse(str);
     }
 
-    OneChar::OneChar(const char ch)
+    onechar::onechar(const char ch)
     : size(1)
     {
         // Store the ASCII character
         parse(ch);
     }
 
-    OneChar::OneChar(const OneChar& cpy)
+    onechar::onechar(const onechar& cpy)
     : size(1)
     {
-        // Make this a copy of the OneChar
+        // Make this a copy of the onechar
         copy(cpy);
     }
 
-    void OneChar::copy(const OneChar& cpy)
+    void onechar::copy(const onechar& cpy)
     {
         // Copy the size
         this->size = cpy.size;
@@ -45,7 +45,7 @@ namespace pawlib
         memcpy(this->internal, cpy.internal, cpy.size);
     }
 
-    void OneChar::parse(const char ch)
+    void onechar::parse(const char ch)
     {
         // char is always ASCII (one byte)
         this->size = 1;
@@ -53,7 +53,7 @@ namespace pawlib
         this->internal[0] = ch;
     }
 
-    void OneChar::parse(const char* cstr)
+    void onechar::parse(const char* cstr)
     {
         /* Determine the bytesize of the Unicode character
          * at the start of the c-string */
@@ -62,13 +62,13 @@ namespace pawlib
         memcpy(this->internal, cstr, sizeof(char) * this->size);
     }
 
-    void OneChar::parse(const std::string& str)
+    void onechar::parse(const std::string& str)
     {
         // Extract the c-string from the std::string and parse it
         parse(str.c_str());
     }
 
-    size_t OneChar::parseFromString(const char* cstr, size_t index)
+    size_t onechar::parseFromString(const char* cstr, size_t index)
     {
         /* Determine the bytesize of the Unicode character
          * at the target location in the c-string */
@@ -79,13 +79,13 @@ namespace pawlib
         return this->size;
     }
 
-    size_t OneChar::parseFromString(const std::string& str, size_t index)
+    size_t onechar::parseFromString(const std::string& str, size_t index)
     {
         // Extract the c-string from the std::string and parse it
         return parseFromString(str.c_str(), index);
     }
 
-    const char* OneChar::c_str() const
+    const char* onechar::c_str() const
     {
         /* Allocate a c-string just large enough to accomidate the character
          * and a null terminator. The end-user will need to deallocate this
@@ -98,12 +98,12 @@ namespace pawlib
         return r;
     }
 
-    bool OneChar::equals(const char cmp) const
+    bool onechar::equals(const char cmp) const
     {
         return ((this->size == 1) && (this->internal[0] == cmp));
     }
 
-    bool OneChar::equals(const char* cmp) const
+    bool onechar::equals(const char* cmp) const
     {
         size_t cmpSize = evaluateLength(cmp);
         // If the string doesn't null-terminate after one character, mismatch.
@@ -113,7 +113,7 @@ namespace pawlib
         return (memcmp(this->internal, cmp, cmpSize) == 0);
     }
 
-    bool OneChar::equals_at(const char* cmp) const
+    bool onechar::equals_at(const char* cmp) const
     {
         size_t cmpSize = evaluateLength(cmp);
         // Ensure the character size matches
@@ -121,13 +121,13 @@ namespace pawlib
         return (memcmp(this->internal, cmp, cmpSize) == 0);
     }
 
-    bool OneChar::equals(const std::string& cmp) const
+    bool onechar::equals(const std::string& cmp) const
     {
         // Extract the c-string from the std::string and compare it directly
         return equals(cmp.c_str());
     }
 
-    bool OneChar::equals(const OneChar& cmp) const
+    bool onechar::equals(const onechar& cmp) const
     {
         // Ensure the character bytelengths are the same
         if (this->size != cmp.size) { return false; }
@@ -135,7 +135,7 @@ namespace pawlib
         return (memcmp(this->internal, cmp.internal, this->size) == 0);
     }
 
-    int OneChar::compare(const char cmp) const
+    int onechar::compare(const char cmp) const
     {
         /* This algorithm will not return a meaningful integer; only its
          * relation to 0 will be useful */
@@ -151,7 +151,7 @@ namespace pawlib
         return sizeDiff;
     }
 
-    int OneChar::compare(const char* cmp) const
+    int onechar::compare(const char* cmp) const
     {
         /* This algorithm will not return a meaningful integer; only its
          * relation to 0 will be useful */
@@ -167,13 +167,13 @@ namespace pawlib
         return sizeDiff;
     }
 
-    int OneChar::compare(const std::string& cmp) const
+    int onechar::compare(const std::string& cmp) const
     {
         // Extract the c-string from the std::string and directly compare it.
         return compare(cmp.c_str());
     }
 
-    int OneChar::compare(const OneChar& cmp) const
+    int onechar::compare(const onechar& cmp) const
     {
         /* This algorithm will not return a meaningful integer; only its
          * relation to 0 will be useful */

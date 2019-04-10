@@ -147,7 +147,7 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const OneChar& rhs)
+    iochannel& iochannel::operator<<(const onechar& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
@@ -157,7 +157,7 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const OneString& rhs)
+    iochannel& iochannel::operator<<(const onestring& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
@@ -523,8 +523,8 @@ namespace pawlib
     template iochannel& iochannel::resolve_pointer<double>(const double*);
     template iochannel& iochannel::resolve_pointer<long double>(const long double*);
     template iochannel& iochannel::resolve_pointer<std::string>(const std::string*);
-    template iochannel& iochannel::resolve_pointer<OneChar>(const OneChar*);
-    template iochannel& iochannel::resolve_pointer<OneString>(const OneString*);
+    template iochannel& iochannel::resolve_pointer<onechar>(const onechar*);
+    template iochannel& iochannel::resolve_pointer<onestring>(const onestring*);
 
     template <typename T>
     iochannel& iochannel::resolve_integer(const T& rhs)
@@ -677,7 +677,7 @@ namespace pawlib
         }
 
         msg.push_back(ch);
-        //TODO: Swap for OneString
+        //TODO: Swap for onestring
     }
 
     void iochannel::inject(const char* str, bool recursive)
@@ -690,7 +690,7 @@ namespace pawlib
 
         //Append to the message.
         msg.append(str);
-        //TODO: Swap for OneString
+        //TODO: Swap for onestring
 
         ////apply_attributes() ? printf("%s", format) : 0;
         ////printf("%s", str);

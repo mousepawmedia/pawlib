@@ -15,7 +15,7 @@ It is used by virtually all of MousePaw Media' core projects.
  - IOChannel: Feature-rich multi-output text output system. (Alternative to ``std::cout``)
  - Trilean: A new atomic data type with three unique states: true, false, and maybe.
  - Pool: A general-purpose implementation of the object pool design pattern.
- - OneString: Performance string class with full Unicode support. (Alternative to ``std::string``) [Experimental]
+ - Onestring: Performance string class with full Unicode support. (Alternative to ``std::string``) [Experimental]
 
 ## Authors
 

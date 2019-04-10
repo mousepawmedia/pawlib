@@ -5,49 +5,49 @@ namespace pawlib
     /*******************************************
     * Constructors + Destructor
     *******************************************/
-    OneString::OneString()
+    onestring::onestring()
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
-        this->internal = new OneChar[this->_capacity];
+        this->internal = new onechar[this->_capacity];
         assign('\0');
     }
 
-    OneString::OneString(char ch)
+    onestring::onestring(char ch)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
-        this->internal = new OneChar[this->_capacity];
+        this->internal = new onechar[this->_capacity];
         assign(ch);
     }
 
-    OneString::OneString(const char* cstr)
+    onestring::onestring(const char* cstr)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
-        this->internal = new OneChar[this->_capacity];
+        this->internal = new onechar[this->_capacity];
         assign(cstr);
     }
 
-    OneString::OneString(const std::string& str)
+    onestring::onestring(const std::string& str)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
-        this->internal = new OneChar[this->_capacity];
+        this->internal = new onechar[this->_capacity];
         append(str);
     }
 
-    OneString::OneString(const OneChar& ochr)
+    onestring::onestring(const onechar& ochr)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
-        this->internal = new OneChar[this->_capacity];
+        this->internal = new onechar[this->_capacity];
         assign(ochr);
     }
 
-    OneString::OneString(const OneString& ostr)
+    onestring::onestring(const onestring& ostr)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr)
     {
-        this->internal = new OneChar[this->_capacity];
+        this->internal = new onechar[this->_capacity];
         assign(ostr);
     }
 
-    OneString::~OneString()
+    onestring::~onestring()
     {
         if (internal != nullptr)
         {
@@ -59,52 +59,52 @@ namespace pawlib
     * Access
     *******************************************/
 
-    OneChar& OneString::at(size_t pos)
+    onechar& onestring::at(size_t pos)
     {
         if (pos > _elements)
         {
-            throw std::out_of_range("OneString::at(): Index out of bounds.");
+            throw std::out_of_range("Onestring::at(): Index out of bounds.");
         }
 
         return internal[pos];
     }
 
-    const OneChar& OneString::at(size_t pos) const
+    const onechar& onestring::at(size_t pos) const
     {
         if (pos > _elements)
         {
-            throw std::out_of_range("OneString::at(): Index out of bounds.");
+            throw std::out_of_range("Onestring::at(): Index out of bounds.");
         }
 
         return internal[pos];
     }
 
-    OneChar& OneString::back()
+    onechar& onestring::back()
     {
         // WARNING: If string is empty, this is undefined (but memory safe)
         // Return a reference to the last element in the string.
         return this->internal[_elements - 1];
     }
 
-    const OneChar& OneString::back() const
+    const onechar& onestring::back() const
     {
         // WARNING: If string is empty, this is undefined (but memory safe)
         // Return a reference to the last element in the string.
         return this->internal[_elements - 1];
     }
 
-    size_t OneString::capacity() const
+    size_t onestring::capacity() const
     {
         return _capacity;
     }
 
-    size_t OneString::copy(char* arr, size_t max, size_t len, size_t pos) const
+    size_t onestring::copy(char* arr, size_t max, size_t len, size_t pos) const
     {
         // Reminder: len and pos default to 0
 
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::copy(): specified pos out of range");
+            throw std::out_of_range("Onestring::copy(): specified pos out of range");
         }
 
         // Remove one char from the max to account for the null terminator.
@@ -132,7 +132,7 @@ namespace pawlib
         return cstr_i;
     }
 
-    const char* OneString::c_str() const
+    const char* onestring::c_str() const
     {
         size_t n = size();
         char* r = new char[n];
@@ -146,54 +146,54 @@ namespace pawlib
         return r;
     }
 
-    bool OneString::empty() const
+    bool onestring::empty() const
     {
         return (_elements == 0);
     }
 
-    OneChar& OneString::front()
+    onechar& onestring::front()
     {
         // WARNING: If string is empty, this is undefined (but memory safe)
         // Return a reference to the first element in the string.
         return this->internal[0];
     }
 
-    const OneChar& OneString::front() const
+    const onechar& onestring::front() const
     {
         // WARNING: If string is empty, this is undefined (but memory safe)
         // Return a reference to the last element in the string.
         return this->internal[0];
     }
 
-    size_t OneString::length() const
+    size_t onestring::length() const
     {
         return _elements;
     }
 
-    OneString OneString::substr(size_t pos, size_t len) const
+    onestring onestring::substr(size_t pos, size_t len) const
     {
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::substr(): specified pos out of range");
+            throw std::out_of_range("Onestring::substr(): specified pos out of range");
         }
 
-        OneString r;
+        onestring r;
         // Calculate size of substr (number of elements)
         size_t elements_to_copy = (len > _elements - pos) ? (_elements - pos) : len;
-        // Reserve necessary space in the new OneString
+        // Reserve necessary space in the new onestring
         r.reserve(elements_to_copy);
         // Copy the memory for the substring
-        memcpy(r.internal, this->internal + pos, sizeof(OneChar) * elements_to_copy);
+        memcpy(r.internal, this->internal + pos, sizeof(onechar) * elements_to_copy);
         // Record how many elements were copied.
         r._elements = elements_to_copy;
         return r;
     }
 
-    size_t OneString::size() const
+    size_t onestring::size() const
     {
         // Start counting at 1 to account for the null terminator.
         size_t bytes = 1;
-        // Sum all of the byte lengths of the OneChars.
+        // Sum all of the byte lengths of the onechars.
         for(size_t i = 0; i < _elements; ++i)
         {
             bytes += this->internal[i].size;
@@ -201,20 +201,20 @@ namespace pawlib
         return bytes;
     }
 
-    size_t OneString::size(size_t len, size_t pos) const
+    size_t onestring::size(size_t len, size_t pos) const
     {
         // Reminder: pos defaults to 0
 
         // Ensure the starting position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::size(): specified pos out of range");
+            throw std::out_of_range("Onestring::size(): specified pos out of range");
         }
 
         // Start counting at 1 to account for the null terminator.
         size_t bytes = 1;
 
-        // Sum all of the byte lengths of the OneChars in the range
+        // Sum all of the byte lengths of the onechars in the range
         for(size_t i = pos; i < (pos + len) && i < _elements; ++i)
         {
             bytes += this->internal[i].size;
@@ -226,36 +226,36 @@ namespace pawlib
     * Comparison
     ********************************************/
 
-    bool OneString::equals(const char ch) const
+    bool onestring::equals(const char ch) const
     {
         return (this->_elements == 1 && this->internal[0] == ch);
     }
 
-    bool OneString::equals(const char* cstr) const
+    bool onestring::equals(const char* cstr) const
     {
         size_t index = 0;
         size_t compare_to = 0;
         while(cstr[index] != '\0')
         {
             if (!(this->internal[compare_to].equals_at(cstr + index))) { return false; }
-            index += OneChar::evaluateLength(cstr + index);
+            index += onechar::evaluateLength(cstr + index);
             if(compare_to++ > this->_elements) { return false; }
         }
 
         return true;
     }
 
-    bool OneString::equals(const std::string& str) const
+    bool onestring::equals(const std::string& str) const
     {
         return equals(str.c_str());
     }
 
-    bool OneString::equals(const OneChar& ochr) const
+    bool onestring::equals(const onechar& ochr) const
     {
         return (this->_elements == 1 && this->internal[0] == ochr);
     }
 
-    bool OneString::equals(const OneString& ostr) const
+    bool onestring::equals(const onestring& ostr) const
     {
         if (this->_elements != ostr._elements) { return false; }
 
@@ -266,7 +266,7 @@ namespace pawlib
         return true;
     }
 
-    int OneString::compare(const char ch) const
+    int onestring::compare(const char ch) const
     {
         int sizeDiff = this->_elements - 1;
         if (sizeDiff == 0)
@@ -276,7 +276,7 @@ namespace pawlib
         return sizeDiff;
     }
 
-    int OneString::compare(const char* cstr) const
+    int onestring::compare(const char* cstr) const
     {
         /* This algorithm will not return a meaningful integer; only its
          * relation to 0 will be useful */
@@ -293,18 +293,18 @@ namespace pawlib
                 int r = this->internal[i].compare(cstr+j);
                 if ( r != 0) { return r; }
 
-                j += OneChar::evaluateLength(cstr+j);
+                j += onechar::evaluateLength(cstr+j);
             }
         }
         return sizeDiff;
     }
 
-    int OneString::compare(const std::string& str) const
+    int onestring::compare(const std::string& str) const
     {
         return compare(str.c_str());
     }
 
-    int OneString::compare(const OneChar& ochr) const
+    int onestring::compare(const onechar& ochr) const
     {
         int sizeDiff = this->_elements - 1;
         if (sizeDiff == 0)
@@ -314,7 +314,7 @@ namespace pawlib
         return sizeDiff;
     }
 
-    int OneString::compare(const OneString& ostr) const
+    int onestring::compare(const onestring& ostr) const
     {
         /* This algorithm will not return a meaningful integer; only its
          * relation to 0 will be useful */
@@ -337,7 +337,7 @@ namespace pawlib
     * Adding + Inserting
     ********************************************/
 
-    OneString& OneString::assign(const char ch)
+    onestring& onestring::assign(const char ch)
     {
         clear();
         reserve(1);
@@ -345,7 +345,7 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::assign(const char* cstr)
+    onestring& onestring::assign(const char* cstr)
     {
         clear();
 
@@ -362,13 +362,13 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::assign(const std::string& str)
+    onestring& onestring::assign(const std::string& str)
     {
         assign(str.c_str());
         return *this;
     }
 
-    OneString& OneString::assign(const OneChar& ochr)
+    onestring& onestring::assign(const onechar& ochr)
     {
         clear();
         reserve(1);
@@ -376,16 +376,16 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::assign(const OneString& ostr)
+    onestring& onestring::assign(const onestring& ostr)
     {
         clear();
         reserve(ostr._elements);
-        memcpy(this->internal, ostr.internal, sizeof(OneChar) * ostr._elements);
+        memcpy(this->internal, ostr.internal, sizeof(onechar) * ostr._elements);
         _elements = ostr._elements;
         return *this;
     }
 
-    OneString& OneString::append(const char ch)
+    onestring& onestring::append(const char ch)
     {
         expand(1);
 
@@ -394,7 +394,7 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::append(const char* cstr)
+    onestring& onestring::append(const char* cstr)
     {
         size_t index = 0;
         size_t len = characterCount(cstr);
@@ -408,21 +408,21 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::append(const std::string& str)
+    onestring& onestring::append(const std::string& str)
     {
         // Parse the internal c string directly.
         append(str.c_str());
         return *this;
     }
 
-    OneString& OneString::append(const OneChar& ochar)
+    onestring& onestring::append(const onechar& ochar)
     {
         expand(1);
         internal[_elements++] = ochar;
         return *this;
     }
 
-    OneString& OneString::append(const OneString& ostr)
+    onestring& onestring::append(const onestring& ostr)
     {
         expand(ostr.length());
 
@@ -438,12 +438,12 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::insert(size_t pos, char ch)
+    onestring& onestring::insert(size_t pos, char ch)
     {
         // Ensure the insertion position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::insert(): specified pos out of range");
+            throw std::out_of_range("Onestring::insert(): specified pos out of range");
         }
 
         // Calculate how many elements need to be shifted to make room (right partition)
@@ -453,7 +453,7 @@ namespace pawlib
         // Move the right partition to make room for the new element
         memmove(this->internal + pos + 1,
                 this->internal + pos,
-                sizeof(OneChar) * elements_to_move);
+                sizeof(onechar) * elements_to_move);
         // Insert the new element
         this->internal[pos] = ch;
         // Increase the element count
@@ -462,12 +462,12 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::insert(size_t pos, char* cstr)
+    onestring& onestring::insert(size_t pos, char* cstr)
     {
         // Ensure the insertion position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::insert(): specified pos out of range");
+            throw std::out_of_range("Onestring::insert(): specified pos out of range");
         }
 
         size_t elements_to_insert = characterCount(cstr);
@@ -478,7 +478,7 @@ namespace pawlib
         // Move the right partition to make room for the new element
         memmove(this->internal + pos + elements_to_insert,
                 this->internal + pos,
-                sizeof(OneChar) * elements_to_move);
+                sizeof(onechar) * elements_to_move);
 
         // Insert the new elements
         size_t index = 0;
@@ -493,17 +493,17 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::insert(size_t pos, std::string& str)
+    onestring& onestring::insert(size_t pos, std::string& str)
     {
         return insert(pos, str.c_str());
     }
 
-    OneString& OneString::insert(size_t pos, OneChar& ochr)
+    onestring& onestring::insert(size_t pos, onechar& ochr)
     {
         // Ensure the insertion position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::insert(): specified pos out of range");
+            throw std::out_of_range("Onestring::insert(): specified pos out of range");
         }
 
         // Calculate how many elements need to be shifted to make room (right partition)
@@ -513,7 +513,7 @@ namespace pawlib
         // Move the right partition to make room for the new element
         memmove(this->internal + pos + 1,
                 this->internal + pos,
-                sizeof(OneChar) * elements_to_move);
+                sizeof(onechar) * elements_to_move);
         // Insert the new element
         this->internal[pos] = ochr;
         // Increase the element count
@@ -522,12 +522,12 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::insert(size_t pos, const OneString& ostr)
+    onestring& onestring::insert(size_t pos, const onestring& ostr)
     {
         // Ensure the insertion position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::insert(): specified pos out of range");
+            throw std::out_of_range("Onestring::insert(): specified pos out of range");
         }
 
         size_t elements_to_insert = ostr._elements;
@@ -538,24 +538,24 @@ namespace pawlib
         // Move the right partition to make room for the new element
         memmove(this->internal + pos + elements_to_insert,
                 this->internal + pos,
-                sizeof(OneChar) * elements_to_move);
+                sizeof(onechar) * elements_to_move);
 
         // Insert the new elements
         memcpy(this->internal + pos,
                ostr.internal,
-               sizeof(OneChar) * elements_to_insert);
+               sizeof(onechar) * elements_to_insert);
         // Increase the element count
         _elements += elements_to_insert;
 
         return *this;
     }
 
-    void OneString::replace_setup(size_t pos, size_t len, size_t sublen)
+    void onestring::replace_setup(size_t pos, size_t len, size_t sublen)
     {
         // WARNING: pos and len are not validated. That MUST be done externally!
 
         // Calculate whether we're replacing 1:1, expanding, or erasing
-        int difference = sublen - len;
+        size_t difference = sublen - len;
         size_t pos_after = pos + len;
         size_t elements_after = _elements - pos_after;
 
@@ -570,7 +570,7 @@ namespace pawlib
             {
                 memmove(this->internal + pos + len + difference,
                         this->internal + pos_after,
-                        sizeof(OneChar) * elements_after);
+                        sizeof(onechar) * elements_after);
             }
 
             // Update the element count
@@ -584,7 +584,7 @@ namespace pawlib
             {
                 memmove(this->internal + pos + len + difference,
                         this->internal + pos_after,
-                        sizeof(OneChar) * elements_after);
+                        sizeof(onechar) * elements_after);
             }
 
             // Update the element count
@@ -594,12 +594,12 @@ namespace pawlib
         // If the string size won't change, we need no extra setup.
     }
 
-    OneString& OneString::replace(size_t pos, size_t len, const char ch)
+    onestring& onestring::replace(size_t pos, size_t len, const char ch)
     {
         // Ensure the replacement position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::replace(): specified pos out of range");
+            throw std::out_of_range("Onestring::replace(): specified pos out of range");
         }
 
         // Adjust len so it doesn't run past the end of the string
@@ -614,12 +614,12 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::replace(size_t pos, size_t len, const OneChar& ochr)
+    onestring& onestring::replace(size_t pos, size_t len, const onechar& ochr)
     {
         // Ensure the replacement position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::replace(): specified pos out of range");
+            throw std::out_of_range("Onestring::replace(): specified pos out of range");
         }
 
         // Adjust len so it doesn't run past the end of the string
@@ -634,12 +634,12 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::replace(size_t pos, size_t len, const char* cstr)
+    onestring& onestring::replace(size_t pos, size_t len, const char* cstr)
     {
         // Ensure the replacement position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::replace(): specified pos out of range");
+            throw std::out_of_range("Onestring::replace(): specified pos out of range");
         }
 
         // Adjust len so it doesn't run past the end of the string
@@ -659,17 +659,17 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::replace(size_t pos, size_t len, const std::string& str)
+    onestring& onestring::replace(size_t pos, size_t len, const std::string& str)
     {
         return replace(pos, len, str.c_str());
     }
 
-    OneString& OneString::replace(size_t pos, size_t len, const OneString& ostr)
+    onestring& onestring::replace(size_t pos, size_t len, const onestring& ostr)
     {
         // Ensure the replacement position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::replace(): specified pos out of range");
+            throw std::out_of_range("Onestring::replace(): specified pos out of range");
         }
 
         // Adjust len so it doesn't run past the end of the string
@@ -681,23 +681,23 @@ namespace pawlib
         /* Replace the characters directly. We use memmove so we can safely
          * use the same string as the destination AND the source.
          */
-        memmove(this->internal + pos, ostr.internal, sizeof(OneChar) * ostr._elements);
+        memmove(this->internal + pos, ostr.internal, sizeof(onechar) * ostr._elements);
 
         return *this;
     }
 
-    OneString& OneString::replace(size_t pos, size_t len, const char* cstr, size_t subpos, size_t sublen)
+    onestring& onestring::replace(size_t pos, size_t len, const char* cstr, size_t subpos, size_t sublen)
     {
         // Ensure the replacement position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::replace(): specified pos out of range");
+            throw std::out_of_range("Onestring::replace(): specified pos out of range");
         }
 
         size_t cstr_len = strlen(cstr);
         if (subpos >= cstr_len)
         {
-            throw std::out_of_range("OneString::replace(): specified subpos out of range");
+            throw std::out_of_range("Onestring::replace(): specified subpos out of range");
         }
 
         // Adjust len so it doesn't run past the end of the string
@@ -721,22 +721,22 @@ namespace pawlib
         return *this;
     }
 
-    OneString& OneString::replace(size_t pos, size_t len, const std::string& str, size_t subpos, size_t sublen)
+    onestring& onestring::replace(size_t pos, size_t len, const std::string& str, size_t subpos, size_t sublen)
     {
         return replace(pos, len, str.c_str(), subpos, sublen);
     }
 
-    OneString& OneString::replace(size_t pos, size_t len, const OneString& ostr, size_t subpos, size_t sublen)
+    onestring& onestring::replace(size_t pos, size_t len, const onestring& ostr, size_t subpos, size_t sublen)
     {
         // Ensure the replacement position is in range.
         if (pos >= this->_elements)
         {
-            throw std::out_of_range("OneString::replace(): specified pos out of range");
+            throw std::out_of_range("Onestring::replace(): specified pos out of range");
         }
 
         if (subpos >= ostr._elements)
         {
-            throw std::out_of_range("OneString::replace(): specified subpos out of range");
+            throw std::out_of_range("Onestring::replace(): specified subpos out of range");
         }
 
         // Adjust len so it doesn't run past the end of the string
@@ -752,7 +752,7 @@ namespace pawlib
          */
         memmove(this->internal + pos,
                 ostr.internal + subpos,
-                sizeof(OneChar) * sublen);
+                sizeof(onechar) * sublen);
 
         return *this;
     }
@@ -761,7 +761,7 @@ namespace pawlib
     * Removing
     ********************************************/
 
-    void OneString::clear()
+    void onestring::clear()
     {
         if (_elements > 0)
         {
@@ -773,11 +773,11 @@ namespace pawlib
         }
     }
 
-    OneString& OneString::erase(size_t pos, size_t len)
+    onestring& onestring::erase(size_t pos, size_t len)
     {
         if (pos > _elements)
         {
-            throw std::out_of_range("OneString::erase(): Index out of bounds.");
+            throw std::out_of_range("Onestring::erase(): Index out of bounds.");
         }
 
         // Calculate the number of elements we need to REMOVE
@@ -787,7 +787,7 @@ namespace pawlib
         size_t elements_to_move = _elements - pos - len;
 
         // Overwrite the elements
-        memcpy(this->internal + pos, this->internal + pos + len, sizeof(OneChar) * elements_to_move);
+        memcpy(this->internal + pos, this->internal + pos + len, sizeof(onechar) * elements_to_move);
 
         // Update the number of elements
         _elements = _elements - len;
@@ -795,7 +795,7 @@ namespace pawlib
         return *this;
     }
 
-    void OneString::pop_back()
+    void onestring::pop_back()
     {
         if(_elements > 0)
         {
@@ -807,7 +807,7 @@ namespace pawlib
 
     ///////////////////// REVIEW //////////////////////
 
-    bool OneString::lessThanCharP(const char* ostr)
+    bool onestring::lessThanCharP(const char* ostr)
     {
         size_t mainIndex = 0;
         size_t smallIndex = 0;
@@ -816,11 +816,11 @@ namespace pawlib
 
         while(mainIndex < endIndex)
         {
-            if(OneString::internal[mainIndex][smallIndex] > ostr[charIndex])
+            if(onestring::internal[mainIndex][smallIndex] > ostr[charIndex])
                 return true;
-            else if(OneString::internal[mainIndex][smallIndex] < ostr[charIndex])
+            else if(onestring::internal[mainIndex][smallIndex] < ostr[charIndex])
                 return true;
-            if(OneString::internal[mainIndex][smallIndex + 1] != '\0')
+            if(onestring::internal[mainIndex][smallIndex + 1] != '\0')
                 ++smallIndex;
             else
             {
@@ -836,13 +836,13 @@ namespace pawlib
         return false;
     }
 
-    //OneString does not name a type
-    bool OneString::lessThanStr(const OneString& ostr)
+    //onestring does not name a type
+    bool onestring::lessThanStr(const onestring& ostr)
     {
         size_t small_len = (this->_elements < ostr.length())? this->_elements: ostr.length();
         for(size_t i = 0; i < small_len; ++i)
         {
-            if(OneString::internal[i] < (ostr[i]))
+            if(onestring::internal[i] < (ostr[i]))
             {
                 return true;
             }
@@ -868,9 +868,9 @@ namespace pawlib
     * Other
     ********************************************/
 
-    void OneString::swap(OneString& str)
+    void onestring::swap(onestring& str)
     {
-        OneString temp(*this);
+        onestring temp(*this);
         *this = str;
         str = temp;
     }

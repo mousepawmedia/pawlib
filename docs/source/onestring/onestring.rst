@@ -1,61 +1,61 @@
-OneString
+Onestring
 #############################
 
-What is OneString?
+What is Onestring?
 ===================================
-``OneString`` is a multi-sized, Unicode-compatible replacement
-for ``std::string``. OneString contains all the
+``Onestring`` is a multi-sized, Unicode-compatible replacement
+for ``std::string``. Onestring contains all the
 basic functions found in ``std::string`` while optimizing
 the use of dynamic allocation wherever possible.
-To handle Unicode, each OneString is made of OneChars,
+To handle Unicode, each Onestring is made of Onechars,
 which are enhanced characters.
 
 
-Using a OneString
+Using a Onestring
 =====================================
 
-Creating a OneString
+Creating a Onestring
 --------------------------------------
-You can create a OneString with characters initialized with the ``=`` operator
+You can create a Onestring with characters initialized with the ``=`` operator
 or leave it blank.
 
 ..  code-block:: c++
 
-    // Empty OneString
-    OneString blankString;
+    // Empty Onestring
+    Onestring blankString;
 
-    // Containing OneChars
-    OneString fullString = "these are Unicode Characters";
+    // Containing Onechars
+    Onestring fullString = "these are Unicode Characters";
 
-You can also use the ``=`` operator to create a new OneString with an existing
-OneString.
+You can also use the ``=`` operator to create a new Onestring with an existing
+Onestring.
 
 ..  code-block:: c++
 
-  // Create the first OneString
-  OneString firstString = "copy me";
+  // Create the first Onestring
+  Onestring firstString = "copy me";
 
-  // Containing OneChars
-  OneString secondString = firstString;
+  // Containing Onechars
+  Onestring secondString = firstString;
 
   // secondString now contains "copy me".
 
 
-Adding to a OneString
+Adding to a Onestring
 ---------------------------------------
 
 ``+``, ``+=``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``+=`` and ``+`` operators add additional Unicode characters at the end of the
-existing ``OneString``.
+existing ``Onestring``.
 
 Using ``+=``
 
 ..  code-block:: c++
 
-    //Declare a OneString
-    OneString more = "apple";
+    //Declare a Onestring
+    Onestring more = "apple";
 
     // Use += to append an "s"
     more += "s";
@@ -69,14 +69,14 @@ Using ``+=``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Alternatively, you can use the functions ``append()`` and ``push_back()``
-to add additional Unicode characters at the end of the existing ``OneString``.
+to add additional Unicode characters at the end of the existing ``Onestring``.
 
 Using ``append()``...
 
 ..  code-block:: c++
 
-    // Declare a OneString
-    OneString to_add = "apple";
+    // Declare a Onestring
+    Onestring to_add = "apple";
 
     // Add "s" to `to_add`
     to_add.append('s');
@@ -91,12 +91,12 @@ Using ``append()``...
 ``insert()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ``insert()`` allows you to insert a Unicode character into an existing
-``OneString`` at a given position.
+``Onestring`` at a given position.
 
 ..  code-block:: c++
 
-    // Declare a OneString
-    OneString alphabet = "abcdf";
+    // Declare a Onestring
+    Onestring alphabet = "abcdf";
 
     // Insert a value into `alphabet`
     // The first value in the function refers to the index to be inserted
@@ -105,17 +105,17 @@ Using ``append()``...
 
     // `alphabet` is now "abcdEf"
 
-Removing from a OneString
+Removing from a Onestring
 ---------------------------------------
 
 ``clear()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``clear()`` erases the contents of a OneString.
+``clear()`` erases the contents of a Onestring.
 
 ..  code-block:: c++
 
-    // Declare a OneString
-    OneString sleeve = "something";
+    // Declare a Onestring
+    Onestring sleeve = "something";
 
     // Clear the contents of `sleeve`
     sleeve.clear();
@@ -125,29 +125,29 @@ Removing from a OneString
 
 ``pop_back()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``pop_back()`` removes the last Unicode character in the OneString
+``pop_back()`` removes the last Unicode character in the Onestring
 
 ..  code-block:: c++
 
-    // Declare a OneString
-    OneString alphabet = "abcdef";
+    // Declare a Onestring
+    Onestring alphabet = "abcdef";
 
     // Remove the last element from `alphabet`
     alphabet.pop_back();
 
     // `alphabet` is now "abcde"
 
-Accessing Elements of A OneString
+Accessing Elements of A Onestring
 ---------------------------------------
 ``[]``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The ``[]`` operator acceses a Unicode character at a given location in a
-``OneString``.
+``Onestring``.
 
 ..  code-block:: c++
 
-    // Declare a OneString
-    OneString test = "hello";
+    // Declare a Onestring
+    Onestring test = "hello";
 
     // Check what character is at position 1 in `test`
     test[1];
@@ -160,15 +160,15 @@ The ``at()`` function can be used as an alternative to ``[]``.
 
 ..  code-block:: c++
 
-     // Declare a OneString
-     OneString alphabet = "abcdef";
+     // Declare a Onestring
+     Onestring alphabet = "abcdef";
 
-     // Find the OneChar at position 3 in `alphabet`
+     // Find the Onechar at position 3 in `alphabet`
      alphabet.at(3);
 
      // The function returns "d"
 
-Comparing OneStrings
+Comparing Onestrings
 ---------------------------------------
 
 ``==``
@@ -178,9 +178,9 @@ a boolean with the result.
 
 ..  code-block:: c++
 
-    // Declare two OneString
-    OneString dogs = "fun";
-    OneString cats = "mean";
+    // Declare two Onestring
+    Onestring dogs = "fun";
+    Onestring cats = "mean";
 
     // Check for equivalence
     if (dogs == cats)
@@ -215,10 +215,10 @@ a boolean with the result.
 
 ..  code-block:: c++
 
-    // Declare a OneString
-    OneString checker = "red";
+    // Declare a Onestring
+    Onestring checker = "red";
 
-    // Compare with another OneString
+    // Compare with another Onestring
     checker.equals("black");
 
     // The function returns false
@@ -236,10 +236,10 @@ relative to the second. ``<`` is less than, ``>`` is greater than, and ``<=`` an
 
 ..  code-block:: c++
 
-    // Delcare three OneStrings
-    OneString first = "one";
-    OneString second = "two";
-    OneString third = "three";
+    // Delcare three Onestrings
+    Onestring first = "one";
+    Onestring second = "two";
+    Onestring third = "three";
 
     // Compare `first` to `second`
     if (first < second)
@@ -280,13 +280,13 @@ Other Functions
 
 ``empty()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``empty()`` checks to see if a OneString is empty.
+``empty()`` checks to see if a Onestring is empty.
 The function returns true if it is empty, and false if it is not.
 
 ..  code-block:: c++
 
-    // Declare a OneString
-    OneString toyBox;
+    // Declare a Onestring
+    Onestring toyBox;
 
     // Check to see if `toybox` empty
     toyBox.empty();
@@ -304,18 +304,18 @@ The function returns true if it is empty, and false if it is not.
 
 ``getType()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``getType()`` returns a boolean that represents either a ``OneString``
+``getType()`` returns a boolean that represents either a ``Onestring``
 or a ``QuickString``.
 
 
 ``size()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``size()`` returns the number of characters that make up the ``OneString``.
+``size()`` returns the number of characters that make up the ``Onestring``.
 
 ..  code-block:: c++
 
-    // Declare a OneString
-    OneString checker = "red";
+    // Declare a Onestring
+    Onestring checker = "red";
 
     // check the size of `checker`
     checker.size();
@@ -325,32 +325,32 @@ or a ``QuickString``.
 ``substr()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ``substr()`` creates a new substring based on a range of characters in an exisiting
-``OneString``
+``Onestring``
 
 ..  code-block:: c++
 
-    // Declare a OneString
-    OneString full = "monochromatic"
+    // Declare a Onestring
+    Onestring full = "monochromatic"
 
-    // Declare a new OneString
+    // Declare a new Onestring
     // Using `full`
     // and substr
-    OneString partial = full.substr(0,3);
+    Onestring partial = full.substr(0,3);
 
-    // The new OneString `partial` contains the word "mono".
+    // The new Onestring `partial` contains the word "mono".
     // The numbers in the function call refer to
     // the range to be copied into the new string.
 
 ``swap()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-``swap()`` switches the contents of the current ``OneString`` with another.
-The two ``OneStrings`` must be of the same size.
+``swap()`` switches the contents of the current ``Onestring`` with another.
+The two ``Onestrings`` must be of the same size.
 
 ..  code-block:: c++
 
-    // Declare two OneStrings
-    OneString first = "primary";
-    OneString second = "secondary";
+    // Declare two Onestrings
+    Onestring first = "primary";
+    Onestring second = "secondary";
 
     // Swap `primary` and `secondary`
     first.swap(second);

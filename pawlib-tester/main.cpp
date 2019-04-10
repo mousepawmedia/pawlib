@@ -86,8 +86,8 @@ int main(int argc, char* argv[])
     shell->register_suite<TestSuite_FlexBit>("P-sB15");
     shell->register_suite<TestSuite_Pool>("P-sB16");
     shell->register_suite<TestSuite_Pawsort>("P-sB30");
-    shell->register_suite<TestSuite_OneString>("P-sB40");
-    shell->register_suite<TestSuite_OneChar>("P-sB41");
+    shell->register_suite<TestSuite_Onestring>("P-sB40");
+    shell->register_suite<TestSuite_Onechar>("P-sB41");
 
     // If we got command-line arguments.
     if(argc > 1)
