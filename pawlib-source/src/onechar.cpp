@@ -3,48 +3,37 @@
 namespace pawlib
 {
     onechar::onechar()
-    : size(1)
+    : size(1), internal{'\0', '\0', '\0', '\0', '\0'}
     {
         // The default value of a onechar should be a null terminator
-        internal[0] = '\0';
-        // Always end with a null terminator. We never touch [4] again
-        internal[4] = '\0';
     }
 
     onechar::onechar(const char* cstr)
-    : size(1)
+    : size(1), internal{'\0', '\0', '\0', '\0', '\0'}
     {
         // Extract the first ASCII or Unicode character from the c-string
         parse(cstr);
-        // Always end with a null terminator. We never touch [4] again
-        internal[4] = '\0';
     }
 
     onechar::onechar(const std::string& str)
-    : size(1)
+    : size(1), internal{'\0', '\0', '\0', '\0', '\0'}
     {
         // Extract the first ASCII or Unicode character from the std::string
         parse(str);
-        // Always end with a null terminator. We never touch [4] again
-        internal[4] = '\0';
     }
 
     onechar::onechar(const char ch)
-    : size(1)
+    : size(1), internal{'\0', '\0', '\0', '\0', '\0'}
     {
         // Store the ASCII character
         parse(ch);
-        // Always end with a null terminator. We never touch [4] again
-        internal[4] = '\0';
     }
 
     onechar::onechar(const onechar& cpy)
-    : size(1)
+    : size(1), internal{'\0', '\0', '\0', '\0', '\0'}
     {
         // Make this a copy of the onechar
         copy(cpy);
-        // Always end with a null terminator. We never touch [4] again
-        internal[4] = '\0';
     }
 
     void onechar::copy(const onechar& cpy)

@@ -2761,16 +2761,15 @@ namespace pawlib
             }
     };
 
-    ///////////// REUSABLE /////////////
-
+    // P-tB4028
     class TestOnestring_Swap : public Test
     {
         protected:
-            onestring beforeOne;
-            onestring beforeTwo;
-            onestring afterOne;
-            onestring afterTwo;
-
+            std::string start1 = "The quick brown 🦊 jumped over the lazy 🐶.";
+            std::string start2 = "🐦 ❤️ my big sphinx of 💎.";
+            onestring test_ostr_1;
+            onestring test_ostr_2;
+            std::string test_str;
         public:
             TestOnestring_Swap(){}
 
@@ -2781,31 +2780,33 @@ namespace pawlib
 
             testdoc_t get_docs() override
             {
-                return "Test swapping two onestrings.";
-            }
-
-            bool pre() override
-            {
-                return janitor();
+                return "Test swapping two strings with swap()";
             }
 
             bool janitor() override
             {
-                beforeOne = "Pre Swap Ø";
-                beforeTwo = "Ø Post Swap";
-                afterOne = beforeOne;
-                afterTwo = beforeTwo;
-                return true;
+                test_ostr_1 = start1;
+                test_ostr_2 = start2;
+                test_str = start2;
+                return (test_ostr_1 == start1 && test_ostr_2 == start2 && test_str == start2);
             }
 
             bool run() override
             {
-                beforeOne.swap(beforeTwo);
-                PL_ASSERT_EQUAL(beforeOne, afterTwo);
-                PL_ASSERT_EQUAL(beforeTwo, afterOne);
+                test_ostr_1.swap(test_ostr_2);
+                PL_ASSERT_EQUAL(test_ostr_1, start2);
+                PL_ASSERT_EQUAL(test_ostr_2, start1);
+
+                test_ostr_2.swap(test_str);
+                PL_ASSERT_EQUAL(test_ostr_2, start2);
+                PL_ASSERT_EQUAL(test_str, start1);
+
                 return true;
             }
     };
+
+    ///////////// REUSABLE /////////////
+
 
     class TestOnestring_ForceResize : public Test
     {

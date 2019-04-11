@@ -851,14 +851,18 @@ namespace pawlib
         return *this;
     }
 
-    /*******************************************
-    * Other
-    ********************************************/
-
-    void onestring::swap(onestring& str)
+    void onestring::swap(std::string& str)
     {
-        onestring temp(*this);
-        *this = str;
-        str = temp;
+        std::string temp = str;
+        str = this->c_str();
+        this->assign(temp);
     }
+
+    void onestring::swap(onestring& ostr)
+    {
+        onestring temp = ostr;
+        ostr.assign(*this);
+        this->assign(temp);
+    }
+
 }

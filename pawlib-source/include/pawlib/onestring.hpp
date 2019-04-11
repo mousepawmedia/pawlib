@@ -582,8 +582,37 @@ namespace pawlib
               * \return a reference to the onestring */
             onestring& replace(size_t pos, size_t len, const onestring& ostr, size_t subpos, size_t sublen);
 
+
             /** Reverses the contents of the onestring in place. */
             onestring& reverse();
+
+
+            /** Exchanges the content of this onestring with that of the given std::string.
+              * \param the std::string to swap with */
+            void swap(std::string& str);
+
+            /** Exchanges the content of this onestring with that of the given onestring.
+              * \param the onestring to swap with */
+            void swap(onestring& ostr);
+
+            /** Exchanges the content of the given strings.
+              * \param the first string to swap
+              * \param the second string to swap
+              */
+            static void swap(std::string& lhs, onestring& rhs) { rhs.swap(lhs); }
+
+            /** Exchanges the content of the given strings.
+              * \param the first string to swap
+              * \param the second string to swap
+              */
+            static void swap(onestring& lhs, std::string& rhs) { lhs.swap(rhs); }
+
+            /** Exchanges the content of the given strings.
+              * \param the first string to swap
+              * \param the second string to swap
+              */
+            static void swap(onestring& lhs, onestring& rhs) { lhs.swap(rhs); }
+
 
             /*******************************************
             * Operators
@@ -687,17 +716,6 @@ namespace pawlib
                 os << ostr.c_str();
                 return os;
             }
-
-            ////////////// REVIEW /////////////////
-
-            /*******************************************
-            * Other
-            ********************************************/
-
-            /**Swaps one onestring with another
-             * \param the onestring to switch with
-             * \return */
-            void swap(onestring& str);
     };
 }
 #endif // PAWLIB_ONESTRING_HPP
