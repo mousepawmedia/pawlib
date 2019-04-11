@@ -1,8 +1,9 @@
 /** onechar [PawLIB]
   * Version: 0.4
   *
-  * onechar is an array of character that can be used to represent both
-  * Unicode character along with ASCII characters.
+  * Onechar is an enhanced UTF-8 character class which is fully compatible with
+  * the atomic char type, c-strings, and std::string. Onestring is a string
+  * class which uses Onechars.
   *
   * Author(s): Jason C. McDonald, Scott Taylor, Jarek Thomas, Bowen Volwiler
   */
@@ -42,7 +43,6 @@
  * on how to contribute to our projects.
  */
 
-
 #ifndef ONECHAR_HPP
 #define ONECHAR_HPP
 
@@ -60,14 +60,15 @@ namespace pawlib
     {
         friend onestring;
         private:
-            /* We never store more than 4 bytes of data.
-             * We do not store the null terminator. */
+            /* We never store more than 4 bytes of meaningful data.
+             * The null terminator is stored as an implementation detail, but
+             * is ignored by virtually all Onechar functions. */
             static const size_t MAX_SIZE = 4;
 
             /// The number of bytes stored.
             size_t size;
 
-            /// The character array as a c-string
+            /// The character array as a c-string.
             char internal[MAX_SIZE + 1];
 
             /** Copy the contents of another onechar to this one.

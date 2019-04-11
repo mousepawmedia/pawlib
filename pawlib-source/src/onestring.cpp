@@ -19,6 +19,13 @@ namespace pawlib
         assign(ch);
     }
 
+    onestring::onestring(const onechar& ochr)
+    :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
+    {
+        this->internal = new onechar[this->_capacity];
+        assign(ochr);
+    }
+
     onestring::onestring(const char* cstr)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
@@ -31,13 +38,6 @@ namespace pawlib
     {
         this->internal = new onechar[this->_capacity];
         append(str);
-    }
-
-    onestring::onestring(const onechar& ochr)
-    :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
-    {
-        this->internal = new onechar[this->_capacity];
-        assign(ochr);
     }
 
     onestring::onestring(const onestring& ostr)
@@ -61,7 +61,7 @@ namespace pawlib
     }
 
     /*******************************************
-    * Access
+    * Accessors
     *******************************************/
 
     onechar& onestring::at(size_t pos)
@@ -244,52 +244,22 @@ namespace pawlib
     * Comparison
     ********************************************/
 
-    bool onestring::equals(const char ch) const
-    {
-        return (this->_elements == 1 && this->internal[0] == ch);
-    }
-
-    bool onestring::equals(const char* cstr) const
-    {
-        size_t index = 0;
-        size_t compare_to = 0;
-        while(cstr[index] != '\0')
-        {
-            if (!(this->internal[compare_to].equals_at(cstr + index))) { return false; }
-            index += onechar::evaluateLength(cstr + index);
-            if(compare_to++ > this->_elements) { return false; }
-        }
-
-        return true;
-    }
-
-    bool onestring::equals(const std::string& str) const
-    {
-        return equals(str.c_str());
-    }
-
-    bool onestring::equals(const onechar& ochr) const
-    {
-        return (this->_elements == 1 && this->internal[0] == ochr);
-    }
-
-    bool onestring::equals(const onestring& ostr) const
-    {
-        if (this->_elements != ostr._elements) { return false; }
-
-        for (size_t index = 0; index < this->_elements; ++index)
-        {
-            if (this->internal[index] != ostr.internal[index]) { return false; }
-        }
-        return true;
-    }
-
-    int onestring::compare(const char ch) const
+   int onestring::compare(const char ch) const
     {
         int sizeDiff = this->_elements - 1;
         if (sizeDiff == 0)
         {
             return this->internal[0].compare(ch);
+        }
+        return sizeDiff;
+    }
+
+    int onestring::compare(const onechar& ochr) const
+    {
+        int sizeDiff = this->_elements - 1;
+        if (sizeDiff == 0)
+        {
+            return this->internal[0].compare(ochr);
         }
         return sizeDiff;
     }
@@ -322,16 +292,6 @@ namespace pawlib
         return compare(str.c_str());
     }
 
-    int onestring::compare(const onechar& ochr) const
-    {
-        int sizeDiff = this->_elements - 1;
-        if (sizeDiff == 0)
-        {
-            return this->internal[0].compare(ochr);
-        }
-        return sizeDiff;
-    }
-
     int onestring::compare(const onestring& ostr) const
     {
         /* This algorithm will not return a meaningful integer; only its
@@ -351,15 +311,116 @@ namespace pawlib
         return sizeDiff;
     }
 
+    bool onestring::equals(const char ch) const
+    {
+        return (this->_elements == 1 && this->internal[0] == ch);
+    }
+
+    bool onestring::equals(const onechar& ochr) const
+    {
+        return (this->_elements == 1 && this->internal[0] == ochr);
+    }
+
+    bool onestring::equals(const char* cstr) const
+    {
+        size_t index = 0;
+        size_t compare_to = 0;
+        while(cstr[index] != '\0')
+        {
+            if (!(this->internal[compare_to].equals_at(cstr + index))) { return false; }
+            index += onechar::evaluateLength(cstr + index);
+            if(compare_to++ > this->_elements) { return false; }
+        }
+
+        return true;
+    }
+
+    bool onestring::equals(const std::string& str) const
+    {
+        return equals(str.c_str());
+    }
+
+    bool onestring::equals(const onestring& ostr) const
+    {
+        if (this->_elements != ostr._elements) { return false; }
+
+        for (size_t index = 0; index < this->_elements; ++index)
+        {
+            if (this->internal[index] != ostr.internal[index]) { return false; }
+        }
+        return true;
+    }
+
     /*******************************************
-    * Adding + Inserting
+    * Mutators
     ********************************************/
+
+   onestring& onestring::append(const char ch)
+    {
+        expand(1);
+
+        // Insert a 1-byte ASCII char
+        internal[_elements++] = ch;
+        return *this;
+    }
+
+    onestring& onestring::append(const onechar& ochar)
+    {
+        expand(1);
+        internal[_elements++] = ochar;
+        return *this;
+    }
+
+    onestring& onestring::append(const char* cstr)
+    {
+        size_t index = 0;
+        size_t len = characterCount(cstr);
+        expand(len);
+
+        // Loop through each character in the string literal
+        while(cstr[index] != '\0')
+        {
+            index += internal[_elements++].parseFromString(cstr, index);
+        }
+        return *this;
+    }
+
+    onestring& onestring::append(const std::string& str)
+    {
+        // Parse the internal c string directly.
+        append(str.c_str());
+        return *this;
+    }
+
+    onestring& onestring::append(const onestring& ostr)
+    {
+        expand(ostr.length());
+
+        size_t index = 0;
+        while(!(ostr[index] == '\0'))
+        {
+            internal[index + _elements] = ostr[index];
+            ++index;
+        }
+
+        _elements += ostr.length();
+
+        return *this;
+    }
 
     onestring& onestring::assign(const char ch)
     {
         clear();
         reserve(1);
         this->internal[_elements++] = ch;
+        return *this;
+    }
+
+    onestring& onestring::assign(const onechar& ochr)
+    {
+        clear();
+        reserve(1);
+        this->internal[_elements++] = ochr;
         return *this;
     }
 
@@ -386,14 +447,6 @@ namespace pawlib
         return *this;
     }
 
-    onestring& onestring::assign(const onechar& ochr)
-    {
-        clear();
-        reserve(1);
-        this->internal[_elements++] = ochr;
-        return *this;
-    }
-
     onestring& onestring::assign(const onestring& ostr)
     {
         clear();
@@ -403,57 +456,50 @@ namespace pawlib
         return *this;
     }
 
-    onestring& onestring::append(const char ch)
+    void onestring::clear()
     {
-        expand(1);
-
-        // Insert a 1-byte ASCII char
-        internal[_elements++] = ch;
-        return *this;
-    }
-
-    onestring& onestring::append(const char* cstr)
-    {
-        size_t index = 0;
-        size_t len = characterCount(cstr);
-        expand(len);
-
-        // Loop through each character in the string literal
-        while(cstr[index] != '\0')
+        if (_elements > 0)
         {
-            index += internal[_elements++].parseFromString(cstr, index);
+            delete[] this->internal;
+            internal = nullptr;
+            _capacity = 0;
+            reserve(BASE_SIZE);
+            _elements = 0;
         }
-        return *this;
     }
 
-    onestring& onestring::append(const std::string& str)
+    onestring& onestring::erase(size_t pos, size_t len)
     {
-        // Parse the internal c string directly.
-        append(str.c_str());
-        return *this;
-    }
-
-    onestring& onestring::append(const onechar& ochar)
-    {
-        expand(1);
-        internal[_elements++] = ochar;
-        return *this;
-    }
-
-    onestring& onestring::append(const onestring& ostr)
-    {
-        expand(ostr.length());
-
-        size_t index = 0;
-        while(!(ostr[index] == '\0'))
+        if (pos > _elements)
         {
-            internal[index + _elements] = ostr[index];
-            ++index;
+            throw std::out_of_range("Onestring::erase(): Index out of bounds.");
         }
 
-        _elements += ostr.length();
+        // Calculate the number of elements we need to REMOVE
+        len = (len > _elements - pos) ? (_elements - pos) : len;
+
+        // Calculate the number of elements we need to move
+        size_t elements_to_move = _elements - pos - len;
+
+        // Overwrite the elements
+        memcpy(this->internal + pos, this->internal + pos + len, sizeof(onechar) * elements_to_move);
+
+        // Update the number of elements
+        _elements = _elements - len;
 
         return *this;
+    }
+
+    std::istream& onestring::getline(std::istream& is, onestring& ostr, char delim)
+    {
+        ostr.clear();
+
+        char ch;
+        while (is.get(ch) && ch != delim)
+        {
+            ostr.append(ch);
+        }
+        return is;
     }
 
     onestring& onestring::insert(size_t pos, char ch)
@@ -474,6 +520,30 @@ namespace pawlib
                 sizeof(onechar) * elements_to_move);
         // Insert the new element
         this->internal[pos] = ch;
+        // Increase the element count
+        ++_elements;
+
+        return *this;
+    }
+
+    onestring& onestring::insert(size_t pos, onechar& ochr)
+    {
+        // Ensure the insertion position is in range.
+        if (pos >= this->_elements)
+        {
+            throw std::out_of_range("Onestring::insert(): specified pos out of range");
+        }
+
+        // Calculate how many elements need to be shifted to make room (right partition)
+        size_t elements_to_move = _elements - pos;
+        // Reserve needed space
+        expand(1);
+        // Move the right partition to make room for the new element
+        memmove(this->internal + pos + 1,
+                this->internal + pos,
+                sizeof(onechar) * elements_to_move);
+        // Insert the new element
+        this->internal[pos] = ochr;
         // Increase the element count
         ++_elements;
 
@@ -516,30 +586,6 @@ namespace pawlib
         return insert(pos, str.c_str());
     }
 
-    onestring& onestring::insert(size_t pos, onechar& ochr)
-    {
-        // Ensure the insertion position is in range.
-        if (pos >= this->_elements)
-        {
-            throw std::out_of_range("Onestring::insert(): specified pos out of range");
-        }
-
-        // Calculate how many elements need to be shifted to make room (right partition)
-        size_t elements_to_move = _elements - pos;
-        // Reserve needed space
-        expand(1);
-        // Move the right partition to make room for the new element
-        memmove(this->internal + pos + 1,
-                this->internal + pos,
-                sizeof(onechar) * elements_to_move);
-        // Insert the new element
-        this->internal[pos] = ochr;
-        // Increase the element count
-        ++_elements;
-
-        return *this;
-    }
-
     onestring& onestring::insert(size_t pos, const onestring& ostr)
     {
         // Ensure the insertion position is in range.
@@ -566,6 +612,16 @@ namespace pawlib
         _elements += elements_to_insert;
 
         return *this;
+    }
+
+    void onestring::pop_back()
+    {
+        if(_elements > 0)
+        {
+            /* We don't actually need to delete anything. The space will be
+            * reused or deallocated as needed by other functions. */
+            --_elements;
+        }
     }
 
     void onestring::replace_setup(size_t pos, size_t len, size_t sublen)
@@ -773,112 +829,6 @@ namespace pawlib
                 sizeof(onechar) * sublen);
 
         return *this;
-    }
-
-    /*******************************************
-    * Removing
-    ********************************************/
-
-    void onestring::clear()
-    {
-        if (_elements > 0)
-        {
-            delete[] this->internal;
-            internal = nullptr;
-            _capacity = 0;
-            reserve(BASE_SIZE);
-            _elements = 0;
-        }
-    }
-
-    onestring& onestring::erase(size_t pos, size_t len)
-    {
-        if (pos > _elements)
-        {
-            throw std::out_of_range("Onestring::erase(): Index out of bounds.");
-        }
-
-        // Calculate the number of elements we need to REMOVE
-        len = (len > _elements - pos) ? (_elements - pos) : len;
-
-        // Calculate the number of elements we need to move
-        size_t elements_to_move = _elements - pos - len;
-
-        // Overwrite the elements
-        memcpy(this->internal + pos, this->internal + pos + len, sizeof(onechar) * elements_to_move);
-
-        // Update the number of elements
-        _elements = _elements - len;
-
-        return *this;
-    }
-
-    void onestring::pop_back()
-    {
-        if(_elements > 0)
-        {
-            /* We don't actually need to delete anything. The space will be
-            * reused or deallocated as needed by other functions. */
-            --_elements;
-        }
-    }
-
-    ///////////////////// REVIEW //////////////////////
-
-    bool onestring::lessThanCharP(const char* ostr)
-    {
-        size_t mainIndex = 0;
-        size_t smallIndex = 0;
-        size_t charIndex = 0;
-        size_t endIndex = length();
-
-        while(mainIndex < endIndex)
-        {
-            if(onestring::internal[mainIndex][smallIndex] > ostr[charIndex])
-                return true;
-            else if(onestring::internal[mainIndex][smallIndex] < ostr[charIndex])
-                return true;
-            if(onestring::internal[mainIndex][smallIndex + 1] != '\0')
-                ++smallIndex;
-            else
-            {
-                ++mainIndex;
-                smallIndex = 0;
-            }
-
-            ++charIndex;
-        }
-
-        if(ostr[charIndex] != '\0')
-            return true;
-        return false;
-    }
-
-    //onestring does not name a type
-    bool onestring::lessThanStr(const onestring& ostr)
-    {
-        size_t small_len = (this->_elements < ostr.length())? this->_elements: ostr.length();
-        for(size_t i = 0; i < small_len; ++i)
-        {
-            if(onestring::internal[i] < (ostr[i]))
-            {
-                return true;
-            }
-            else
-            {
-                //if(!(master[i] == (ostr[i])))
-                if(!(ostr[i] == (internal[i])))
-                {
-                    return false;
-                }
-            }
-        }
-
-        if((small_len == this->_elements) && (small_len != ostr.length()))
-        {
-            return true;
-        }
-        return false;
     }
 
 

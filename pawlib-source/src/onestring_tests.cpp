@@ -153,21 +153,17 @@ namespace pawlib
         // tB4028: reverse
         // tB4029: swap
 
-        // tB4030: opStreamInsert (<<)
-        // tB4031: opStreamExtract (>>)
+        // tB4030: expand
+        // tB4031: reserve
+        // tB4032: resize
+        // tB4033: shrink_to_fit
+        // tB4034: "force resize"
 
-        // tB4032: find
-        // tB4033: find_first_not_of
-        // tB4034: find_first_of
-        // tB4035: find_last_not_of
-        // tB4036: rfind
-
-        // tB4037: expand
-        // tB4038: reserve
-        // tB4039: resize
-        // tB4040: shrink_to_fit
-
-        // tB4041: "force resize"
+        // tB4035: find
+        // tB4036: find_first_not_of
+        // tB4037: find_first_of
+        // tB4038: find_last_not_of
+        // tB4039: rfind
 
         //TODO: Comparative tests against std::string
     }
