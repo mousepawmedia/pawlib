@@ -2822,7 +2822,7 @@ namespace pawlib
 
             testdoc_t get_docs() override
             {
-                return "Append characters to force resizing of the Onestring's internal structure.";
+                return "Append characters to force resizing of the Oresetnestring's internal structure.";
             }
 
             bool run() override

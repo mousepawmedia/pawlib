@@ -155,19 +155,15 @@ namespace pawlib
             {
                 const char* cstr = ch1.c_str();
                 PL_ASSERT_EQUAL(cstr, "M");
-                delete[] cstr;
 
                 cstr = ch2.c_str();
                 PL_ASSERT_EQUAL(cstr, "©");
-                delete[] cstr;
 
                 cstr = ch3.c_str();
                 PL_ASSERT_EQUAL(cstr, "‽");
-                delete[] cstr;
 
                 cstr = ch4.c_str();
                 PL_ASSERT_EQUAL(cstr, "🐭");
-                delete[] cstr;
 
                 return true;
             }
@@ -203,7 +199,6 @@ namespace pawlib
                         test = ch;
                         const char* test_cstr = test.c_str();
                         PL_ASSERT_EQUAL(test_cstr, "M");
-                        delete[] test_cstr;
                         return true;
                     }
                     case CSTR:
@@ -212,7 +207,6 @@ namespace pawlib
                         test = cstr;
                         const char* test_cstr = test.c_str();
                         PL_ASSERT_EQUAL(test_cstr, "🐭");
-                        delete[] test_cstr;
                         return true;
                     }
                     case STRING:
@@ -221,7 +215,6 @@ namespace pawlib
                         test = str;
                         const char* test_cstr = test.c_str();
                         PL_ASSERT_EQUAL(test_cstr, "🐭");
-                        delete[] test_cstr;
                         return true;
                     }
                     case ONECHAR:
@@ -230,7 +223,6 @@ namespace pawlib
                         test = ochr;
                         const char* test_cstr = test.c_str();
                         PL_ASSERT_EQUAL(test_cstr, "🐭");
-                        delete[] test_cstr;
                         return true;
                     }
                     default:

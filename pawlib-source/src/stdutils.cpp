@@ -306,7 +306,7 @@ namespace pawlib
 
         //Reverse the string.
         //char temp[strlen(str)];
-        char* temp = new char[strlen(str)];
+        char* temp = new char[67];
         temp[0] = '\0';
 
         strcpy(temp, str);
