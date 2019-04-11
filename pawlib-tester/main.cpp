@@ -75,6 +75,9 @@ void test_code()
 
 int main(int argc, char* argv[])
 {
+    // Return code.
+    int r = 0;
+
     //Set up signal handling.
     ioc.configure_echo(echo_cout);
 
@@ -92,7 +95,7 @@ int main(int argc, char* argv[])
     // If we got command-line arguments.
     if(argc > 1)
     {
-        return shell->command(argc, argv);
+        r = shell->command(argc, argv);
     }
     else
     {
@@ -108,5 +111,5 @@ int main(int argc, char* argv[])
     delete shell;
     shell = 0;
 
-    return 0;
+    return r;
 }
