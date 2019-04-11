@@ -150,7 +150,7 @@ namespace pawlib
         register_test("P-tB4027h", new TestOnestring_Replace(TestOnestring::OSTR_ASCII));
         register_test("P-tB4027i", new TestOnestring_Replace(TestOnestring::OSTR_UNICODE));
 
-        // tB4028: reverse
+        register_test("P-tB4028", new TestOnestring_Reverse());
         // tB4029: swap
 
         // tB4030: expand

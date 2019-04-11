@@ -582,6 +582,9 @@ namespace pawlib
               * \return a reference to the onestring */
             onestring& replace(size_t pos, size_t len, const onestring& ostr, size_t subpos, size_t sublen);
 
+            /** Reverses the contents of the onestring in place. */
+            onestring& reverse();
+
             /*******************************************
             * Operators
             ********************************************/

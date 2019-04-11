@@ -2713,6 +2713,54 @@ namespace pawlib
             }
     };
 
+    // P-tB4028
+    class TestOnestring_Reverse : public Test
+    {
+        protected:
+            onestring start = "The quick brown 🦊 jumped over the lazy 🐶.";
+            onestring test;
+            onestring goal1 = ".🐶 yzal eht revo depmuj 🦊 nworb kciuq ehT"; // 41 characters
+            onestring goal2 = "🐶 yzal eht revo depmuj 🦊 nworb kciuq ehT"; // 40 characters
+            onestring goal3 = "The quick brown 🦊 jumped over the lazy 🐶";
+        public:
+            TestOnestring_Reverse(){}
+
+            testdoc_t get_title() override
+            {
+                return "Onestring: reverse()";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test reversing a string reverse()";
+            }
+
+            bool janitor() override
+            {
+                test = start;
+                return (test == start);
+            }
+
+            bool run() override
+            {
+                // Test reversal of ODD number of characters (41)
+                test.reverse();
+                PL_ASSERT_EQUAL(test, goal1);
+                test.reverse();
+                PL_ASSERT_EQUAL(test, start);
+
+                /* Remove a single character from the end, to test reversal
+                 * of EVEN number of characters (40) */
+                test.pop_back();
+                test.reverse();
+                PL_ASSERT_EQUAL(test, goal2);
+                test.reverse();
+                PL_ASSERT_EQUAL(test, goal3);
+
+                return true;
+            }
+    };
+
     ///////////// REUSABLE /////////////
 
     class TestOnestring_Swap : public Test

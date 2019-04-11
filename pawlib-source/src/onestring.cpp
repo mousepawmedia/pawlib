@@ -831,6 +831,25 @@ namespace pawlib
         return *this;
     }
 
+    onestring& onestring::reverse()
+    {
+        // Create temporary storage unit
+        onechar temp;
+
+        // Perform the swap
+        size_t lhe = 0;
+        size_t rhe = _elements - 1;
+        while(lhe < rhe)
+        {
+            temp = this->internal[rhe];
+            this->internal[rhe] = this->internal[lhe];
+            this->internal[lhe] = temp;
+            ++lhe;
+            --rhe;
+        }
+
+        return *this;
+    }
 
     /*******************************************
     * Other
