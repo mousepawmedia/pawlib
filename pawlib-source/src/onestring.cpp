@@ -61,6 +61,102 @@ namespace pawlib
     }
 
     /*******************************************
+    * Memory Management
+    *******************************************/
+
+    void onestring::allocate(size_t capacity)
+    {
+        this->_capacity = capacity;
+
+        // If we're allocating down, throw away the excess elements.
+        if (this->_elements > this->_capacity)
+        {
+            this->_elements = this->_capacity;
+        }
+
+        // TODO: Would it be better to use realloc? (If so, be sure to throw bad_alloc as needed)
+
+        // Allocate a new array with the new size.
+        onechar* newArr = new onechar[this->_capacity];
+
+        // If an old array exists...
+        if(this->internal != nullptr)
+        {
+            // Move the contents over
+            memmove(
+                newArr,
+                this->internal,
+                sizeof(onechar) * this->_elements
+            );
+
+            // Delete the old structure
+            delete[] internal;
+            this->internal = nullptr;
+        }
+
+        // Store the new structure.
+        this->internal = newArr;
+    }
+
+    void onestring::expand(size_t expansion)
+    {
+        reserve(this->_elements + expansion);
+    }
+
+    void onestring::reserve(size_t elements)
+    {
+        // If we're already large enough, don't reallocate.
+        if (this->_capacity >= elements) { return; }
+
+        // A capacity of 0 will trigger a complete reallocation
+        if (this->_capacity == 0)
+        {
+            this->_capacity = BASE_SIZE;
+        }
+
+        // If we're about to blow past indexing, manually set the capacity.
+        if (elements >= RESIZE_LIMIT)
+        {
+            this->_capacity = npos;
+        }
+
+        // Expand until we have enough space.
+        while (this->_capacity < elements)
+        {
+            this->_capacity *= RESIZE_FACTOR;
+        }
+
+        allocate(this->_capacity);
+    }
+
+    void onestring::resize(size_t elements)
+    {
+        // Don't reallocate if we already have the exact size needed.
+        if (this->_capacity == elements) { return; }
+
+        // Reallocate to EXACTLY the needed size.
+        allocate(elements);
+    }
+
+    void onestring::resize(size_t elements, const onechar& ch)
+    {
+        int to_add = elements - this->_elements;
+        std::cout << to_add << std::endl;
+        resize(elements);
+
+        if (to_add > 0)
+        {
+            append(ch, to_add);
+        }
+    }
+
+    void onestring::shrink_to_fit()
+    {
+        // We simply need to reallocate for the EXACT number of elements we have
+        allocate(this->_elements);
+    }
+
+    /*******************************************
     * Accessors
     *******************************************/
 
@@ -125,7 +221,7 @@ namespace pawlib
             len = this->_elements - pos;
         }
 
-        while (cstr_i < max && ostr_i < len)
+        while (cstr_i < max && ostr_i < (pos + len))
         {
             memcpy(arr + cstr_i, this->internal[ostr_i].internal, this->internal[ostr_i].size);
             cstr_i += this->internal[ostr_i].size;
@@ -325,6 +421,7 @@ namespace pawlib
     {
         size_t index = 0;
         size_t compare_to = 0;
+        if (this->_elements != characterCount(cstr)) { return false; }
         while(cstr[index] != '\0')
         {
             if (!(this->internal[compare_to].equals_at(cstr + index))) { return false; }
@@ -355,55 +452,65 @@ namespace pawlib
     * Mutators
     ********************************************/
 
-   onestring& onestring::append(const char ch)
+    onestring& onestring::append(const char ch, size_t repeat)
     {
-        expand(1);
+        expand(repeat);
 
-        // Insert a 1-byte ASCII char
-        internal[_elements++] = ch;
-        return *this;
-    }
-
-    onestring& onestring::append(const onechar& ochar)
-    {
-        expand(1);
-        internal[_elements++] = ochar;
-        return *this;
-    }
-
-    onestring& onestring::append(const char* cstr)
-    {
-        size_t index = 0;
-        size_t len = characterCount(cstr);
-        expand(len);
-
-        // Loop through each character in the string literal
-        while(cstr[index] != '\0')
+        for(size_t a = 0; a < repeat; ++a)
         {
-            index += internal[_elements++].parseFromString(cstr, index);
+            // Insert a 1-byte ASCII char
+            internal[_elements++] = ch;
         }
         return *this;
     }
 
-    onestring& onestring::append(const std::string& str)
+    onestring& onestring::append(const onechar& ochr, size_t repeat)
+    {
+        expand(repeat);
+
+        for(size_t a = 0; a < repeat; ++a)
+        {
+            internal[_elements++] = ochr;
+        }
+        return *this;
+    }
+
+    onestring& onestring::append(const char* cstr, size_t repeat)
+    {
+        size_t len = characterCount(cstr);
+        expand(len * repeat);
+
+        for(size_t a = 0; a < repeat; ++a)
+        {
+            size_t index = 0;
+            // Loop through each character in the string literal
+            while(cstr[index] != '\0')
+            {
+                index += internal[_elements++].parseFromString(cstr, index);
+            }
+        }
+        return *this;
+    }
+
+    onestring& onestring::append(const std::string& str, size_t repeat)
     {
         // Parse the internal c string directly.
-        append(str.c_str());
+        append(str.c_str(), repeat);
         return *this;
     }
 
-    onestring& onestring::append(const onestring& ostr)
+    onestring& onestring::append(const onestring& ostr, size_t repeat)
     {
-        expand(ostr.length());
+        expand(ostr.length() * repeat);
 
-        size_t index = 0;
-        while(!(ostr[index] == '\0'))
+        for(size_t a = 0; a < repeat; ++a)
         {
-            internal[index + _elements] = ostr[index];
-            ++index;
-        }
+            memmove(this->internal + _elements,
+                ostr.internal,
+                sizeof(onechar) * ostr.length());
 
-        _elements += ostr.length();
+            _elements += ostr.length();
+        }
 
         return *this;
     }

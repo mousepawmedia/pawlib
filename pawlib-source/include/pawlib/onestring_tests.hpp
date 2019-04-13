@@ -2049,8 +2049,8 @@ namespace pawlib
     {
         protected:
             onestring test = "🐦 ❤ my big sphinx of 💎.";
-            onestring sub1 = "🐦 ❤"; //3, 0
-            onestring sub2 = "of 💎"; //4, 18
+            onestring sub1 = "🐦 ❤"; //len=3, pos=0
+            onestring sub2 = "of 💎"; //len=4, pos=18
 
         public:
             TestOnestring_Copy(){}
@@ -2070,19 +2070,19 @@ namespace pawlib
                 // Test copying the entire string.
                 char* cstr = new char[test.size()];
                 test.copy(cstr, test.size());
-                PL_ASSERT_TRUE(test.equals(cstr));
+                PL_ASSERT_EQUAL(test, cstr);
                 delete[] cstr;
 
                 // Test copying substring 1
                 cstr = new char[test.size(3, 0)];
                 test.copy(cstr, test.size(3, 0), 3, 0);
-                PL_ASSERT_TRUE(sub1.equals(cstr));
+                PL_ASSERT_EQUAL(sub1, cstr);
                 delete[] cstr;
 
                 // Test copying substring 2
                 cstr = new char[test.size(4, 18)];
                 test.copy(cstr, test.size(4, 18), 4, 18);
-                PL_ASSERT_TRUE(sub2.equals(cstr));
+                PL_ASSERT_EQUAL(sub2, cstr);
                 delete[] cstr;
 
                 return true;
@@ -2213,6 +2213,9 @@ namespace pawlib
                         char ch = '!';
                         test.append(ch);
                         PL_ASSERT_EQUAL(test, "TEST!");
+
+                        test.append(ch, 3);
+                        PL_ASSERT_EQUAL(test, "TEST!!!!");
                         return true;
                     }
                     case OCHAR_ASCII:
@@ -2220,6 +2223,9 @@ namespace pawlib
                         onechar ochr = "!";
                         test.append(ochr);
                         PL_ASSERT_EQUAL(test, "TEST!");
+
+                        test.append(ochr, 3);
+                        PL_ASSERT_EQUAL(test, "TEST!!!!");
                         return true;
                     }
                     case OCHAR_UNICODE:
@@ -2227,6 +2233,9 @@ namespace pawlib
                         onechar ochr = "‽";
                         test.append(ochr);
                         PL_ASSERT_EQUAL(test, "TEST‽");
+
+                        test.append(ochr, 3);
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽‽");
                         return true;
                     }
                     case CSTR_ASCII:
@@ -2234,6 +2243,9 @@ namespace pawlib
                         std::string str = "!!!";
                         test.append(str.c_str());
                         PL_ASSERT_EQUAL(test, "TEST!!!");
+
+                        test.append(str.c_str(), 3);
+                        PL_ASSERT_EQUAL(test, "TEST!!!!!!!!!!!!");
                         return true;
                     }
                     case CSTR_UNICODE:
@@ -2241,6 +2253,9 @@ namespace pawlib
                         std::string str = "‽‽‽";
                         test.append(str.c_str());
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+
+                        test.append(str.c_str(), 3);
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽‽‽‽‽‽‽‽‽‽");
                         return true;
                     }
                     case STR_ASCII:
@@ -2248,6 +2263,9 @@ namespace pawlib
                         std::string str = "!!!";
                         test.append(str);
                         PL_ASSERT_EQUAL(test, "TEST!!!");
+
+                        test.append(str, 3);
+                        PL_ASSERT_EQUAL(test, "TEST!!!!!!!!!!!!");
                         return true;
                     }
                     case STR_UNICODE:
@@ -2255,6 +2273,9 @@ namespace pawlib
                         std::string str = "‽‽‽";
                         test.append(str);
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+
+                        test.append(str, 3);
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽‽‽‽‽‽‽‽‽‽");
                         return true;
                     }
                     case OSTR_ASCII:
@@ -2262,6 +2283,9 @@ namespace pawlib
                         onestring ostr = "!!!";
                         test.append(ostr);
                         PL_ASSERT_EQUAL(test, "TEST!!!");
+
+                        test.append(ostr, 3);
+                        PL_ASSERT_EQUAL(test, "TEST!!!!!!!!!!!!");
                         return true;
                     }
                     case OSTR_UNICODE:
@@ -2269,6 +2293,9 @@ namespace pawlib
                         onestring ostr = "‽‽‽";
                         test.append(ostr);
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+
+                        test.append(ostr, 3);
+                        PL_ASSERT_EQUAL(test, "TEST‽‽‽‽‽‽‽‽‽‽‽‽");
                         return true;
                     }
                     default:
@@ -2761,7 +2788,7 @@ namespace pawlib
             }
     };
 
-    // P-tB4028
+    // P-tB4029
     class TestOnestring_Swap : public Test
     {
         protected:
@@ -2805,6 +2832,141 @@ namespace pawlib
             }
     };
 
+    // P-tB4030
+    class TestOnestring_Expand : public Test
+    {
+        public:
+            TestOnestring_Expand(){}
+
+            testdoc_t get_title() override
+            {
+                return "Onestring: Expand";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test directly expanding the allocated space with expand().";
+            }
+
+            bool run() override
+            {
+                onestring test;
+                test.append("🐉🐉🐉");
+                PL_ASSERT_GREATER_EQUAL(test.capacity(), 3u);
+
+                test.expand(3);
+                test.append("🐉🐉🐉");
+                PL_ASSERT_GREATER_EQUAL(test.capacity(), 6u);
+
+                test.expand(9);
+                test.append("🐉🐉🐉🐉🐉🐉🐉🐉🐉");
+                PL_ASSERT_GREATER_EQUAL(test.capacity(), 15u);
+
+                return true;
+            }
+    };
+
+    // P-tB4031
+    class TestOnestring_Reserve : public Test
+    {
+        public:
+            TestOnestring_Reserve(){}
+
+            testdoc_t get_title() override
+            {
+                return "Onestring: Reserve";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test directly reserving allocated space with reserve().";
+            }
+
+            bool run() override
+            {
+                onestring test;
+                test.reserve(10);
+                PL_ASSERT_GREATER_EQUAL(test.capacity(), 10u);
+
+                test.reserve(45);
+                PL_ASSERT_GREATER_EQUAL(test.capacity(), 55u);
+
+                test.reserve(99);
+                PL_ASSERT_GREATER_EQUAL(test.capacity(), 99u);
+
+                return true;
+            }
+    };
+
+    // P-tB4032
+    class TestOnestring_Resize : public Test
+    {
+        public:
+            TestOnestring_Resize(){}
+
+            testdoc_t get_title() override
+            {
+                return "Onestring: Resize";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test resizing up and down with resize().";
+            }
+
+            bool run() override
+            {
+                onestring test = "Hello!";
+                test.resize(9, '!');
+                PL_ASSERT_EQUAL(test.capacity(), 9u);
+                PL_ASSERT_EQUAL(test, "Hello!!!!");
+
+                test.resize(5);
+                PL_ASSERT_EQUAL(test.capacity(), 5u);
+                PL_ASSERT_EQUAL(test, "Hello");
+
+                test.resize(10);
+                PL_ASSERT_EQUAL(test.capacity(), 10u);
+                PL_ASSERT_EQUAL(test, "Hello");
+
+                return true;
+            }
+    };
+
+    // P-tB4033
+    class TestOnestring_ShrinkToFit : public Test
+    {
+        public:
+            TestOnestring_ShrinkToFit(){}
+
+            testdoc_t get_title() override
+            {
+                return "Onestring: Shrink To Fit";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Test shrinking capacity to the number of elements with shrink_to_fit()";
+            }
+
+            bool run() override
+            {
+                onestring test = "Hello!!";
+                test.shrink_to_fit();
+                PL_ASSERT_EQUAL(test.capacity(), 7u);
+                PL_ASSERT_EQUAL(test, "Hello!!");
+
+                test.append("!!");
+                test.shrink_to_fit();
+                PL_ASSERT_EQUAL(test.capacity(), 9u);
+                PL_ASSERT_EQUAL(test, "Hello!!!!");
+
+                return true;
+            }
+    };
+
+
+
     ///////////// REUSABLE /////////////
 
 
@@ -2822,7 +2984,7 @@ namespace pawlib
 
             testdoc_t get_docs() override
             {
-                return "Append characters to force resizing of the Oresetnestring's internal structure.";
+                return "Append characters to force resizing of the Onestring's internal structure.";
             }
 
             bool run() override

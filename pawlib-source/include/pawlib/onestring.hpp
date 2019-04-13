@@ -72,6 +72,8 @@ namespace pawlib
             inline static const float RESIZE_FACTOR = 1.5;
 
         private:
+            inline static const float RESIZE_LIMIT = npos / RESIZE_FACTOR;
+
             /// The maximum number of elements that can be stored without resize
             size_t _capacity;
 
@@ -123,62 +125,29 @@ namespace pawlib
             * Memory Management
             ********************************************/
 
+        private:
+            /** Allocates the requested space exactly.
+              * This is the primary function responsible for allocation.
+              * \param the number of elements to allocate space for */
+            void allocate(size_t capacity);
+
+        public:
+
             /** Requests that the string capacity be expanded to accomidate
              * the given number of additional characters.
              * `s.expand(n)` is equivalent to `s.reserve(s.length() + n)`
              * \param the number of additional elements to reserve space for */
-            void expand(size_t expansion)
-            {
-                reserve(this->_elements + expansion);
-            }
+            void expand(size_t expansion);
 
             /** Requests that the string capacity be expanded to accomidate
              * the given number of characters.
-             * This is the primary function responsible for allocation.
              * \param the number of elements to reserve space for */
-            void reserve(size_t elements)
-            {
-                // If we're already large enough, don't reallocate.
-                if (this->_capacity >= elements) { return; }
+            void reserve(size_t elements);
 
-                // A capacity of 0 will trigger a complete reallocation
-                if (this->_capacity == 0)
-                {
-                    this->_capacity = BASE_SIZE;
-                }
+            void resize(size_t elements);
+            void resize(size_t elements, const onechar& ch);
 
-                // If we're about to blow past indexing, fail
-                if (elements >= npos) { return; }
-
-                // Expand until we have enough space.
-                while (this->_capacity < elements)
-                {
-                    this->_capacity *= RESIZE_FACTOR;
-                }
-
-                // TODO: Would it be better to use realloc? (If so, be sure to throw bad_alloc as needed)
-
-                // Allocate a new array with the new size.
-                onechar* newArr = new onechar[this->_capacity];
-
-                // If an old array exists...
-                if(this->internal != nullptr)
-                {
-                    // Move the contents over
-                    memmove(
-                        newArr,
-                        this->internal,
-                        sizeof(onechar) * this->_elements
-                    );
-
-                    // Delete the old structure
-                    delete[] internal;
-                    this->internal = nullptr;
-                }
-
-                // Store the new structure.
-                this->internal = newArr;
-            }
+            void shrink_to_fit();
 
             /** Evaluate the number of Unicode characters in a c-string
               * \param the c-string to evaluate
@@ -363,28 +332,33 @@ namespace pawlib
 
             /** Appends a character to the end of the onestring.
               * \param the char to append
+              * \param how many times to repeat the append, default 1
               * \return a reference to the onestring */
-            onestring& append(const char);
+            onestring& append(const char, size_t repeat = 1);
 
             /** Appends a character to the end of the onestring.
               * \param the onechar to append
+              * \param how many times to repeat the append, default 1
               * \return a reference to the onestring */
-            onestring& append(const onechar&);
+            onestring& append(const onechar&, size_t repeat = 1);
 
             /** Appends characters to the end of the onestring.
               * \param the c-string to append from
+              * \param how many times to repeat the append, default 1
               * \return a reference to the onestring */
-            onestring& append(const char*);
+            onestring& append(const char*, size_t repeat = 1);
 
             /** Appends characters to the end of the onestring.
               * \param the std::string to append from
+              * \param how many times to repeat the append, default 1
               * \return a reference to the onestring */
-            onestring& append(const std::string&);
+            onestring& append(const std::string&, size_t repeat = 1);
 
             /** Appends characters to the end of the onestring.
               * \param the onestring to append from
+              * \param how many times to repeat the append, default 1
               * \return a reference to the onestring */
-            onestring& append(const onestring&);
+            onestring& append(const onestring&, size_t repeat = 1);
 
 
             /** Assigns a character to the onestring.

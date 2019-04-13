@@ -153,11 +153,12 @@ namespace pawlib
         register_test("P-tB4028", new TestOnestring_Reverse());
         register_test("P-tB4029", new TestOnestring_Swap());
 
-        // tB4030: expand
-        // tB4031: reserve
-        // tB4032: resize
-        // tB4033: shrink_to_fit
+        register_test("P-tB4030", new TestOnestring_Expand());
+        register_test("P-tB4031", new TestOnestring_Reserve());
+        register_test("P-tB4032", new TestOnestring_Resize());
+        register_test("P-tB4033", new TestOnestring_ShrinkToFit());
         // tB4034: "force resize"
+        // tS4034: "force resize upper limit"
 
         // tB4035: find
         // tB4036: find_first_not_of
