@@ -8,42 +8,42 @@ namespace pawlib
     onestring::onestring()
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
-        this->internal = new onechar[this->_capacity];
-        assign('\0');
+        allocate(this->_capacity);
+        //assign('\0');
     }
 
     onestring::onestring(char ch)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
-        this->internal = new onechar[this->_capacity];
+        allocate(this->_capacity);
         assign(ch);
     }
 
     onestring::onestring(const onechar& ochr)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
-        this->internal = new onechar[this->_capacity];
+        allocate(this->_capacity);
         assign(ochr);
     }
 
     onestring::onestring(const char* cstr)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
-        this->internal = new onechar[this->_capacity];
+        allocate(this->_capacity);
         assign(cstr);
     }
 
     onestring::onestring(const std::string& str)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
-        this->internal = new onechar[this->_capacity];
+        allocate(this->_capacity);
         append(str);
     }
 
     onestring::onestring(const onestring& ostr)
     :_capacity(BASE_SIZE), _elements(0), internal(nullptr), _c_str(0)
     {
-        this->internal = new onechar[this->_capacity];
+        allocate(this->_capacity);
         assign(ostr);
     }
 

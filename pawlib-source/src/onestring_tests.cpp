@@ -157,8 +157,8 @@ namespace pawlib
         register_test("P-tB4031", new TestOnestring_Reserve());
         register_test("P-tB4032", new TestOnestring_Resize());
         register_test("P-tB4033", new TestOnestring_ShrinkToFit());
-        // tB4034: "force resize"
-        // tS4034: "force resize upper limit"
+        register_test("P-tB4034", new TestOnestring_ForceResize());
+        register_test("P-tS4034", new TestOnestring_ForceResizeStress(), false);
 
         // tB4035: find
         // tB4036: find_first_not_of

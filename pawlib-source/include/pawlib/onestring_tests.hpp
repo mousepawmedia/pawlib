@@ -2965,11 +2965,7 @@ namespace pawlib
             }
     };
 
-
-
-    ///////////// REUSABLE /////////////
-
-
+    // P-tB4034
     class TestOnestring_ForceResize : public Test
     {
         protected:
@@ -2995,6 +2991,35 @@ namespace pawlib
                     test.append("🐉");
                 }
                 PL_ASSERT_EQUAL(test, target);
+                return true;
+            }
+    };
+
+    // P-tS4034
+    class TestOnestring_ForceResizeStress : public Test
+    {
+        public:
+            TestOnestring_ForceResizeStress(){}
+
+            testdoc_t get_title() override
+            {
+                return "Onestring: Force Resize (Stress Test)";
+            }
+
+            testdoc_t get_docs() override
+            {
+                return "Append characters to force resizing of the Onestring's internal structure.";
+            }
+
+            bool run() override
+            {
+                onestring test;
+                size_t limit = 1000000;
+                for (size_t i = 0; i < limit; ++i)
+                {
+                    test.append("🐉");
+                }
+                PL_ASSERT_EQUAL(test[limit - 1], "🐉");
                 return true;
             }
     };
