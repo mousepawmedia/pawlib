@@ -74,8 +74,6 @@ namespace pawlib
             this->_elements = this->_capacity;
         }
 
-        // TODO: Would it be better to use realloc? (If so, be sure to throw bad_alloc as needed)
-
         // Allocate a new array with the new size.
         onechar* newArr = new onechar[this->_capacity];
 
