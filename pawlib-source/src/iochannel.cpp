@@ -347,7 +347,7 @@ namespace pawlib
             {
                 reset_attributes();
                 keep = false;
-                //Fall through to twin.
+                [[fallthrough]];
             }
             case io_end_keep:
             {
@@ -359,7 +359,7 @@ namespace pawlib
             {
                 reset_attributes();
                 keep = false;
-                //Fall through to twin.
+                [[fallthrough]];
             }
             case io_send_keep:
             {
@@ -370,7 +370,7 @@ namespace pawlib
             case io_endline:
             {
                 reset_attributes();
-                //Fall through to twin.
+                [[fallthrough]];
             }
             case io_endline_keep:
             {
@@ -380,12 +380,12 @@ namespace pawlib
             case io_show:
             {
                 reset_attributes();
-                //Fall through to twin.
+                [[fallthrough]];
             }
             case io_show_keep:
             {
                 (can_parse()) ? inject("\r") : inject("");
-                //Fall through to flush.
+                [[fallthrough]];
             }
             case io_flush:
             {
@@ -841,18 +841,19 @@ namespace pawlib
                      * This allows outputs to connect to the HIGHEST
                      * verbosity they will allow, and get the rest regardless.
                      */
+                    [[fallthrough]];
                 }
                 case vrb_normal:
                 {
                     // Dispatch the "normal" verbosity signal.
                     signal_v_normal.dispatch(msg, cat);
-                    //Fall through.
+                    [[fallthrough]];
                 }
                 case vrb_chatty:
                 {
                     // Dispatch the "chatty" verbosity signal.
                     signal_v_chatty.dispatch(msg, cat);
-                    //Fall through.
+                    [[fallthrough]];
                 }
                 case vrb_tmi:
                 {

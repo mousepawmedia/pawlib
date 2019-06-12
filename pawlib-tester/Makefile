@@ -55,9 +55,6 @@ CH_DIR = @cmake -E chdir
 RM_DIR = @cmake -E remove_directory
 ECHO = @cmake -E echo
 
-# CHANGEME: Project name
-NAME = "PawLIB Tester"
-
 # CHANGEME: Set to 'lib' or 'bin'
 BUILD_DIR = bin
 
@@ -66,7 +63,8 @@ TEMP_DIR = build_temp
 EXEC_BUILD = $(CH_DIR) $(TEMP_DIR)
 
 none:
-	$(ECHO) "=== $(NAME) ==="
+	# CHANGEME: Project name
+	$(ECHO) "=== PawLIB Tester ==="
 	$(ECHO) "Select a build target:"
 	$(ECHO) "  make debug"
 	$(ECHO) "  make release"

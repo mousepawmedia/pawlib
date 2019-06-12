@@ -343,7 +343,7 @@ namespace pawlib
             {
                 this->testmanager->i_run_benchmark(tokens[1], std::stoi(tokens[2]));
             }
-            catch(std::invalid_argument)
+            catch(const std::invalid_argument&)
             {
                 ioc << fg_red << ta_bold << cat_error
                 << "ERROR: " << tokens[2] << " is not a valid integer. "
@@ -367,7 +367,7 @@ namespace pawlib
             {
                 this->testmanager->i_run_compare(tokens[1], tokens[2], std::stoi(tokens[3]));
             }
-            catch(std::invalid_argument)
+            catch(const std::invalid_argument&)
             {
                 ioc << fg_red << ta_bold << cat_error
                 << "ERROR: " << tokens[3] << " is not a valid integer. "
@@ -422,7 +422,7 @@ namespace pawlib
             {
                 this->testmanager->i_run(tokens[1], std::stoi(tokens[2]));
             }
-            catch(std::invalid_argument)
+            catch(const std::invalid_argument&)
             {
                 ioc << fg_red << ta_bold << cat_error
                 << "ERROR: " << tokens[2] << " is not a valid integer. "
