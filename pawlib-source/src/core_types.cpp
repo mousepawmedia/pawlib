@@ -4,7 +4,7 @@ namespace pawlib
 {
     // UNCERTAINTY
 
-    bool operator~(const uncertainty& rhs)
+    bool operator~(const uncertainty& rhs) noexcept
     {
         // Return the certainty of rhs.
         bool r = rhs.data;
@@ -17,42 +17,42 @@ namespace pawlib
         return output;
     }
 
-    bool operator==(const uncertainty& lhs, const uncertainty& rhs)
+    bool operator==(const uncertainty& lhs, const uncertainty& rhs) noexcept
     {
         return (lhs.data == rhs.data);
     }
 
-    bool operator!=(const uncertainty& lhs, const uncertainty& rhs)
+    bool operator!=(const uncertainty& lhs, const uncertainty& rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
-    bool operator==(const uncertainty&, const bool&)
+    bool operator==(const uncertainty&, const bool&) noexcept
     {
         return false;
     }
 
-    bool operator!=(const uncertainty&, const bool&)
+    bool operator!=(const uncertainty&, const bool&) noexcept
     {
         return false;
     }
 
-    bool operator==(const bool& lhs, const uncertainty& rhs)
+    bool operator==(const bool& lhs, const uncertainty& rhs) noexcept
     {
         return (rhs == lhs);
     }
 
-    bool operator!=(const bool& lhs, const uncertainty& rhs)
+    bool operator!=(const bool& lhs, const uncertainty& rhs) noexcept
     {
         return !(rhs == lhs);
     }
 
-    bool operator==(const uncertainty& lhs, const tril& rhs)
+    bool operator==(const uncertainty& lhs, const tril& rhs) noexcept
     {
         return (rhs == lhs);
     }
 
-    bool operator!=(const uncertainty& lhs, const tril& rhs)
+    bool operator!=(const uncertainty& lhs, const tril& rhs) noexcept
     {
         return (rhs != lhs);
     }
@@ -60,24 +60,24 @@ namespace pawlib
 
     // TRIL
 
-    tril::tril(bool in_b, bool in_u)
+    tril::tril(bool in_b, bool in_u) noexcept
     :data(0)
     {
         set_b(in_b);
         set_u(in_u);
     }
 
-    void tril::set_b(bool b)
+    void tril::set_b(bool b) noexcept
     {
         data = (b ? (data | B) : (data & ~B));
     }
 
-    void tril::set_u(bool u)
+    void tril::set_u(bool u) noexcept
     {
         data = (u ? (data | U) : (data & ~U));
     }
 
-    tril::operator bool_type() const
+    tril::operator bool_type() const noexcept
     {
         if(~(*this))
         {
@@ -90,7 +90,7 @@ namespace pawlib
         }
     }
 
-    bool operator!(const tril& rhs)
+    bool operator!(const tril& rhs) noexcept
     {
         // Get the boolean bit of rhs.
         bool b = (rhs.data & tril::B);
@@ -102,20 +102,20 @@ namespace pawlib
         return (u ? false : !b);
     }
 
-    bool operator~(const tril& rhs)
+    bool operator~(const tril& rhs) noexcept
     {
         // Return just the uncertainty bit of rhs.
         return (rhs.data & tril::U);
     }
 
-    tril& tril::operator=(const bool& rhs)
+    tril& tril::operator=(const bool& rhs) noexcept
     {
         set_b(rhs);
         set_u(false);
         return *this;
     }
 
-    tril& tril::operator=(const tril& rhs)
+    tril& tril::operator=(const tril& rhs) noexcept
     {
         // We just copy all the data from one tril to the other.
         data = rhs.data;
@@ -123,7 +123,7 @@ namespace pawlib
         return *this;
     }
 
-    tril& tril::operator=(const uncertainty& rhs)
+    tril& tril::operator=(const uncertainty& rhs) noexcept
     {
         /* We only copy the uncertainty state, so as to preserve the
          * boolean bit and allow reverting with `certain()`. */
@@ -132,13 +132,13 @@ namespace pawlib
         return *this;
     }
 
-    bool tril::certain()
+    bool tril::certain() const noexcept
     {
         // Return the boolean bit, ignoring the uncertainty bit.
         return (data & tril::B);
     }
 
-    bool operator==(const tril& lhs, const bool& rhs)
+    bool operator==(const tril& lhs, const bool& rhs) noexcept
     {
         // Get the boolean bit of the left side.
         bool b = (lhs.data & tril::B);
@@ -149,13 +149,13 @@ namespace pawlib
         return (u ? false : rhs == b);
     }
 
-    bool operator==(const bool& lhs, const tril& rhs)
+    bool operator==(const bool& lhs, const tril& rhs) noexcept
     {
         // We'll use operator!=(tril, bool), since the logic is the same.
         return (rhs == lhs);
     }
 
-    bool operator==(const tril& lhs, const tril& rhs)
+    bool operator==(const tril& lhs, const tril& rhs) noexcept
     {
         // Get the boolean bit of the left side.
         bool lb = (lhs.data & tril::B);
@@ -172,7 +172,7 @@ namespace pawlib
         return ( (lu && ru) || (!lu && !ru && lb == rb) );
     }
 
-    bool operator==(const tril& lhs, const uncertainty& rhs)
+    bool operator==(const tril& lhs, const uncertainty& rhs) noexcept
     {
         /* When comparing a tril and a pure tril, the boolean bit is irrelevant.
          * Only the uncertainty flag matters in a pure tril. */
@@ -184,7 +184,7 @@ namespace pawlib
         return (u == rhs.data);
     }
 
-    bool operator!=(const tril& lhs, const bool& rhs)
+    bool operator!=(const tril& lhs, const bool& rhs) noexcept
     {
         // Get the boolean bit of the left side.
         bool b = (lhs.data & tril::B);
@@ -195,13 +195,13 @@ namespace pawlib
         return (u ? true : rhs != b);
     }
 
-    bool operator!=(const bool& lhs, const tril& rhs)
+    bool operator!=(const bool& lhs, const tril& rhs) noexcept
     {
         // We'll use operator!=(tril, bool), since the logic is the same.
         return (rhs != lhs);
     }
 
-    bool operator!=(const tril& lhs, const tril& rhs)
+    bool operator!=(const tril& lhs, const tril& rhs) noexcept
     {
         // Get the boolean bit of the left side.
         bool lb = (lhs.data & tril::B);
@@ -219,7 +219,7 @@ namespace pawlib
         return ( (lu && !ru) || (!lu && ru) || (!lu && !ru && lb != rb));
     }
 
-    bool operator!=(const tril& lhs, const uncertainty& rhs)
+    bool operator!=(const tril& lhs, const uncertainty& rhs) noexcept
     {
         /* When comparing a tril and a pure tril, the boolean bit is irrelevant.
          * Only the uncertainty flag matters in a pure tril. */
