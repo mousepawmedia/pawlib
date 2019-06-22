@@ -30,18 +30,39 @@ namespace pawlib
     }
 
     onechar::onechar(const onechar& cpy)
-    : size(1), internal{'\0', '\0', '\0', '\0', '\0'}
+    : size(cpy.size), internal{'\0', '\0', '\0', '\0', '\0'}
     {
-        // Make this a copy of the onechar
-        copy(cpy);
-    }
-
-    void onechar::copy(const onechar& cpy)
-    {
-        // Copy the size
-        this->size = cpy.size;
         // Directly copy the contents of the internal array
         memcpy(this->internal, cpy.internal, cpy.size);
+    }
+
+    onechar::onechar(onechar&& mov)
+    : size(mov.size)
+    {
+        // Directly copy the contents of the internal array
+        // TODO: Is there a way just to steal the pointer?
+        memcpy(this->internal, mov.internal, mov.size);
+    }
+
+    onechar& onechar::operator=(const onechar& cpy)
+    {
+        if (this != &cpy)
+        {
+            this->size = cpy.size;
+            memcpy(this->internal, cpy.internal, cpy.size);
+        }
+        return *this;
+    }
+
+    onechar& onechar::operator=(onechar&& mov)
+    {
+        if (this != &mov)
+        {
+            this->size = mov.size;
+            memcpy(this->internal, mov.internal, mov.size);
+
+        }
+        return *this;
     }
 
     void onechar::parse(const char ch)

@@ -80,12 +80,10 @@ namespace pawlib
         // If an old array exists...
         if(this->internal != nullptr)
         {
-            // Move the contents over
-            memmove(
-                newArr,
-                this->internal,
-                sizeof(onechar) * this->_elements
-            );
+            for (size_t i = 0; i < this->_elements; ++i)
+            {
+                newArr[i] = std::move(this->internal[i]);
+            }
 
             // Delete the old structure
             delete[] internal;
@@ -145,6 +143,35 @@ namespace pawlib
         if (to_add > 0)
         {
             append(ch, to_add);
+        }
+    }
+
+    void onestring::shift(size_t fromIndex, int offset)
+    {
+        // WARNING: We do NOT handle expansion in this function; only shifting.
+
+        // If we're shifting forward...
+        if (offset > 0)
+        {
+            // Work from last element being moved to first
+            size_t target = _elements;
+            // Copy each element forward to its new position.
+            while (target-- > fromIndex)
+            {
+                this->internal[target + offset] = this->internal[target];
+            }
+        }
+        // Otherwise, if we're shifting backward...
+        else if (offset < 0)
+        {
+            // Work from first element being moved to last
+            size_t target = fromIndex;
+            // Copy each element back to its new position.
+            while (target < _elements)
+            {
+                this->internal[target + offset] = this->internal[target];
+                ++target;
+            }
         }
     }
 
@@ -294,8 +321,11 @@ namespace pawlib
         size_t elements_to_copy = (len > _elements - pos) ? (_elements - pos) : len;
         // Reserve necessary space in the new onestring
         r.reserve(elements_to_copy);
-        // Copy the memory for the substring
-        memcpy(r.internal, this->internal + pos, sizeof(onechar) * elements_to_copy);
+        // Copy the characters for the substring
+        for (size_t i = 0; i < elements_to_copy; ++i)
+        {
+            r.internal[i] = this->internal[pos + i];
+        }
         // Record how many elements were copied.
         r._elements = elements_to_copy;
         return r;
@@ -499,15 +529,16 @@ namespace pawlib
 
     onestring& onestring::append(const onestring& ostr, size_t repeat)
     {
-        expand(ostr.length() * repeat);
+        expand(ostr._elements * repeat);
 
         for(size_t a = 0; a < repeat; ++a)
         {
-            memmove(this->internal + _elements,
-                ostr.internal,
-                sizeof(onechar) * ostr.length());
+            for(size_t i = 0; i < ostr._elements; ++i)
+            {
+                this->internal[_elements + i] = ostr.internal[i];
+            }
 
-            _elements += ostr.length();
+            _elements += ostr._elements;
         }
 
         return *this;
@@ -556,7 +587,10 @@ namespace pawlib
     {
         clear();
         reserve(ostr._elements);
-        memcpy(this->internal, ostr.internal, sizeof(onechar) * ostr._elements);
+        for(size_t i = 0; i < ostr._elements; ++i)
+        {
+            this->internal[i] = ostr.internal[i];
+        }
         _elements = ostr._elements;
         return *this;
     }
@@ -583,11 +617,12 @@ namespace pawlib
         // Calculate the number of elements we need to REMOVE
         len = (len > _elements - pos) ? (_elements - pos) : len;
 
-        // Calculate the number of elements we need to move
-        size_t elements_to_move = _elements - pos - len;
-
-        // Overwrite the elements
-        memcpy(this->internal + pos, this->internal + pos + len, sizeof(onechar) * elements_to_move);
+        // If there are any elements remaining after the erasure...
+        if(_elements - pos - len > 0)
+        {
+            // Move the remaining elements back
+            shift(pos + len, -(len));
+        }
 
         // Update the number of elements
         _elements = _elements - len;
@@ -615,14 +650,11 @@ namespace pawlib
             throw std::out_of_range("Onestring::insert(): specified pos out of range");
         }
 
-        // Calculate how many elements need to be shifted to make room (right partition)
-        size_t elements_to_move = _elements - pos;
         // Reserve needed space
         expand(1);
         // Move the right partition to make room for the new element
-        memmove(this->internal + pos + 1,
-                this->internal + pos,
-                sizeof(onechar) * elements_to_move);
+        shift(pos, 1);
+
         // Insert the new element
         this->internal[pos] = ch;
         // Increase the element count
@@ -639,14 +671,11 @@ namespace pawlib
             throw std::out_of_range("Onestring::insert(): specified pos out of range");
         }
 
-        // Calculate how many elements need to be shifted to make room (right partition)
-        size_t elements_to_move = _elements - pos;
         // Reserve needed space
         expand(1);
         // Move the right partition to make room for the new element
-        memmove(this->internal + pos + 1,
-                this->internal + pos,
-                sizeof(onechar) * elements_to_move);
+        shift(pos, 1);
+
         // Insert the new element
         this->internal[pos] = ochr;
         // Increase the element count
@@ -664,14 +693,10 @@ namespace pawlib
         }
 
         size_t elements_to_insert = characterCount(cstr);
-        // Calculate how many elements need to be shifted to make room (right partition)
-        size_t elements_to_move = _elements - pos;
         // Reserve needed space
         expand(elements_to_insert);
         // Move the right partition to make room for the new element
-        memmove(this->internal + pos + elements_to_insert,
-                this->internal + pos,
-                sizeof(onechar) * elements_to_move);
+        shift(pos, elements_to_insert);
 
         // Insert the new elements
         size_t index = 0;
@@ -700,19 +725,16 @@ namespace pawlib
         }
 
         size_t elements_to_insert = ostr._elements;
-        // Calculate how many elements need to be shifted to make room (right partition)
-        size_t elements_to_move = _elements - pos;
         // Reserve needed space
         expand(elements_to_insert);
         // Move the right partition to make room for the new element
-        memmove(this->internal + pos + elements_to_insert,
-                this->internal + pos,
-                sizeof(onechar) * elements_to_move);
+        shift(pos, elements_to_insert);
 
         // Insert the new elements
-        memcpy(this->internal + pos,
-               ostr.internal,
-               sizeof(onechar) * elements_to_insert);
+        for(size_t i = 0; i < ostr._elements; ++i)
+        {
+            this->internal[pos + i] = ostr.internal[i];
+        }
         // Increase the element count
         _elements += elements_to_insert;
 
@@ -747,9 +769,7 @@ namespace pawlib
             // Move the right partition to make room, if necessary
             if (elements_after > 0)
             {
-                memmove(this->internal + pos + len + difference,
-                        this->internal + pos_after,
-                        sizeof(onechar) * elements_after);
+                shift(pos, difference);
             }
 
             // Update the element count
@@ -761,9 +781,7 @@ namespace pawlib
             // Move the right partition back, erasing excess characters.
             if (elements_after > 0)
             {
-                memmove(this->internal + pos + len + difference,
-                        this->internal + pos_after,
-                        sizeof(onechar) * elements_after);
+                shift(pos_after, difference);
             }
 
             // Update the element count
@@ -857,10 +875,10 @@ namespace pawlib
         // Rearrange the string memory to accommodate the new data
         replace_setup(pos, len, ostr._elements);
 
-        /* Replace the characters directly. We use memmove so we can safely
-         * use the same string as the destination AND the source.
-         */
-        memmove(this->internal + pos, ostr.internal, sizeof(onechar) * ostr._elements);
+        for(size_t i = 0; i < ostr._elements; ++i)
+        {
+            this->internal[pos + i] = ostr.internal[i];
+        }
 
         return *this;
     }
@@ -926,12 +944,10 @@ namespace pawlib
         // Rearrange the string memory to accommodate the new data
         replace_setup(pos, len, sublen);
 
-        /* Replace the characters directly. We use memmove so we can safely
-         * use the same string as the destination AND the source.
-         */
-        memmove(this->internal + pos,
-                ostr.internal + subpos,
-                sizeof(onechar) * sublen);
+        for(size_t i = 0; i < sublen; ++i)
+        {
+            this->internal[pos + i] = ostr.internal[subpos + i];
+        }
 
         return *this;
     }

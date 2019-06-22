@@ -131,6 +131,14 @@ namespace pawlib
               * \param the number of elements to allocate space for */
             void allocate(size_t capacity);
 
+            /** Shifts the contents of the onestring efficiently.
+              * WARNING: Does not check for validity of shift, nor perform
+              * expansions or shrinks. That is the responsibility of the caller.
+              * \param the first index to shift
+              * \param how much to shift by, and in what direction.
+              * Negative values shift back, positive shift forward. */
+            void shift(size_t fromIndex, int offset);
+
         public:
 
             /** Requests that the string capacity be expanded to accomidate
@@ -330,6 +338,8 @@ namespace pawlib
             * Mutators
             ********************************************/
 
+            // TODO How many need rvalue versions?
+
             /** Appends a character to the end of the onestring.
               * \param the char to append
               * \param how many times to repeat the append, default 1
@@ -470,6 +480,8 @@ namespace pawlib
             /** Appends characters to the end of the onestring.
               * \param the onestring to append from */
             void push_back(const onestring& ostr) { append(ostr); }
+
+            // TODO: Implement rvalue versions of most of the above
 
         protected:
             /** Modifies the internal data structure in preparation for a
@@ -672,6 +684,8 @@ namespace pawlib
             friend bool operator>=(const onechar& ochr, const onestring& ostr) { return (ostr.compare(ochr) <= 0); }
             friend bool operator>=(const char* cstr, const onestring& ostr) { return (ostr.compare(cstr) <= 0); }
             friend bool operator>=(const std::string& str, const onestring& ostr) { return (ostr.compare(str) <= 0); }
+
+            // TODO: Implement iterators
 
             friend std::istream& operator>>(std::istream& is, onestring& ostr)
             {

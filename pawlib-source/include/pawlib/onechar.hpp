@@ -71,10 +71,6 @@ namespace pawlib
             /// The character array as a c-string.
             char internal[MAX_SIZE + 1];
 
-            /** Copy the contents of another onechar to this one.
-              * \param the onechar to copy */
-            void copy(const onechar&);
-
             /** Store an ASCII character in this onechar
               * \param the char to copy */
             void parse(const char);
@@ -127,6 +123,9 @@ namespace pawlib
 
             /** Initialize a onechar as a copy of another. */
             onechar(const onechar&);
+
+            /** Initialize a onechar by moving another. */
+            onechar(onechar&&);
 
             /** Destructor */
             ~onechar(){};
@@ -240,11 +239,9 @@ namespace pawlib
                 return *this;
             }
 
-            onechar& operator=(const onechar& cpy)
-            {
-                copy(cpy);
-                return *this;
-            }
+            onechar& operator=(const onechar&);
+
+            onechar& operator=(onechar&&);
 
             // Comparison Operators
 
