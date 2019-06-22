@@ -141,7 +141,7 @@ namespace pawlib
                     return index_available.pop();
                 }
                 // If our stack was empty...
-                catch(std::out_of_range)
+                catch(std::out_of_range&)
                 {
                     // The pool is full.
                     return INVALID_INDEX;
@@ -294,7 +294,7 @@ namespace pawlib
                         * before the reference is invalidated. */
                         index_available.push(rf.getIndex());
                     }
-                    catch(std::length_error)
+                    catch(std::length_error&)
                     {
                         // Just don't bother pushing.
                     }

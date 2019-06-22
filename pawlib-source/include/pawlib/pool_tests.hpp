@@ -69,6 +69,15 @@ namespace pawlib
              num4(cpy.num4), num5(cpy.num5)
             {}
 
+            DummyClass& operator=(const DummyClass& cpy)
+            {
+                num1 = cpy.num1;
+                num2 = cpy.num2;
+                num3 = cpy.num3;
+                num4 = cpy.num4;
+                return *this;
+            }
+
             bool alive()
             {
                 return true;
@@ -156,7 +165,7 @@ namespace pawlib
                         {
                             refs[i] = pool->create();
                         }
-                        catch(e_pool_reinit)
+                        catch(e_pool_reinit&)
                         {
                             return false;
                         }
@@ -167,11 +176,11 @@ namespace pawlib
                         {
                             pool->destroy(refs[j]);
                         }
-                        catch(e_pool_invalid_ref)
+                        catch(e_pool_invalid_ref&)
                         {
                             return false;
                         }
-                        catch(e_pool_foreign_ref)
+                        catch(e_pool_foreign_ref&)
                         {
                             return false;
                         }
@@ -296,7 +305,7 @@ namespace pawlib
                         poolrf = rf;
                     }
                 }
-                catch(e_pool_full)
+                catch(e_pool_full&)
                 {
                     return false;
                 }
@@ -363,7 +372,7 @@ namespace pawlib
                 {
                     poolrf = pool->create();
                 }
-                catch(e_pool_full)
+                catch(e_pool_full&)
                 {
                     return false;
                 }
@@ -378,7 +387,7 @@ namespace pawlib
                 {
                     r = pool->access(poolrf).alive();
                 }
-                catch(e_pool_invalid_ref)
+                catch(e_pool_invalid_ref&)
                 {
                     return false;
                 }
@@ -435,7 +444,7 @@ namespace pawlib
                 {
                     poolrf = pool->create();
                 }
-                catch(e_pool_full)
+                catch(e_pool_full&)
                 {
                     return false;
                 }
@@ -449,7 +458,7 @@ namespace pawlib
                 {
                     pool->destroy(poolrf);
                 }
-                catch(e_pool_invalid_ref)
+                catch(e_pool_invalid_ref&)
                 {
                     return false;
                 }
@@ -570,7 +579,7 @@ namespace pawlib
                         {
                             pool_ref<DummyClass> rf2 = pool->create();
                         }
-                        catch(e_pool_full)
+                        catch(e_pool_full&)
                         {
                             return true;
                         }
@@ -584,7 +593,7 @@ namespace pawlib
                         {
                             pool_ref<DummyClass> rf2 = pool->create(DummyClass(5,4,3,2,1));
                         }
-                        catch(e_pool_full)
+                        catch(e_pool_full&)
                         {
                             return true;
                         }
@@ -599,7 +608,7 @@ namespace pawlib
                         {
                             pool->access(poolrf).alive();
                         }
-                        catch(e_pool_invalid_ref)
+                        catch(e_pool_invalid_ref&)
                         {
                             return true;
                         }
@@ -614,7 +623,7 @@ namespace pawlib
                         {
                             pool->access(foreignref).alive();
                         }
-                        catch(e_pool_foreign_ref)
+                        catch(e_pool_foreign_ref&)
                         {
                             return true;
                         }
@@ -628,7 +637,7 @@ namespace pawlib
                         {
                             pool->destroy(poolrf);
                         }
-                        catch(e_pool_invalid_ref)
+                        catch(e_pool_invalid_ref&)
                         {
                             return true;
                         }
@@ -642,7 +651,7 @@ namespace pawlib
                         {
                             pool->destroy(foreignref);
                         }
-                        catch(e_pool_foreign_ref)
+                        catch(e_pool_foreign_ref&)
                         {
                             return true;
                         }
