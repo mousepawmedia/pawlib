@@ -100,7 +100,7 @@ else()
 endif()
 
 # Our global compiler flags.
-add_definitions(-Wall -Wextra -Werror -pedantic)
+add_definitions(-Wall -Wextra -Werror -Wpedantic)
 
 if(COMPILERTYPE STREQUAL "gcc")
     # -Wimplicit-fallthrough=0 is required for
