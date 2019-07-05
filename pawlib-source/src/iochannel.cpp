@@ -7,33 +7,28 @@ namespace pawlib
 
     iochannel::iochannel()
     : msg(""),
-      process_c(cat_all),
-      process_v(vrb_tmi),
-      echomode(echo_printf),
-      echovrb(vrb_tmi),
-      echocat(cat_all),
-      base(base_10),
-      boolstyle(bool_lower),
-      charval(char_char),
-      significands(14),
-      sci(sci_auto),
-      numcase(num_upper),
-      ptr(ptr_value),
-      readsize(1),
+      process_c(static_cast<int>(IOCategory::all)),
+      process_v(static_cast<int>(IOVerbosity::tmi)),
+      echomode(IOEchoMode::cout),
+      echovrb(IOVerbosity::tmi),
+      echocat(IOCategory::all),
+      base(IOFormatBase::dec),
+      boolstyle(IOFormatBool::lower),
+      charval(IOFormatCharValue::as_char),
+      significands(IOFormatSignificands(14)),
+      sci(IOFormatSciNotation::automatic),
+      numcase(IOFormatNumeralCase::upper),
+      ptr(IOFormatPtr::value),
+      readsize(IOMemReadSize(1)),
       memformat(0),
-      ta(ta_none),
-      bg(bg_none),
-      fg(fg_none),
-      vrb(vrb_normal),
-      cat(cat_normal),
-      parse(maybe)
-    {
-        ta = ta_none;
-        fg = fg_none;
-        bg = bg_none;
-        base = base_dec;
-        dirty_attributes = false;
-    }
+      ta(IOFormatTextAttr::none),
+      bg(IOFormatTextBG::none),
+      fg(IOFormatTextFG::none),
+      vrb(IOVerbosity::normal),
+      cat(IOCategory::normal),
+      parse(maybe),
+      dirty_attributes(false)
+    {}
 
     //------------ DATA TYPES ------------//
 
@@ -43,27 +38,27 @@ namespace pawlib
         if(!can_parse()){return *this;}
         switch(boolstyle)
         {
-            case bool_lower:
+            case IOFormatBool::lower:
             {
                 inject(rhs ? "true" : "false");
                 break;
             }
-            case bool_upper:
+            case IOFormatBool::upper:
             {
                 inject(rhs ? "True" : "False");
                 break;
             }
-            case bool_caps:
+            case IOFormatBool::caps:
             {
                 inject(rhs ? "TRUE" : "FALSE");
                 break;
             }
-            case bool_numeral:
+            case IOFormatBool::numeral:
             {
                 inject(rhs ? "1" : "0");
                 break;
             }
-            case bool_scott:
+            case IOFormatBool::scott:
             {
                 inject(rhs ? "Yea" : "Nay");
                 break;
@@ -79,31 +74,31 @@ namespace pawlib
         if(!can_parse()){return *this;}
         switch(boolstyle)
         {
-            case bool_lower:
+            case IOFormatBool::lower:
             {
                 inject( (~rhs) ? "maybe"
                 : (rhs ? "true" : "false"));
                 break;
             }
-            case bool_upper:
+            case IOFormatBool::upper:
             {
                 inject( (~rhs) ? "Maybe"
                 : (rhs ? "True" : "False"));
                 break;
             }
-            case bool_caps:
+            case IOFormatBool::caps:
             {
                 inject( (~rhs) ? "MAYBE"
                 : (rhs ? "TRUE" : "FALSE"));
                 break;
             }
-            case bool_numeral:
+            case IOFormatBool::numeral:
             {
                 inject( (~rhs) ? "2"
                 : (rhs ? "1" : "0"));
                 break;
             }
-            case bool_scott:
+            case IOFormatBool::scott:
             {
                 inject( (~rhs) ? "Maybe"
                 : (rhs ? "Yea" : "Nay"));
@@ -121,14 +116,14 @@ namespace pawlib
         switch(charval)
         {
             //Output as character.
-            case char_char:
+            case IOFormatCharValue::as_char:
             {
                 //This will call the inject(char) function.
                 inject(rhs);
                 break;
             }
             //Output as integer.
-            case char_int:
+            case IOFormatCharValue::as_int:
             {
                 resolve_integer(rhs);
                 break;
@@ -207,12 +202,12 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const set_significands& rhs)
+    iochannel& iochannel::operator<<(const IOFormatSignificands& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        significands = rhs.significands;
+        significands = rhs;
         return *this;
     }
 
@@ -234,7 +229,7 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOFormatPointer& rhs)
+    iochannel& iochannel::operator<<(const IOFormatPtr& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
@@ -243,18 +238,18 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOFormatMemorySeparators& rhs)
+    iochannel& iochannel::operator<<(const IOFormatMemSep& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        if(rhs == 0)
+        if(rhs != IOFormatMemSep::none)
         {
             memformat = 0;
         }
         else
         {
-            memformat = (memformat | rhs);
+            memformat = (memformat | static_cast<int>(rhs));
         }
 
         return *this;
@@ -284,7 +279,7 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOFormatTextAttributes& rhs)
+    iochannel& iochannel::operator<<(const IOFormatTextAttr& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
@@ -306,17 +301,17 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const read_size& rhs)
+    iochannel& iochannel::operator<<(const IOMemReadSize& rhs)
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        readsize = rhs.readsize;
+        readsize = rhs;
 
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOFormatVerbosity& rhs)
+    iochannel& iochannel::operator<<(const IOVerbosity& rhs)
     {
         //Set the verbosity.
         vrb = rhs;
@@ -325,7 +320,7 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOFormatCategory& rhs)
+    iochannel& iochannel::operator<<(const IOCategory& rhs)
     {
         //Set the category.
         cat = rhs;
@@ -343,51 +338,51 @@ namespace pawlib
 
         switch(rhs)
         {
-            case io_end:
+            case IOControl::end:
             {
                 reset_attributes();
                 keep = false;
                 [[fallthrough]];
             }
-            case io_end_keep:
+            case IOControl::end_keep:
             {
                 (can_parse()) ? inject("\n") : inject("");
                 transmit(keep);
                 break;
             }
-            case io_send:
+            case IOControl::send:
             {
                 reset_attributes();
                 keep = false;
                 [[fallthrough]];
             }
-            case io_send_keep:
+            case IOControl::send_keep:
             {
                 inject("");
                 transmit(keep);
                 break;
             }
-            case io_endline:
+            case IOControl::endline:
             {
                 reset_attributes();
                 [[fallthrough]];
             }
-            case io_endline_keep:
+            case IOControl::endline_keep:
             {
                 (can_parse()) ? inject("\n") : inject("");
                 break;
             }
-            case io_show:
+            case IOControl::show:
             {
                 reset_attributes();
                 [[fallthrough]];
             }
-            case io_show_keep:
+            case IOControl::show_keep:
             {
                 (can_parse()) ? inject("\r") : inject("");
                 [[fallthrough]];
             }
-            case io_flush:
+            case IOControl::flush:
             {
                 flush();
                 break;
@@ -401,11 +396,11 @@ namespace pawlib
         //TODO: We will need to switch formats. For now, just ANSI.
         switch(rhs)
         {
-            case IOCursor::cur_left:
+            case IOCursor::left:
                 //NOTE: Watch this. \x1B is allegedly equal to \e, check it.
                 inject("\x1B[1D");
                 break;
-            case IOCursor::cur_right:
+            case IOCursor::right:
                 //NOTE: Watch this. \x1B is allegedly equal to \e, check it.
                 inject("\x1B[1C");
                 break;
@@ -423,21 +418,21 @@ namespace pawlib
         switch(ptr)
         {
             //If we are to print as value...
-            case ptr_value:
+            case IOFormatPtr::value:
             {
                 //We can just inject the C-string.
                 inject(rhs);
                 break;
             }
             //If we are to print as address...
-            case ptr_address:
+            case IOFormatPtr::address:
             {
                 //Inject raw address.
                 inject(rhs, sizeof(*rhs), false);
                 break;
             }
             //If we are to print the raw memory...
-            case ptr_memory:
+            case IOFormatPtr::memory:
             {
                 //Inject address for memory dump.
                 inject(rhs, ((strlen(rhs) + 1) * sizeof(char)), true);
@@ -455,23 +450,23 @@ namespace pawlib
         switch(ptr)
         {
             //If we are to print as value...
-            case ptr_value:
+            case IOFormatPtr::value:
             {
                 *this << "[iochannel cannot interpret value at pointer of this type.]";
                 break;
             }
             //If we are to print as address...
-            case ptr_address:
+            case IOFormatPtr::address:
             {
                 //Inject raw address, overriding with byte read size 1.
                 inject(rhs, 1, false);
                 break;
             }
             //If we are to print the raw memory...
-            case ptr_memory:
+            case IOFormatPtr::memory:
             {
                 //Inject raw address with the read_size() given by the user.
-                inject(rhs, readsize, true);
+                inject(rhs, readsize.readsize, true);
                 break;
             }
         }
@@ -487,20 +482,20 @@ namespace pawlib
         switch(ptr)
         {
             //If we are to print as value...
-            case ptr_value:
+            case IOFormatPtr::value:
             {
                 *this << *rhs;
                 break;
             }
             //If we are to print as address...
-            case ptr_address:
+            case IOFormatPtr::address:
             {
                 //Inject raw address.
                 inject(rhs, sizeof(*rhs), false);
                 break;
             }
             //If we are to print the raw memory...
-            case ptr_memory:
+            case IOFormatPtr::memory:
             {
                 //Inject address for memory dump.
                 inject(rhs, sizeof(typeid(*rhs)), true);
@@ -532,7 +527,7 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        int len = stdutils::intlen(rhs, base, true) + 1;
+        int len = stdutils::intlen(rhs, static_cast<int>(base), true) + 1;
 
         // We're changing approach below to keep Clang happy.
         //// char cstr[len] = {'\0'};
@@ -543,7 +538,7 @@ namespace pawlib
         char* cstr = new char[len];
         std::fill_n(cstr, len, '\0');
 
-        stdutils::itoa(cstr, rhs, base, len, numcase);
+        stdutils::itoa(cstr, rhs, static_cast<int>(base), len, static_cast<bool>(numcase));
         inject(cstr);
 
         delete[] cstr;
@@ -571,12 +566,13 @@ namespace pawlib
         cstr[0] = '\0';*/
 
         // Accepting defeat on VLAs - we'll just have to dynamically allocate.
-        uint32_t len = stdutils::floatlen(rhs, significands, sci, true) + 1;
+        uint32_t len = stdutils::floatlen(rhs, significands.significands,
+                                          static_cast<bool>(sci), true) + 1;
         char* cstr = new char[len];
         std::fill_n(cstr, len, '\0');
 
         //Convert the float to a cstring, and dump into cstr.
-        stdutils::ftoa(cstr, rhs, significands, sci);
+        stdutils::ftoa(cstr, rhs, significands.significands, static_cast<bool>(sci));
         inject(cstr);
 
         delete[] cstr;
@@ -597,13 +593,13 @@ namespace pawlib
             format = "\033[";
             format.append(stdutils::itos(static_cast<int>(ta)));
 
-            if(bg > 0)
+            if(bg != IOFormatTextBG::none)
             {
                 format.append(";");
                 format.append(stdutils::itos(static_cast<int>(bg)));
             }
 
-            if(fg > 0)
+            if(fg != IOFormatTextFG::none)
             {
                 format.append(";");
                 format.append(stdutils::itos(static_cast<int>(fg)));
@@ -625,7 +621,9 @@ namespace pawlib
         {
             /* If the verbosity is in range or the category is set to parse,
              * then set false. Otherwise, set true. */
-            parse = ((vrb <= process_v) && (process_c & cat)) ? true : false;
+            int v = static_cast<int>(vrb);
+            int c = static_cast<int>(cat);
+            parse = ((v <= process_v) && (process_c & c)) ? true : false;
         }
         return parse;
     }
@@ -636,7 +634,7 @@ namespace pawlib
         msg = "";
     }
 
-    void iochannel::configure_echo(IOEchoMode echo, IOFormatVerbosity echo_vrb, IOFormatCategory echo_cat)
+    void iochannel::configure_echo(IOEchoMode echo, IOVerbosity echo_vrb, IOCategory echo_cat)
     {
         echomode = echo;
         echovrb = echo_vrb;
@@ -651,17 +649,17 @@ namespace pawlib
         //Flush is essential for progress-style outputs (after \r and no \n).
         switch(echomode)
         {
-            case echo_cout:
+            case IOEchoMode::cout:
             {
                 std::cout << std::flush;
                 break;
             }
-            case echo_printf:
+            case IOEchoMode::printf:
             {
                 fflush(stdout);
                 break;
             }
-            case echo_none:
+            case IOEchoMode::none:
             {
                 break;
             }
@@ -701,7 +699,7 @@ namespace pawlib
         if(!dump)
         {
             uintptr_t address = reinterpret_cast<uintptr_t>(ptr);
-            inject(stdutils::ptrtos(address, numcase).c_str());
+            inject(stdutils::ptrtos(address, static_cast<bool>(numcase)).c_str());
         }
         else if(dump)
         {
@@ -747,9 +745,11 @@ namespace pawlib
         }
     }
 
-    void iochannel::shutup(IOFormatCategory cat)
+    void iochannel::shutup(IOCategory cat)
     {
-        process_c = process_c & ~cat;
+        int c = static_cast<int>(cat);
+
+        process_c = process_c & ~c;
         if(process_c == 0)
         {
             printf("WARNING: All message categories have been turned off!\n");
@@ -758,36 +758,42 @@ namespace pawlib
         parse = maybe;
     }
 
-    void iochannel::shutup(IOFormatVerbosity vrb)
+    void iochannel::shutup(IOVerbosity vrb)
     {
+        int v = static_cast<int>(vrb);
+
         //Set the processing verbosity.
-        process_v = vrb;
+        process_v = v;
         //Revalidate parsing.
         parse = maybe;
     }
 
     void iochannel::speakup()
     {
-        process_v = vrb_tmi;
-        process_c = cat_all;
+        process_v = static_cast<int>(IOVerbosity::tmi);
+        process_c = static_cast<int>(IOCategory::all);
         //Revalidate parsing.
         parse = maybe;
     }
 
-    void iochannel::speakup(IOFormatCategory cat)
+    void iochannel::speakup(IOCategory cat)
     {
+        int c = static_cast<int>(cat);
+
         //Allow the category through by turning on its bit.
-        process_c = process_c | cat;
+        process_c = process_c | c;
         //Revalidate parsing.
         parse = maybe;
     }
 
-    void iochannel::speakup(IOFormatVerbosity vrb)
+    void iochannel::speakup(IOVerbosity vrb)
     {
+        int v = static_cast<int>(vrb);
+
         //Allow verbosity through by turning on its bit.
-        if(process_v < vrb)
+        if(process_v < v)
         {
-            process_v = vrb;
+            process_v = v;
         }
         //Revalidate parsing.
         parse = maybe;
@@ -795,11 +801,11 @@ namespace pawlib
 
     void iochannel::reset_attributes()
     {
-        if(ta > 0 || fg > 0 || bg > 0)
+        if(ta != IOFormatTextAttr::none || fg != IOFormatTextFG::none || bg != IOFormatTextBG::none)
         {
-            ta = ta_none;
-            fg = fg_none;
-            bg = bg_none;
+            ta = IOFormatTextAttr::none;
+            fg = IOFormatTextFG::none;
+            bg = IOFormatTextBG::none;
             dirty_attributes = true;
             /* We must leave calling `apply_attributes()` to `inject()`,
              * otherwise the reset attributes will never get injected
@@ -812,19 +818,19 @@ namespace pawlib
     void iochannel::reset_flags()
     {
         //Reset all the flags.
-        base = base_dec;
-        boolstyle = bool_lower;
-        charval = char_char;
-        significands = 14;
-        sci = sci_auto;
-        numcase = num_lower;
-        ptr = ptr_value;
-        readsize = 1;
+        base = IOFormatBase::b10;
+        boolstyle = IOFormatBool::lower;
+        charval = IOFormatCharValue::as_char;
+        significands = IOFormatSignificands(14);
+        sci = IOFormatSciNotation::automatic;
+        numcase = IOFormatNumeralCase::lower;
+        ptr = IOFormatPtr::value;
+        readsize = IOMemReadSize(1);
         memformat = 0;
 
         //We reset the verbosity and category.
-        vrb = vrb_normal;
-        cat = cat_normal;
+        vrb = IOVerbosity::normal;
+        cat = IOCategory::normal;
     }
 
     void iochannel::transmit(bool keep)
@@ -833,7 +839,7 @@ namespace pawlib
         {
             switch(vrb)
             {
-                case vrb_quiet:
+                case IOVerbosity::quiet:
                 {
                     // Dispatch the "quiet" verbosity signal.
                     signal_v_quiet.dispatch(msg, cat);
@@ -843,19 +849,19 @@ namespace pawlib
                      */
                     [[fallthrough]];
                 }
-                case vrb_normal:
+                case IOVerbosity::normal:
                 {
                     // Dispatch the "normal" verbosity signal.
                     signal_v_normal.dispatch(msg, cat);
                     [[fallthrough]];
                 }
-                case vrb_chatty:
+                case IOVerbosity::chatty:
                 {
                     // Dispatch the "chatty" verbosity signal.
                     signal_v_chatty.dispatch(msg, cat);
                     [[fallthrough]];
                 }
-                case vrb_tmi:
+                case IOVerbosity::tmi:
                 {
                     // Dispatch the "TMI" verbosity signal.
                     signal_v_tmi.dispatch(msg, cat);
@@ -865,37 +871,37 @@ namespace pawlib
 
             switch(cat)
             {
-                case cat_normal:
+                case IOCategory::normal:
                 {
                     // Dispatch the "normal" category signal.
                     signal_c_normal.dispatch(msg, vrb);
                     break;
                 }
-                case cat_debug:
+                case IOCategory::debug:
                 {
                     // Dispatch the "debug" category signal.
                     signal_c_debug.dispatch(msg, vrb);
                     break;
                 }
-                case cat_warning:
+                case IOCategory::warning:
                 {
                     // Dispatch the "warning" category signal.
                     signal_c_warning.dispatch(msg, vrb);
                     break;
                 }
-                case cat_error:
+                case IOCategory::error:
                 {
                     // Dispatch the "error" category signal.
                     signal_c_error.dispatch(msg, vrb);
                     break;
                 }
-                case cat_testing:
+                case IOCategory::testing:
                 {
                     // Dispatch the "testing" category signal.
                     signal_c_testing.dispatch(msg, vrb);
                     break;
                 }
-                case cat_all:
+                case IOCategory::all:
                 {
                     /* This has no corresponding signal. I just leave
                      * the case here to make the compiler warnings happy. */
@@ -908,17 +914,17 @@ namespace pawlib
             signal_all.dispatch(msg);
 
             //If we are supposed to be echoing
-            if(echomode != echo_none)
+            if(echomode != IOEchoMode::none)
             {
                 //If the verbosity and category is correct...
-                if(vrb <= echovrb && (cat == echocat || echocat == cat_all))
+                if(vrb <= echovrb && (cat == echocat || echocat == IOCategory::all))
                 {
                     switch(echomode)
                     {
                         // If we're supposed to use `printf`...
-                        case echo_printf:
+                        case IOEchoMode::printf:
                         {
-                            if(cat == cat_error)
+                            if(cat == IOCategory::error)
                             {
                                 /* Route the message through stderr
                                  * instead of stdout.*/
@@ -932,9 +938,9 @@ namespace pawlib
                             break;
                         }
                         // If we're supposed to use `std::cout`...
-                        case echo_cout:
+                        case IOEchoMode::cout:
                         {
-                            if(cat == cat_error)
+                            if(cat == IOCategory::error)
                             {
                                 /* Route the message through stderr
                                  * instead of stdout.*/
@@ -949,7 +955,7 @@ namespace pawlib
                             break;
                         }
                         // This case is here for completeness...
-                        case echo_none:
+                        case IOEchoMode::none:
                         {
                             // ...we should never reach this point!
                             break;

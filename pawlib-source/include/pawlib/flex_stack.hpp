@@ -50,7 +50,6 @@
 #include "pawlib/iochannel.hpp"
 
 using pawlib::iochannel;
-using namespace pawlib::ioformat;
 
 namespace pawlib
 {

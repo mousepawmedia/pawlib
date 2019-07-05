@@ -165,9 +165,9 @@ namespace pawlib
                 ioc << ": " << it->second->get_title();
             }
             // Newline.
-            ioc << io_endline;
+            ioc << IOControl::endline;
         }
-        ioc << io_end;
+        ioc << IOControl::end;
     }
 
     void TestManager::list_suites(bool showTitles)
@@ -186,9 +186,9 @@ namespace pawlib
                 ioc << ": " << it->second->get_title();
             }
             // Newline.
-            ioc << io_endline;
+            ioc << IOControl::endline;
         }
-        ioc << io_end;
+        ioc << IOControl::end;
     }
 
     void TestManager::show_docs(testname_t test_name)
@@ -198,9 +198,9 @@ namespace pawlib
         {
             return;
         }
-        ioc << ta_bold << tests[test_name]->get_title()
-            << "[" << test_name << "]: " << io_send;
-        ioc << tests[test_name]->get_docs() << io_end;
+        ioc << IOFormatTextAttr::bold << tests[test_name]->get_title()
+            << "[" << test_name << "]: " << IOControl::send;
+        ioc << tests[test_name]->get_docs() << IOControl::end;
     }
 
     bool TestManager::i_confirm(bool default_option)
@@ -228,7 +228,7 @@ namespace pawlib
         // If no suite was specified (load all)...
         if(suite == "")
         {
-            ioc << "Load ALL test suites? (y/N) " << io_send;
+            ioc << "Load ALL test suites? (y/N) " << IOControl::send;
 
             if(i_confirm(false))
             {
@@ -247,15 +247,15 @@ namespace pawlib
 
         if(!suites[suite]->is_loaded())
         {
-            ioc << cat_error << ta_bold << fg_red << "ERROR: The suite " << suite
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextFG::red << "ERROR: The suite " << suite
                 << " is not yet loaded. Aborting."
-                << io_end;
+                << IOControl::end;
             return;
         }
 
-        ioc << "Load test suite " << io_send;
-        ioc << ta_bold << suites[suite]->get_title() << io_send;
-        ioc << "[" << suite << "]? (y/N) " << io_send;
+        ioc << "Load test suite " << IOControl::send;
+        ioc << IOFormatTextAttr::bold << suites[suite]->get_title() << IOControl::send;
+        ioc << "[" << suite << "]? (y/N) " << IOControl::send;
 
         if(i_confirm(false))
         {
@@ -284,14 +284,14 @@ namespace pawlib
             return;
         }
 
-        ioc << "Run test " << io_send;
-        ioc << ta_bold << tests[test]->get_title() << io_send;
-        ioc << "[" << test << "]" << io_send;
+        ioc << "Run test " << IOControl::send;
+        ioc << IOFormatTextAttr::bold << tests[test]->get_title() << IOControl::send;
+        ioc << "[" << test << "]" << IOControl::send;
         if(repeat > 1)
         {
-            ioc << " " << stdutils::itos(repeat) << " times" << io_send;
+            ioc << " " << stdutils::itos(repeat) << " times" << IOControl::send;
         }
-        ioc << "? (y/N) " << io_send;
+        ioc << "? (y/N) " << IOControl::send;
 
         if(i_confirm(false))
         {
@@ -318,9 +318,9 @@ namespace pawlib
             }
         }
 
-        ioc << "Run test suite " << io_send;
-        ioc << ta_bold << suites[suite]->get_title() << io_send;
-        ioc << "[" << suite << "]? (y/N) " << io_send;
+        ioc << "Run test suite " << IOControl::send;
+        ioc << IOFormatTextAttr::bold << suites[suite]->get_title() << IOControl::send;
+        ioc << "[" << suite << "]? (y/N) " << IOControl::send;
 
         if(i_confirm(false))
         {
@@ -339,11 +339,11 @@ namespace pawlib
             return;
         }
 
-        ioc << "Run comparative benchmark between " << io_send;
-        ioc << ta_bold << tests[test]->get_title() << io_send;
-        ioc << "[" << test << "] and " << io_send;
-        ioc << ta_bold << comparatives[test]->get_title() << io_send;
-        ioc << " at " << repeat << " repetitions? (y/N) " << io_send;
+        ioc << "Run comparative benchmark between " << IOControl::send;
+        ioc << IOFormatTextAttr::bold << tests[test]->get_title() << IOControl::send;
+        ioc << "[" << test << "] and " << IOControl::send;
+        ioc << IOFormatTextAttr::bold << comparatives[test]->get_title() << IOControl::send;
+        ioc << " at " << repeat << " repetitions? (y/N) " << IOControl::send;
 
         if(i_confirm(false))
         {
@@ -362,11 +362,11 @@ namespace pawlib
             return;
         }
 
-        ioc << "Run comparative benchmark between " << io_send;
-        ioc << ta_bold << tests[test1]->get_title() << io_send;
-        ioc << "[" << test1 << "] and " << io_send;
-        ioc << ta_bold << tests[test2]->get_title() << io_send;
-        ioc << "[" << test2 << "] at " << repeat << " repetitions? (y/N) " << io_send;
+        ioc << "Run comparative benchmark between " << IOControl::send;
+        ioc << IOFormatTextAttr::bold << tests[test1]->get_title() << IOControl::send;
+        ioc << "[" << test1 << "] and " << IOControl::send;
+        ioc << IOFormatTextAttr::bold << tests[test2]->get_title() << IOControl::send;
+        ioc << "[" << test2 << "] at " << repeat << " repetitions? (y/N) " << IOControl::send;
 
         if(i_confirm(false))
         {
@@ -391,7 +391,7 @@ namespace pawlib
                 {
                     it->second->load_tests();
                     it->second->is_loaded(true);
-                    ioc << cat_normal << ta_bold << it->first << ": " << it->second->get_title() << " loaded." << io_end;
+                    ioc << IOCategory::normal << IOFormatTextAttr::bold << it->first << ": " << it->second->get_title() << " loaded." << IOControl::end;
                 }
             }
             return true;
@@ -416,16 +416,16 @@ namespace pawlib
             // Mark the suite as loaded.
             suites[suite]->is_loaded(true);
             // Report the good news.
-            ioc << cat_normal << ta_bold << suites[suite]->get_title() << io_end;
-            ioc << cat_normal << ta_bold << bg_green << fg_white
-                << "Suite loaded." << io_endline << io_end;
+            ioc << IOCategory::normal << IOFormatTextAttr::bold << suites[suite]->get_title() << IOControl::end;
+            ioc << IOCategory::normal << IOFormatTextAttr::bold << IOFormatTextBG::green << IOFormatTextFG::white
+                << "Suite loaded." << IOControl::endline << IOControl::end;
             return true;
         }
         else
         {
-            ioc << cat_error << ta_bold << fg_red << "ERROR: The suite " << suite
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextFG::red << "ERROR: The suite " << suite
                 << " is already loaded."
-                << io_end;
+                << IOControl::end;
             return false;
         }
         return false;
@@ -471,7 +471,7 @@ namespace pawlib
         }
 
         // Display the suite name in a banner.
-        ioc << "===== [" << suites[suite]->get_title() << "] =====" << io_end;
+        ioc << "===== [" << suites[suite]->get_title() << "] =====" << IOControl::end;
 
         // Run the suite, and return whether it succeeded.
         bool r = suites[suite]->run_tests();
@@ -479,8 +479,8 @@ namespace pawlib
         //If the suite run fails (return false)...
         if(!r)
         {
-            ioc << io_endline << cat_error << ta_bold << bg_red << fg_white
-                << "SUITE FAILED" << io_end;
+            ioc << IOControl::endline << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextBG::red << IOFormatTextFG::white
+                << "SUITE FAILED" << IOControl::end;
 
             //End of suite, fail.
             return false;
@@ -489,8 +489,8 @@ namespace pawlib
         else
         {
             // Let the user know that all went well.
-            ioc << io_endline << cat_normal << ta_bold << bg_green << fg_white
-                << "SUITE COMPLETE" << io_end;
+            ioc << IOControl::endline << IOCategory::normal << IOFormatTextAttr::bold << IOFormatTextBG::green << IOFormatTextFG::white
+                << "SUITE COMPLETE" << IOControl::end;
 
             //End of suite, success.
             return true;
@@ -506,9 +506,9 @@ namespace pawlib
         if(validate(test_name, false, GolidlocksItemType::test))
         {
             // Throw an error.
-            ioc << cat_error << ta_bold << fg_red
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextFG::red
                 << "ERROR: A test by the name of " << test_name
-                << "is already registered in Golidlocks Test Manager." << io_end;
+                << "is already registered in Golidlocks Test Manager." << IOControl::end;
             return;
         }
 
@@ -518,9 +518,9 @@ namespace pawlib
         if(test == nullptr)
         {
             //Display an error message.
-            ioc << cat_error << "TestManager: Unable to create a new "
+            ioc << IOCategory::error << "TestManager: Unable to create a new "
                 << "instance of the test \"" << test_name << "\". Test not "
-                << "registered." << io_end;
+                << "registered." << IOControl::end;
 
             //Return non-fatally.
             return;
@@ -560,9 +560,9 @@ namespace pawlib
         if(validate(suite_name, false, GolidlocksItemType::suite))
         {
             // Throw an error.
-            ioc << cat_error << ta_bold << fg_red
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextFG::red
                 << "ERROR: A suite by the name of " << suite_name
-                << " is already registered in Golidlocks Test Manager." << io_end;
+                << " is already registered in Golidlocks Test Manager." << IOControl::end;
             return;
         }
 
@@ -572,9 +572,9 @@ namespace pawlib
         if(suite == nullptr)
         {
             //Display an error message.
-            ioc << cat_error << "TestManager: Unable to create a new "
+            ioc << IOCategory::error << "TestManager: Unable to create a new "
                 << "instance of the suite \"" << suite_name << "\". Suite not "
-                << "registered." << io_end;
+                << "registered." << IOControl::end;
 
             //Return non-fatally.
             return;
@@ -611,22 +611,22 @@ namespace pawlib
         if(repeat < 1 || repeat > 10000)
         {
             // Display an error.
-            ioc << cat_error << "Test repeat value must be between 1 and 10000 inclusively." << io_end;
+            ioc << IOCategory::error << "Test repeat value must be between 1 and 10000 inclusively." << IOControl::end;
 
             // Abort the test.
             return false;
         }
 
         // Display the test name in a banner.
-        ioc << "===== [" << tests[test]->get_title() << "] =====" << io_end;
+        ioc << "===== [" << tests[test]->get_title() << "] =====" << IOControl::end;
 
         /* Attempt to run the pretest function, which is intended to set up
          * for multiple runs of the test. If that fails (returns false)...*/
         if(!(tests[test]->pre()))
         {
             // Alert the user with an error message.
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "PRE-TEST FAILED - ABORTING" << io_end;
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextBG::red << IOFormatTextFG::white
+                << "PRE-TEST FAILED - ABORTING" << IOControl::end;
 
             // Run the function to clean up after a pretest fail.
             tests[test]->prefail();
@@ -639,8 +639,8 @@ namespace pawlib
 
         for(unsigned int i = 0; i < repeat; ++i)
         {
-            ioc << cat_normal << "Pass " << stdutils::itos(i+1)
-                << " of " << stdutils::itos(repeat) << io_end;
+            ioc << IOCategory::normal << "Pass " << stdutils::itos(i+1)
+                << " of " << stdutils::itos(repeat) << IOControl::end;
 
             tests[test]->janitor();
 
@@ -655,8 +655,8 @@ namespace pawlib
         if(!status)
         {
             // Alert the user with an error message.
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "TEST FAILED" << io_end;
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextBG::red << IOFormatTextFG::white
+                << "TEST FAILED" << IOControl::end;
 
             // Run the test's fail-cleanup function.
             tests[test]->postmortem();
@@ -668,8 +668,8 @@ namespace pawlib
         else
         {
             // Let the user know that all went well.
-            ioc << cat_normal << ta_bold << bg_green << fg_white
-                << "TEST COMPLETE" << io_end;
+            ioc << IOCategory::normal << IOFormatTextAttr::bold << IOFormatTextBG::green << IOFormatTextFG::white
+                << "TEST COMPLETE" << IOControl::end;
 
             // Run the test's cleanup (post) function.
             tests[test]->post();
@@ -682,16 +682,16 @@ namespace pawlib
     void TestManager::benchmark_banner()
     {
         // Display the fancy benchmark banner, with its disclaimer.
-        ioc << ta_bold << fg_blue
+        ioc << IOFormatTextAttr::bold << IOFormatTextFG::blue
             << "======" << "===========" << "=====\n"
             << "|     " << "BENCHMARKER" << "    |\n"
-            << "======" << "===========" << "=====" << io_end;
-        ioc << ta_none << fg_red
+            << "======" << "===========" << "=====" << IOControl::end;
+        ioc << IOFormatTextAttr::none << IOFormatTextFG::red
             << "Disclaimer: This benchmarker is intended to give a rough estimate "
             << "of how many CPU cycles a particular test takes. It is not a "
             << "replacement for a fully-featured code profiler. "
             << "Cache warming will NOT be performed.\n"
-            << io_end;
+            << IOControl::end;
     }
 
     bool TestManager::run_benchmark(testname_t test, unsigned int repeat,
@@ -739,8 +739,8 @@ namespace pawlib
         if(repeat < 10 || repeat > 10000)
         {
             // Display an error.
-            ioc << cat_error << "Benchmark requires a repeat value "
-                << "between 10-10000 (inclusively)." << io_end;
+            ioc << IOCategory::error << "Benchmark requires a repeat value "
+                << "between 10-10000 (inclusively)." << IOControl::end;
 
             // Abort the benchmark.
             return false;
@@ -750,14 +750,14 @@ namespace pawlib
         benchmark_banner();
         // Display the names of the tests we're about to compare.
         ioc << "===== [" << test1->get_title() << "] | ["
-            << test2->get_title() << "] =====" << io_end;
+            << test2->get_title() << "] =====" << IOControl::end;
 
         // Attempt to run the "pre" function for test 1. If it fails...
         if(!(test1->pre()))
         {
             // Alert the user with an error message...
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test1->get_title() << "] PRE-TEST FAILED - ABORTING" << io_end;
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextBG::red << IOFormatTextFG::white
+                << "[" << test1->get_title() << "] PRE-TEST FAILED - ABORTING" << IOControl::end;
             // Perform pre-fail cleanup on test 1.
             test1->prefail();
 
@@ -771,8 +771,8 @@ namespace pawlib
         if(!(test2->pre()))
         {
             // Alert the user with an error message...
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test2->get_title() << "] PRE-TEST FAILED - ABORTING" << io_end;
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextBG::red << IOFormatTextFG::white
+                << "[" << test2->get_title() << "] PRE-TEST FAILED - ABORTING" << IOControl::end;
 
             // Perform pre-fail cleanup on test 2.
             test2->prefail();
@@ -786,7 +786,7 @@ namespace pawlib
         }
 
         // Let the user know what we're doing...
-        ioc << "Ensuring [" << test1->get_title() << "] succeeds before benchmarking..." << io_end;
+        ioc << "Ensuring [" << test1->get_title() << "] succeeds before benchmarking..." << IOControl::end;
 
         test1->janitor();
 
@@ -794,8 +794,8 @@ namespace pawlib
         if(!(test1->run()) || !(test1->verify()))
         {
             // Alert the user with an error message.
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test1->get_title() << "] FAILED - ABORTING" << io_end;
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextBG::red << IOFormatTextFG::white
+                << "[" << test1->get_title() << "] FAILED - ABORTING" << IOControl::end;
 
             // Run postmortem cleanup on test1.
             test1->postmortem();
@@ -811,13 +811,13 @@ namespace pawlib
         else
         {
             // Let the user know the good news...
-            ioc << cat_normal << ta_bold << bg_green << fg_white
-                << "[" << test1->get_title() << "] PASSED" << io_end;
+            ioc << IOCategory::normal << IOFormatTextAttr::bold << IOFormatTextBG::green << IOFormatTextFG::white
+                << "[" << test1->get_title() << "] PASSED" << IOControl::end;
             // ...and move on.
         }
 
         // Give the user a status update.
-        ioc << "Ensuring [" << test2->get_title() << "] succeeds before benchmarking..." << io_end;
+        ioc << "Ensuring [" << test2->get_title() << "] succeeds before benchmarking..." << IOControl::end;
 
         test2->janitor();
 
@@ -825,8 +825,8 @@ namespace pawlib
         if(!(test2->run()) || !(test2->verify()))
         {
             // Alert the user with an error message.
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "[" << test2->get_title() << "] FAILED - ABORTING" << io_end;
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextBG::red << IOFormatTextFG::white
+                << "[" << test2->get_title() << "] FAILED - ABORTING" << IOControl::end;
 
             // Run postmortem cleanup on test2.
             test2->postmortem();
@@ -842,17 +842,17 @@ namespace pawlib
         else
         {
             // Let the user know the good news about that as well...
-            ioc << cat_normal << ta_bold << bg_green << fg_white
-                << "[" << test2->get_title() << "] PASSED" << io_end;
+            ioc << IOCategory::normal << IOFormatTextAttr::bold << IOFormatTextBG::green << IOFormatTextFG::white
+                << "[" << test2->get_title() << "] PASSED" << IOControl::end;
             // ...and let the fun proceed!
         }
 
         // Let the user know that we're starting our measurements.
-        ioc << cat_normal << bg_cyan << fg_black << "STARTING BENCHMARK" << io_end;
+        ioc << IOCategory::normal << IOFormatTextBG::cyan << IOFormatTextFG::white << "STARTING BENCHMARK" << IOControl::end;
 
         /* Shut off all testing messages; they aren't useful after the initial
          * test run has finished. We don't want to clog up or clutter output.*/
-        ioc.shutup(cat_testing);
+        ioc.shutup(IOCategory::testing);
 
         /* The average execution time of the measurement functions, represented
          * as a 64-bit unsigned integer.*/
@@ -869,8 +869,8 @@ namespace pawlib
         if(results1 == nullptr || results2 == nullptr)
         {
             // Alert the user with an error message.
-            ioc << cat_error << ta_bold << bg_red << fg_white
-                << "Cannot allocate results arrays. Aborting." << io_end;
+            ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextBG::red << IOFormatTextFG::white
+                << "Cannot allocate results arrays. Aborting." << IOControl::end;
 
             if(results1 != nullptr)
             {
@@ -893,15 +893,15 @@ namespace pawlib
          * function itself.)*/
         for(unsigned int i=0; i<repeat; ++i)
         {
-            /* Keep the user apprised of our progress. We use `io_show` so we
+            /* Keep the user apprised of our progress. We use `IOControl::show` so we
              * keep overwriting the same line.*/
-            ioc << cat_normal << "CALIBRATING: " << (((i+1)/repeat)*100) << "%" << io_show;
+            ioc << IOCategory::normal << "CALIBRATING: " << (((i+1)/repeat)*100) << "%" << IOControl::show;
             // Get a baseline measurement.
             results1[i] = clock();
         }
 
         // Move to a new line for output.
-        ioc << io_flush << io_end;
+        ioc << IOControl::flush << IOControl::end;
 
         /* Calculate the statistical results from our array of baseline
          * measurements.*/
@@ -914,14 +914,14 @@ namespace pawlib
          * the possibility of cache misses on each individual test run.*/
 
         // Display MAMA BEAR banner.
-        ioc << cat_normal  << "\n" << bg_cyan << fg_black << "COMPARISON 1/3: MAMA BEAR" << io_flush << io_end;
-        ioc << cat_normal << "(MAMA BEAR) Loading..." << io_show;
+        ioc << IOCategory::normal  << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "COMPARISON 1/3: MAMA BEAR" << IOControl::flush << IOControl::end;
+        ioc << IOCategory::normal << "(MAMA BEAR) Loading..." << IOControl::show;
 
         // Take <repeat> measurements of test A and B.
         for(unsigned int i=0; i<repeat; ++i)
         {
             // Display progress (overwrite line.)
-            ioc << cat_normal << "(MAMA BEAR) Pass " << (i+1) << "-A of " << repeat << ".  " << io_show;
+            ioc << IOCategory::normal << "(MAMA BEAR) Pass " << (i+1) << "-A of " << repeat << ".  " << IOControl::show;
             // Run pre-repeat cleanup on test1.
             test1->janitor();
             // Record test 1 measurement, offset by baseline.
@@ -930,7 +930,7 @@ namespace pawlib
             test1->verify();
 
             // Display progress (overwrite line.)
-            ioc << cat_normal << "(MAMA BEAR) Pass " << (i+1) << "-B of " << repeat << ".  " << io_show;
+            ioc << IOCategory::normal << "(MAMA BEAR) Pass " << (i+1) << "-B of " << repeat << ".  " << IOControl::show;
             // Run pre-repeat cleanup on test2.
             test2->janitor();
             // Record test 2 measurement, offset by baseline.
@@ -940,7 +940,7 @@ namespace pawlib
         }
 
         // Move to a new line for output.
-        ioc << io_flush << io_end;
+        ioc << IOControl::flush << IOControl::end;
 
         // Calculate the statistical results for MAMA BEAR, tests 1 and 2.
         resultFromArray(mama1, results1, repeat);
@@ -951,14 +951,14 @@ namespace pawlib
         * in other words, allowing natural cache warming to occur.*/
 
         // Display PAPA BEAR banner.
-        ioc << cat_normal  << "\n" << bg_cyan << fg_black << "COMPARISON 2/3: PAPA BEAR" << io_flush << io_end;
-        ioc << cat_normal << "(PAPA BEAR) Loading..." << io_show;
+        ioc << IOCategory::normal  << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "COMPARISON 2/3: PAPA BEAR" << IOControl::flush << IOControl::end;
+        ioc << IOCategory::normal << "(PAPA BEAR) Loading..." << IOControl::show;
 
         // Take <repeat> measurements of test A.
         for(unsigned int i=0; i<repeat; ++i)
         {
             // Display progress (overwrite line).
-            ioc << cat_normal << "(PAPA BEAR) Pass " << (i+1) << "-A of " << repeat << ".  " << io_show;
+            ioc << IOCategory::normal << "(PAPA BEAR) Pass " << (i+1) << "-A of " << repeat << ".  " << IOControl::show;
             // Run pre-repeat cleanup on test1.
             test1->janitor();
             // Record test 1 measurement, offset by baseline.
@@ -971,7 +971,7 @@ namespace pawlib
         for(unsigned int i=0; i<repeat; ++i)
         {
             // Display progress (overwrite line).
-            ioc << cat_normal << "(PAPA BEAR) Pass " << (i+1) << "-B of " << repeat << ".  " << io_show;
+            ioc << IOCategory::normal << "(PAPA BEAR) Pass " << (i+1) << "-B of " << repeat << ".  " << IOControl::show;
             // Run pre-repeat cleanup on test2.
             test2->janitor();
             // Record test 2 measurement, offset by baseline.
@@ -981,8 +981,8 @@ namespace pawlib
         }
 
         // Move to a new line for output.
-        ioc << io_flush << io_end;
-        ////ioc << "\n\n" << io_end << io_flush;
+        ioc << IOControl::flush << IOControl::end;
+        ////ioc << "\n\n" << IOControl::end << IOControl::flush;
 
         // Calculate the statistical results for PAPA BEAR, tests 1 and 2.
         resultFromArray(papa1, results1, repeat);
@@ -995,8 +995,8 @@ namespace pawlib
          * approach.*/
 
         // Display BABY BEAR banner.
-        ioc << cat_normal << "\n" << bg_cyan << fg_black << "COMPARISON 3/3: BABY BEAR" << io_end;
-        ioc << cat_normal << "(BABY BEAR) Loading..." << io_show;
+        ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "COMPARISON 3/3: BABY BEAR" << IOControl::end;
+        ioc << IOCategory::normal << "(BABY BEAR) Loading..." << IOControl::show;
 
         /* Define three 16-bit unsigned integers for managing BABY BEAR's more
          * complex alternation - counters for the outer and inner loops, and
@@ -1016,7 +1016,7 @@ namespace pawlib
             for(int i1=0; i1<inner; i1++)
             {
                 // Display progress (overwrite line.)
-                ioc << cat_normal << "(BABY BEAR) Pass " << ((o+1)*(i1+1)) << "-A of " << repeat << ".  " << io_show;
+                ioc << IOCategory::normal << "(BABY BEAR) Pass " << ((o+1)*(i1+1)) << "-A of " << repeat << ".  " << IOControl::show;
                 // Run pre-repeat cleanup on test1.
                 test1->janitor();
                 // Record test 1 measurement, offset by baseline.
@@ -1029,7 +1029,7 @@ namespace pawlib
             for(int i2=0; i2<inner; i2++)
             {
                 // Display progress (overwrite line.)
-                ioc << cat_normal << "(BABY BEAR) Pass " << ((o+1)*(i2+1)) << "-B of " << repeat << ".  " << io_show;
+                ioc << IOCategory::normal << "(BABY BEAR) Pass " << ((o+1)*(i2+1)) << "-B of " << repeat << ".  " << IOControl::show;
                 // Run pre-repeat cleanup on test2.
                 test2->janitor();
                 // Record test 2 measurement, offset by baseline.
@@ -1043,7 +1043,7 @@ namespace pawlib
         for(int r1=0; r1<remain; r1++)
         {
             // Display progress (overwrite line.)
-            ioc << cat_normal << "(BABY BEAR) Pass " << ((outer*inner)+(r1+1)) << "-A of " << repeat << ".  " << io_show;
+            ioc << IOCategory::normal << "(BABY BEAR) Pass " << ((outer*inner)+(r1+1)) << "-A of " << repeat << ".  " << IOControl::show;
             // Run pre-repeat cleanup on test1.
             test1->janitor();
             // Record test 1 measurement, offset by baseline.
@@ -1056,7 +1056,7 @@ namespace pawlib
         for(int r2=0; r2<remain; r2++)
         {
             // Display progress (overwrite line.)
-            ioc << cat_normal << "(BABY BEAR) Pass " << ((outer*inner)+(r2+1)) << "-B of " << repeat << "." << io_show_keep;
+            ioc << IOCategory::normal << "(BABY BEAR) Pass " << ((outer*inner)+(r2+1)) << "-B of " << repeat << "." << IOControl::show_keep;
             // Run pre-repeat cleanup on test2.
             test2->janitor();
             // Record test 2 measurement, offset by baseline.
@@ -1066,19 +1066,19 @@ namespace pawlib
         }
 
         // Move to a new line for output.
-        ioc << io_flush << io_end;
-        ////ioc << io_end << io_flush;
+        ioc << IOControl::flush << IOControl::end;
+        ////ioc << IOControl::end << IOControl::flush;
 
         // Calculate the statistical results for BABY BEAR, tests 1 and 2.
         resultFromArray(baby1, results1, repeat);
         resultFromArray(baby2, results2, repeat);
 
         // Turn on testing messages again, as we're done running the tests.
-        ioc.speakup(cat_testing);
+        ioc.speakup(IOCategory::testing);
 
         // Let the user know that we're done running the benchmarker.
-        ioc << cat_normal << "\n" << ta_bold << bg_green << fg_white
-                << "BENCHMARKER COMPLETE" << io_end;
+        ioc << IOCategory::normal << "\n" << IOFormatTextAttr::bold << IOFormatTextBG::green << IOFormatTextFG::white
+                << "BENCHMARKER COMPLETE" << IOControl::end;
 
 
         // Cleanup test 1 and 2 using their post functions.
@@ -1088,72 +1088,72 @@ namespace pawlib
         // Display information about results.
         if(showStats)
         {
-            ioc << "RESULTS" << io_end;
-            ioc << "\tMany numbers are displayed as VALUE/ADJUSTED" << io_endline_keep
-                << "\t(The adjusted value excludes outlier values.)" << io_endline << io_end;
+            ioc << "RESULTS" << IOControl::end;
+            ioc << "\tMany numbers are displayed as VALUE/ADJUSTED" << IOControl::endline_keep
+                << "\t(The adjusted value excludes outlier values.)" << IOControl::endline << IOControl::end;
 
             // Display the baseline measurements, for reference.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BASELINE MEASUREMENTS" << io_end;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "BASELINE MEASUREMENTS" << IOControl::end;
             printResult(baseR);
 
             // Display the results for MAMA BEAR, test 1.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << test1->get_title() << "]" << io_end;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "MAMA BEAR: [" << test1->get_title() << "]" << IOControl::end;
             printResult(mama1);
 
             // Display the results for MAMA BEAR, test 2.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: [" << test2->get_title() << "]" << io_end;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "MAMA BEAR: [" << test2->get_title() << "]" << IOControl::end;
             printResult(mama2);
 
             // Display the verdict for MAMA BEAR in BOLD.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: VERDICT" << io_end;
-            ioc << ta_bold;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "MAMA BEAR: VERDICT" << IOControl::end;
+            ioc << IOFormatTextAttr::bold;
             printVerdict(mama1, mama2, test1, test2);
 
             // Display the results for PAPA BEAR, test 1.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << test1->get_title() << "]" << io_end;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "PAPA BEAR: TEST [" << test1->get_title() << "]" << IOControl::end;
             printResult(papa1);
 
             // Display the results for PAPA BEAR, test 2.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: TEST [" << test2->get_title() << "]" << io_end;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "PAPA BEAR: TEST [" << test2->get_title() << "]" << IOControl::end;
             printResult(papa2);
 
             // Display the verdict for PAPA BEAR in BOLD.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: VERDICT" << io_end;
-            ioc << ta_bold;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "PAPA BEAR: VERDICT" << IOControl::end;
+            ioc << IOFormatTextAttr::bold;
             printVerdict(papa1, papa2, test1, test2);
 
             // Display the results for BABY BEAR, test 1.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << test1->get_title() << "]" << io_end;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "BABY BEAR: TEST [" << test1->get_title() << "]" << IOControl::end;
             printResult(baby1);
 
             // Display the results for BABY BEAR, test 2.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: TEST [" << test2->get_title() << "]" << io_end;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "BABY BEAR: TEST [" << test2->get_title() << "]" << IOControl::end;
             printResult(baby2);
 
             // Display the verdict for BABY BEAR in BOLD.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: VERDICT" << io_end;
-            ioc << ta_bold;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "BABY BEAR: VERDICT" << IOControl::end;
+            ioc << IOFormatTextAttr::bold;
             printVerdict(baby1, baby2, test1, test2);
         }
         else
         {
             // Display the baseline measurements, for reference.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BASELINE MEASUREMENTS" << io_end;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "BASELINE MEASUREMENTS" << IOControl::end;
             printResult(baseR);
 
             // Display the verdict for MAMA BEAR in BOLD.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "MAMA BEAR: VERDICT" << io_end;
-            ioc << ta_bold;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "MAMA BEAR: VERDICT" << IOControl::end;
+            ioc << IOFormatTextAttr::bold;
             printVerdict(mama1, mama2, test1, test2);
 
             // Display the verdict for PAPA BEAR in BOLD.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "PAPA BEAR: VERDICT" << io_end;
-            ioc << ta_bold;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "PAPA BEAR: VERDICT" << IOControl::end;
+            ioc << IOFormatTextAttr::bold;
             printVerdict(papa1, papa2, test1, test2);
 
             // Display the verdict for BABY BEAR in BOLD.
-            ioc << cat_normal << "\n" << bg_cyan << fg_black << "BABY BEAR: VERDICT" << io_end;
-            ioc << ta_bold;
+            ioc << IOCategory::normal << "\n" << IOFormatTextBG::cyan << IOFormatTextFG::white << "BABY BEAR: VERDICT" << IOControl::end;
+            ioc << IOFormatTextAttr::bold;
             printVerdict(baby1, baby2, test1, test2);
         }
 
@@ -1397,18 +1397,18 @@ namespace pawlib
         int rsd_threshold = 25;
 
         //Output the relevant data, keeping formatting until the end.
-        ioc << "\tMEAN (μ): " << result.mean << " / " << result.mean_adj << io_end_keep;
+        ioc << "\tMEAN (μ): " << result.mean << " / " << result.mean_adj << IOControl::end_keep;
 
         ioc <<  "\tMIN-MAX(RANGE): " << result.min_val << "-" << result.max_val << "(" << result.range << ") / "
-            <<  result.min_adj_val << "-" << result.max_adj_val << "(" << result.range_adj <<")" << io_end_keep;
+            <<  result.min_adj_val << "-" << result.max_adj_val << "(" << result.range_adj <<")" << IOControl::end_keep;
 
         ioc << "\tOUTLIERS: " << result.low_out_major+result.low_out_minor << " LOW, "
-            << result.upp_out_major+result.upp_out_minor << " HIGH" << io_end_keep;
+            << result.upp_out_major+result.upp_out_minor << " HIGH" << IOControl::end_keep;
 
-        ioc << "\tSD (σ): " << set_significands(2) << result.std_dev << " / " << result.std_dev_adj << "" << io_end_keep;
+        ioc << "\tSD (σ): " << IOFormatSignificands(2) << result.std_dev << " / " << result.std_dev_adj << "" << IOControl::end_keep;
 
-        ioc << "\t" << (result.rsd_adj > rsd_threshold ? bg_red : bg_none)
-            << "RSD: " << result.rsd << "% / " << result.rsd_adj << "%" << io_end;
+        ioc << "\t" << (result.rsd_adj > rsd_threshold ? IOFormatTextBG::red : IOFormatTextBG::none)
+            << "RSD: " << result.rsd << "% / " << result.rsd_adj << "%" << IOControl::end;
     }
 
     uint8_t TestManager::calculateVerdict(BenchmarkResult& result1, BenchmarkResult& result2)
@@ -1456,7 +1456,7 @@ namespace pawlib
         if(labs(difference) <= result1.std_dev || labs(difference) <= result2.std_dev)
         {
             //Non-adjusted, the tests are roughly identical.
-            ioc << "\t     RAW: Both tests are roughly identical. (DIFF <= STD DEV)" << io_end_keep;
+            ioc << "\t     RAW: Both tests are roughly identical. (DIFF <= STD DEV)" << IOControl::end_keep;
         }
         else
         {
@@ -1464,13 +1464,13 @@ namespace pawlib
             if(difference < 0)
             {
                 // Declare the first test as faster, and by how much.
-                ioc << "\t     RAW: [" << test1->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << io_end_keep;
+                ioc << "\t     RAW: [" << test1->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << IOControl::end_keep;
             }
             //Else if the second test won (its non-adjusted mean was smaller)...
             else if(difference > 0)
             {
                 // Declare the second test as faster, and by how much.
-                ioc << "\t     RAW: [" << test2->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << io_end_keep;
+                ioc << "\t     RAW: [" << test2->get_title() << "] faster by approx. " << (labs(difference)) << " cycles." << IOControl::end_keep;
             }
         }
 
@@ -1480,7 +1480,7 @@ namespace pawlib
         if(labs(difference_adj) <= result1.std_dev_adj || labs(difference_adj) <= result2.std_dev_adj)
         {
             //Adjusted, the tests are roughly identical.
-            ioc << "\tADJUSTED: Both tests are roughly identical. (DIFF <= STD DEV)" << io_end;
+            ioc << "\tADJUSTED: Both tests are roughly identical. (DIFF <= STD DEV)" << IOControl::end;
         }
         else
         {
@@ -1488,13 +1488,13 @@ namespace pawlib
             if(difference_adj < 0)
             {
                 // Declare the first test as faster, and by how much.
-                ioc << "\tADJUSTED: [" << test1->get_title() << "] faster by approx. " << (labs(difference_adj) - result1.std_dev_adj) << " cycles." << io_end;
+                ioc << "\tADJUSTED: [" << test1->get_title() << "] faster by approx. " << (labs(difference_adj) - result1.std_dev_adj) << " cycles." << IOControl::end;
             }
             //Else if the second test won (its adjusted mean was smaller)...
             else if(difference_adj > 0)
             {
                 // Declare the second test as faster, and by how much.
-                ioc << "\tADJUSTED: [" << test2->get_title() << "] faster by approx. " << (labs(difference_adj) - result2.std_dev_adj) << " cycles." << io_end;
+                ioc << "\tADJUSTED: [" << test2->get_title() << "] faster by approx. " << (labs(difference_adj) - result2.std_dev_adj) << " cycles." << IOControl::end;
             }
         }
     }
@@ -1508,13 +1508,13 @@ namespace pawlib
         bool r = false;
         switch(type)
         {
-            case test:
+            case GolidlocksItemType::test:
                 r = (tests.count(item_name) != 0);
                 break;
-            case comparative:
+            case GolidlocksItemType::comparative:
                 r = (comparatives.count(item_name) != 0);
                 break;
-            case suite:
+            case GolidlocksItemType::suite:
                 r = (suites.count(item_name) != 0);
                 break;
         }
@@ -1523,16 +1523,16 @@ namespace pawlib
         {
             switch(type)
             {
-                case test:
-                case suite:
-                    ioc << cat_error << ta_bold << fg_red << "ERROR: The item " << item_name
+                case GolidlocksItemType::test:
+                case GolidlocksItemType::suite:
+                    ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextFG::red << "ERROR: The item " << item_name
                     << " is not registered with Goldilocks Test Manager. Aborting."
-                    << io_end;
+                    << IOControl::end;
                     break;
-                case comparative:
-                    ioc << cat_error << ta_bold << fg_red << "ERROR: The item " << item_name
+                case GolidlocksItemType::comparative:
+                    ioc << IOCategory::error << IOFormatTextAttr::bold << IOFormatTextFG::red << "ERROR: The item " << item_name
                     << " does not have a comparative test registered with Golidlocks Test Manager. Aborting."
-                    << io_end;
+                    << IOControl::end;
                     break;
             }
         }
@@ -1559,9 +1559,9 @@ namespace pawlib
         }
         else
         {
-            ioc << cat_error << vrb_normal
+            ioc << IOCategory::error << IOVerbosity::normal
                 << "ERROR: TestSuite is lonely and has no one to talk to. :("
-                << io_end;
+                << IOControl::end;
             return;
         }
 
@@ -1588,17 +1588,17 @@ namespace pawlib
         // Else if we don't have any tests marked to run...
         else if(tests_run.size())
         {
-            ioc << cat_error << vrb_normal
+            ioc << IOCategory::error << IOVerbosity::normal
                 << "ERROR: TestSuite has no tests marked to run. Aborting."
-                << io_end;
+                << IOControl::end;
             return false;
         }
         // Else if we don't have a valid testmananger...
         else if(!testmanager)
         {
-            ioc << cat_error << vrb_normal
+            ioc << IOCategory::error << IOVerbosity::normal
                 << "ERROR: TestSuite is lonely and has no one to talk to. :("
-                << io_end;
+                << IOControl::end;
             return false;
         }
 

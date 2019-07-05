@@ -65,19 +65,19 @@ namespace pawlib
             ~TestFlexBit_Push() {}
 
             //Test title.
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexBit: Push " + stdutils::itos(iters, 10) + " bytes.";
             }
 
             //Test description.
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Push " + stdutils::itos(iters, 10) + " bytes to a flex bit.";
             }
 
             //Run the test.
-            bool run()
+            bool run() override
             {
                 FlexBit flexbit;
 
@@ -94,13 +94,13 @@ namespace pawlib
                 catch (const std::exception& e)
                 {
                     //Any unaccounted for exception.
-                    ioc << cat_error << "Error occurred: " << e << io_end;
+                    ioc << IOCategory::error << "Error occurred: " << e << IOControl::end;
                     return false;
                 }
                 catch (...)
                 {
                     //Unknown failure.
-                    ioc << cat_error << "Unknown failure occurred." << io_end;
+                    ioc << IOCategory::error << "Unknown failure occurred." << IOControl::end;
                     return false;
                 }
 
@@ -123,19 +123,19 @@ namespace pawlib
             ~TestFlexBit_Peek() {}
 
             //Test tittle.
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexBit: Peek";
             }
 
             //Test description.
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Push 101 bytes to a flex bit then peek and test if its the right value.";
             }
 
             //Adding 100 bytes to a test FlexBit.
-            bool pre()
+            bool pre() override
             {
                 try
                 {
@@ -164,7 +164,7 @@ namespace pawlib
             }
 
             //Running the test to peek at the FlexBit.
-            bool run()
+            bool run() override
             {
                 try
                 {
@@ -181,19 +181,19 @@ namespace pawlib
                 catch (const std::out_of_range& e)
                 {
                     //Out of range exception.
-                    ioc << cat_error << "Out of range error: " << e << io_end;
+                    ioc << IOCategory::error << "Out of range error: " << e << IOControl::end;
                     return false;
                 }
                 catch (const std::exception& e)
                 {
                     //Any unaccounted for exception.
-                    ioc << cat_error << "Error occurred: " << e << io_end;
+                    ioc << IOCategory::error << "Error occurred: " << e << IOControl::end;
                     return false;
                 }
                 catch (...)
                 {
                     //Unknown failure.
-                    ioc << cat_error << "Unknown failure occurred." << io_end;
+                    ioc << IOCategory::error << "Unknown failure occurred." << IOControl::end;
                     return false;
                 }
 
@@ -201,7 +201,7 @@ namespace pawlib
             }
 
             //Clean up.
-            bool post()
+            bool post() override
             {
                 testFlexBit.~FlexBit();
 
@@ -226,20 +226,20 @@ namespace pawlib
             ~TestFlexBit_Poll() {}
 
             //Test title.
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexBit: Poll " + stdutils::itos(iters, 10) + " bytes.";
             }
 
             //Test description.
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Push " + stdutils::itos(iters,
                                                 10) + " bytes to a flex bit then remove them.";
             }
 
             //Add given amount of bytes to a FlexBit.
-            bool pre()
+            bool pre() override
             {
                 for (int i = iters - 1; i >= 0 ; i--)
                 {
@@ -251,7 +251,7 @@ namespace pawlib
             }
 
             //Running the poll function until FlexBit is empty.
-            bool run()
+            bool run() override
             {
                 try
                 {
@@ -274,19 +274,19 @@ namespace pawlib
                 catch (const std::length_error& e)
                 {
                     //Length error, which is only thrown inside poll().
-                    ioc << cat_error << "Length error: " << e << io_end;
+                    ioc << IOCategory::error << "Length error: " << e << IOControl::end;
                     return false;
                 }
                 catch (const std::exception& e)
                 {
                     //Any unaccounted for exception.
-                    ioc << cat_error << "Error occurred: " << e << io_end;
+                    ioc << IOCategory::error << "Error occurred: " << e << IOControl::end;
                     return false;
                 }
                 catch (...)
                 {
                     //Unknown failure.
-                    ioc << cat_error << "Unknown failure occurred." << io_end;
+                    ioc << IOCategory::error << "Unknown failure occurred." << IOControl::end;
                     return false;
                 }
 
@@ -295,7 +295,7 @@ namespace pawlib
             }
 
             //Clean up.
-            bool post()
+            bool post() override
             {
                 testFlexBit.~FlexBit();
 
@@ -319,20 +319,20 @@ namespace pawlib
             ~TestFlexBit_ToString() {}
 
             //Test tittle.
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexBit: ToString " + stdutils::itos(iters, 10) + " bytes.";
             }
 
             //Test description.
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Push " + stdutils::itos(iters,
                                                 10) + " bytes to a flex bit and return as a readable string.";
             }
 
             //Add given amount of bytes to a FlexBit.
-            bool pre()
+            bool pre() override
             {
                 for (int i = iters - 1; i >= 0 ; i--)
                 {
@@ -344,7 +344,7 @@ namespace pawlib
             }
 
             //Running test to print given amount of bytes in the FlexBit.
-            bool run()
+            bool run() override
             {
                 try
                 {
@@ -378,20 +378,20 @@ namespace pawlib
                 catch (const std::length_error& e)
                 {
                     //Length error.
-                    ioc << cat_error << "Length error: " << e << io_end;
+                    ioc << IOCategory::error << "Length error: " << e << IOControl::end;
                     return false;
                 }
                 catch (const std::exception& e)
                 {
                     //Any unaccounted for exception.
-                    ioc << cat_error << "Error occurred: " << e << io_end;
+                    ioc << IOCategory::error << "Error occurred: " << e << IOControl::end;
                     return false;
                 }
                 catch (...)
                 {
                     //Unknown failure.
                     std::cerr << "Unknown failure occurred." << std::endl;
-                    ioc << cat_error << "Unknown failure occurred." << io_end;
+                    ioc << IOCategory::error << "Unknown failure occurred." << IOControl::end;
                     return false;
                 }
 
@@ -400,7 +400,7 @@ namespace pawlib
             }
 
             //Clean up.
-            bool post()
+            bool post() override
             {
                 testFlexBit.~FlexBit();
 
@@ -416,8 +416,8 @@ namespace pawlib
     class TestSuite_FlexBit : public TestSuite
     {
         public:
-            void load_tests();
-            testdoc_t get_title()
+            void load_tests() override;
+            testdoc_t get_title() override
             {
                 return "PawLIB: FlexBit tests";
             }

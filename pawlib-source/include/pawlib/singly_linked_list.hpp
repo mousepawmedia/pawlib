@@ -49,7 +49,6 @@
 #include "pawlib/iochannel.hpp"
 
 using pawlib::iochannel;
-using namespace pawlib::ioformat;
 
 namespace pawlib
 {
@@ -59,10 +58,9 @@ namespace pawlib
     struct Node{
         public:
             // cppcheck-suppress noExplicitConstructor
-            Node(T datas){
-                data = datas;
-                next = nullptr;
-            }
+            Node(T inData)
+            : data(inData), next(nullptr)
+            {}
 
             //some getters and setters
             T getData(){return data;}
@@ -150,12 +148,12 @@ namespace pawlib
             //otherwise it returns the node that was removed
             Node<Type>* remove(int index){
                 if(size == 0){
-                    ioc << cat_error << vrb_quiet << "List is empty" << io_end;
+                    ioc << IOCategory::error << IOVerbosity::quiet << "List is empty" << IOControl::end;
                     return nullptr;
                 }
                 else if(index < 0 || index > size - 1)
                 {
-                    ioc << cat_error << vrb_quiet << "Index out of bounds" << io_end;
+                    ioc << IOCategory::error << IOVerbosity::quiet << "Index out of bounds" << IOControl::end;
                     return nullptr;
                 }
                 else if(index == 0)
@@ -208,7 +206,7 @@ namespace pawlib
             void print(){
                 Node<Type>* curr = head;
                 for(int i = 0; i < size; i++){
-                    ioc << curr -> getData() << io_end;
+                    ioc << curr -> getData() << IOControl::end;
                     curr = curr -> getNext();
                 }
             }

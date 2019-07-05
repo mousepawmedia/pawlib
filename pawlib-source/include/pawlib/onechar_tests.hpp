@@ -46,7 +46,6 @@
 #include "pawlib/onestring.hpp"
 #include "pawlib/iochannel.hpp"
 
-using namespace pawlib::ioformat;
 using namespace pawlib;
 
 namespace pawlib
@@ -54,7 +53,7 @@ namespace pawlib
     class TestOnechar : public Test
     {
         public:
-            enum TestCharType {
+            enum class TestCharType {
                 CHAR,
                 CSTR,
                 STRING,
@@ -74,22 +73,22 @@ namespace pawlib
             {
                 switch(charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         title = "(char)";
                         break;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         title = "(c-string)";
                         break;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         title = "(std::string)";
                         break;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         title = "(onechar)";
                         break;
@@ -193,7 +192,7 @@ namespace pawlib
                 onechar test;
                 switch(this->charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         char ch = 'M';
                         test = ch;
@@ -201,7 +200,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test_cstr, "M");
                         return true;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         const char* cstr = "🐭";
                         test = cstr;
@@ -209,7 +208,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test_cstr, "🐭");
                         return true;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         std::string str = "🐭";
                         test = str;
@@ -217,7 +216,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test_cstr, "🐭");
                         return true;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         onechar ochr = "🐭";
                         test = ochr;
@@ -258,7 +257,7 @@ namespace pawlib
                 onechar test;
                 switch(this->charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         char ch = 'M';
                         char ch_bad = 'X';
@@ -267,7 +266,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(test.equals(ch_bad));
                         return true;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         const char* cstr = "🐭";
                         const char* cstr_double = "🐭🐭";
@@ -278,7 +277,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(test.equals(cstr_bad));
                         return true;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         std::string str = "🐭";
                         std::string str_double = "🐭🐭";
@@ -289,7 +288,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(test.equals(str_bad));
                         return true;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         onechar ochr = "🐭";
                         onechar ochr_bad = "©";
@@ -331,7 +330,7 @@ namespace pawlib
                 onechar test;
                 switch(this->charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         char ch = 'M';
                         char ch_bad = 'X';
@@ -340,7 +339,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(test == ch_bad);
                         return true;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         const char* cstr = "🐭";
                         const char* cstr_double = "🐭🐭";
@@ -351,7 +350,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(test == cstr_bad);
                         return true;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         std::string str = "🐭";
                         std::string str_double = "🐭🐭";
@@ -362,7 +361,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(test == str_bad);
                         return true;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         onechar ochr = "🐭";
                         onechar ochr_bad = "©";
@@ -404,7 +403,7 @@ namespace pawlib
                 onechar test;
                 switch(this->charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         char ch = 'M';
                         char ch_bad = 'X';
@@ -413,7 +412,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(test != ch_bad);
                         return true;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         const char* cstr = "🐭";
                         const char* cstr_double = "🐭🐭";
@@ -424,7 +423,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(test != cstr_bad);
                         return true;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         std::string str = "🐭";
                         std::string str_double = "🐭🐭";
@@ -435,7 +434,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(test != str_bad);
                         return true;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         onechar ochr = "🐭";
                         onechar ochr_bad = "©";
@@ -477,7 +476,7 @@ namespace pawlib
                 onechar test;
                 switch(this->charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         char ch_eq = 'M';
                         char ch_less = 'D';
@@ -496,7 +495,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(ch_more), 0);
                         return true;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         const char* cstr_eq = "🐭";
                         const char* cstr_less = "🐁";
@@ -515,7 +514,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(cstr_more), 0);
                         return true;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         std::string str_eq = "🐭";
                         std::string str_less = "🐁";
@@ -534,7 +533,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(str_more), 0);
                         return true;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         onechar ochr_eq = "🐭";
                         onechar ochr_less = "🐁";
@@ -586,7 +585,7 @@ namespace pawlib
                 onechar test;
                 switch(this->charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         char ch_eq = 'M';
                         char ch_less = 'D';
@@ -600,7 +599,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ch_eq < test);
                         return true;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         const char* cstr_eq = "🐭";
                         const char* cstr_less = "🐁";
@@ -614,7 +613,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(cstr_eq < test);
                         return true;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         std::string str_eq = "🐭";
                         std::string str_less = "🐁";
@@ -628,7 +627,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_eq < test);
                         return true;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         onechar ochr_eq = "🐭";
                         onechar ochr_less = "🐁";
@@ -675,7 +674,7 @@ namespace pawlib
                 onechar test;
                 switch(this->charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         char ch_eq = 'M';
                         char ch_less = 'D';
@@ -692,7 +691,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ch_more <= test);
                         return true;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         const char* cstr_eq = "🐭";
                         const char* cstr_less = "🐁";
@@ -709,7 +708,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(cstr_more <= test);
                         return true;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         std::string str_eq = "🐭";
                         std::string str_less = "🐁";
@@ -726,7 +725,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_more <= test);
                         return true;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         onechar ochr_eq = "🐭";
                         onechar ochr_less = "🐁";
@@ -776,7 +775,7 @@ namespace pawlib
                 onechar test;
                 switch(this->charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         char ch_eq = 'M';
                         char ch_less = 'D';
@@ -790,7 +789,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ch_eq > test);
                         return true;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         const char* cstr_eq = "🐭";
                         const char* cstr_less = "🐁";
@@ -804,7 +803,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(cstr_eq > test);
                         return true;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         std::string str_eq = "🐭";
                         std::string str_less = "🐁";
@@ -818,7 +817,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_eq > test);
                         return true;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         onechar ochr_eq = "🐭";
                         onechar ochr_less = "🐁";
@@ -865,7 +864,7 @@ namespace pawlib
                 onechar test;
                 switch(this->charType)
                 {
-                    case CHAR:
+                    case TestCharType::CHAR:
                     {
                         char ch_eq = 'M';
                         char ch_less = 'D';
@@ -882,7 +881,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ch_less >= test);
                         return true;
                     }
-                    case CSTR:
+                    case TestCharType::CSTR:
                     {
                         const char* cstr_eq = "🐭";
                         const char* cstr_less = "🐁";
@@ -899,7 +898,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(cstr_less >= test);
                         return true;
                     }
-                    case STRING:
+                    case TestCharType::STRING:
                     {
                         std::string str_eq = "🐭";
                         std::string str_less = "🐁";
@@ -916,7 +915,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_less >= test);
                         return true;
                     }
-                    case ONECHAR:
+                    case TestCharType::ONECHAR:
                     {
                         onechar ochr_eq = "🐭";
                         onechar ochr_less = "🐁";

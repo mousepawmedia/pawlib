@@ -75,6 +75,7 @@ namespace pawlib
                 num2 = cpy.num2;
                 num3 = cpy.num3;
                 num4 = cpy.num4;
+                num5 = cpy.num5;
                 return *this;
             }
 
@@ -212,7 +213,7 @@ namespace pawlib
     class TestPool_Create : public Test
     {
         public:
-            enum TestPoolCreateMode
+            enum class TestPoolCreateMode
             {
                 DFLT,
                 COPY,
@@ -225,7 +226,7 @@ namespace pawlib
             {
                 switch(mode)
                 {
-                    case DFLT:
+                    case TestPoolCreateMode::DFLT:
                     {
                         title = "Pool: Create by Assignment, Default";
                         docs = "Create a new object in a pool using pool_ref assignment and the object's default constructor.";
@@ -233,7 +234,7 @@ namespace pawlib
                         failsafe = false;
                         break;
                     }
-                    case COPY:
+                    case TestPoolCreateMode::COPY:
                     {
                         title = "Pool: Create by Assignment, Copy";
                         docs = "Create a new object in a pool using pool_ref assignment and the object's copy constructor.";
@@ -241,7 +242,7 @@ namespace pawlib
                         failsafe = false;
                         break;
                     }
-                    case DFLT_FAILSAFE:
+                    case TestPoolCreateMode::DFLT_FAILSAFE:
                     {
                         title = "Pool: Create by Assignment, Default Failsafe";
                         docs = "Create a new object in a failsafe pool using pool_ref assignment and the object's default constructor.";
@@ -249,7 +250,7 @@ namespace pawlib
                         failsafe = true;
                         break;
                     }
-                    case COPY_FAILSAFE:
+                    case TestPoolCreateMode::COPY_FAILSAFE:
                     {
                         title = "Pool: Create by Constructor, Default Failsafe";
                         docs = "Create a new object in a failsafe pool using the pool_ref constructor and the object's default constructor.";
@@ -490,7 +491,7 @@ namespace pawlib
     class TestPool_Exception : public Test
     {
         public:
-            enum FailTestType
+            enum class FailTestType
             {
                 POOL_FULL_ASGN,
                 POOL_FULL_ASGN_CPY,
@@ -506,37 +507,37 @@ namespace pawlib
             {
                 switch(type)
                 {
-                    case POOL_FULL_ASGN:
+                    case FailTestType::POOL_FULL_ASGN:
                     {
                         title = "Pool: (Exception) Full Pool Create Assignment w/ Default";
                         docs = "Throw and Catch e_pool_full from pool_ref assignment using the object's default constructor.";
                         break;
                     }
-                    case POOL_FULL_ASGN_CPY:
+                    case FailTestType::POOL_FULL_ASGN_CPY:
                     {
                         title = "Pool: (Exception) Full Pool Create Constructor w/ Default";
                         docs = "Throw and Catch e_pool_full from pool_ref constructor using the object's default constructor.";
                         break;
                     }
-                    case POOL_ACC_DELETED_REF:
+                    case FailTestType::POOL_ACC_DELETED_REF:
                     {
                         title = "Pool: (Exception) Access w/ Deleted Ref";
                         docs = "Throw and Catch e_pool_invalid_ref from access using deleted reference.";
                         break;
                     }
-                    case POOL_ACC_FOREIGN_REF:
+                    case FailTestType::POOL_ACC_FOREIGN_REF:
                     {
                         title = "Pool: (Exception) Access w/ Foreign Ref";
                         docs = "Throw and Catch e_pool_invalid_ref from access using foreign reference.";
                         break;
                     }
-                    case POOL_DES_DELETED_REF:
+                    case FailTestType::POOL_DES_DELETED_REF:
                     {
                         title = "Pool: (Exception) Destroy w/ Deleted Ref";
                         docs = "Throw and Catch e_pool_invalid_ref from destroy using deleted reference.";
                         break;
                     }
-                    case POOL_DES_FOREIGN_REF:
+                    case FailTestType::POOL_DES_FOREIGN_REF:
                     {
                         title = "Pool: (Exception) Destroy w/ Foreign Ref";
                         docs = "Throw and Catch e_pool_invalid_ref from destroy using foreign reference.";
@@ -571,7 +572,7 @@ namespace pawlib
             {
                 switch(type)
                 {
-                    case POOL_FULL_ASGN:
+                    case FailTestType::POOL_FULL_ASGN:
                     {
                         pool_ref<DummyClass> poolrf = pool->create();
 
@@ -585,7 +586,7 @@ namespace pawlib
                         }
                         return false;
                     }
-                    case POOL_FULL_ASGN_CPY:
+                    case FailTestType::POOL_FULL_ASGN_CPY:
                     {
                         pool_ref<DummyClass> poolrf = pool->create();
 
@@ -599,7 +600,7 @@ namespace pawlib
                         }
                         return false;
                     }
-                    case POOL_ACC_DELETED_REF:
+                    case FailTestType::POOL_ACC_DELETED_REF:
                     {
                         pool_ref<DummyClass> poolrf = pool->create();
                         pool->destroy(poolrf);
@@ -614,7 +615,7 @@ namespace pawlib
                         }
                         return false;
                     }
-                    case POOL_ACC_FOREIGN_REF:
+                    case FailTestType::POOL_ACC_FOREIGN_REF:
                     {
                         Pool<DummyClass> pool2(1);
 
@@ -629,7 +630,7 @@ namespace pawlib
                         }
                         return false;
                     }
-                    case POOL_DES_DELETED_REF:
+                    case FailTestType::POOL_DES_DELETED_REF:
                     {
                         pool_ref<DummyClass> poolrf = pool->create();
                         pool->destroy(poolrf);
@@ -643,7 +644,7 @@ namespace pawlib
                         }
                         return false;
                     }
-                    case POOL_DES_FOREIGN_REF:
+                    case FailTestType::POOL_DES_FOREIGN_REF:
                     {
                         Pool<DummyClass> pool2(1);
                         pool_ref<DummyClass> foreignref = pool2.create();

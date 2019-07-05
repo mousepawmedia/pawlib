@@ -51,7 +51,7 @@ namespace pawlib
     class TestTrilean_CompareConst : public Test
     {
         public:
-            enum Scenario
+            enum class Scenario
             {
                 FALSE,
                 MAYBE,
@@ -66,11 +66,11 @@ namespace pawlib
             {
                 switch(s)
                 {
-                    case FALSE:
+                    case Scenario::FALSE:
                         return "Trilean: Const Comparions Against 'false'";
-                    case MAYBE:
+                    case Scenario::MAYBE:
                         return "Trilean: Const Comparions Against 'maybe'";
-                    case TRUE:
+                    case Scenario::TRUE:
                         return "Trilean: Const Comparions Against 'true'";
                 }
                 return "";
@@ -80,11 +80,11 @@ namespace pawlib
             {
                 switch(s)
                 {
-                    case FALSE:
+                    case Scenario::FALSE:
                         return "Test tril-to-const comparions against a 'false' tril.";
-                    case MAYBE:
+                    case Scenario::MAYBE:
                         return "Test tril-to-const comparions against a 'maybe' tril.";
-                    case TRUE:
+                    case Scenario::TRUE:
                         return "Test tril-to-const comparions against a 'true' tril.";
                 }
                 return "";
@@ -95,7 +95,7 @@ namespace pawlib
                 switch(s)
                 {
                     // P-tB0101
-                    case FALSE:
+                    case Scenario::FALSE:
                     {
                         tril t(false);
 
@@ -125,7 +125,7 @@ namespace pawlib
                         return true;
                     }
                     // P-tB0102
-                    case MAYBE:
+                    case Scenario::MAYBE:
                     {
                         tril t(maybe);
 
@@ -155,7 +155,7 @@ namespace pawlib
                         return true;
                     }
                     // P-tB0103
-                    case TRUE:
+                    case Scenario::TRUE:
                     {
                         tril t(true);
 
@@ -199,7 +199,7 @@ namespace pawlib
     class TestTrilean_CompareTril : public Test
     {
         public:
-            enum Scenario
+            enum class Scenario
             {
                 FALSE,
                 MAYBE,
@@ -214,11 +214,11 @@ namespace pawlib
             {
                 switch(s)
                 {
-                    case FALSE:
+                    case Scenario::FALSE:
                         return "Trilean: Trilean Comparions Against 'false'";
-                    case MAYBE:
+                    case Scenario::MAYBE:
                         return "Trilean: Trilean Comparions Against 'maybe'";
-                    case TRUE:
+                    case Scenario::TRUE:
                         return "Trilean: Trilean Comparions Against 'true'";
                 }
                 return "";
@@ -228,11 +228,11 @@ namespace pawlib
             {
                 switch(s)
                 {
-                    case FALSE:
+                    case Scenario::FALSE:
                         return "Test tril-to-tril comparions against a 'false' tril.";
-                    case MAYBE:
+                    case Scenario::MAYBE:
                         return "Test tril-to-tril comparions against a 'maybe' tril.";
-                    case TRUE:
+                    case Scenario::TRUE:
                         return "Test tril-to-tril comparions against a 'true' tril.";
                 }
                 return "";
@@ -258,7 +258,7 @@ namespace pawlib
                 switch(s)
                 {
                     // P-tB0104
-                    case FALSE:
+                    case Scenario::FALSE:
                     {
                         tril t(false);
 
@@ -294,7 +294,7 @@ namespace pawlib
                         return true;
                     }
                     // P-tB0105
-                    case MAYBE:
+                    case Scenario::MAYBE:
                     {
                         tril t(maybe);
 
@@ -330,7 +330,7 @@ namespace pawlib
                         return true;
                     }
                     // P-tB0106
-                    case TRUE:
+                    case Scenario::TRUE:
                     {
                         tril t(true);
 
@@ -380,7 +380,7 @@ namespace pawlib
     class TestTrilean_Unary : public Test
     {
         public:
-            enum Scenario
+            enum class Scenario
             {
                 FALSE,
                 MAYBE,
@@ -395,11 +395,11 @@ namespace pawlib
             {
                 switch(s)
                 {
-                    case FALSE:
+                    case Scenario::FALSE:
                         return "Trilean: Unary False (!foo)";
-                    case MAYBE:
+                    case Scenario::MAYBE:
                         return "Trilean: Unary Maybe (~foo)";
-                    case TRUE:
+                    case Scenario::TRUE:
                         return "Trilean: Unary True (foo)";
                 }
                 return "";
@@ -409,11 +409,11 @@ namespace pawlib
             {
                 switch(s)
                 {
-                    case FALSE:
+                    case Scenario::FALSE:
                         return "Test the NOT operator (!foo) on trileans.";
-                    case MAYBE:
+                    case Scenario::MAYBE:
                         return "Test the 'maybe' operator (~foo) on trileans.";
-                    case TRUE:
+                    case Scenario::TRUE:
                         return "Test the boolean condition (foo) on trileans.";
                 }
                 return "";
@@ -424,7 +424,7 @@ namespace pawlib
                 switch(s)
                 {
                     // P-tB0107
-                    case FALSE:
+                    case Scenario::FALSE:
                     {
                         tril t(false);
 
@@ -443,7 +443,7 @@ namespace pawlib
                         return true;
                     }
                     // P-tB0108
-                    case MAYBE:
+                    case Scenario::MAYBE:
                     {
                         tril t(maybe);
 
@@ -462,7 +462,7 @@ namespace pawlib
                         return true;
                     }
                     // P-tB0109
-                    case TRUE:
+                    case Scenario::TRUE:
                     {
                         tril t(true);
 

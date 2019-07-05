@@ -640,7 +640,7 @@ the context of a class.
     };
 
     TestClass testObject;
-    ioc.signal_v_normal.add(&testObect, TestClass::output)
+    ioc.signal_v_normal.add(&testObject, TestClass::output)
 
 Enumeration Lists
 =============================================

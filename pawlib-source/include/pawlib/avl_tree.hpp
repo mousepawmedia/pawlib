@@ -49,7 +49,7 @@
 #include "pawlib/singly_linked_list.hpp"
 
 using pawlib::iochannel;
-using namespace pawlib::ioformat;
+
 
 namespace pawlib
 {
@@ -402,7 +402,7 @@ namespace pawlib
             //pre-order print
             void printNode(Node* temp)
             {
-                ioc << temp->data << io_end;
+                ioc << temp->data << IOControl::end;
                 if(temp->left != nullptr)
                 {
                     printNode(temp->left);

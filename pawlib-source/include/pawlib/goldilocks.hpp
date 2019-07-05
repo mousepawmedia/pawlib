@@ -69,7 +69,6 @@
 #include "pawlib/goldilocks_assertions.hpp"
 
 using namespace pawlib;
-using namespace pawlib::ioformat;
 
 namespace pawlib
 {
@@ -94,7 +93,7 @@ namespace pawlib
     /* The type we use for storing documentation strings. Alias of testname_t.*/
     typedef testname_t testdoc_t;
 
-    enum GolidlocksItemType
+    enum class GolidlocksItemType
     {
         test,
         comparative,
@@ -410,7 +409,7 @@ namespace pawlib
          * \param whether we're searching for a suite (default, test)
          * \return true if the test exists, else false
          */
-        bool validate(testname_t, bool = false, GolidlocksItemType = test);
+        bool validate(testname_t, bool = false, GolidlocksItemType = GolidlocksItemType::test);
 
         /**Benchmark and compare two tests using a three-pass system.
          * The three passes - MAMA BEAR, PAPA BEAR, and BABY BEAR -
@@ -561,7 +560,7 @@ namespace pawlib
         /**Print the data from a BenchmarkResult. This uses the
          * standard IOChannel. Output formatting is retained until the end
          * of the function, so you can modify formatting by preceding this
-         * function call with `ioc << [SOME FORMATTING TAGS] << io_send_keep;`
+         * function call with `ioc << [SOME FORMATTING TAGS] << IOControl::send_keep;`
          * \param the BenchmarkResult to output from */
         void printResult(BenchmarkResult&);
 
@@ -577,7 +576,7 @@ namespace pawlib
          * removed), and factoring uncertainty into the verdict.
          * Output formatting is retained until the end
          * of the function, so you can modify formatting by preceding this
-         * function call with `ioc << [SOME FORMATTING TAGS] << io_send_keep;`
+         * function call with `ioc << [SOME FORMATTING TAGS] << IOControl::send_keep;`
          * \param the BenchmarkResult from test A
          * \param the BenchmarkResult from test B
          * \param the name of test A (optional)

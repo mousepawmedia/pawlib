@@ -53,7 +53,6 @@
 #include "pawlib/iochannel.hpp"
 
 using pawlib::iochannel;
-using namespace pawlib::ioformat;
 
 namespace pawlib
 {
@@ -85,10 +84,10 @@ namespace pawlib
             {
                 if(!this->validateIndex(index))
                 {
-                    ioc << cat_error << vrb_quiet
+                    ioc << IOCategory::error << IOVerbosity::quiet
                         << "FlexArray: insert() failed. " << index
                         << " out of bounds [0 - " << this->_elements - 1
-                        << "]." << io_end;
+                        << "]." << IOControl::end;
                     return false;
                 }
                 return this->insertAtIndex(newElement, index);

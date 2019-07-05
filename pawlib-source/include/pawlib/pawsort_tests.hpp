@@ -52,7 +52,7 @@ namespace pawlib
     class TestSort : public Test
     {
         public:
-            enum TestArrayType
+            enum class TestArrayType
             {
                 /// Totally random array. Not recommended; inconsistent results.
                 ARRAY_RANDOM,
@@ -122,91 +122,91 @@ namespace pawlib
                 // We'll initialize titles and doc strings in the constructor.
                 switch(arrayType)
                 {
-                    case ARRAY_RANDOM:
+                    case TestArrayType::ARRAY_RANDOM:
                     {
                         title = "Pawsort: Random";
                         docs = "Random array. DO NOT USE.";
                         break;
                     }
-                    case ARRAY_SORTED:
+                    case TestArrayType::ARRAY_SORTED:
                     {
                         title = "PawSort: Sorted Array";
                         docs = "Already sorted array.";
                         break;
                     }
-                    case ARRAY_REVERSED:
+                    case TestArrayType::ARRAY_REVERSED:
                     {
                         title = "PawSort: Reversed Array";
                         docs = "Already sorted array in reverse.";
                         break;
                     }
-                    case ARRAY_NEARLY_2:
+                    case TestArrayType::ARRAY_NEARLY_2:
                     {
                         title = "PawSort: Nearly, Invert 2";
                         docs = "Nearly sorted array - the order of every two are inverted.";
                         break;
                     }
-                    case ARRAY_NEARLY_5:
+                    case TestArrayType::ARRAY_NEARLY_5:
                     {
                         title = "PawSort: Nearly, Invert 5";
                         docs = "Nearly sorted array - the order of every five are inverted.";
                         break;
                     }
-                    case ARRAY_FEW_UNIQUE:
+                    case TestArrayType::ARRAY_FEW_UNIQUE:
                     {
                         title = "PawSort: Few Unique";
                         docs = "Few (specifically, five) unique values in the array.";
                         break;
                     }
-                    case ARRAY_BLACK_SHEEP:
+                    case TestArrayType::ARRAY_BLACK_SHEEP:
                     {
                         title = "PawSort: Black Sheep";
                         docs = "Array with only two values out of place.";
                         break;
                     }
-                    case ARRAY_DOUBLE_CLIMB:
+                    case TestArrayType::ARRAY_DOUBLE_CLIMB:
                     {
                         title = "PawSort: Double Climb";
                         docs = "Array values ascends from 0 to half, twice sequentially.";
                         break;
                     }
-                    case ARRAY_DOUBLE_DROP:
+                    case TestArrayType::ARRAY_DOUBLE_DROP:
                     {
                         title = "PawSort: Double Drop";
                         docs = "Array values descend from half to 0, twice sequentially.";
                         break;
                     }
-                    case ARRAY_STAIRS:
+                    case TestArrayType::ARRAY_STAIRS:
                     {
                         title = "PawSort: Stairs";
                         docs = "Array ascends and descends 'stairs', with a jump of 5.";
                         break;
                     }
-                    case ARRAY_MOUNTAIN:
+                    case TestArrayType::ARRAY_MOUNTAIN:
                     {
                         title = "PawSort: Mountain";
                         docs = "Array ascends from 0 to half and drops back to 0.";
                         break;
                     }
-                    case ARRAY_DOUBLE_MOUNTAIN:
+                    case TestArrayType::ARRAY_DOUBLE_MOUNTAIN:
                     {
                         title = "PawSort: Double Mountain";
                         docs = "Array ascends from 0 to half and drops, twice. Uses double-jumps.";
                         break;
                     }
-                    case ARRAY_EVEREST:
+                    case TestArrayType::ARRAY_EVEREST:
                     {
                         title = "PawSort: Everest";
                         docs = "Array ascends by huge increments, and then drop back to 0.";
                         break;
                     }
-                    case ARRAY_CLIFF:
+                    case TestArrayType::ARRAY_CLIFF:
                     {
                         title = "PawSort: Cliff";
                         docs = "Array ascends by huge increments, and then drops off suddenly.";
                         break;
                     }
-                    case ARRAY_SPIKE:
+                    case TestArrayType::ARRAY_SPIKE:
                     {
                         title = "PawSort: Spike";
                         docs = "Array ascends from 0 towards half, spikes suddenly, and then drops \
@@ -214,7 +214,7 @@ back down near half and descends towards 0. Intended to throw off the \
 median-of-three by creating an absurdly high middle value.";
                         break;
                     }
-                    case ARRAY_CHICKEN:
+                    case TestArrayType::ARRAY_CHICKEN:
                     {
                         title = "PawSort: Chicken";
                         docs = "Array composed of pairs - one starting at 0 and incrementing by \
@@ -222,7 +222,7 @@ one each pair, and one starting at n and decrementing by one each [pair, with \
 the middle pair values both being half of n.";
                         break;
                     }
-                    case ARRAY_NIGHTMARE:
+                    case TestArrayType::ARRAY_NIGHTMARE:
                     {
                         title = "PawSort: Nightmare";
                         docs = "Array brutally murders the median-of-three by placing 0 at the \
@@ -249,13 +249,13 @@ unique values. Really, this is just evil incarnate.";
                 if(test_size % 10 != 0)
                 {
                     /* Abort - many array generation types rely on
-                     * a number of elements disible by ten. */
+                     * a number of elements disable by ten. */
                     return false;
                 }
 
                 switch(arrayType)
                 {
-                    case ARRAY_RANDOM:
+                    case TestArrayType::ARRAY_RANDOM:
                     {
                         for(int i = 0; i < test_size; ++i)
                         {
@@ -263,7 +263,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_SORTED:
+                    case TestArrayType::ARRAY_SORTED:
                     {
                         for(int i = 0; i < test_size; ++i)
                         {
@@ -271,7 +271,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_REVERSED:
+                    case TestArrayType::ARRAY_REVERSED:
                     {
                         for(int i = 0; i < test_size; ++i)
                         {
@@ -279,7 +279,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_NEARLY_2:
+                    case TestArrayType::ARRAY_NEARLY_2:
                     {
                         for(int i = 0; i < test_size; i+=2)
                         {
@@ -290,7 +290,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_NEARLY_5:
+                    case TestArrayType::ARRAY_NEARLY_5:
                     {
                         for(int i = 0; i < test_size; i+=5)
                         {
@@ -307,7 +307,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_FEW_UNIQUE:
+                    case TestArrayType::ARRAY_FEW_UNIQUE:
                     {
                         //Only have 6 unique values.
                         int jump = test_size / 6;
@@ -329,7 +329,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_BLACK_SHEEP:
+                    case TestArrayType::ARRAY_BLACK_SHEEP:
                     {
                         // First, generate an already-sorted array.
                         for(int i = 0; i < test_size; ++i)
@@ -343,7 +343,7 @@ unique values. Really, this is just evil incarnate.";
                         start_arr[third+third] = tmp;
                         break;
                     }
-                    case ARRAY_DOUBLE_CLIMB:
+                    case TestArrayType::ARRAY_DOUBLE_CLIMB:
                     {
                         int half = test_size/2;
                         for(int i = 0; i < half; ++i)
@@ -353,7 +353,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_DOUBLE_DROP:
+                    case TestArrayType::ARRAY_DOUBLE_DROP:
                     {
                         int half = test_size/2;
                         for(int i = 0; i < half; ++i)
@@ -363,7 +363,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_STAIRS:
+                    case TestArrayType::ARRAY_STAIRS:
                     {
                         int half = test_size/2;
                         int maxI = test_size-1;
@@ -378,7 +378,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_MOUNTAIN:
+                    case TestArrayType::ARRAY_MOUNTAIN:
                     {
                         int half = test_size/2;
                         int maxI = test_size-1;
@@ -389,7 +389,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_DOUBLE_MOUNTAIN:
+                    case TestArrayType::ARRAY_DOUBLE_MOUNTAIN:
                     {
                         int half = test_size/2;
                         int qtr = half/2;
@@ -402,7 +402,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_EVEREST:
+                    case TestArrayType::ARRAY_EVEREST:
                     {
                         int half = test_size/2;
                         int maxI = test_size-1;
@@ -415,7 +415,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_CLIFF:
+                    case TestArrayType::ARRAY_CLIFF:
                     {
                         int dropoff = test_size - (test_size/10);
                         for(int i = 0; i < dropoff; ++i)
@@ -429,7 +429,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_SPIKE:
+                    case TestArrayType::ARRAY_SPIKE:
                     {
                         int half = test_size/2;
                         int maxI = test_size-1;
@@ -448,7 +448,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_CHICKEN:
+                    case TestArrayType::ARRAY_CHICKEN:
                     {
                         // Increments from 0 to half.
                         int low = 0;
@@ -463,7 +463,7 @@ unique values. Really, this is just evil incarnate.";
                         }
                         break;
                     }
-                    case ARRAY_NIGHTMARE:
+                    case TestArrayType::ARRAY_NIGHTMARE:
                     {
                         //Only have 5 unique values.
                         int jump = test_size / 5;

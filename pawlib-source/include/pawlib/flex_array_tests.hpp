@@ -64,17 +64,17 @@ namespace pawlib
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Push " + stdutils::itos(iters, 10) + " Integers (std::vector)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Insert " + stdutils::itos(iters, 10) + " integers at the back of a vector (push).";
             }
 
-            bool run()
+            bool run() override
             {
                 // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
@@ -84,7 +84,7 @@ namespace pawlib
                 return true;
             }
 
-            bool verify()
+            bool verify() override
             {
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -96,7 +96,7 @@ namespace pawlib
                 return true;
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 vec.clear();
                 return true;
@@ -119,16 +119,16 @@ namespace pawlib
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Push " + stdutils::itos(iters, 10) + " Integers (FlexArray)";
             }
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Insert " + stdutils::itos(iters, 10) + " integers at the back of a FlexArray (push).";
             }
 
-            bool run()
+            bool run() override
             {
                 // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
@@ -144,7 +144,7 @@ namespace pawlib
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 // Insert each required element via a push.
                 for(unsigned int i=0; i<iters; ++i)
@@ -155,7 +155,7 @@ namespace pawlib
                 return true;
             }
 
-            bool verify()
+            bool verify() override
             {
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -164,16 +164,16 @@ namespace pawlib
                     if(flex[i] != i)
                     {
                         // Report failure.
-                        ioc << "Incorrect push." << io_endline
-                            << "    expected = " << i << io_endline
-                            << "         got = " << flex.peek() << io_end;
+                        ioc << "Incorrect push." << IOControl::endline
+                            << "    expected = " << i << IOControl::endline
+                            << "         got = " << flex.peek() << IOControl::end;
                         return false;
                     }
                 }
                 return true;
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 return flex.clear();
             }
@@ -188,17 +188,17 @@ namespace pawlib
         public:
            explicit TestVector_Shift(unsigned int iterations): iters(iterations){}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Shift " + stdutils::itos(iters, 10) + " Integers to Front (std::vector)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Insert " + stdutils::itos(iters, 10) + " integers at the front of a vector (shift).";
             }
 
-            bool run()
+            bool run() override
             {
                 // Create instance of vector.
                 std::vector<unsigned int> vec;
@@ -215,7 +215,7 @@ namespace pawlib
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 // Create instance of vector.
                 std::vector<unsigned int> vec;
@@ -245,17 +245,17 @@ namespace pawlib
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Shift " + stdutils::itos(iters, 10) + " Integers to Front (FlexArray)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Insert " + stdutils::itos(iters, 10) + " integers at the front of a FlexArray (shift).";
             }
 
-            bool run()
+            bool run() override
             {
                 // Create instance of FlexArray.
                 pawlib::FlexArray<unsigned int> flex;
@@ -273,18 +273,18 @@ namespace pawlib
                     if(flex[0] != i || (i > 0 && flex[1] != i-1))
                     {
                         // Report failure
-                        ioc << "Incorrect shift." << io_endline
-                            << "      expected = " << i << io_endline
-                            << "           got = " << flex[0] << io_endline
-                            << " f[1] expected = " << i-1 << io_endline
-                            << "      f[1] got = " << flex[1] << io_end;
+                        ioc << "Incorrect shift." << IOControl::endline
+                            << "      expected = " << i << IOControl::endline
+                            << "           got = " << flex[0] << IOControl::endline
+                            << " f[1] expected = " << i-1 << IOControl::endline
+                            << "      f[1] got = " << flex[1] << IOControl::end;
                         return false;
                     }
                 }
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 // Create instance of FlexArray.
                 pawlib::FlexArray<unsigned int> flex;
@@ -313,23 +313,23 @@ namespace pawlib
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Insert " + stdutils::itos(iters, 10) + " Integers At Middle (std::vector)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Insert " + stdutils::itos(iters, 10) + " integers at the middle of a vector. Middle \
 is calculated as size()/2.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 return janitor();
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 vec.clear();
                 // We initially push two values, to make the
@@ -339,7 +339,7 @@ is calculated as size()/2.";
                 return true;
             }
 
-            bool run()
+            bool run() override
             {
                 // Insert each required element.
                 for(unsigned int val=1; val<1000; ++val)
@@ -354,7 +354,7 @@ is calculated as size()/2.";
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 // Insert each required element.
                 for(unsigned int val=1; val<1000; ++val)
@@ -382,23 +382,23 @@ is calculated as size()/2.";
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Insert " + stdutils::itos(iters, 10) + " Integers At Middle (FlexArray)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Insert " + stdutils::itos(iters, 10) + " integers at the middle of a FlexArray. \
 Middle is calculated as size()/2.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 return janitor();
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 flex.clear();
                 /* We initially push two values, to make the
@@ -408,7 +408,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run()
+            bool run() override
             {
                 // Insert each required element.
                 for(unsigned int val=1; val<iters; ++val)
@@ -425,11 +425,11 @@ Middle is calculated as size()/2.";
                     if(flex[at] != val || flex.peek() != 1)
                     {
                         // Report failure.
-                        ioc << "Incorrect insert." << io_endline
-                            << "      expected = " << val << io_endline
-                            << "           got = " << flex[at] << io_endline
-                            << " expected peek = 1" << io_endline
-                            << "      got peek = " << flex.peek() << io_end;
+                        ioc << "Incorrect insert." << IOControl::endline
+                            << "      expected = " << val << IOControl::endline
+                            << "           got = " << flex[at] << IOControl::endline
+                            << " expected peek = 1" << IOControl::endline
+                            << "      got peek = " << flex.peek() << IOControl::end;
                         return false;
                     }
                 }
@@ -438,7 +438,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 // Insert each required element.
                 for(unsigned int val=1; val<iters; ++val)
@@ -468,22 +468,22 @@ Middle is calculated as size()/2.";
             :iters(iterations)
             {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Erase " + stdutils::itos(iters, 10) + " Integers Individually (std::vector)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Erase " + stdutils::itos(iters, 10) + " integers individually at the front of a Vector (pop).";
             }
 
-            bool pre()
+            bool pre() override
             {
                 return janitor();
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 // Fill up the vector.
                 for(unsigned int i=0; i<iters; ++i)
@@ -493,7 +493,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run()
+            bool run() override
             {
                 // Remove and return each element.
                 for(unsigned int i=0; i<iters; ++i)
@@ -513,7 +513,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 // Remove and return each element.
                 for(unsigned int i=0; i<iters; ++i)
@@ -543,17 +543,17 @@ Middle is calculated as size()/2.";
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Yank " + stdutils::itos(iters, 10) + " Integers (flexarray)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Erase " + stdutils::itos(iters, 10) + " integers at any given index (yank).";
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 flex.clear();
 
@@ -568,7 +568,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run()
+            bool run() override
             {
                 // For each element...
                 for(int i=(iters-1); i>=0; --i)
@@ -585,7 +585,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 // For each element...
                 for(int i=(iters-1); i>=0; --i)
@@ -611,22 +611,22 @@ Middle is calculated as size()/2.";
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Unshift " + stdutils::itos(iters, 10) + " Integers (std::vector)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Unshift " + stdutils::itos(iters, 10) + " integers from a std::vector.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 return janitor();
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 // Refill the std::queue
                 for(unsigned int i=0; i<iters; ++i)
@@ -636,7 +636,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run()
+            bool run() override
             {
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -653,7 +653,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -678,22 +678,22 @@ Middle is calculated as size()/2.";
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Unshift " + stdutils::itos(iters, 10) + " Integers (FlexArray)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Unshift " + stdutils::itos(iters, 10) + " integers from a FlexArray.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 return janitor();
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 // Refill FlexQueue.
                 for(unsigned int i=0; i<iters; ++i)
@@ -703,7 +703,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run()
+            bool run() override
             {
                 // Pop each element.
                 for(unsigned int i=0; i<iters; ++i)
@@ -718,7 +718,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 // Pop each element.
                 for(unsigned int i=0; i<iters; ++i)
@@ -743,22 +743,22 @@ Middle is calculated as size()/2.";
                 {}
 
             // Test title
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return"FlexArray: Pop " + stdutils::itos(iters, 10) + " integers from a std::vector.";
             }
             // test documentation
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Pop " + stdutils::itos(iters, 10) + " integers from a std::vector.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 return janitor();
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 // Refill the std::vector.
                 for(unsigned int i=0; i<iters; ++i)
@@ -768,7 +768,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run()
+            bool run() override
             {
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -785,7 +785,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 for(unsigned int i=0; i<iters; ++i)
                 {
@@ -810,22 +810,22 @@ Middle is calculated as size()/2.";
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return"FlexArray: Pop " + stdutils::itos(iters, 10) + " integers from a FlexArray.";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Pop " + stdutils::itos(iters, 10) + " integers from a FlexArray.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 return janitor();
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 // Refill the FlexArray.
                 for(unsigned int i=0; i<iters; ++i)
@@ -834,7 +834,7 @@ Middle is calculated as size()/2.";
                 }
                 return true;
             }
-            bool run()
+            bool run() override
             {
                 // Pop each element.
                 for(unsigned int i=(iters-1); i; --i)
@@ -849,7 +849,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 // Pop each element.
                 for(unsigned int i=(iters-1); i; --i)
@@ -874,22 +874,22 @@ Middle is calculated as size()/2.";
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return"FlexArray: Erase half of " + stdutils::itos(iters, 10) + " integers from a FlexArray.";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Erase the center half of elements in a " + stdutils::itos(iters, 10) + " integer-wide FlexArray.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 return janitor();
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 flex.clear();
                 // Refill the FlexArray.
@@ -899,7 +899,7 @@ Middle is calculated as size()/2.";
                 }
                 return true;
             }
-            bool run()
+            bool run() override
             {
                 // Calculate erase size as the center half of the elements.
                 int first = iters/4;
@@ -923,22 +923,22 @@ Middle is calculated as size()/2.";
                 :iters(iterations)
                 {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return"FlexArray: Erase half of " + stdutils::itos(iters, 10) + " integers from a std::vector.";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Erase the center half of elements in a " + stdutils::itos(iters, 10) + " integer-wide std::vector.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 return janitor();
             }
 
-            bool janitor()
+            bool janitor() override
             {
                 // Refill the FlexArray.
                 for(unsigned int i=0; i<iters; ++i)
@@ -947,7 +947,7 @@ Middle is calculated as size()/2.";
                 }
                 return true;
             }
-            bool run()
+            bool run() override
             {
                 // Calculate erase size as the center half of the elements.
                 int first = iters/4;
@@ -972,17 +972,17 @@ Middle is calculated as size()/2.";
         public:
             TestVector_Peek(){}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Peek (std::vector)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Access the last element in the vector.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 /* We initially push three values, to make the
                  * math calculating the insert index a bit safer.*/
@@ -993,7 +993,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run()
+            bool run() override
             {
                 (void)vec.back();
                 return true;
@@ -1013,17 +1013,17 @@ Middle is calculated as size()/2.";
         public:
             TestFArray_Peek(){}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "FlexArray: Peek (FlexArray)";
             }
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return "Ensure the last element is being peeked correctly.";
             }
 
-            bool pre()
+            bool pre() override
             {
                 /* We initially push three values, to make the
                  * math calculating the insert index a bit safer.*/
@@ -1034,7 +1034,7 @@ Middle is calculated as size()/2.";
                 return true;
             }
 
-            bool run()
+            bool run() override
             {
                 unsigned int peeked = flex.peek();
                 if(peeked == expected)
@@ -1048,7 +1048,7 @@ Middle is calculated as size()/2.";
                 }
             }
 
-            bool run_optimized()
+            bool run_optimized() override
             {
                 (void)flex.peek();
                 return true;
@@ -1063,9 +1063,9 @@ Middle is calculated as size()/2.";
         public:
             explicit TestSuite_FlexArray(){}
 
-            void load_tests();
+            void load_tests() override;
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "PawLIB: FlexArray Tests";
             }

@@ -47,7 +47,6 @@
 #include "pawlib/goldilocks.hpp"
 #include "pawlib/onestring.hpp"
 
-using namespace pawlib::ioformat;
 using namespace pawlib;
 
 namespace pawlib
@@ -55,7 +54,7 @@ namespace pawlib
     class TestOnestring : public Test
     {
         public:
-            enum TestStringType {
+            enum class TestStringType {
                 CHAR,
                 OCHAR_ASCII,
                 OCHAR_UNICODE,
@@ -103,47 +102,47 @@ namespace pawlib
             {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         title = "(char)";
                         break;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         title = "(onechar, ASCII)";
                         break;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         title = "(onechar, Unicode)";
                         break;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         title = "(c-string, ASCII)";
                         break;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         title = "(c-string, Unicode)";
                         break;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         title = "(std::string, ASCII)";
                         break;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         title = "(std::string, Unicode)";
                         break;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         title = "(onestring, ASCII)";
                         break;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         title = "(onestring, Unicode)";
                         break;
@@ -178,62 +177,62 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = "";
+                test = "";
                 return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         test.assign(ch_1);
                         PL_ASSERT_EQUAL(test, ostr_ch_ascii_1);
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         test.assign(ochr_ascii_1);
                         PL_ASSERT_EQUAL(test, ostr_ch_ascii_1);
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         test.assign(ochr_unicode_1);
                         PL_ASSERT_EQUAL(test, ostr_ch_unicode_1);
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         test.assign(str_ascii_1.c_str());
                         PL_ASSERT_EQUAL(test, ostr_ascii_1);
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         test.assign(str_unicode_1.c_str());
                         PL_ASSERT_EQUAL(test, ostr_unicode_1);
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         test.assign(str_ascii_1);
                         PL_ASSERT_EQUAL(test, ostr_ascii_1);
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         test.assign(str_unicode_1);
                         PL_ASSERT_EQUAL(test, ostr_unicode_1);
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         test.assign(ostr_ascii_1);
                         PL_ASSERT_EQUAL(test, ostr_ascii_1);
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         test.assign(ostr_unicode_1);
                         PL_ASSERT_EQUAL(test, ostr_unicode_1);
@@ -270,70 +269,70 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = "";
+                test = "";
                 return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         test = ch_1;
                         PL_ASSERT_TRUE(test.equals(ch_1));
                         PL_ASSERT_FALSE(test.equals(ch_2));
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         test = ochr_ascii_1;
                         PL_ASSERT_TRUE(test.equals(ochr_ascii_1));
                         PL_ASSERT_FALSE(test.equals(ochr_ascii_2));
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         test = ochr_unicode_1;
                         PL_ASSERT_TRUE(test.equals(ochr_unicode_1));
                         PL_ASSERT_FALSE(test.equals(ochr_unicode_2));
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test.equals(str_ascii_1.c_str()));
                         PL_ASSERT_FALSE(test.equals(str_ascii_2.c_str()));
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test.equals(str_unicode_1.c_str()));
                         PL_ASSERT_FALSE(test.equals(str_unicode_2.c_str()));
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test.equals(str_ascii_1));
                         PL_ASSERT_FALSE(test.equals(str_ascii_2));
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test.equals(str_unicode_1));
                         PL_ASSERT_FALSE(test.equals(str_unicode_2));
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         test = ostr_ascii_1;
                         PL_ASSERT_TRUE(test.equals(ostr_ascii_1));
                         PL_ASSERT_FALSE(test.equals(ostr_ascii_2));
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         test = ostr_unicode_1;
                         PL_ASSERT_TRUE(test.equals(ostr_unicode_1));
@@ -371,14 +370,14 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = "";
+                test = "";
                 return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         test = ch_1;
                         PL_ASSERT_TRUE(test == ch_1);
@@ -388,7 +387,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ch_2 == test);
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         test = ochr_ascii_1;
                         PL_ASSERT_TRUE(test == ochr_ascii_1);
@@ -398,7 +397,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ochr_ascii_2 == test);
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         test = ochr_unicode_1;
                         PL_ASSERT_TRUE(test == ochr_unicode_1);
@@ -408,7 +407,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ochr_unicode_2 == test);
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test == str_ascii_1.c_str());
@@ -418,7 +417,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_ascii_2.c_str() == test);
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test == str_unicode_1.c_str());
@@ -428,7 +427,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_unicode_2.c_str() == test);
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test == str_ascii_1);
@@ -438,7 +437,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_ascii_2 == test);
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test == str_unicode_1);
@@ -448,7 +447,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_unicode_2 == test);
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         test = ostr_ascii_1;
                         PL_ASSERT_TRUE(test == ostr_ascii_1);
@@ -458,7 +457,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ostr_ascii_2 == test);
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         test = ostr_unicode_1;
                         PL_ASSERT_TRUE(test == ostr_unicode_1);
@@ -499,14 +498,14 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = "";
+                test = "";
                 return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         test = ch_1;
                         PL_ASSERT_TRUE(test != ch_2);
@@ -516,7 +515,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ch_1 != test);
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         test = ochr_ascii_1;
                         PL_ASSERT_TRUE(test != ochr_ascii_2);
@@ -526,7 +525,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ochr_ascii_1 != test);
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         test = ochr_unicode_1;
                         PL_ASSERT_TRUE(test != ochr_unicode_2);
@@ -536,7 +535,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ochr_unicode_1 != test);
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test != str_ascii_2.c_str());
@@ -546,7 +545,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_ascii_1.c_str() != test);
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test != str_unicode_2.c_str());
@@ -556,7 +555,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_unicode_1.c_str() != test);
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         test = str_ascii_1;
                         PL_ASSERT_TRUE(test != str_ascii_2);
@@ -566,7 +565,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_ascii_1 != test);
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         test = str_unicode_1;
                         PL_ASSERT_TRUE(test != str_unicode_2);
@@ -576,7 +575,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(str_unicode_1 != test);
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         test = ostr_ascii_1;
                         PL_ASSERT_TRUE(test != ostr_ascii_2);
@@ -586,7 +585,7 @@ namespace pawlib
                         PL_ASSERT_FALSE(ostr_ascii_1 != test);
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         test = ostr_unicode_1;
                         PL_ASSERT_TRUE(test != ostr_unicode_2);
@@ -627,14 +626,14 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = "";
+                test = "";
                 return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         char eq = 'B';
                         char lt = 'A';
@@ -654,7 +653,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(gt), 0);
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         onechar eq = "B";
                         onechar lt = "A";
@@ -674,7 +673,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(gt), 0);
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         onechar eq = "🐭";
                         onechar lt = "🐁";
@@ -694,7 +693,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(gt), 0);
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -722,7 +721,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(longer.c_str()), 0);
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -750,7 +749,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(longer.c_str()), 0);
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -778,7 +777,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(longer), 0);
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -806,7 +805,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(longer), 0);
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         onestring eq = "abcB";
                         onestring lt = "abcA";
@@ -834,7 +833,7 @@ namespace pawlib
                         PL_ANTIASSERT_GREATER(test.compare(longer), 0);
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         onestring eq = "🐭abc🐭";
                         onestring lt = "🐭abc🐁";
@@ -893,14 +892,14 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = "";
+                test = "";
                 return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         char eq = 'B';
                         char lt = 'A';
@@ -916,7 +915,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(lt < test);
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         onechar eq = "B";
                         onechar lt = "A";
@@ -932,7 +931,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(lt < test);
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         onechar eq = "🐭";
                         onechar lt = "🐁";
@@ -948,7 +947,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(lt < test);
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -970,7 +969,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter.c_str() < test);
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -992,7 +991,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter.c_str() < test);
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -1014,7 +1013,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter < test);
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -1036,7 +1035,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter < test);
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         onestring eq = "abcB";
                         onestring lt = "abcA";
@@ -1058,7 +1057,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter < test);
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         onestring eq = "🐭abc🐭";
                         onestring lt = "🐭abc🐁";
@@ -1111,14 +1110,14 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = "";
+                test = "";
                 return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         char eq = 'B';
                         char lt = 'A';
@@ -1134,7 +1133,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(lt <= test);
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         onechar eq = "B";
                         onechar lt = "A";
@@ -1150,7 +1149,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(lt <= test);
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         onechar eq = "🐭";
                         onechar lt = "🐁";
@@ -1166,7 +1165,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(lt <= test);
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -1188,7 +1187,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter.c_str() <= test);
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -1210,7 +1209,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter.c_str() <= test);
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -1232,7 +1231,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter <= test);
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -1254,7 +1253,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter <= test);
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         onestring eq = "abcB";
                         onestring lt = "abcA";
@@ -1276,7 +1275,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(shorter <= test);
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         onestring eq = "🐭abc🐭";
                         onestring lt = "🐭abc🐁";
@@ -1329,14 +1328,14 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = "";
+                test = "";
                 return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         char eq = 'B';
                         char lt = 'A';
@@ -1352,7 +1351,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(gt > test);
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         onechar eq = "B";
                         onechar lt = "A";
@@ -1368,7 +1367,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(gt > test);
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         onechar eq = "🐭";
                         onechar lt = "🐁";
@@ -1384,7 +1383,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(gt > test);
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -1406,7 +1405,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer.c_str() > test);
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -1428,7 +1427,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer.c_str() > test);
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -1450,7 +1449,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer > test);
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -1472,7 +1471,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer > test);
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         onestring eq = "abcB";
                         onestring lt = "abcA";
@@ -1494,7 +1493,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer > test);
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         onestring eq = "🐭abc🐭";
                         onestring lt = "🐭abc🐁";
@@ -1547,14 +1546,14 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = "";
+                test = "";
                 return true;
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         char eq = 'B';
                         char lt = 'A';
@@ -1570,7 +1569,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(gt >= test);
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         onechar eq = "B";
                         onechar lt = "A";
@@ -1586,7 +1585,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(gt >= test);
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         onechar eq = "🐭";
                         onechar lt = "🐁";
@@ -1602,7 +1601,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(gt >= test);
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -1624,7 +1623,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer.c_str() >= test);
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -1646,7 +1645,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer.c_str() >= test);
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         std::string eq = "abcB";
                         std::string lt = "abcA";
@@ -1668,7 +1667,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer >= test);
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         std::string eq = "🐭abc🐭";
                         std::string lt = "🐭abc🐁";
@@ -1690,7 +1689,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer >= test);
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         onestring eq = "abcB";
                         onestring lt = "abcA";
@@ -1712,7 +1711,7 @@ namespace pawlib
                         PL_ASSERT_TRUE(longer >= test);
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         onestring eq = "🐭abc🐭";
                         onestring lt = "🐭abc🐁";
@@ -2208,7 +2207,7 @@ namespace pawlib
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         char ch = '!';
                         test.append(ch);
@@ -2218,7 +2217,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test, "TEST!!!!");
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         onechar ochr = "!";
                         test.append(ochr);
@@ -2228,7 +2227,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test, "TEST!!!!");
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         onechar ochr = "‽";
                         test.append(ochr);
@@ -2238,7 +2237,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽‽");
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         std::string str = "!!!";
                         test.append(str.c_str());
@@ -2248,7 +2247,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test, "TEST!!!!!!!!!!!!");
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         std::string str = "‽‽‽";
                         test.append(str.c_str());
@@ -2258,7 +2257,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽‽‽‽‽‽‽‽‽‽");
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         std::string str = "!!!";
                         test.append(str);
@@ -2268,7 +2267,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test, "TEST!!!!!!!!!!!!");
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         std::string str = "‽‽‽";
                         test.append(str);
@@ -2278,7 +2277,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽‽‽‽‽‽‽‽‽‽");
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         onestring ostr = "!!!";
                         test.append(ostr);
@@ -2288,7 +2287,7 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test, "TEST!!!!!!!!!!!!");
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         onestring ostr = "‽‽‽";
                         test.append(ostr);
@@ -2330,70 +2329,70 @@ namespace pawlib
             }
 
             bool janitor() override {
-                onestring test = start;
+                test = start;
                 return (test == start);
             }
 
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         char ch = '!';
                         test += ch;
                         PL_ASSERT_EQUAL(test, "TEST!");
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         onechar ochr = "!";
                         test += ochr;
                         PL_ASSERT_EQUAL(test, "TEST!");
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         onechar ochr = "‽";
                         test += ochr;
                         PL_ASSERT_EQUAL(test, "TEST‽");
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         std::string str = "!!!";
                         test += str.c_str();
                         PL_ASSERT_EQUAL(test, "TEST!!!");
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         std::string str = "‽‽‽";
                         test += str.c_str();
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽");
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         std::string str = "!!!";
                         test += str;
                         PL_ASSERT_EQUAL(test, "TEST!!!");
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         std::string str = "‽‽‽";
                         test += str;
                         PL_ASSERT_EQUAL(test, "TEST‽‽‽");
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         onestring ostr = "!!!";
                         test += ostr;
                         PL_ASSERT_EQUAL(test, "TEST!!!");
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         onestring ostr = "‽‽‽";
                         test += ostr;
@@ -2516,21 +2515,21 @@ namespace pawlib
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         char ch = 'E';
                         test.insert(1, ch);
                         PL_ASSERT_EQUAL(test, "TESTING!!");
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         onechar ochr = "E";
                         test.insert(1, ochr);
                         PL_ASSERT_EQUAL(test, "TESTING!!");
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         onechar ochr = "Ё";
                         std::cout << ochr.c_str() << std::endl;
@@ -2538,42 +2537,42 @@ namespace pawlib
                         PL_ASSERT_EQUAL(test, "TЁSTING!!");
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         std::string cstr = "ESS";
                         test.insert(1, cstr.c_str());
                         PL_ASSERT_EQUAL(test, "TESSSTING!!");
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         std::string cstr = "ЁSS";
                         test.insert(1, cstr.c_str());
                         PL_ASSERT_EQUAL(test, "TЁSSSTING!!");
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         std::string str = "ESS";
                         test.insert(1, str);
                         PL_ASSERT_EQUAL(test, "TESSSTING!!");
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         std::string str = "ЁSS";
                         test.insert(1, str);
                         PL_ASSERT_EQUAL(test, "TЁSSSTING!!");
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         onestring ostr = "ESS";
                         test.insert(1, ostr);
                         PL_ASSERT_EQUAL(test, "TESSSTING!!");
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         onestring ostr = "ЁSS";
                         test.insert(1, ostr);
@@ -2629,35 +2628,35 @@ namespace pawlib
             bool run() override {
                 switch(stringType)
                 {
-                    case CHAR:
+                    case TestStringType::CHAR:
                     {
                         char ch = '!';
                         test.replace(31, 1, ch);
                         PL_ASSERT_EQUAL(test, goal1);
                         return true;
                     }
-                    case OCHAR_ASCII:
+                    case TestStringType::OCHAR_ASCII:
                     {
                         onechar ochr = "!";
                         test.replace(31, 1, ochr);
                         PL_ASSERT_EQUAL(test, goal1);
                         return true;
                     }
-                    case OCHAR_UNICODE:
+                    case TestStringType::OCHAR_UNICODE:
                     {
                         onechar ochr = "…";
                         test.replace(31, 1, ochr);
                         PL_ASSERT_EQUAL(test, goal1b);
                         return true;
                     }
-                    case CSTR_ASCII:
+                    case TestStringType::CSTR_ASCII:
                     {
                         std::string cstr = "!";
                         test.replace(31, 1, cstr.c_str());
                         PL_ASSERT_EQUAL(test, goal1);
                         return true;
                     }
-                    case CSTR_UNICODE:
+                    case TestStringType::CSTR_UNICODE:
                     {
                         std::string cstr = "!";
                         test.replace(31, 1, cstr.c_str());
@@ -2677,14 +2676,14 @@ namespace pawlib
 
                         return true;
                     }
-                    case STR_ASCII:
+                    case TestStringType::STR_ASCII:
                     {
                         std::string str = "!";
                         test.replace(31, 1, str);
                         PL_ASSERT_EQUAL(test, goal1);
                         return true;
                     }
-                    case STR_UNICODE:
+                    case TestStringType::STR_UNICODE:
                     {
                         std::string str = "!";
                         test.replace(31, 1, str);
@@ -2704,14 +2703,14 @@ namespace pawlib
 
                         return true;
                     }
-                    case OSTR_ASCII:
+                    case TestStringType::OSTR_ASCII:
                     {
                         onestring ostr = "!";
                         test.replace(31, 1, ostr);
                         PL_ASSERT_EQUAL(test, goal1);
                         return true;
                     }
-                    case OSTR_UNICODE:
+                    case TestStringType::OSTR_UNICODE:
                     {
                         onestring ostr = "!";
                         test.replace(31, 1, ostr);

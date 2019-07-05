@@ -53,7 +53,6 @@
 
 
 using pawlib::iochannel;
-using namespace pawlib::ioformat;
 
 namespace pawlib
 {
@@ -187,9 +186,9 @@ namespace pawlib
                 else
                 {
                     // Throw non-fatal error.
-                    ioc << cat_error << "BaseFlexArray Erase: Invalid range ("
+                    ioc << IOCategory::error << "BaseFlexArray Erase: Invalid range ("
                         << first << " - " << last << "). Took no action."
-                        << io_end;
+                        << IOControl::end;
                     return false;
                 }
             }
@@ -277,9 +276,9 @@ namespace pawlib
                     if(yell)
                     {
                         // Throw a non-fatal error. Numbers are 0-based.
-                        ioc << cat_error << vrb_quiet << "Index " << index
+                        ioc << IOCategory::error << IOVerbosity::quiet << "Index " << index
                         << " out of bounds [0 - " << this->_elements - 1
-                        << "]." << io_end;
+                        << "]." << IOControl::end;
                     }
                     // Report failure.
                     return false;
@@ -460,9 +459,9 @@ namespace pawlib
                     {
                         if(yell)
                         {
-                            ioc << cat_error
+                            ioc << IOCategory::error
                             << "Data structure is full and cannot be resized."
-                            << io_end;
+                            << IOControl::end;
                         }
                         return false;
                     }
@@ -634,7 +633,7 @@ namespace pawlib
                 else
                 {
                     // NOTE: Test for this.
-                    ioc << "weird edge case" << io_end;
+                    ioc << "weird edge case" << IOControl::end;
                 }
             }
 

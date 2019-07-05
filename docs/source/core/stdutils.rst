@@ -42,7 +42,7 @@ two of which are required:
     std::string foo_s = stdutils::itos(foo, 10, false);
 
     // Print out the std::string.
-    ioc << foo_s << io_end;
+    ioc << foo_s << IOControl::end;
 
     // OUTPUT: -16753
 
@@ -100,7 +100,7 @@ C-string, without having to know anything in advance.
     stdutils::itoa(foo_a, foo, 10, 0, false);
 
     // Print out the C-string.
-    ioc << foo_a << io_end;
+    ioc << foo_a << IOControl::end;
 
     // OUTPUT: -16753
 
@@ -139,7 +139,7 @@ of which are required:
     std::string foo_s = stdutils::ftos(foo, 5, 1);
 
     // Print out the std::string.
-    ioc << foo_s << io_end;
+    ioc << foo_s << IOControl::end;
 
     // OUTPUT: -65.78324
 
@@ -190,7 +190,7 @@ of which are required:
     std::string foo_s = stdutils::ftos(foo, 5, 1);
 
     // Print out the std::string.
-    ioc << foo_s << io_end;
+    ioc << foo_s << IOControl::end;
 
     // OUTPUT: -65.78324
 
@@ -227,4 +227,4 @@ This will reverse a given C-string in place, overriding the string.
 
     char foo[14] = "Hello, world!";
     stdutils::strrev(foo);
-    ioc << foo << io_end;
+    ioc << foo << IOControl::end;
