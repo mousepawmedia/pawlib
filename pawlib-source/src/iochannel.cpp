@@ -2,6 +2,45 @@
 
 namespace pawlib
 {
+    template<typename T>
+    T operator&(const T& lhs, const T& rhs)
+    {
+        return static_cast<T>
+            (static_cast<int>(lhs) & static_cast<int>(rhs));
+    }
+    template IOVerbosity operator&<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
+    template IOCategory operator&<IOCategory>(const IOCategory&, const IOCategory&);
+    template IOFormatMemSep operator&<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
+
+    template<typename T>
+    T operator|(const T& lhs, const T& rhs)
+    {
+        return static_cast<T>
+            (static_cast<int>(lhs) | static_cast<int>(rhs));
+    }
+    template IOVerbosity operator|<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
+    template IOCategory operator|<IOCategory>(const IOCategory&, const IOCategory&);
+    template IOFormatMemSep operator|<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
+
+    template<typename T>
+    T operator^(const T& lhs, const T& rhs)
+    {
+        return static_cast<T>
+            (static_cast<int>(lhs) ^ static_cast<int>(rhs));
+    }
+    template IOVerbosity operator^<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
+    template IOCategory operator^<IOCategory>(const IOCategory&, const IOCategory&);
+    template IOFormatMemSep operator^<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
+
+    template<typename T>
+    T operator~(const T& rhs)
+    {
+        return static_cast<T>(~static_cast<int>(rhs));
+    }
+    template IOVerbosity operator~<IOVerbosity>(const IOVerbosity&);
+    template IOCategory operator~<IOCategory>(const IOCategory&);
+    template IOFormatMemSep operator~<IOFormatMemSep>(const IOFormatMemSep&);
+
     //Declaring global instance of ioc.
     iochannel ioc;
 
@@ -12,18 +51,8 @@ namespace pawlib
       echomode(IOEchoMode::cout),
       echovrb(IOVerbosity::tmi),
       echocat(IOCategory::all),
-      base(IOFormatBase::dec),
-      boolstyle(IOFormatBool::lower),
-      charval(IOFormatCharValue::as_char),
-      significands(IOFormatSignificands(14)),
-      sci(IOFormatSciNotation::automatic),
-      numcase(IOFormatNumeralCase::upper),
-      ptr(IOFormatPtr::value),
+      fmt(IOFormat()),
       readsize(IOMemReadSize(1)),
-      memformat(0),
-      ta(IOFormatTextAttr::none),
-      bg(IOFormatTextBG::none),
-      fg(IOFormatTextFG::none),
       vrb(IOVerbosity::normal),
       cat(IOCategory::normal),
       parse(maybe),
@@ -36,7 +65,7 @@ namespace pawlib
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
-        switch(boolstyle)
+        switch(fmt.fmt_bool)
         {
             case IOFormatBool::lower:
             {
@@ -72,7 +101,7 @@ namespace pawlib
     {
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
-        switch(boolstyle)
+        switch(fmt.fmt_bool)
         {
             case IOFormatBool::lower:
             {
@@ -113,7 +142,7 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        switch(charval)
+        switch(fmt.fmt_char_value)
         {
             //Output as character.
             case IOFormatCharValue::as_char:
@@ -174,122 +203,6 @@ namespace pawlib
     }
 
     //------------ ENUMERATIONS ------------//
-
-    iochannel& iochannel::operator<<(const IOFormatBase& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        base = rhs;
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatBool& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        boolstyle = rhs;
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatCharValue& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        charval = rhs;
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatSignificands& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        significands = rhs;
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatSciNotation& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        sci = rhs;
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatNumeralCase& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        numcase = rhs;
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatPtr& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        ptr = rhs;
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatMemSep& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        if(rhs != IOFormatMemSep::none)
-        {
-            memformat = 0;
-        }
-        else
-        {
-            memformat = (memformat | static_cast<int>(rhs));
-        }
-
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatTextBG& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        //Save the setting.
-        bg = rhs;
-        //Raise dirty flag for attributes.
-        dirty_attributes = true;
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatTextFG& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        //Save the setting.
-        fg = rhs;
-        //Raise dirty flag for attributes.
-        dirty_attributes = true;
-        return *this;
-    }
-
-    iochannel& iochannel::operator<<(const IOFormatTextAttr& rhs)
-    {
-        //If we cannot parse because of `shutup()` settings, abort.
-        if(!can_parse()){return *this;}
-
-        //Save the setting.
-        ta = rhs;
-        //Raise dirty flag for attributes.
-        dirty_attributes = true;
-        return *this;
-    }
 
     iochannel& iochannel::operator<<(const IOCursor& rhs)
     {
@@ -415,7 +328,7 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        switch(ptr)
+        switch(fmt.fmt_ptr)
         {
             //If we are to print as value...
             case IOFormatPtr::value:
@@ -447,7 +360,7 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        switch(ptr)
+        switch(fmt.fmt_ptr)
         {
             //If we are to print as value...
             case IOFormatPtr::value:
@@ -479,7 +392,7 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        switch(ptr)
+        switch(fmt.fmt_ptr)
         {
             //If we are to print as value...
             case IOFormatPtr::value:
@@ -527,18 +440,13 @@ namespace pawlib
         //If we cannot parse because of `shutup()` settings, abort.
         if(!can_parse()){return *this;}
 
-        int len = stdutils::intlen(rhs, static_cast<int>(base), true) + 1;
-
-        // We're changing approach below to keep Clang happy.
-        //// char cstr[len] = {'\0'};
-        /*char cstr[len];
-        std::fill_n(cstr, len, '\0');*/
+        int len = stdutils::intlen(rhs, static_cast<int>(fmt.fmt_base), true) + 1;
 
         // Accepting defeat on VLAs - we'll just have to dynamically allocate.
         char* cstr = new char[len];
         std::fill_n(cstr, len, '\0');
 
-        stdutils::itoa(cstr, rhs, static_cast<int>(base), len, static_cast<bool>(numcase));
+        stdutils::itoa(cstr, rhs, static_cast<int>(fmt.fmt_base), len, static_cast<bool>(fmt.fmt_numeral_case));
         inject(cstr);
 
         delete[] cstr;
@@ -566,13 +474,13 @@ namespace pawlib
         cstr[0] = '\0';*/
 
         // Accepting defeat on VLAs - we'll just have to dynamically allocate.
-        uint32_t len = stdutils::floatlen(rhs, significands.significands,
-                                          static_cast<bool>(sci), true) + 1;
+        uint32_t len = stdutils::floatlen(rhs, fmt.fmt_significands.significands,
+                                          static_cast<bool>(fmt.fmt_sci_notation), true) + 1;
         char* cstr = new char[len];
         std::fill_n(cstr, len, '\0');
 
         //Convert the float to a cstring, and dump into cstr.
-        stdutils::ftoa(cstr, rhs, significands.significands, static_cast<bool>(sci));
+        stdutils::ftoa(cstr, rhs, fmt.fmt_significands.significands, static_cast<bool>(fmt.fmt_sci_notation));
         inject(cstr);
 
         delete[] cstr;
@@ -591,18 +499,18 @@ namespace pawlib
         {
             //TODO: We will need to switch formats. For now, just ANSI.
             format = "\033[";
-            format.append(stdutils::itos(static_cast<int>(ta)));
+            format.append(stdutils::itos(static_cast<int>(fmt.fmt_text_attr)));
 
-            if(bg != IOFormatTextBG::none)
+            if(fmt.fmt_text_bg != IOFormatTextBG::none)
             {
                 format.append(";");
-                format.append(stdutils::itos(static_cast<int>(bg)));
+                format.append(stdutils::itos(static_cast<int>(fmt.fmt_text_bg)));
             }
 
-            if(fg != IOFormatTextFG::none)
+            if(fmt.fmt_text_fg != IOFormatTextFG::none)
             {
                 format.append(";");
-                format.append(stdutils::itos(static_cast<int>(fg)));
+                format.append(stdutils::itos(static_cast<int>(fmt.fmt_text_fg)));
             }
 
             format.append("m");
@@ -699,13 +607,13 @@ namespace pawlib
         if(!dump)
         {
             uintptr_t address = reinterpret_cast<uintptr_t>(ptr);
-            inject(stdutils::ptrtos(address, static_cast<bool>(numcase)).c_str());
+            inject(stdutils::ptrtos(address, static_cast<bool>(fmt.fmt_numeral_case)).c_str());
         }
         else if(dump)
         {
             unsigned int memsize = (len * 2) + 1;
-            bool bytespacing = (memformat & (1 << 0));
-            bool wordspacing = (memformat & (1 << 1));
+            bool bytespacing = static_cast<bool>(fmt.fmt_mem_sep & IOFormatMemSep::byte);
+            bool wordspacing = static_cast<bool>(fmt.fmt_mem_sep & IOFormatMemSep::word);
             if(bytespacing)
             {
                 //Add a space for each byte except the last.
@@ -740,7 +648,7 @@ namespace pawlib
             char* mem = new char[memsize];
             std::fill_n(mem, memsize, '\0');
 
-            stdutils::memdump(mem, ptr, len, false, memformat);
+            stdutils::memdump(mem, ptr, len, false, static_cast<int>(fmt.fmt_mem_sep));
             inject(mem);
         }
     }
@@ -801,11 +709,13 @@ namespace pawlib
 
     void iochannel::reset_attributes()
     {
-        if(ta != IOFormatTextAttr::none || fg != IOFormatTextFG::none || bg != IOFormatTextBG::none)
+        if(fmt.fmt_text_attr != IOFormatTextAttr::none
+            || fmt.fmt_text_fg != IOFormatTextFG::none
+            || fmt.fmt_text_bg != IOFormatTextBG::none)
         {
-            ta = IOFormatTextAttr::none;
-            fg = IOFormatTextFG::none;
-            bg = IOFormatTextBG::none;
+            fmt << IOFormatTextAttr::none;
+            fmt << IOFormatTextFG::none;
+            fmt << IOFormatTextBG::none;
             dirty_attributes = true;
             /* We must leave calling `apply_attributes()` to `inject()`,
              * otherwise the reset attributes will never get injected
@@ -818,15 +728,8 @@ namespace pawlib
     void iochannel::reset_flags()
     {
         //Reset all the flags.
-        base = IOFormatBase::b10;
-        boolstyle = IOFormatBool::lower;
-        charval = IOFormatCharValue::as_char;
-        significands = IOFormatSignificands(14);
-        sci = IOFormatSciNotation::automatic;
-        numcase = IOFormatNumeralCase::lower;
-        ptr = IOFormatPtr::value;
+        fmt = IOFormat();
         readsize = IOMemReadSize(1);
-        memformat = 0;
 
         //We reset the verbosity and category.
         vrb = IOVerbosity::normal;
@@ -869,44 +772,30 @@ namespace pawlib
                 }
             }
 
-            switch(cat)
+            if(static_cast<bool>(cat & IOCategory::normal))
             {
-                case IOCategory::normal:
-                {
-                    // Dispatch the "normal" category signal.
-                    signal_c_normal.dispatch(msg, vrb);
-                    break;
-                }
-                case IOCategory::debug:
-                {
-                    // Dispatch the "debug" category signal.
-                    signal_c_debug.dispatch(msg, vrb);
-                    break;
-                }
-                case IOCategory::warning:
-                {
-                    // Dispatch the "warning" category signal.
-                    signal_c_warning.dispatch(msg, vrb);
-                    break;
-                }
-                case IOCategory::error:
-                {
-                    // Dispatch the "error" category signal.
-                    signal_c_error.dispatch(msg, vrb);
-                    break;
-                }
-                case IOCategory::testing:
-                {
-                    // Dispatch the "testing" category signal.
-                    signal_c_testing.dispatch(msg, vrb);
-                    break;
-                }
-                case IOCategory::all:
-                {
-                    /* This has no corresponding signal. I just leave
-                     * the case here to make the compiler warnings happy. */
-                    break;
-                }
+                // Dispatch the "normal" category signal.
+                signal_c_normal.dispatch(msg, vrb);
+            }
+            if(static_cast<bool>(cat & IOCategory::debug))
+            {
+                // Dispatch the "debug" category signal.
+                signal_c_debug.dispatch(msg, vrb);
+            }
+            if(static_cast<bool>(cat & IOCategory::warning))
+            {
+                // Dispatch the "warning" category signal.
+                signal_c_warning.dispatch(msg, vrb);
+            }
+            if(static_cast<bool>(cat & IOCategory::error))
+            {
+                // Dispatch the "error" category signal.
+                signal_c_error.dispatch(msg, vrb);
+            }
+            if(static_cast<bool>(cat & IOCategory::testing))
+            {
+                // Dispatch the "testing" category signal.
+                signal_c_testing.dispatch(msg, vrb);
             }
 
             // Dispatch the general purpose signals.
@@ -924,7 +813,7 @@ namespace pawlib
                         // If we're supposed to use `printf`...
                         case IOEchoMode::printf:
                         {
-                            if(cat == IOCategory::error)
+                            if(static_cast<bool>(cat & IOCategory::error))
                             {
                                 /* Route the message through stderr
                                  * instead of stdout.*/
@@ -940,7 +829,7 @@ namespace pawlib
                         // If we're supposed to use `std::cout`...
                         case IOEchoMode::cout:
                         {
-                            if(cat == IOCategory::error)
+                            if(static_cast<bool>(cat & IOCategory::error))
                             {
                                 /* Route the message through stderr
                                  * instead of stdout.*/

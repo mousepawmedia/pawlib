@@ -131,6 +131,7 @@ namespace pawlib
 {
     class pure_tril;
     class tril;
+    class iochannel;
 
     enum class IOFormatBase
     {
@@ -280,6 +281,7 @@ namespace pawlib
         ///Inverted text colors, also known as "reverse video".
         invert = 6
     };
+    // TODO: Change `IOFormatTextAttr` to a bitfield, to allow multiple format flags.
 
     /**The standard ANSI text foreground colors.*/
     enum class IOFormatTextFG
@@ -404,6 +406,95 @@ namespace pawlib
         printf = 1,
         /** Output messages to stdout via C++-style `std::cout`. */
         cout = 2
+    };
+
+    template<typename T>
+    T operator|(const T& lhs, const T& rhs);
+
+    template<typename T>
+    T operator&(const T& lhs, const T& rhs);
+
+    template<typename T>
+    T operator^(const T& lhs, const T& rhs);
+
+    template<typename T>
+    T operator~(const T& rhs);
+
+    class IOFormat
+    {
+        friend iochannel;
+
+        private:
+            IOFormatBase fmt_base;
+            IOFormatBool fmt_bool;
+            IOFormatCharValue fmt_char_value;
+            IOFormatMemSep fmt_mem_sep;
+            IOFormatNumeralCase fmt_numeral_case;
+            IOFormatPtr fmt_ptr;
+            IOFormatSciNotation fmt_sci_notation;
+            IOFormatSignificands fmt_significands;
+            IOFormatTextAttr fmt_text_attr;
+            IOFormatTextBG fmt_text_bg;
+            IOFormatTextFG fmt_text_fg;
+
+        public:
+            IOFormat()
+            : fmt_base(IOFormatBase::b10),
+              fmt_bool(IOFormatBool::lower),
+              fmt_char_value(IOFormatCharValue::as_char),
+              fmt_mem_sep(IOFormatMemSep::all),
+              fmt_numeral_case(IOFormatNumeralCase::upper),
+              fmt_ptr(IOFormatPtr::value),
+              fmt_sci_notation(IOFormatSciNotation::automatic),
+              fmt_significands(IOFormatSignificands(14)),
+              fmt_text_attr(IOFormatTextAttr::none),
+              fmt_text_bg(IOFormatTextBG::none),
+              fmt_text_fg(IOFormatTextFG::none)
+              {}
+
+            IOFormat(const IOFormat& cpy)
+            : fmt_base(cpy.fmt_base),
+              fmt_bool(cpy.fmt_bool),
+              fmt_char_value(cpy.fmt_char_value),
+              fmt_mem_sep(cpy.fmt_mem_sep),
+              fmt_numeral_case(cpy.fmt_numeral_case),
+              fmt_ptr(cpy.fmt_ptr),
+              fmt_sci_notation(cpy.fmt_sci_notation),
+              fmt_significands(cpy.fmt_significands),
+              fmt_text_attr(cpy.fmt_text_attr),
+              fmt_text_bg(cpy.fmt_text_bg),
+              fmt_text_fg(cpy.fmt_text_fg)
+              {}
+
+            IOFormat& operator=(const IOFormat& cpy)
+            {
+                fmt_base = cpy.fmt_base;
+                fmt_bool = cpy.fmt_bool;
+                fmt_char_value = cpy.fmt_char_value;
+                fmt_mem_sep = cpy.fmt_mem_sep;
+                fmt_numeral_case = cpy.fmt_numeral_case;
+                fmt_ptr = cpy.fmt_ptr;
+                fmt_sci_notation = cpy.fmt_sci_notation;
+                fmt_significands = cpy.fmt_significands;
+                fmt_text_attr = cpy.fmt_text_attr;
+                fmt_text_bg = cpy.fmt_text_bg;
+                fmt_text_fg = cpy.fmt_text_fg;
+                return *this;
+            }
+
+            IOFormat& operator<<(const IOFormatBase& rhs){fmt_base = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatBool& rhs){fmt_bool = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatCharValue& rhs){fmt_char_value = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatMemSep& rhs){fmt_mem_sep = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatNumeralCase& rhs){fmt_numeral_case = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatPtr& rhs){fmt_ptr = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatSciNotation& rhs){fmt_sci_notation = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatSignificands& rhs){fmt_significands = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatTextAttr& rhs){fmt_text_attr = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatTextBG& rhs){fmt_text_bg = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatTextFG& rhs){fmt_text_fg = rhs; return *this;}
+
+
     };
 
     /**An iochannel allows console output to be custom routed to one or more
@@ -554,13 +645,13 @@ namespace pawlib
             {
                 // Store the old values for the two flags we use.
                 IOMemReadSize old_readsize = readsize;
-                IOFormatPtr old_ptr = ptr;
+                IOFormatPtr old_ptr = fmt.fmt_ptr;
 
                 /* The readsize (in bytes) is the bitset size (bits) divided
                  * by 8 and rounded to the nearest integer. */
                 readsize = static_cast<unsigned int>(ceil((T/8)));
                 // We want a memory dump.
-                ptr = IOFormatPtr::memory;
+                fmt << IOFormatPtr::memory;
 
                 // Remove the const-ness from the pointer.
                 std::bitset<T>* rhs_ptr = const_cast<std::bitset<T>*>(&rhs);
@@ -570,7 +661,7 @@ namespace pawlib
                 iochannel* r = &resolve_pointer(static_cast<void*>(rhs_ptr));
 
                 // Restore our prior flag values.
-                ptr = old_ptr;
+                fmt << old_ptr;
                 readsize = old_readsize;
 
                 /* Return the value at the pointer, which will be implicitly
@@ -578,17 +669,42 @@ namespace pawlib
                 return *r;
             }
 
-            iochannel& operator<<(const IOFormatBase&);
-            iochannel& operator<<(const IOFormatBool&);
-            iochannel& operator<<(const IOFormatCharValue&);
-            iochannel& operator<<(const IOFormatSignificands&);
-            iochannel& operator<<(const IOFormatSciNotation&);
-            iochannel& operator<<(const IOFormatNumeralCase&);
-            iochannel& operator<<(const IOFormatPtr&);
-            iochannel& operator<<(const IOFormatMemSep&);
-            iochannel& operator<<(const IOFormatTextBG&);
-            iochannel& operator<<(const IOFormatTextFG&);
-            iochannel& operator<<(const IOFormatTextAttr&);
+            iochannel& operator<<(const IOFormatBase& rhs) {process_fmt(rhs); return *this;}
+            iochannel& operator<<(const IOFormatBool& rhs) {process_fmt(rhs); return *this;}
+            iochannel& operator<<(const IOFormatCharValue& rhs) {process_fmt(rhs); return *this;}
+            iochannel& operator<<(const IOFormatMemSep& rhs) {process_fmt(rhs); return *this;}
+            iochannel& operator<<(const IOFormatNumeralCase& rhs) {process_fmt(rhs); return *this;}
+            iochannel& operator<<(const IOFormatPtr& rhs) {process_fmt(rhs); return *this;}
+            iochannel& operator<<(const IOFormatSciNotation& rhs) {process_fmt(rhs); return *this;}
+            iochannel& operator<<(const IOFormatSignificands& rhs) {process_fmt(rhs); return *this;}
+
+            iochannel& operator<<(const IOFormatTextAttr& rhs)
+            {
+                if (process_fmt(rhs))
+                {
+                    dirty_attributes = true;
+                }
+                return *this;
+            }
+
+            iochannel& operator<<(const IOFormatTextBG& rhs)
+            {
+                if (process_fmt(rhs))
+                {
+                    dirty_attributes = true;
+                }
+                return *this;
+            }
+
+            iochannel& operator<<(const IOFormatTextFG& rhs)
+            {
+                if (process_fmt(rhs))
+                {
+                    dirty_attributes = true;
+                }
+                return *this;
+            }
+
             iochannel& operator<<(const IOCursor&);
             iochannel& operator<<(const IOMemReadSize&);
             iochannel& operator<<(const IOVerbosity&);
@@ -650,33 +766,10 @@ namespace pawlib
              * control with a "keep" flag.
              */
 
-            // The base or radix to display numbers in.
-            IOFormatBase base = IOFormatBase::b10;
-            /* The boolean value output style. This will also be used
-             * later for trilean. */
-            IOFormatBool boolstyle = IOFormatBool::lower;
-            // What data type to interpret char values as.
-            IOFormatCharValue charval = IOFormatCharValue::as_char;
-            // The significands to display in floating point values.
-            IOFormatSignificands significands = IOFormatSignificands(14);
-            // Whether to display in scientific notation or not.
-            IOFormatSciNotation sci = IOFormatSciNotation::automatic;
-            // Whether to display digits > 9 [radix > 10] as uppercase or lowercase.
-            IOFormatNumeralCase numcase = IOFormatNumeralCase::upper;
-            // What to print out when given a pointer.
-            IOFormatPtr ptr = IOFormatPtr::value;
+            IOFormat fmt;
+
             // How many bytes of data to read from a pointer.
             IOMemReadSize readsize = IOMemReadSize(1);
-            // Bitfield for binary data display formats.
-            unsigned char memformat = 0;
-
-            // Text attributes.
-            IOFormatTextAttr ta = IOFormatTextAttr::none;
-            // TODO: Change `ta` to a bitfield, to allow multiple format flags.
-            /* Text background color. */
-            IOFormatTextBG bg = IOFormatTextBG::none;
-            /* Text foreground color. */
-            IOFormatTextFG fg = IOFormatTextFG::none;
 
             /* Message verbosity. */
             IOVerbosity vrb = IOVerbosity::normal;
@@ -685,13 +778,23 @@ namespace pawlib
             /* Message parsable */
             tril parse = maybe;
 
+            template<typename T>
+            bool process_fmt(T val)
+            {
+                //If we cannot parse because of `shutup()` settings, abort.
+                if(!can_parse()){return false;}
+
+                fmt << val;
+                return true;
+            }
+
             template <typename T>
             iochannel& resolve_pointer_smart(const T* rhs)
             {
                 //If we cannot parse because of `shutup()` settings, abort.
                 if(!can_parse()){return *this;}
 
-                switch(ptr)
+                switch(fmt.fmt_ptr)
                 {
                     //If we are to print as value...
                     case IOFormatPtr::value:
