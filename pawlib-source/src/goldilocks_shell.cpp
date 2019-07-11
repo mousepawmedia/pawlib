@@ -4,7 +4,7 @@
     if(i+X >= args) \
     { \
         ioc << "ERROR: " << tokens[i] << " requires " << X << " argument(s). " \
-            << IOControl::endline << "See --help" << IOControl::end; \
+            << IOCtrl::n << "See --help" << IOCtrl::endl; \
         continue; \
     }
 
@@ -59,15 +59,15 @@ namespace pawlib
             if(tokens[i] == "--help")
             {
                 // Display CLI help
-                ioc << "Usage: ./pawlib-tester [command] [argument]" << IOControl::endline;
-                ioc << "    --help          | Show this screen. "  << IOControl::endline;
-                ioc << "    --list          | List all tests. "  << IOControl::endline;
-                ioc << "    --listsuites    | List all suites. "  << IOControl::endline;
+                ioc << "Usage: ./pawlib-tester [command] [argument]" << IOCtrl::n;
+                ioc << "    --help          | Show this screen. "  << IOCtrl::n;
+                ioc << "    --list          | List all tests. "  << IOCtrl::n;
+                ioc << "    --listsuites    | List all suites. "  << IOCtrl::n;
                 ioc << "    --load [suite]  | Load the suite [suite]. "
-                    << "If unspecified, all suites will be loaded." << IOControl::endline;
-                ioc << "    --run [item]    | Run the test or suite [item]. "  << IOControl::endline;
-                ioc << "    --benchmark [item]    | Runs the benchmark for [item]. " << IOControl::endline;
-                ioc << IOControl::end;
+                    << "If unspecified, all suites will be loaded." << IOCtrl::n;
+                ioc << "    --run [item]    | Run the test or suite [item]. "  << IOCtrl::n;
+                ioc << "    --benchmark [item]    | Runs the benchmark for [item]. " << IOCtrl::n;
+                ioc << IOCtrl::endl;
             }
             // If load flag and subsequent argument are provided...
             else if(tokens[i] == "--load")
@@ -166,8 +166,8 @@ namespace pawlib
             else
             {
                 // Throw error and help prompt.
-                ioc << "ERROR: Invalid command " << tokens[i] << IOControl::endline;
-                ioc << "See --help" << IOControl::end;
+                ioc << "ERROR: Invalid command " << tokens[i] << IOCtrl::n;
+                ioc << "See --help" << IOCtrl::endl;
             }
 
             // If the return code is greater than 0...
@@ -190,11 +190,11 @@ namespace pawlib
         std::vector<std::string> tokens;
 
         // Display banner and help prompt.
-        ioc << IOFormatTextAttr::bold << "Goldilocks Test Shell" << IOControl::end;
-        ioc << "Type 'help' for a list of commands." << IOControl::end;
+        ioc << IOFormatTextAttr::bold << "Goldilocks Test Shell" << IOCtrl::endl;
+        ioc << "Type 'help' for a list of commands." << IOCtrl::endl;
 
         // Display typing prompt.
-        ioc << this->prompt << IOControl::send;
+        ioc << this->prompt << IOCtrl::end;
         // Get what the user typed.
         getline(std::cin, buffer);
         // Split the line into space-delimited tokens.
@@ -243,27 +243,27 @@ namespace pawlib
             {
                 ioc << IOFormatTextFG::yellow << IOFormatTextAttr::bold << IOCategory::warning
                 << "[Deprecated] Use 'run [suite]' instead."
-                << IOControl::end;
+                << IOCtrl::endl;
                 run(tokens);
             }
             else if(tokens[0] == "test")
             {
                 ioc << IOFormatTextFG::yellow << IOFormatTextAttr::bold << IOCategory::warning
                     << "[Deprecated] Use 'run [test] (number)' instead."
-                    << IOControl::end;
+                    << IOCtrl::endl;
                 run(tokens);
             }
             else
             {
                 ioc << IOFormatTextAttr::bold << IOCategory::warning
-                    << "Unrecognized command. Type 'help' for help." << IOControl::end;
+                    << "Unrecognized command. Type 'help' for help." << IOCtrl::endl;
             }
 
             // Get more user input...
             // Clear the tokens vector to make room for new results.
             tokens.clear();
             // Display the prompt.
-            ioc << this->prompt << IOControl::send;
+            ioc << this->prompt << IOCtrl::end;
             // Get the line the user just typed.
             getline(std::cin, buffer);
             // Split the line into space-delimited tokens.
@@ -274,51 +274,51 @@ namespace pawlib
 
     void GoldilocksShell::help()
     {
-        ioc << "-- HELP --" << IOControl::end;
-        ioc << "[SYNTAX: command [required param] (optional param)\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << "-- HELP --" << IOCtrl::endl;
+        ioc << "[SYNTAX: command [required param] (optional param)\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "about [test]" << IOControl::end;
-        ioc << "Display the documentation for [test].\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "about [test]" << IOCtrl::endl;
+        ioc << "Display the documentation for [test].\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "benchmark [test] (number)" << IOControl::end;
-        ioc << "Runs a benchmark on [test] with (number) repetitions.\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "benchmark [test] (number)" << IOCtrl::endl;
+        ioc << "Runs a benchmark on [test] with (number) repetitions.\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "compare [test1] [test2] (number)" << IOControl::end;
-        ioc << "Runs a comparative benchmark between [test1] and [test2] with (number) reps.\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "compare [test1] [test2] (number)" << IOCtrl::endl;
+        ioc << "Runs a comparative benchmark between [test1] and [test2] with (number) reps.\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "help" << IOControl::end;
-        ioc << "Displays the help screen.\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "help" << IOCtrl::endl;
+        ioc << "Displays the help screen.\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "list" << IOControl::end;
-        ioc << "Displays the available tests.\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "list" << IOCtrl::endl;
+        ioc << "Displays the available tests.\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "listsuites" << IOControl::end;
-        ioc << "Displays the available suites.\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "listsuites" << IOCtrl::endl;
+        ioc << "Displays the available suites.\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "load" << IOControl::end;
-        ioc << "Loads all suites.\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "load" << IOCtrl::endl;
+        ioc << "Loads all suites.\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "load [suite]" << IOControl::end;
-        ioc << "Loads the tests from [suite].\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "load [suite]" << IOCtrl::endl;
+        ioc << "Loads the tests from [suite].\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "run [suite]" << IOControl::end;
-        ioc << "Runs all tests in [suite].\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "run [suite]" << IOCtrl::endl;
+        ioc << "Runs all tests in [suite].\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << IOFormatTextAttr::bold << this->prompt << "run [test] (number)" << IOControl::end;
-        ioc << "Runs [test] with (number) repetitions.\n" << IOControl::end;
-        ioc << "----" << IOControl::end;
+        ioc << IOFormatTextAttr::bold << this->prompt << "run [test] (number)" << IOCtrl::endl;
+        ioc << "Runs [test] with (number) repetitions.\n" << IOCtrl::endl;
+        ioc << "----" << IOCtrl::endl;
 
-        ioc << "Back to you, Bob!\n" << IOControl::end;
+        ioc << "Back to you, Bob!\n" << IOCtrl::endl;
     }
 
     void GoldilocksShell::about(stringvector& tokens)
@@ -348,7 +348,7 @@ namespace pawlib
                 ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
                 << "ERROR: " << tokens[2] << " is not a valid integer. "
                 << "Please specify a valid number of reptitions for "
-                << "the benchmark." << IOControl::end;
+                << "the benchmark." << IOCtrl::endl;
             }
         }
     }
@@ -372,7 +372,7 @@ namespace pawlib
                 ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
                 << "ERROR: " << tokens[3] << " is not a valid integer. "
                 << "Please specify a valid number of reptitions for "
-                << "the benchmark." << IOControl::end;
+                << "the benchmark." << IOCtrl::endl;
             }
         }
     }
@@ -427,7 +427,7 @@ namespace pawlib
                 ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
                 << "ERROR: " << tokens[2] << " is not a valid integer. "
                 << "Please specify a valid number of reptitions for "
-                << "the test." << IOControl::end;
+                << "the test." << IOCtrl::endl;
             }
         }
     }
@@ -448,14 +448,14 @@ namespace pawlib
         if(args < min)
         {
             ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
-                << "ERROR: Not enough arguments." << IOControl::end;
+                << "ERROR: Not enough arguments." << IOCtrl::endl;
             return 0;
         }
         // Else if there are too many arguments, throw error and return 0.
         else if(args > max)
         {
             ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
-                << "ERROR: Too many arguments." << IOControl::end;
+                << "ERROR: Too many arguments." << IOCtrl::endl;
             return 0;
         }
 

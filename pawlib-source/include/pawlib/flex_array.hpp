@@ -87,7 +87,7 @@ namespace pawlib
                     ioc << IOCategory::error << IOVerbosity::quiet
                         << "FlexArray: insert() failed. " << index
                         << " out of bounds [0 - " << this->_elements - 1
-                        << "]." << IOControl::end;
+                        << "]." << IOCtrl::endl;
                     return false;
                 }
                 return this->insertAtIndex(newElement, index);

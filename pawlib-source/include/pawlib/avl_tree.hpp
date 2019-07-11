@@ -402,7 +402,7 @@ namespace pawlib
             //pre-order print
             void printNode(Node* temp)
             {
-                ioc << temp->data << IOControl::end;
+                ioc << temp->data << IOCtrl::endl;
                 if(temp->left != nullptr)
                 {
                     printNode(temp->left);

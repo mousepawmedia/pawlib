@@ -164,9 +164,9 @@ namespace pawlib
                     if(flex[i] != i)
                     {
                         // Report failure.
-                        ioc << "Incorrect push." << IOControl::endline
-                            << "    expected = " << i << IOControl::endline
-                            << "         got = " << flex.peek() << IOControl::end;
+                        ioc << "Incorrect push." << IOCtrl::n
+                            << "    expected = " << i << IOCtrl::n
+                            << "         got = " << flex.peek() << IOCtrl::endl;
                         return false;
                     }
                 }
@@ -273,11 +273,11 @@ namespace pawlib
                     if(flex[0] != i || (i > 0 && flex[1] != i-1))
                     {
                         // Report failure
-                        ioc << "Incorrect shift." << IOControl::endline
-                            << "      expected = " << i << IOControl::endline
-                            << "           got = " << flex[0] << IOControl::endline
-                            << " f[1] expected = " << i-1 << IOControl::endline
-                            << "      f[1] got = " << flex[1] << IOControl::end;
+                        ioc << "Incorrect shift." << IOCtrl::n
+                            << "      expected = " << i << IOCtrl::n
+                            << "           got = " << flex[0] << IOCtrl::n
+                            << " f[1] expected = " << i-1 << IOCtrl::n
+                            << "      f[1] got = " << flex[1] << IOCtrl::endl;
                         return false;
                     }
                 }
@@ -425,11 +425,11 @@ Middle is calculated as size()/2.";
                     if(flex[at] != val || flex.peek() != 1)
                     {
                         // Report failure.
-                        ioc << "Incorrect insert." << IOControl::endline
-                            << "      expected = " << val << IOControl::endline
-                            << "           got = " << flex[at] << IOControl::endline
-                            << " expected peek = 1" << IOControl::endline
-                            << "      got peek = " << flex.peek() << IOControl::end;
+                        ioc << "Incorrect insert." << IOCtrl::n
+                            << "      expected = " << val << IOCtrl::n
+                            << "           got = " << flex[at] << IOCtrl::n
+                            << " expected peek = 1" << IOCtrl::n
+                            << "      got peek = " << flex.peek() << IOCtrl::endl;
                         return false;
                     }
                 }

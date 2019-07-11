@@ -51,7 +51,6 @@
 
 #include "pawlib/iochannel.hpp"
 
-
 using pawlib::iochannel;
 
 namespace pawlib
@@ -188,7 +187,7 @@ namespace pawlib
                     // Throw non-fatal error.
                     ioc << IOCategory::error << "BaseFlexArray Erase: Invalid range ("
                         << first << " - " << last << "). Took no action."
-                        << IOControl::end;
+                        << IOCtrl::endl;
                     return false;
                 }
             }
@@ -278,7 +277,7 @@ namespace pawlib
                         // Throw a non-fatal error. Numbers are 0-based.
                         ioc << IOCategory::error << IOVerbosity::quiet << "Index " << index
                         << " out of bounds [0 - " << this->_elements - 1
-                        << "]." << IOControl::end;
+                        << "]." << IOCtrl::endl;
                     }
                     // Report failure.
                     return false;
@@ -461,7 +460,7 @@ namespace pawlib
                         {
                             ioc << IOCategory::error
                             << "Data structure is full and cannot be resized."
-                            << IOControl::end;
+                            << IOCtrl::endl;
                         }
                         return false;
                     }
@@ -633,7 +632,7 @@ namespace pawlib
                 else
                 {
                     // NOTE: Test for this.
-                    ioc << "weird edge case" << IOControl::end;
+                    ioc << "weird edge case" << IOCtrl::endl;
                 }
             }
 

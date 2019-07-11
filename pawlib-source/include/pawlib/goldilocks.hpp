@@ -560,7 +560,7 @@ namespace pawlib
         /**Print the data from a BenchmarkResult. This uses the
          * standard IOChannel. Output formatting is retained until the end
          * of the function, so you can modify formatting by preceding this
-         * function call with `ioc << [SOME FORMATTING TAGS] << IOControl::send_keep;`
+         * function call with `ioc << [SOME FORMATTING TAGS] << IOCtrl::send;`
          * \param the BenchmarkResult to output from */
         void printResult(BenchmarkResult&);
 
@@ -576,7 +576,7 @@ namespace pawlib
          * removed), and factoring uncertainty into the verdict.
          * Output formatting is retained until the end
          * of the function, so you can modify formatting by preceding this
-         * function call with `ioc << [SOME FORMATTING TAGS] << IOControl::send_keep;`
+         * function call with `ioc << [SOME FORMATTING TAGS] << IOCtrl::send;`
          * \param the BenchmarkResult from test A
          * \param the BenchmarkResult from test B
          * \param the name of test A (optional)

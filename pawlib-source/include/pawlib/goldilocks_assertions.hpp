@@ -104,7 +104,7 @@ namespace pawlib {
             ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
-        ioc << val << " is " << true << IOControl::end;
+        ioc << val << " is " << true << IOCtrl::endl;
         return r;
     }
 
@@ -121,7 +121,7 @@ namespace pawlib {
             ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
-        ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << true << IOControl::end;
+        ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << true << IOCtrl::endl;
         return r;
     }
 
@@ -138,7 +138,7 @@ namespace pawlib {
             ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
-        ioc << val << " is " << false << IOControl::end;
+        ioc << val << " is " << false << IOCtrl::endl;
         return r;
     }
 
@@ -155,7 +155,7 @@ namespace pawlib {
             ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
-        ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << false << IOControl::end;
+        ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << false << IOCtrl::endl;
         return r;
     }
 
@@ -175,7 +175,7 @@ namespace pawlib {
         ioc << lhs
             << " == "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -196,7 +196,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " == "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -217,7 +217,7 @@ namespace pawlib {
         ioc << lhs
             << " == "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -238,7 +238,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " == "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -259,7 +259,7 @@ namespace pawlib {
         ioc << lhs
             << " != "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -280,7 +280,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " != "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -301,7 +301,7 @@ namespace pawlib {
         ioc << lhs
             << " != "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -322,7 +322,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " != "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -343,7 +343,7 @@ namespace pawlib {
         ioc << lhs
             << " < "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -364,7 +364,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " < "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -385,7 +385,7 @@ namespace pawlib {
         ioc << lhs
             << " < "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -406,7 +406,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " < "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -427,7 +427,7 @@ namespace pawlib {
         ioc << lhs
             << " <= "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -448,7 +448,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " <= "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -469,7 +469,7 @@ namespace pawlib {
         ioc << lhs
             << " <= "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -490,7 +490,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " <= "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -511,7 +511,7 @@ namespace pawlib {
         ioc << lhs
             << " > "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -532,7 +532,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " > "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -553,7 +553,7 @@ namespace pawlib {
         ioc << lhs
             << " > "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -574,7 +574,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " > "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -595,7 +595,7 @@ namespace pawlib {
         ioc << lhs
             << " >= "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -616,7 +616,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " >= "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -637,7 +637,7 @@ namespace pawlib {
         ioc << lhs
             << " >= "
             << rhs
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }
@@ -658,7 +658,7 @@ namespace pawlib {
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
             << " >= "
             << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOControl::end;
+            << IOCtrl::endl;
 
         return r;
     }

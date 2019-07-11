@@ -1,5 +1,5 @@
 /** IOChannel [PawLIB]
-  * Version: 1.0
+  * Version: 2.0.0
   *
   * Allows managed, custom output to any console or terminal.
   * See WHAT IS IOCHANNEL? below.
@@ -233,7 +233,7 @@ namespace pawlib
          * This will not override the memory dump read size of built-in
          * types.
          * CAUTION: Misuse can cause SEGFAULT or other memory errors.
-         \param the number of bytes to read*/
+         * \param the number of bytes to read*/
         explicit IOMemReadSize(unsigned int i):readsize(i){}
         unsigned int readsize = 1;
 
@@ -283,7 +283,7 @@ namespace pawlib
     };
     // TODO: Change `IOFormatTextAttr` to a bitfield, to allow multiple format flags.
 
-    /**The standard ANSI text foreground colors.*/
+    /** The standard ANSI text foreground colors. */
     enum class IOFormatTextFG
     {
         //None.
@@ -306,7 +306,7 @@ namespace pawlib
         white = 37
     };
 
-    /** The standard ANSI text background colors.*/
+    /** The standard ANSI text background colors. */
     enum class IOFormatTextBG
     {
         //None.
@@ -329,7 +329,7 @@ namespace pawlib
         white = 47
     };
 
-    /**Basic cursor movement. */
+    /** Basic cursor movement. */
     enum class IOCursor
     {
         // Move cursor left ('\[1D]')
@@ -338,7 +338,7 @@ namespace pawlib
         right
     };
 
-    /**The level of verbosity necessary for the message to display.*/
+    /** The level of verbosity necessary for the message to display. */
     enum class IOVerbosity
     {
         /**Only essential messages and errors. For normal end-use.
@@ -355,10 +355,7 @@ namespace pawlib
         tmi = 3
     };
 
-    /**The category of the message. Don't confuse this with Verbosity!
-    Both a loop iterator output (V_TMI) and rare function start
-    notification (V_NORMAL or V_CHATTY) belong under C_DEBUG, but they
-    have different verbosity levels, as demonstrated.*/
+    /** The category of the message. */
     enum class IOCategory
     {
         /**The default value - anything that doesn't fit elsewhere.*/
@@ -375,27 +372,25 @@ namespace pawlib
         all = 31
     };
 
-    /**Special structures for iochannel, such as "END".*/
-    enum class IOControl
+    /** Controls the output of the IOChannel. */
+    enum class IOCtrl
     {
-        /**Newline, end of message (EoM), remove formatting.*/
-        end = 0,
-        /**Newline, EoM, retain formatting.*/
-        end_keep = 1,
-        /**EoM, remove formatting.*/
-        send = 2,
-        /**EoM, retain formatting.*/
-        send_keep = 3,
-        /**Newline, NOT EoM, retain formatting.*/
-        endline_keep = 4,
-        /**Newline, NOT EoM, remove formatting.*/
-        endline = 5,
-        /**Carriage return and flush, EoM, remove formatting.*/
-        show = 6,
-        /**Carriage return and flush, EoM, retain formatting.*/
-        show_keep = 7,
-        /**Flush only.*/
-        flush = 8
+        /// Send, keep formatting
+        send = 1,
+        clear = 2,
+        r = 4,
+        n = 8,
+        flush = 16,
+        /// Send with carriage return (\r), keep formatting
+        sendc = 1 | 4 | 16,
+        /// Send with line feed (\n), keep formatting
+        sendl = 1 | 8 | 16,
+        /// Send, clear formatting
+        end = 1 | 2,
+        /// End with carriage return (\r), clear formatting
+        endc = 1 | 2 | 4 | 16,
+        /// End with line feed (\n), clear formatting
+        endl = 1 | 2 | 8 | 16,
     };
 
     enum class IOEchoMode
@@ -705,11 +700,12 @@ namespace pawlib
                 return *this;
             }
 
+            iochannel& operator<<(const IOFormat&);
             iochannel& operator<<(const IOCursor&);
             iochannel& operator<<(const IOMemReadSize&);
             iochannel& operator<<(const IOVerbosity&);
             iochannel& operator<<(const IOCategory&);
-            iochannel& operator<<(const IOControl&);
+            iochannel& operator<<(const IOCtrl&);
 
             void configure_echo(IOEchoMode, IOVerbosity = IOVerbosity::tmi, IOCategory = IOCategory::all);
 

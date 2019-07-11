@@ -123,6 +123,7 @@
         "ASGN",
         "cpuid",
         "cstr",
+        "endc",
         "echovrb",
         "fooptr",
         "ftoa",
@@ -133,6 +134,8 @@
         "poolrf",
         "pydsigner",
         "rdtsc",
+        "sendc",
+        "sendl",
         "stoi",
     ],
 

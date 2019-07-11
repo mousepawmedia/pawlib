@@ -194,7 +194,7 @@ namespace pawlib
             //Prints the first byte in the FlexBit.
             void printPeek()
             {
-                ioc << peek().to_string() << IOControl::end;
+                ioc << peek().to_string() << IOCtrl::endl;
             }
 
         private:

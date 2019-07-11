@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     else
     {
         ioc << pawlib::IOFormatTextAttr::bold << pawlib::IOFormatTextFG::blue
-            << "===== PawLIB Tester =====\n" << pawlib::IOControl::end;
+            << "===== PawLIB Tester =====\n" << pawlib::IOCtrl::endl;
 
         test_code();
 

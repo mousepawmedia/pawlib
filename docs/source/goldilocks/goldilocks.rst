@@ -200,17 +200,17 @@ demonstrate their behavior.
 
         bool pre()
         {
-            ioc << cat_testing << "Do Pre Stuff" << IOControl::end;
+            ioc << cat_testing << "Do Pre Stuff" << IOCtrl::endl;
             return true;
         }
         bool prefail()
         {
-            ioc << cat_testing << "Do Prefail Stuff" << IOControl::end;
+            ioc << cat_testing << "Do Prefail Stuff" << IOCtrl::endl;
             return true;
         }
         bool run()
         {
-            ioc << cat_testing << "Do Test Stuff" << IOControl::end;
+            ioc << cat_testing << "Do Test Stuff" << IOCtrl::endl;
             char str[5000] = {'\0'};
             for(int a=0;a<5000;a++)
             {
@@ -220,17 +220,17 @@ demonstrate their behavior.
         }
         bool janitor()
         {
-            ioc << cat_testing << "Do Janitorial Stuff" << IOControl::end;
+            ioc << cat_testing << "Do Janitorial Stuff" << IOCtrl::endl;
             return true;
         }
         bool postmortem()
         {
-            ioc << cat_testing << "Do Postmortem Stuff" << IOControl::end;
+            ioc << cat_testing << "Do Postmortem Stuff" << IOCtrl::endl;
             return true;
         }
         bool post()
         {
-            ioc << cat_testing << "Do Post Stuff" << IOControl::end;
+            ioc << cat_testing << "Do Post Stuff" << IOCtrl::endl;
             return true;
         }
         ~TestFoo(){}

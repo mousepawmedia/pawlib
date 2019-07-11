@@ -8,9 +8,10 @@ namespace pawlib
         return static_cast<T>
             (static_cast<int>(lhs) & static_cast<int>(rhs));
     }
-    template IOVerbosity operator&<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
     template IOCategory operator&<IOCategory>(const IOCategory&, const IOCategory&);
+    template IOCtrl operator&<IOCtrl>(const IOCtrl&, const IOCtrl&);
     template IOFormatMemSep operator&<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
+    template IOVerbosity operator&<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
 
     template<typename T>
     T operator|(const T& lhs, const T& rhs)
@@ -18,9 +19,10 @@ namespace pawlib
         return static_cast<T>
             (static_cast<int>(lhs) | static_cast<int>(rhs));
     }
-    template IOVerbosity operator|<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
     template IOCategory operator|<IOCategory>(const IOCategory&, const IOCategory&);
+    template IOCtrl operator|<IOCtrl>(const IOCtrl&, const IOCtrl&);
     template IOFormatMemSep operator|<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
+    template IOVerbosity operator|<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
 
     template<typename T>
     T operator^(const T& lhs, const T& rhs)
@@ -28,18 +30,20 @@ namespace pawlib
         return static_cast<T>
             (static_cast<int>(lhs) ^ static_cast<int>(rhs));
     }
-    template IOVerbosity operator^<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
     template IOCategory operator^<IOCategory>(const IOCategory&, const IOCategory&);
+    template IOCtrl operator^<IOCtrl>(const IOCtrl&, const IOCtrl&);
     template IOFormatMemSep operator^<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
+    template IOVerbosity operator^<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
 
     template<typename T>
     T operator~(const T& rhs)
     {
         return static_cast<T>(~static_cast<int>(rhs));
     }
-    template IOVerbosity operator~<IOVerbosity>(const IOVerbosity&);
     template IOCategory operator~<IOCategory>(const IOCategory&);
+    template IOCtrl operator~<IOCtrl>(const IOCtrl&);
     template IOFormatMemSep operator~<IOFormatMemSep>(const IOFormatMemSep&);
+    template IOVerbosity operator~<IOVerbosity>(const IOVerbosity&);
 
     //Declaring global instance of ioc.
     iochannel ioc;
@@ -202,7 +206,11 @@ namespace pawlib
         return *this;
     }
 
-    //------------ ENUMERATIONS ------------//
+    iochannel& iochannel::operator<<(const IOFormat& rhs)
+    {
+        fmt = rhs;
+        return *this;
+    }
 
     iochannel& iochannel::operator<<(const IOCursor& rhs)
     {
@@ -242,65 +250,39 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOControl& rhs)
+    iochannel& iochannel::operator<<(const IOCtrl& rhs)
     {
         /* We'll need to track whether we're supposed to ask the transmission
          * to clear the flags. Doing it ourselves in this function
          * was the cause of T1081. */
         bool keep = true;
 
-        switch(rhs)
+        if(static_cast<bool>(rhs & IOCtrl::clear))
         {
-            case IOControl::end:
-            {
-                reset_attributes();
-                keep = false;
-                [[fallthrough]];
-            }
-            case IOControl::end_keep:
-            {
-                (can_parse()) ? inject("\n") : inject("");
-                transmit(keep);
-                break;
-            }
-            case IOControl::send:
-            {
-                reset_attributes();
-                keep = false;
-                [[fallthrough]];
-            }
-            case IOControl::send_keep:
-            {
-                inject("");
-                transmit(keep);
-                break;
-            }
-            case IOControl::endline:
-            {
-                reset_attributes();
-                [[fallthrough]];
-            }
-            case IOControl::endline_keep:
-            {
-                (can_parse()) ? inject("\n") : inject("");
-                break;
-            }
-            case IOControl::show:
-            {
-                reset_attributes();
-                [[fallthrough]];
-            }
-            case IOControl::show_keep:
-            {
-                (can_parse()) ? inject("\r") : inject("");
-                [[fallthrough]];
-            }
-            case IOControl::flush:
-            {
-                flush();
-                break;
-            }
+            reset_attributes();
+            keep = false;
         }
+
+        if(static_cast<bool>(rhs & IOCtrl::r))
+        {
+            can_parse() ? inject("\r") : inject("");
+        }
+
+        if(static_cast<bool>(rhs & IOCtrl::n))
+        {
+            can_parse() ? inject("\n") : inject("");
+        }
+
+        if(static_cast<bool>(rhs & IOCtrl::send))
+        {
+            transmit(keep);
+        }
+
+        if(static_cast<bool>(rhs & IOCtrl::flush))
+        {
+            flush();
+        }
+
         return *this;
     }
 

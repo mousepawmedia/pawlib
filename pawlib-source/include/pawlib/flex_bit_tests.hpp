@@ -94,13 +94,13 @@ namespace pawlib
                 catch (const std::exception& e)
                 {
                     //Any unaccounted for exception.
-                    ioc << IOCategory::error << "Error occurred: " << e << IOControl::end;
+                    ioc << IOCategory::error << "Error occurred: " << e << IOCtrl::endl;
                     return false;
                 }
                 catch (...)
                 {
                     //Unknown failure.
-                    ioc << IOCategory::error << "Unknown failure occurred." << IOControl::end;
+                    ioc << IOCategory::error << "Unknown failure occurred." << IOCtrl::endl;
                     return false;
                 }
 
@@ -181,19 +181,19 @@ namespace pawlib
                 catch (const std::out_of_range& e)
                 {
                     //Out of range exception.
-                    ioc << IOCategory::error << "Out of range error: " << e << IOControl::end;
+                    ioc << IOCategory::error << "Out of range error: " << e << IOCtrl::endl;
                     return false;
                 }
                 catch (const std::exception& e)
                 {
                     //Any unaccounted for exception.
-                    ioc << IOCategory::error << "Error occurred: " << e << IOControl::end;
+                    ioc << IOCategory::error << "Error occurred: " << e << IOCtrl::endl;
                     return false;
                 }
                 catch (...)
                 {
                     //Unknown failure.
-                    ioc << IOCategory::error << "Unknown failure occurred." << IOControl::end;
+                    ioc << IOCategory::error << "Unknown failure occurred." << IOCtrl::endl;
                     return false;
                 }
 
@@ -274,19 +274,19 @@ namespace pawlib
                 catch (const std::length_error& e)
                 {
                     //Length error, which is only thrown inside poll().
-                    ioc << IOCategory::error << "Length error: " << e << IOControl::end;
+                    ioc << IOCategory::error << "Length error: " << e << IOCtrl::endl;
                     return false;
                 }
                 catch (const std::exception& e)
                 {
                     //Any unaccounted for exception.
-                    ioc << IOCategory::error << "Error occurred: " << e << IOControl::end;
+                    ioc << IOCategory::error << "Error occurred: " << e << IOCtrl::endl;
                     return false;
                 }
                 catch (...)
                 {
                     //Unknown failure.
-                    ioc << IOCategory::error << "Unknown failure occurred." << IOControl::end;
+                    ioc << IOCategory::error << "Unknown failure occurred." << IOCtrl::endl;
                     return false;
                 }
 
@@ -378,20 +378,20 @@ namespace pawlib
                 catch (const std::length_error& e)
                 {
                     //Length error.
-                    ioc << IOCategory::error << "Length error: " << e << IOControl::end;
+                    ioc << IOCategory::error << "Length error: " << e << IOCtrl::endl;
                     return false;
                 }
                 catch (const std::exception& e)
                 {
                     //Any unaccounted for exception.
-                    ioc << IOCategory::error << "Error occurred: " << e << IOControl::end;
+                    ioc << IOCategory::error << "Error occurred: " << e << IOCtrl::endl;
                     return false;
                 }
                 catch (...)
                 {
                     //Unknown failure.
                     std::cerr << "Unknown failure occurred." << std::endl;
-                    ioc << IOCategory::error << "Unknown failure occurred." << IOControl::end;
+                    ioc << IOCategory::error << "Unknown failure occurred." << IOCtrl::endl;
                     return false;
                 }
 
