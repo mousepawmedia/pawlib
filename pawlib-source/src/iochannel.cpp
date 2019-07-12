@@ -8,10 +8,10 @@ namespace pawlib
         return static_cast<T>
             (static_cast<int>(lhs) & static_cast<int>(rhs));
     }
-    template IOCategory operator&<IOCategory>(const IOCategory&, const IOCategory&);
+    template IOCat operator&<IOCat>(const IOCat&, const IOCat&);
     template IOCtrl operator&<IOCtrl>(const IOCtrl&, const IOCtrl&);
     template IOFormatMemSep operator&<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
-    template IOVerbosity operator&<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
+    template IOVrb operator&<IOVrb>(const IOVrb&, const IOVrb&);
 
     template<typename T>
     T operator|(const T& lhs, const T& rhs)
@@ -19,10 +19,10 @@ namespace pawlib
         return static_cast<T>
             (static_cast<int>(lhs) | static_cast<int>(rhs));
     }
-    template IOCategory operator|<IOCategory>(const IOCategory&, const IOCategory&);
+    template IOCat operator|<IOCat>(const IOCat&, const IOCat&);
     template IOCtrl operator|<IOCtrl>(const IOCtrl&, const IOCtrl&);
     template IOFormatMemSep operator|<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
-    template IOVerbosity operator|<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
+    template IOVrb operator|<IOVrb>(const IOVrb&, const IOVrb&);
 
     template<typename T>
     T operator^(const T& lhs, const T& rhs)
@@ -30,35 +30,35 @@ namespace pawlib
         return static_cast<T>
             (static_cast<int>(lhs) ^ static_cast<int>(rhs));
     }
-    template IOCategory operator^<IOCategory>(const IOCategory&, const IOCategory&);
+    template IOCat operator^<IOCat>(const IOCat&, const IOCat&);
     template IOCtrl operator^<IOCtrl>(const IOCtrl&, const IOCtrl&);
     template IOFormatMemSep operator^<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
-    template IOVerbosity operator^<IOVerbosity>(const IOVerbosity&, const IOVerbosity&);
+    template IOVrb operator^<IOVrb>(const IOVrb&, const IOVrb&);
 
     template<typename T>
     T operator~(const T& rhs)
     {
         return static_cast<T>(~static_cast<int>(rhs));
     }
-    template IOCategory operator~<IOCategory>(const IOCategory&);
+    template IOCat operator~<IOCat>(const IOCat&);
     template IOCtrl operator~<IOCtrl>(const IOCtrl&);
     template IOFormatMemSep operator~<IOFormatMemSep>(const IOFormatMemSep&);
-    template IOVerbosity operator~<IOVerbosity>(const IOVerbosity&);
+    template IOVrb operator~<IOVrb>(const IOVrb&);
 
     //Declaring global instance of ioc.
     iochannel ioc;
 
     iochannel::iochannel()
     : msg(""),
-      process_c(static_cast<int>(IOCategory::all)),
-      process_v(static_cast<int>(IOVerbosity::tmi)),
+      process_c(static_cast<int>(IOCat::all)),
+      process_v(static_cast<int>(IOVrb::tmi)),
       echomode(IOEchoMode::cout),
-      echovrb(IOVerbosity::tmi),
-      echocat(IOCategory::all),
+      echovrb(IOVrb::tmi),
+      echocat(IOCat::all),
       fmt(IOFormat()),
       readsize(IOMemReadSize(1)),
-      vrb(IOVerbosity::normal),
-      cat(IOCategory::normal),
+      vrb(IOVrb::normal),
+      cat(IOCat::normal),
       parse(maybe),
       dirty_attributes(false)
     {}
@@ -232,7 +232,7 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOVerbosity& rhs)
+    iochannel& iochannel::operator<<(const IOVrb& rhs)
     {
         //Set the verbosity.
         vrb = rhs;
@@ -241,7 +241,7 @@ namespace pawlib
         return *this;
     }
 
-    iochannel& iochannel::operator<<(const IOCategory& rhs)
+    iochannel& iochannel::operator<<(const IOCat& rhs)
     {
         //Set the category.
         cat = rhs;
@@ -524,7 +524,7 @@ namespace pawlib
         msg = "";
     }
 
-    void iochannel::configure_echo(IOEchoMode echo, IOVerbosity echo_vrb, IOCategory echo_cat)
+    void iochannel::configure_echo(IOEchoMode echo, IOVrb echo_vrb, IOCat echo_cat)
     {
         echomode = echo;
         echovrb = echo_vrb;
@@ -635,7 +635,7 @@ namespace pawlib
         }
     }
 
-    void iochannel::shutup(IOCategory cat)
+    void iochannel::shutup(IOCat cat)
     {
         int c = static_cast<int>(cat);
 
@@ -648,7 +648,7 @@ namespace pawlib
         parse = maybe;
     }
 
-    void iochannel::shutup(IOVerbosity vrb)
+    void iochannel::shutup(IOVrb vrb)
     {
         int v = static_cast<int>(vrb);
 
@@ -660,13 +660,13 @@ namespace pawlib
 
     void iochannel::speakup()
     {
-        process_v = static_cast<int>(IOVerbosity::tmi);
-        process_c = static_cast<int>(IOCategory::all);
+        process_v = static_cast<int>(IOVrb::tmi);
+        process_c = static_cast<int>(IOCat::all);
         //Revalidate parsing.
         parse = maybe;
     }
 
-    void iochannel::speakup(IOCategory cat)
+    void iochannel::speakup(IOCat cat)
     {
         int c = static_cast<int>(cat);
 
@@ -676,7 +676,7 @@ namespace pawlib
         parse = maybe;
     }
 
-    void iochannel::speakup(IOVerbosity vrb)
+    void iochannel::speakup(IOVrb vrb)
     {
         int v = static_cast<int>(vrb);
 
@@ -714,8 +714,8 @@ namespace pawlib
         readsize = IOMemReadSize(1);
 
         //We reset the verbosity and category.
-        vrb = IOVerbosity::normal;
-        cat = IOCategory::normal;
+        vrb = IOVrb::normal;
+        cat = IOCat::normal;
     }
 
     void iochannel::transmit(bool keep)
@@ -724,7 +724,7 @@ namespace pawlib
         {
             switch(vrb)
             {
-                case IOVerbosity::quiet:
+                case IOVrb::quiet:
                 {
                     // Dispatch the "quiet" verbosity signal.
                     signal_v_quiet.dispatch(msg, cat);
@@ -734,19 +734,19 @@ namespace pawlib
                      */
                     [[fallthrough]];
                 }
-                case IOVerbosity::normal:
+                case IOVrb::normal:
                 {
                     // Dispatch the "normal" verbosity signal.
                     signal_v_normal.dispatch(msg, cat);
                     [[fallthrough]];
                 }
-                case IOVerbosity::chatty:
+                case IOVrb::chatty:
                 {
                     // Dispatch the "chatty" verbosity signal.
                     signal_v_chatty.dispatch(msg, cat);
                     [[fallthrough]];
                 }
-                case IOVerbosity::tmi:
+                case IOVrb::tmi:
                 {
                     // Dispatch the "TMI" verbosity signal.
                     signal_v_tmi.dispatch(msg, cat);
@@ -754,27 +754,27 @@ namespace pawlib
                 }
             }
 
-            if(static_cast<bool>(cat & IOCategory::normal))
+            if(static_cast<bool>(cat & IOCat::normal))
             {
                 // Dispatch the "normal" category signal.
                 signal_c_normal.dispatch(msg, vrb);
             }
-            if(static_cast<bool>(cat & IOCategory::debug))
+            if(static_cast<bool>(cat & IOCat::debug))
             {
                 // Dispatch the "debug" category signal.
                 signal_c_debug.dispatch(msg, vrb);
             }
-            if(static_cast<bool>(cat & IOCategory::warning))
+            if(static_cast<bool>(cat & IOCat::warning))
             {
                 // Dispatch the "warning" category signal.
                 signal_c_warning.dispatch(msg, vrb);
             }
-            if(static_cast<bool>(cat & IOCategory::error))
+            if(static_cast<bool>(cat & IOCat::error))
             {
                 // Dispatch the "error" category signal.
                 signal_c_error.dispatch(msg, vrb);
             }
-            if(static_cast<bool>(cat & IOCategory::testing))
+            if(static_cast<bool>(cat & IOCat::testing))
             {
                 // Dispatch the "testing" category signal.
                 signal_c_testing.dispatch(msg, vrb);
@@ -788,14 +788,14 @@ namespace pawlib
             if(echomode != IOEchoMode::none)
             {
                 //If the verbosity and category is correct...
-                if(vrb <= echovrb && (cat == echocat || echocat == IOCategory::all))
+                if(vrb <= echovrb && (cat == echocat || echocat == IOCat::all))
                 {
                     switch(echomode)
                     {
                         // If we're supposed to use `printf`...
                         case IOEchoMode::printf:
                         {
-                            if(static_cast<bool>(cat & IOCategory::error))
+                            if(static_cast<bool>(cat & IOCat::error))
                             {
                                 /* Route the message through stderr
                                  * instead of stdout.*/
@@ -811,7 +811,7 @@ namespace pawlib
                         // If we're supposed to use `std::cout`...
                         case IOEchoMode::cout:
                         {
-                            if(static_cast<bool>(cat & IOCategory::error))
+                            if(static_cast<bool>(cat & IOCat::error))
                             {
                                 /* Route the message through stderr
                                  * instead of stdout.*/

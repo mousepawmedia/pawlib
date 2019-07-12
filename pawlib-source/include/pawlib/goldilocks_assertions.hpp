@@ -96,12 +96,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(val)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << val << " is " << true << IOCtrl::endl;
@@ -113,12 +113,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(*val)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << true << IOCtrl::endl;
@@ -130,12 +130,12 @@ namespace pawlib {
     {
         bool r = true;
         if (val) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << val << " is " << false << IOCtrl::endl;
@@ -147,12 +147,12 @@ namespace pawlib {
     {
        bool r = true;
         if (*val) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << false << IOCtrl::endl;
@@ -164,12 +164,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(lhs == rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs
@@ -185,12 +185,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(*lhs == *rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -206,12 +206,12 @@ namespace pawlib {
     {
         bool r = true;
         if (lhs == rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs
@@ -227,12 +227,12 @@ namespace pawlib {
     {
         bool r = true;
         if (*lhs == *rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -248,12 +248,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(lhs != rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs
@@ -269,12 +269,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(*lhs != *rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -290,12 +290,12 @@ namespace pawlib {
     {
         bool r = true;
         if (lhs != rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs
@@ -311,12 +311,12 @@ namespace pawlib {
     {
         bool r = true;
         if (*lhs != *rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -332,12 +332,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(lhs < rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs
@@ -353,12 +353,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(*lhs < *rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -374,12 +374,12 @@ namespace pawlib {
     {
         bool r = true;
         if (lhs < rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs
@@ -395,12 +395,12 @@ namespace pawlib {
     {
         bool r = true;
         if (*lhs < *rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -416,12 +416,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(lhs <= rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs
@@ -437,12 +437,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(*lhs <= *rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -458,12 +458,12 @@ namespace pawlib {
     {
         bool r = true;
         if (lhs <= rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs
@@ -479,12 +479,12 @@ namespace pawlib {
     {
         bool r = true;
         if (*lhs <= *rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -500,12 +500,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(lhs > rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs
@@ -521,12 +521,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(*lhs > *rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -542,12 +542,12 @@ namespace pawlib {
     {
         bool r = true;
         if (lhs > rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs
@@ -563,12 +563,12 @@ namespace pawlib {
     {
         bool r = true;
         if (*lhs > *rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -584,12 +584,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(lhs >= rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs
@@ -605,12 +605,12 @@ namespace pawlib {
     {
         bool r = true;
         if (!(*lhs >= *rhs)) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
@@ -626,12 +626,12 @@ namespace pawlib {
     {
         bool r = true;
         if (lhs >= rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs
@@ -647,12 +647,12 @@ namespace pawlib {
     {
         bool r = true;
         if (*lhs >= *rhs) {
-            ioc << IOCategory::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
             r = false;
         }
         else
         {
-            ioc << IOCategory::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
         }
 
         ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "

@@ -104,7 +104,7 @@ Reserve Size
 We can specify the initial size (in elements) of the FlexArray in the
 constructor.
 
-..  code-block::
+..  code-block:: c++
 
     FlexArray<int>* temps_high = new FlexArray<int>(100);
 

@@ -185,7 +185,7 @@ namespace pawlib
                 else
                 {
                     // Throw non-fatal error.
-                    ioc << IOCategory::error << "BaseFlexArray Erase: Invalid range ("
+                    ioc << IOCat::error << "BaseFlexArray Erase: Invalid range ("
                         << first << " - " << last << "). Took no action."
                         << IOCtrl::endl;
                     return false;
@@ -275,7 +275,7 @@ namespace pawlib
                     if(yell)
                     {
                         // Throw a non-fatal error. Numbers are 0-based.
-                        ioc << IOCategory::error << IOVerbosity::quiet << "Index " << index
+                        ioc << IOCat::error << IOVrb::quiet << "Index " << index
                         << " out of bounds [0 - " << this->_elements - 1
                         << "]." << IOCtrl::endl;
                     }
@@ -458,7 +458,7 @@ namespace pawlib
                     {
                         if(yell)
                         {
-                            ioc << IOCategory::error
+                            ioc << IOCat::error
                             << "Data structure is full and cannot be resized."
                             << IOCtrl::endl;
                         }

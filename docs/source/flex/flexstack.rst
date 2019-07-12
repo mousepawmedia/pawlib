@@ -105,7 +105,7 @@ Reserve Size
 We can specify the initial size (in elements) of the FlexStack in the
 constructor.
 
-..  code-block::
+..  code-block:: c++
 
     FlexStack<int>* temps_high = new FlexStack<int>(100);
 

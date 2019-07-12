@@ -108,7 +108,7 @@ Reserve Size
 We can specify the initial size (in elements) of the FlexQueue in the
 constructor.
 
-..  code-block::
+..  code-block:: c++
 
     FlexQueue<int>* dmvLine = new FlexQueue<int>(250);
 

@@ -1,4 +1,4 @@
-PawLIB 1.1 Documentation
+PawLIB 2.0 Documentation
 ################################
 
 The **PawLIB** static library provides various common utility functions,

@@ -148,12 +148,12 @@ namespace pawlib
             //otherwise it returns the node that was removed
             Node<Type>* remove(int index){
                 if(size == 0){
-                    ioc << IOCategory::error << IOVerbosity::quiet << "List is empty" << IOCtrl::endl;
+                    ioc << IOCat::error << IOVrb::quiet << "List is empty" << IOCtrl::endl;
                     return nullptr;
                 }
                 else if(index < 0 || index > size - 1)
                 {
-                    ioc << IOCategory::error << IOVerbosity::quiet << "Index out of bounds" << IOCtrl::endl;
+                    ioc << IOCat::error << IOVrb::quiet << "Index out of bounds" << IOCtrl::endl;
                     return nullptr;
                 }
                 else if(index == 0)

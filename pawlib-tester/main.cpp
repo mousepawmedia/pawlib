@@ -55,6 +55,8 @@
 #include "pawlib/onechar_tests.hpp"
 #include "pawlib/pool_tests.hpp"
 
+using namespace pawlib;
+
 /** Temporary test code goes in this function ONLY.
   * All test code that is needed long term should be
   * moved to a dedicated Goldilocks Test and TestSuite.

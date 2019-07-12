@@ -241,21 +241,21 @@ namespace pawlib
             }
             else if(tokens[0] == "suite")
             {
-                ioc << IOFormatTextFG::yellow << IOFormatTextAttr::bold << IOCategory::warning
+                ioc << IOFormatTextFG::yellow << IOFormatTextAttr::bold << IOCat::warning
                 << "[Deprecated] Use 'run [suite]' instead."
                 << IOCtrl::endl;
                 run(tokens);
             }
             else if(tokens[0] == "test")
             {
-                ioc << IOFormatTextFG::yellow << IOFormatTextAttr::bold << IOCategory::warning
+                ioc << IOFormatTextFG::yellow << IOFormatTextAttr::bold << IOCat::warning
                     << "[Deprecated] Use 'run [test] (number)' instead."
                     << IOCtrl::endl;
                 run(tokens);
             }
             else
             {
-                ioc << IOFormatTextAttr::bold << IOCategory::warning
+                ioc << IOFormatTextAttr::bold << IOCat::warning
                     << "Unrecognized command. Type 'help' for help." << IOCtrl::endl;
             }
 
@@ -345,7 +345,7 @@ namespace pawlib
             }
             catch(const std::invalid_argument&)
             {
-                ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
+                ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCat::error
                 << "ERROR: " << tokens[2] << " is not a valid integer. "
                 << "Please specify a valid number of reptitions for "
                 << "the benchmark." << IOCtrl::endl;
@@ -369,7 +369,7 @@ namespace pawlib
             }
             catch(const std::invalid_argument&)
             {
-                ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
+                ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCat::error
                 << "ERROR: " << tokens[3] << " is not a valid integer. "
                 << "Please specify a valid number of reptitions for "
                 << "the benchmark." << IOCtrl::endl;
@@ -424,7 +424,7 @@ namespace pawlib
             }
             catch(const std::invalid_argument&)
             {
-                ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
+                ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCat::error
                 << "ERROR: " << tokens[2] << " is not a valid integer. "
                 << "Please specify a valid number of reptitions for "
                 << "the test." << IOCtrl::endl;
@@ -447,14 +447,14 @@ namespace pawlib
         // If there are not enough arguments, throw error and return 0.
         if(args < min)
         {
-            ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
+            ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCat::error
                 << "ERROR: Not enough arguments." << IOCtrl::endl;
             return 0;
         }
         // Else if there are too many arguments, throw error and return 0.
         else if(args > max)
         {
-            ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCategory::error
+            ioc << IOFormatTextFG::red << IOFormatTextAttr::bold << IOCat::error
                 << "ERROR: Too many arguments." << IOCtrl::endl;
             return 0;
         }

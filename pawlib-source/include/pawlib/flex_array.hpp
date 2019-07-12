@@ -84,7 +84,7 @@ namespace pawlib
             {
                 if(!this->validateIndex(index))
                 {
-                    ioc << IOCategory::error << IOVerbosity::quiet
+                    ioc << IOCat::error << IOVrb::quiet
                         << "FlexArray: insert() failed. " << index
                         << " out of bounds [0 - " << this->_elements - 1
                         << "]." << IOCtrl::endl;

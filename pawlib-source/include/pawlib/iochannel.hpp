@@ -133,6 +133,63 @@ namespace pawlib
     class tril;
     class iochannel;
 
+    /** The category of the message. */
+    enum class IOCat
+    {
+        /**The default value - anything that doesn't fit elsewhere.*/
+        normal = 1,
+        /**Warnings, but not necessarily errors.*/
+        warning = 2,
+        /**Error messages.*/
+        error = 4,
+        /**Debug messages, such as variable outputs.*/
+        debug = 8,
+        /**Testing messages that we may want shut off during benchmarking.*/
+        testing = 16,
+        /**All message categories. Does not have a correlating signal.*/
+        all = 31
+    };
+
+    /** Controls the output of the IOChannel. */
+    enum class IOCtrl
+    {
+        /// Send, keep formatting
+        send = 1,
+        clear = 2,
+        r = 4,
+        n = 8,
+        flush = 16,
+        /// Send with carriage return (\r), keep formatting
+        sendc = 1 | 4 | 16,
+        /// Send with line feed (\n), keep formatting
+        sendl = 1 | 8 | 16,
+        /// Send, clear formatting
+        end = 1 | 2,
+        /// End with carriage return (\r), clear formatting
+        endc = 1 | 2 | 4 | 16,
+        /// End with line feed (\n), clear formatting
+        endl = 1 | 2 | 8 | 16,
+    };
+
+    /** Basic cursor movement. */
+    enum class IOCursor
+    {
+        // Move cursor left ('\[1D]')
+        left,
+        // Move cursor right ('\[1C]')
+        right
+    };
+
+    enum class IOEchoMode
+    {
+        /** Don't automatically output messages via the stdout echo. */
+        none = 0,
+        /** Output messages to stdout via C-style `printf`. */
+        printf = 1,
+        /** Output messages to stdout via C++-style `std::cout`. */
+        cout = 2
+    };
+
     enum class IOFormatBase
     {
         bin = 2,
@@ -197,50 +254,10 @@ namespace pawlib
         scott = 4
     };
 
-    struct IOFormatSignificands
+    enum class IOFormatCharValue
     {
-        explicit IOFormatSignificands(unsigned int s):significands(s){}
-        int significands = 14;
-    };
-
-    enum class IOFormatSciNotation
-    {
-        ///Turn off all scientific notation.
-        none = 0,
-        ///Automatically select the best option.
-        automatic = 1,
-        ///Turn on all scientific notation.
-        on = 2
-    };
-
-    enum class IOFormatPtr
-    {
-        ///Print the value at the address.
-        value = 0,
-        ///Print the actual memory address.
-        address = 1,
-        ///Dump the hexadecimal representation of the memory at address.
-        memory = 2
-    };
-
-    /**Indicate how many bytes to read from any pointer that isn't
-     * recognized explicitly by iochannel, including void pointers.
-     * This will not override the memory dump read size of built-in types.*/
-    struct IOMemReadSize
-    {
-        /**Indicate how many bytes to read from any pointer that isn't
-         * recognized explicitly by iochannel, including void pointers.
-         * This will not override the memory dump read size of built-in
-         * types.
-         * CAUTION: Misuse can cause SEGFAULT or other memory errors.
-         * \param the number of bytes to read*/
-        explicit IOMemReadSize(unsigned int i):readsize(i){}
-        unsigned int readsize = 1;
-
-        void operator=(unsigned int rhs)
-        {
-            readsize = rhs;
-        }
+        as_char = 0,
+        as_int = 1
     };
 
     enum class IOFormatMemSep
@@ -255,7 +272,7 @@ namespace pawlib
         all = 3
     };
 
-    enum class IOFormatNumeralCase
+    enum class IOFormatNumCase
     {
         ///Print all letter digits as lowercase.
         lower = 0,
@@ -263,10 +280,30 @@ namespace pawlib
         upper = 1
     };
 
-    enum class IOFormatCharValue
+    enum class IOFormatPtr
     {
-        as_char = 0,
-        as_int = 1
+        ///Print the value at the address.
+        value = 0,
+        ///Print the actual memory address.
+        address = 1,
+        ///Dump the hexadecimal representation of the memory at address.
+        memory = 2
+    };
+
+    enum class IOFormatSciNotation
+    {
+        ///Turn off all scientific notation.
+        none = 0,
+        ///Automatically select the best option.
+        automatic = 1,
+        ///Turn on all scientific notation.
+        on = 2
+    };
+
+    struct IOFormatSignificands
+    {
+        explicit IOFormatSignificands(unsigned int s):significands(s){}
+        int significands = 14;
     };
 
     /**The standard ANSI text attributes.*/
@@ -282,29 +319,6 @@ namespace pawlib
         invert = 6
     };
     // TODO: Change `IOFormatTextAttr` to a bitfield, to allow multiple format flags.
-
-    /** The standard ANSI text foreground colors. */
-    enum class IOFormatTextFG
-    {
-        //None.
-        none = 0,
-        ///Black text.
-        black = 30,
-        ///Red text.
-        red = 31,
-        ///Green text
-        green = 32,
-        ///Yellow text.
-        yellow = 33,
-        ///Blue text.
-        blue = 34,
-        ///Magenta text.
-        magenta = 35,
-        ///Cyan text.
-        cyan = 36,
-        ///White text.
-        white = 37
-    };
 
     /** The standard ANSI text background colors. */
     enum class IOFormatTextBG
@@ -329,17 +343,51 @@ namespace pawlib
         white = 47
     };
 
-    /** Basic cursor movement. */
-    enum class IOCursor
+    /** The standard ANSI text foreground colors. */
+    enum class IOFormatTextFG
     {
-        // Move cursor left ('\[1D]')
-        left,
-        // Move cursor right ('\[1C]')
-        right
+        //None.
+        none = 0,
+        ///Black text.
+        black = 30,
+        ///Red text.
+        red = 31,
+        ///Green text
+        green = 32,
+        ///Yellow text.
+        yellow = 33,
+        ///Blue text.
+        blue = 34,
+        ///Magenta text.
+        magenta = 35,
+        ///Cyan text.
+        cyan = 36,
+        ///White text.
+        white = 37
+    };
+
+    /**Indicate how many bytes to read from any pointer that isn't
+     * recognized explicitly by iochannel, including void pointers.
+     * This will not override the memory dump read size of built-in types.*/
+    struct IOMemReadSize
+    {
+        /**Indicate how many bytes to read from any pointer that isn't
+         * recognized explicitly by iochannel, including void pointers.
+         * This will not override the memory dump read size of built-in
+         * types.
+         * CAUTION: Misuse can cause SEGFAULT or other memory errors.
+         * \param the number of bytes to read*/
+        explicit IOMemReadSize(unsigned int i):readsize(i){}
+        unsigned int readsize = 1;
+
+        void operator=(unsigned int rhs)
+        {
+            readsize = rhs;
+        }
     };
 
     /** The level of verbosity necessary for the message to display. */
-    enum class IOVerbosity
+    enum class IOVrb
     {
         /**Only essential messages and errors. For normal end-use.
         Shipping default.*/
@@ -353,54 +401,6 @@ namespace pawlib
         /**Absolutely everything. For intense testing, detailed
         debugging, and driving the developers crazy.*/
         tmi = 3
-    };
-
-    /** The category of the message. */
-    enum class IOCategory
-    {
-        /**The default value - anything that doesn't fit elsewhere.*/
-        normal = 1,
-        /**Warnings, but not necessarily errors.*/
-        warning = 2,
-        /**Error messages.*/
-        error = 4,
-        /**Debug messages, such as variable outputs.*/
-        debug = 8,
-        /**Testing messages that we may want shut off during benchmarking.*/
-        testing = 16,
-        /**All message categories. Does not have a correlating signal.*/
-        all = 31
-    };
-
-    /** Controls the output of the IOChannel. */
-    enum class IOCtrl
-    {
-        /// Send, keep formatting
-        send = 1,
-        clear = 2,
-        r = 4,
-        n = 8,
-        flush = 16,
-        /// Send with carriage return (\r), keep formatting
-        sendc = 1 | 4 | 16,
-        /// Send with line feed (\n), keep formatting
-        sendl = 1 | 8 | 16,
-        /// Send, clear formatting
-        end = 1 | 2,
-        /// End with carriage return (\r), clear formatting
-        endc = 1 | 2 | 4 | 16,
-        /// End with line feed (\n), clear formatting
-        endl = 1 | 2 | 8 | 16,
-    };
-
-    enum class IOEchoMode
-    {
-        /** Don't automatically output messages via the stdout echo. */
-        none = 0,
-        /** Output messages to stdout via C-style `printf`. */
-        printf = 1,
-        /** Output messages to stdout via C++-style `std::cout`. */
-        cout = 2
     };
 
     template<typename T>
@@ -424,7 +424,7 @@ namespace pawlib
             IOFormatBool fmt_bool;
             IOFormatCharValue fmt_char_value;
             IOFormatMemSep fmt_mem_sep;
-            IOFormatNumeralCase fmt_numeral_case;
+            IOFormatNumCase fmt_numeral_case;
             IOFormatPtr fmt_ptr;
             IOFormatSciNotation fmt_sci_notation;
             IOFormatSignificands fmt_significands;
@@ -438,7 +438,7 @@ namespace pawlib
               fmt_bool(IOFormatBool::lower),
               fmt_char_value(IOFormatCharValue::as_char),
               fmt_mem_sep(IOFormatMemSep::all),
-              fmt_numeral_case(IOFormatNumeralCase::upper),
+              fmt_numeral_case(IOFormatNumCase::upper),
               fmt_ptr(IOFormatPtr::value),
               fmt_sci_notation(IOFormatSciNotation::automatic),
               fmt_significands(IOFormatSignificands(14)),
@@ -481,7 +481,7 @@ namespace pawlib
             IOFormat& operator<<(const IOFormatBool& rhs){fmt_bool = rhs; return *this;}
             IOFormat& operator<<(const IOFormatCharValue& rhs){fmt_char_value = rhs; return *this;}
             IOFormat& operator<<(const IOFormatMemSep& rhs){fmt_mem_sep = rhs; return *this;}
-            IOFormat& operator<<(const IOFormatNumeralCase& rhs){fmt_numeral_case = rhs; return *this;}
+            IOFormat& operator<<(const IOFormatNumCase& rhs){fmt_numeral_case = rhs; return *this;}
             IOFormat& operator<<(const IOFormatPtr& rhs){fmt_ptr = rhs; return *this;}
             IOFormat& operator<<(const IOFormatSciNotation& rhs){fmt_sci_notation = rhs; return *this;}
             IOFormat& operator<<(const IOFormatSignificands& rhs){fmt_significands = rhs; return *this;}
@@ -503,14 +503,14 @@ namespace pawlib
 
             /** CPGF multi-output signal (callback list) for categories. */
             typedef cpgf::GCallbackList<void (std::string,
-                IOCategory)> IOSignalCat;
+                IOCat)> IOSignalCat;
             /** CPGF multi-output signal (callback list) for verbosities. */
             typedef cpgf::GCallbackList<void (std::string,
-                IOVerbosity)> IOSignalVrb;
+                IOVrb)> IOSignalVrb;
             /** CPGF multi-output signal (callback list) for everything,
               * transmitting the message, the verbosity, and the category. */
             typedef cpgf::GCallbackList<void (std::string,
-                IOVerbosity, IOCategory)> IOSignalFull;
+                IOVrb, IOCat)> IOSignalFull;
             /** CPGF multi-output signal (callback list) for everything,
               * transmitting only the message. */
             typedef cpgf::GCallbackList<void (std::string)> IOSignalAll;
@@ -522,61 +522,61 @@ namespace pawlib
 
             /** Emitted when a message with verbosity 0 (quiet) is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOCategory){}'
+              * IOCat){}'
               */
             IOSignalCat signal_v_quiet;
 
             /** Emitted when a message with verbosity <= 1 (normal) is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOCategory){}'
+              * IOCat){}'
               */
             IOSignalCat signal_v_normal;
 
             /** Emitted when a message with verbosity <=2 (chatty) is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOCategory){}'
+              * IOCat){}'
               */
             IOSignalCat signal_v_chatty;
 
             /** Emitted when a message with verbosity <=3 (tmi) is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOCategory){}'
+              * IOCat){}'
               */
             IOSignalCat signal_v_tmi;
 
             /** Emitted when a message with category "normal" is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOVerbosity){}'
+              * IOVrb){}'
               */
             IOSignalVrb signal_c_normal;
 
             /** Emitted when a message with category "warning" is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOVerbosity){}'
+              * IOVrb){}'
               */
             IOSignalVrb signal_c_warning;
 
             /** Emitted when a message with category "error" is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOVerbosity){}'
+              * IOVrb){}'
               */
             IOSignalVrb signal_c_error;
 
             /** Emitted when a message with category "debug" is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOVerbosity){}'
+              * IOVrb){}'
               */
             IOSignalVrb signal_c_debug;
 
             /** Emitted when a message with category "testing" is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOVerbosity){}'
+              * IOVrb){}'
               */
             IOSignalVrb signal_c_testing;
 
             /** Emitted when any message is broadcast.
               * Callback must be of form 'void callback(string,
-              * IOVerbosity, IOCategory){}'
+              * IOVrb, IOCat){}'
               */
             IOSignalFull signal_full;
 
@@ -668,7 +668,7 @@ namespace pawlib
             iochannel& operator<<(const IOFormatBool& rhs) {process_fmt(rhs); return *this;}
             iochannel& operator<<(const IOFormatCharValue& rhs) {process_fmt(rhs); return *this;}
             iochannel& operator<<(const IOFormatMemSep& rhs) {process_fmt(rhs); return *this;}
-            iochannel& operator<<(const IOFormatNumeralCase& rhs) {process_fmt(rhs); return *this;}
+            iochannel& operator<<(const IOFormatNumCase& rhs) {process_fmt(rhs); return *this;}
             iochannel& operator<<(const IOFormatPtr& rhs) {process_fmt(rhs); return *this;}
             iochannel& operator<<(const IOFormatSciNotation& rhs) {process_fmt(rhs); return *this;}
             iochannel& operator<<(const IOFormatSignificands& rhs) {process_fmt(rhs); return *this;}
@@ -703,34 +703,34 @@ namespace pawlib
             iochannel& operator<<(const IOFormat&);
             iochannel& operator<<(const IOCursor&);
             iochannel& operator<<(const IOMemReadSize&);
-            iochannel& operator<<(const IOVerbosity&);
-            iochannel& operator<<(const IOCategory&);
+            iochannel& operator<<(const IOVrb&);
+            iochannel& operator<<(const IOCat&);
             iochannel& operator<<(const IOCtrl&);
 
-            void configure_echo(IOEchoMode, IOVerbosity = IOVerbosity::tmi, IOCategory = IOCategory::all);
+            void configure_echo(IOEchoMode, IOVrb = IOVrb::tmi, IOCat = IOCat::all);
 
             /** Suppress a category from broadcasting at all.
               * \param the category to suppress
               */
-            void shutup(IOCategory);
+            void shutup(IOCat);
 
             /** Suppress verbosities higher than the one given.
               * This is also mainly used to reset verbosity back to "normal"
               * (the default).
-              * \param the maximum verbosity to permit (default=IOVerbosity::normal)
+              * \param the maximum verbosity to permit (default=IOVrb::normal)
               */
-            void shutup(IOVerbosity = IOVerbosity::normal);
+            void shutup(IOVrb = IOVrb::normal);
 
             /** Permit a category to broadcast.
               * \param the category to broadcast
               */
-            void speakup(IOCategory);
+            void speakup(IOCat);
 
             /** Permit a verbosity (and all below it) to broadcast.
-              * Functionally identical to `shutup(IOVerbosity)`.
+              * Functionally identical to `shutup(IOVrb)`.
               * \param the maximum verbosity to permit
               */
-            void speakup(IOVerbosity);
+            void speakup(IOVrb);
 
             /** Permit all messages (full verbosity and all categories)
               * to be broadcast.
@@ -743,16 +743,16 @@ namespace pawlib
             std::string msg;
 
             // The bitfield storing which categories are permitted.
-            int process_c = static_cast<int>(IOCategory::all);
+            int process_c = static_cast<int>(IOCat::all);
             // The maximum verbosity to permit.
-            int process_v = static_cast<int>(IOVerbosity::tmi);
+            int process_v = static_cast<int>(IOVrb::tmi);
 
             // Which method should be used for IOChannel's default stdout echo?
             IOEchoMode echomode = IOEchoMode::printf;
             // The maximum verbosity to echo.
-            IOVerbosity echovrb = IOVerbosity::tmi;
+            IOVrb echovrb = IOVrb::tmi;
             // The category to echo.
-            IOCategory echocat = IOCategory::all;
+            IOCat echocat = IOCat::all;
             // TODO: Change echocat to a bitfield.
 
             /* MESSAGE ATTRIBUTES
@@ -768,9 +768,9 @@ namespace pawlib
             IOMemReadSize readsize = IOMemReadSize(1);
 
             /* Message verbosity. */
-            IOVerbosity vrb = IOVerbosity::normal;
+            IOVrb vrb = IOVrb::normal;
             /* Message category. */
-            IOCategory cat = IOCategory::normal;
+            IOCat cat = IOCat::normal;
             /* Message parsable */
             tril parse = maybe;
 
