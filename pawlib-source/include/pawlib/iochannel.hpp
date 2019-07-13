@@ -849,7 +849,6 @@ namespace pawlib
 
             //The string containing the format.
             std::string format = "";
-            //TODO: Swap to onestring
 
             /**Flush the standard output.*/
             void flush();

@@ -1,5 +1,9 @@
+..  _iochannel:
+
 IOChannel
 ###################################
+
+..  _iochannel_about:
 
 What is IOChannel?
 ===================================
@@ -15,6 +19,8 @@ features.
 * Advanced memory tools.
 
 ..  index:: iochannel
+
+..  _iochannel_setup:
 
 Setting up IOChannel
 =====================================
@@ -45,16 +51,21 @@ will be used in this documentation. Furthermore, we will assume that
 ``using namespace pawlib;`` is being used. All namespaces outside of the
 scope of PawLIB will be stated explicitly.
 
-Concepts
--------------------------------------
+..  _iochannel_concepts:
 
-IOChannel uses two unique concepts: **Verbosity** and **Category**.
+Concepts
+=====================================
+
+IOChannel uses two unique concepts, **Verbosity** and **Category**, to
+determine where and how a message is routed.
 
 ..  index::
     pair: output; category
 
+..  _iochannel_concepts_category:
+
 Category
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------
 
 The benefit to having categories on messages is that you can route different
 kinds of messages to different outputs. For example, you might send all errors
@@ -82,12 +93,18 @@ in the code, and just control when and how they are processed and broadcast.
 This means you can actually ship with debugging statements still alive in the
 code, allowing you to diagnose problems on any machine.
 
+You can control which of these categories messages are broadcast from using
+the echo settings (:ref:`iochannel_output_echo`) and signals
+(:ref:`iochannel_output_signals_category`).
+
 ..  index::
     pair: output; verbosity
     see: priority; verbosity
 
+..  _iochannel_concepts_verbosity:
+
 Verbosity
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------
 
 Some messages we need to see every time, and others only in special
 circumstances. This is what verbosity is for.
@@ -109,11 +126,19 @@ notification about a rare and potentially problematic function being called
 might be ``IOVrb::normal``, while the output of a loop iterator would probably
 be ``IOVrb::tmi``.
 
+You can control which of these categories messages are broadcast from using
+the echo settings (:ref:`iochannel_output_echo`) and signals
+(:ref:`iochannel_output_signals_verbosity`).
+
 ..  index::
     single: output
 
+..  _iochannel_output:
+
 Output
 =======================================
+
+..  _iochannel_output_general:
 
 General
 --------------------------------------
@@ -137,6 +162,8 @@ control enumerations have different behaviors. (See `Stream Control`_)
 
 ..  index::
     pair: output; strings
+
+..  _iochannel_output_strings:
 
 Strings
 ----------------------------------------
@@ -164,6 +191,8 @@ via IOChannel. The message will not be broadcast until an EoT
 ..  index::
     pair: output; formatting
 
+..  _iochannel_output_formatting:
+
 Formatting
 ----------------------------------------
 
@@ -182,8 +211,13 @@ correctly on each output and environment.
 ..  IMPORTANT:: Currently, only ANSI is used. Formatting-removed and an
     easy-to-parse formatting flag system for custom outputs will be added soon.
 
+Alternative, you can use the ``IOFormat`` object to store multiple flags.
+(See :ref:`iochannel_output_ioformat`)
+
 ..  index::
     pair: output; variables
+
+..  _iochannel_output_variables:
 
 Variable Input
 ----------------------------------------
@@ -198,6 +232,8 @@ IOChannel supports all basic C/C++ data types.
 
 ..  index::
     pair: output; boolean
+
+..  _iochannel_output_variables_bool:
 
 Boolean
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -227,6 +263,8 @@ The output style can be adjusted, however, using the ``IOFormatBool::`` flags.
 ..  index::
     pair: output; char
 
+..  _iochannel_output_variables_char:
+
 Char
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -247,6 +285,8 @@ int (see that section).
 
 ..  index::
     pair: output; integers
+
+..  _iochannel_output_variables_int:
 
 Integer
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -292,6 +332,8 @@ lowercase or uppercase (default) using the ``IOFormatNumCase::`` flags.
     pair: output; float
     pair: output; double
 
+..  _iochannel_output_variables_float:
+
 Float and Double
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -323,12 +365,16 @@ Both types work the same.
 ..  index::
     pair: output; pointer
 
+..  _iochannel_output_pointer:
+
 Pointer Output
 -----------------------------------------
 
 One of the most powerful features of IOChannel is its handling of pointers.
 In addition to printing the value at known pointer types, it can print the
 address or raw memory for ANY pointer, even for custom objects.
+
+..  _iochannel_output_pointer_value:
 
 Pointer Value
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -349,6 +395,8 @@ can also be forced using ``IOFormatPtr::value``.
     Value of foo: 12345
     Value of bar: My name is Bob, and I am a coder.
     */
+
+..  _iochannel_output_pointer_address:
 
 Pointer Address
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -371,6 +419,8 @@ It is capable of doing this with any pointer, even for custom objects.
     Address of foo: 0x7ffc33518308
     Address of bar: 0x405AF0
     */
+
+..  _iochannel_output_pointer_dump:
 
 Pointer Memory Dump
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -430,6 +480,8 @@ number of bytes to read using ``IOMemReadSize()``.
 ..  index::
     pair: output; control
 
+..  _iochannel_output_bitset:
+
 Bitset
 ----------------------------------------
 
@@ -450,6 +502,8 @@ style of output. By default, ``IOFormatMemSep::none`` is used.
 
 ..  index::
     pair: output; format object
+
+..  _iochannel_output_ioformat:
 
 Formatting Objects
 ----------------------------------------
@@ -474,6 +528,8 @@ As you can see, anything passed to the IOChannel *after* the ``IOFormat``
 object overrides prior options.
 
 IOFormat supports all the flags beginning with ``IOFormat...``.
+
+..  _iochannel_output_control:
 
 Stream Control
 ------------------------------------------------
@@ -539,6 +595,8 @@ The complete list of stream controls is as follows. Some notes...
 ..  index::
     pair: output; cursor movement
 
+..  _iochannel_output_cursor:
+
 Cursor Movement
 ----------------------------------------------
 
@@ -566,7 +624,9 @@ using the `IOCursor::left` and `IOCursor::right` flags.
     pair: output; broadcast
     pair: output; forwarding
 
-Internal Broadcast Settings
+..  _iochannel_output_echo:
+
+Internal Broadcast Settings (Echo)
 ----------------------------------------------
 
 IOChannel can internally output to either ``printf()`` or ``std::cout``
@@ -593,11 +653,15 @@ These settings are modified by passing a ``IOEchoMode::`` flag to the
     //Turn off internal output.
     ioc.configure_echo(IOEchoMode::none);
 
+..  _iochannel_output_signals:
+
 External Broadcast with Signals
 -------------------------------------------------
 One of the primary features of IOChannel is that it can be connected to
 multiple outputs using signals. Examples of this might be if you want to
 output to a log file, or display messages in a console in your interface.
+
+..  _iochannel_output_signals_all:
 
 Main Signal (``signal_all``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -617,6 +681,8 @@ as seen in the following example.
 
     //We connect the callback function to `signal_all` so we get all messages.
     ioc.signal_all.add(&print);
+
+..  _iochannel_output_signals_category:
 
 Category Signals (``signal_c_...``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -643,6 +709,8 @@ The callbacks for category signals require the form
 
     //We connect the callback function to signal_c_error to get only error messages.
     ioc.signal_c_error.add(&print_error);
+
+..  _iochannel_output_signals_verbosity:
 
 Verbosity Signals (``signal_v_...``)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -671,18 +739,24 @@ the context of a class.
     TestClass testObject;
     ioc.signal_v_normal.add(&testObject, TestClass::output)
 
+..  _iochannel_flags:
+
 Flag Lists
 =============================================
 
 ..  index::
     single: category
 
+..  _iochannel_flags_cat:
+
 Category (``IOCat::``)
 --------------------------------------------------------
 
 +--------------------+-------------------------------------------------------------------------------------+
-| Flag               | Use                                                                                 |
+|        Flag        |                                         Use                                         |
 +====================+=====================================================================================+
+| ``IOCat::none``    | No category; **NEVER broadcasted**. Does not have a correlating signal.             |
++--------------------+-------------------------------------------------------------------------------------+
 | ``IOCat::normal``  | The default value - anything that doesn't fit elsewhere.                            |
 +--------------------+-------------------------------------------------------------------------------------+
 | ``IOCat::warning`` | Warnings, but not necessarily errors.                                               |
@@ -699,6 +773,8 @@ Category (``IOCat::``)
 ..  index::
     single: cursor
 
+    ..  _iochannel_flags_cursor:
+
 Cursor Control (``IOCursor::``)
 -----------------------------------------
 
@@ -712,6 +788,8 @@ Cursor Control (``IOCursor::``)
 
 ..  index::
     single: output, echo
+
+..  _iochannel_flags_echo:
 
 Echo Mode (``IOEchoMode::``)
 -----------------------------------------
@@ -731,6 +809,8 @@ Echo Mode (``IOEchoMode::``)
 ..  index::
     pair: base; format
     see: radix; base
+
+..  _iochannel_flags_format_base:
 
 Base/Radix Format (``IOFormatBase::``)
 --------------------------------------------------------
@@ -844,6 +924,8 @@ Base/Radix Format (``IOFormatBase::``)
 ..  index::
     pair: boolean; format
 
+..  _iochannel_flags_format_bool:
+
 Boolean Format (``IOFormatBool::``)
 --------------------------------------------------------
 
@@ -864,6 +946,8 @@ Boolean Format (``IOFormatBool::``)
 ..  index::
     pair: char type; format
 
+..  _iochannel_flags_char_value:
+
 Char Value (``IOFormatCharValue::``)
 --------------------------------------------------------
 
@@ -878,6 +962,8 @@ Char Value (``IOFormatCharValue::``)
 ..  index::
     pair: memory separators; format
     single: pointers; memory separators
+
+..  _iochannel_flags_format_memsep:
 
 Memory Separators (``IOFormatMemSep::``)
 --------------------------------------------------------
@@ -897,6 +983,8 @@ Memory Separators (``IOFormatMemSep::``)
 ..  index::
     pair: numeral case; format
 
+..  _iochannel_flags_format_numcase:
+
 Numeral Case (``IOFormatNumCase::``)
 --------------------------------------------------------
 
@@ -910,6 +998,8 @@ Numeral Case (``IOFormatNumCase::``)
 
 ..  index::
     pair: pointers; format
+
+..  _iochannel_flags_format_ptr:
 
 Pointer Format (``IOFormatPtr::``)
 --------------------------------------------------------
@@ -926,6 +1016,8 @@ Pointer Format (``IOFormatPtr::``)
 
 ..  index::
     pair: scientific notation; format
+
+..  _iochannel_flags_format_scinotation:
 
 Scientific Notation Format (``IOFormatSciNotation::``)
 --------------------------------------------------------
@@ -946,6 +1038,8 @@ Scientific Notation Format (``IOFormatSciNotation::``)
 ..  index::
     pair: significands; format
 
+..  _iochannel_flags_format_significands:
+
 Significands(``IOFormatSignificands()``)
 --------------------------------------------------------
 
@@ -955,6 +1049,8 @@ representing the number of significands.
 
 ..  index::
     pair: text attributes; format
+
+..  _iochannel_flags_format_textattr:
 
 Text Attributes(``IOFormatTextAttr::``)
 --------------------------------------------------------
@@ -973,6 +1069,8 @@ Text Attributes(``IOFormatTextAttr::``)
 
 ..  index::
     pair: color, background; format
+
+..  _iochannel_flags_format_textbg:
 
 Text Background Color(``IOFormatTextBG::``)
 --------------------------------------------------------
@@ -1001,6 +1099,8 @@ Text Background Color(``IOFormatTextBG::``)
 
 ..  index::
     pair: color, foreground; format
+
+    ..  _iochannel_flags_format_textfg:
 
 Text Foreground Color(``IOFormatTextFG::``)
 --------------------------------------------------------
@@ -1032,6 +1132,8 @@ Text Foreground Color(``IOFormatTextFG::``)
     pair: read size; format
     single: pointer; read size
 
+..  _iochannel_flags_memreadsize:
+
 Memory Dump Read Size (``IOMemReadSize()``)
 --------------------------------------------------------
 
@@ -1044,7 +1146,9 @@ starting at the memory address. **Only used with void pointers.**
 ..  index::
     single: verbosity; priority
 
-Verbosity/Priority (``IOVrb::``)
+..  _iochannel_flags_vrb:
+
+Verbosity (``IOVrb::``)
 --------------------------------------------------------
 
 +--------------------+---------------------------------------------------------------------------------------------------+

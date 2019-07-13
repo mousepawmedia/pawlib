@@ -559,7 +559,6 @@ namespace pawlib
         }
 
         msg.push_back(ch);
-        //TODO: Swap for onestring
     }
 
     void iochannel::inject(const char* str, bool recursive)
@@ -572,10 +571,6 @@ namespace pawlib
 
         //Append to the message.
         msg.append(str);
-        //TODO: Swap for onestring
-
-        ////apply_attributes() ? printf("%s", format) : 0;
-        ////printf("%s", str);
     }
 
     void iochannel::inject(const void* ptr, unsigned int len, bool dump)
