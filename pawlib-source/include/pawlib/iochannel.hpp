@@ -136,17 +136,19 @@ namespace pawlib
     /** The category of the message. */
     enum class IOCat
     {
-        /**The default value - anything that doesn't fit elsewhere.*/
+        /// No category. Internal use only; no correlating signal.
+        none = 0,
+        /// The default value - anything that doesn't fit elsewhere.
         normal = 1,
-        /**Warnings, but not necessarily errors.*/
+        /// Warnings, but not necessarily errors.
         warning = 2,
-        /**Error messages.*/
+        /// Error messages.
         error = 4,
-        /**Debug messages, such as variable outputs.*/
+        /// Debug messages, such as variable outputs.
         debug = 8,
-        /**Testing messages that we may want shut off during benchmarking.*/
+        /// Testing messages that we may want shut off during benchmarking.
         testing = 16,
-        /**All message categories. Does not have a correlating signal.*/
+        /// All message categories. Internal use only; no correlating signal.
         all = 31
     };
 
@@ -739,21 +741,19 @@ namespace pawlib
 
             ~iochannel();
         protected:
-            // TODO: Swap to onestring
             std::string msg;
 
-            // The bitfield storing which categories are permitted.
-            int process_c = static_cast<int>(IOCat::all);
+            // Which categories are permitted.
+            IOCat process_cat = IOCat::all;
             // The maximum verbosity to permit.
-            int process_v = static_cast<int>(IOVrb::tmi);
+            IOVrb process_vrb = IOVrb::tmi;
 
             // Which method should be used for IOChannel's default stdout echo?
-            IOEchoMode echomode = IOEchoMode::printf;
-            // The maximum verbosity to echo.
-            IOVrb echovrb = IOVrb::tmi;
+            IOEchoMode echo_mode = IOEchoMode::printf;
             // The category to echo.
-            IOCat echocat = IOCat::all;
-            // TODO: Change echocat to a bitfield.
+            IOCat echo_cat = IOCat::all;
+            // The maximum verbosity to echo.
+            IOVrb echo_vrb = IOVrb::tmi;
 
             /* MESSAGE ATTRIBUTES
              * These are set by enum and flags,

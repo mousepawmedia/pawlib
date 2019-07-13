@@ -11,7 +11,6 @@ namespace pawlib
     template IOCat operator&<IOCat>(const IOCat&, const IOCat&);
     template IOCtrl operator&<IOCtrl>(const IOCtrl&, const IOCtrl&);
     template IOFormatMemSep operator&<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
-    template IOVrb operator&<IOVrb>(const IOVrb&, const IOVrb&);
 
     template<typename T>
     T operator|(const T& lhs, const T& rhs)
@@ -22,7 +21,6 @@ namespace pawlib
     template IOCat operator|<IOCat>(const IOCat&, const IOCat&);
     template IOCtrl operator|<IOCtrl>(const IOCtrl&, const IOCtrl&);
     template IOFormatMemSep operator|<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
-    template IOVrb operator|<IOVrb>(const IOVrb&, const IOVrb&);
 
     template<typename T>
     T operator^(const T& lhs, const T& rhs)
@@ -33,7 +31,6 @@ namespace pawlib
     template IOCat operator^<IOCat>(const IOCat&, const IOCat&);
     template IOCtrl operator^<IOCtrl>(const IOCtrl&, const IOCtrl&);
     template IOFormatMemSep operator^<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
-    template IOVrb operator^<IOVrb>(const IOVrb&, const IOVrb&);
 
     template<typename T>
     T operator~(const T& rhs)
@@ -43,18 +40,17 @@ namespace pawlib
     template IOCat operator~<IOCat>(const IOCat&);
     template IOCtrl operator~<IOCtrl>(const IOCtrl&);
     template IOFormatMemSep operator~<IOFormatMemSep>(const IOFormatMemSep&);
-    template IOVrb operator~<IOVrb>(const IOVrb&);
 
     //Declaring global instance of ioc.
     iochannel ioc;
 
     iochannel::iochannel()
     : msg(""),
-      process_c(static_cast<int>(IOCat::all)),
-      process_v(static_cast<int>(IOVrb::tmi)),
-      echomode(IOEchoMode::cout),
-      echovrb(IOVrb::tmi),
-      echocat(IOCat::all),
+      process_cat(IOCat::all),
+      process_vrb(IOVrb::tmi),
+      echo_mode(IOEchoMode::cout),
+      echo_cat(IOCat::all),
+      echo_vrb(IOVrb::tmi),
       fmt(IOFormat()),
       readsize(IOMemReadSize(1)),
       vrb(IOVrb::normal),
@@ -511,9 +507,7 @@ namespace pawlib
         {
             /* If the verbosity is in range or the category is set to parse,
              * then set false. Otherwise, set true. */
-            int v = static_cast<int>(vrb);
-            int c = static_cast<int>(cat);
-            parse = ((v <= process_v) && (process_c & c)) ? true : false;
+            parse = ((vrb <= process_vrb) && static_cast<bool>(process_cat & cat)) ? true : false;
         }
         return parse;
     }
@@ -524,11 +518,11 @@ namespace pawlib
         msg = "";
     }
 
-    void iochannel::configure_echo(IOEchoMode echo, IOVrb echo_vrb, IOCat echo_cat)
+    void iochannel::configure_echo(IOEchoMode mode, IOVrb vrb, IOCat cat)
     {
-        echomode = echo;
-        echovrb = echo_vrb;
-        echocat = echo_cat;
+        echo_mode = mode;
+        echo_vrb = vrb;
+        echo_cat = cat;
     }
 
     void iochannel::flush()
@@ -537,7 +531,7 @@ namespace pawlib
          * tell external outputs to flush.*/
 
         //Flush is essential for progress-style outputs (after \r and no \n).
-        switch(echomode)
+        switch(echo_mode)
         {
             case IOEchoMode::cout:
             {
@@ -637,10 +631,8 @@ namespace pawlib
 
     void iochannel::shutup(IOCat cat)
     {
-        int c = static_cast<int>(cat);
-
-        process_c = process_c & ~c;
-        if(process_c == 0)
+        process_cat = process_cat & ~cat;
+        if(process_cat == IOCat::none)
         {
             printf("WARNING: All message categories have been turned off!\n");
         }
@@ -650,40 +642,34 @@ namespace pawlib
 
     void iochannel::shutup(IOVrb vrb)
     {
-        int v = static_cast<int>(vrb);
-
         //Set the processing verbosity.
-        process_v = v;
+        process_vrb = vrb;
         //Revalidate parsing.
         parse = maybe;
     }
 
     void iochannel::speakup()
     {
-        process_v = static_cast<int>(IOVrb::tmi);
-        process_c = static_cast<int>(IOCat::all);
+        process_vrb = IOVrb::tmi;
+        process_cat = IOCat::all;
         //Revalidate parsing.
         parse = maybe;
     }
 
     void iochannel::speakup(IOCat cat)
     {
-        int c = static_cast<int>(cat);
-
         //Allow the category through by turning on its bit.
-        process_c = process_c | c;
+        process_cat = process_cat | cat;
         //Revalidate parsing.
         parse = maybe;
     }
 
     void iochannel::speakup(IOVrb vrb)
     {
-        int v = static_cast<int>(vrb);
-
         //Allow verbosity through by turning on its bit.
-        if(process_v < v)
+        if(process_vrb < vrb)
         {
-            process_v = v;
+            process_vrb = vrb;
         }
         //Revalidate parsing.
         parse = maybe;
@@ -785,12 +771,12 @@ namespace pawlib
             signal_all.dispatch(msg);
 
             //If we are supposed to be echoing
-            if(echomode != IOEchoMode::none)
+            if(echo_mode != IOEchoMode::none)
             {
                 //If the verbosity and category is correct...
-                if(vrb <= echovrb && (cat == echocat || echocat == IOCat::all))
+                if(vrb <= echo_vrb && static_cast<bool>(cat | echo_cat))
                 {
-                    switch(echomode)
+                    switch(echo_mode)
                     {
                         // If we're supposed to use `printf`...
                         case IOEchoMode::printf:

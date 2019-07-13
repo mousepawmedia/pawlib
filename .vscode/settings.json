@@ -124,7 +124,6 @@
         "cpuid",
         "cstr",
         "endc",
-        "echovrb",
         "fooptr",
         "ftoa",
         "itos",
