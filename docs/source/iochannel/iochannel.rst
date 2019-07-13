@@ -179,9 +179,8 @@ correctly on each output and environment.
         << IOCtrl::endl;
     //The output is exactly what you'd expect.
 
-..  IMPORTANT:: Currently, only ANSI is used. Windows support,
-    formatting-removed, and an easy-to-parse formatting flag system for custom
-    outputs will be added soon.
+..  IMPORTANT:: Currently, only ANSI is used. Formatting-removed and an
+    easy-to-parse formatting flag system for custom outputs will be added soon.
 
 ..  index::
     pair: output; variables
@@ -449,6 +448,33 @@ style of output. By default, ``IOFormatMemSep::none`` is used.
     4e 61 bc 00
     */
 
+..  index::
+    pair: output; format object
+
+Formatting Objects
+----------------------------------------
+
+If you find yourself regularly using particular formatting flags
+(``IOFormat...::``), you can store them in an IOFormat object for reuse.
+Flags are passed into the ``IOFormat`` object with the stream insertion
+operator (``<<``), and then the ``IOFormat`` object itself can be passed to
+the IOChannel.
+
+..  code-block:: c++
+
+    IOFormat fmt;
+    fmt << IOFormatTextAttr::bold << IOFormatTextFG::red << IOFormatTextBG::black;
+
+    ioc << fmt << "This is bold, red text on a black background." << IOCtrl::endl;
+
+    ioc << fmt << IOFormatBG::blue << "This is bold, red text on a blue background."
+        << IOCtrl::endl;
+
+As you can see, anything passed to the IOChannel *after* the ``IOFormat``
+object overrides prior options.
+
+IOFormat supports all the flags beginning with ``IOFormat...``.
+
 Stream Control
 ------------------------------------------------
 
@@ -598,7 +624,7 @@ Category Signals (``signal_c_...``)
 Almost all categories have a signal: ``signal_c_normal``, ``signal_c_warning``,
 ``signal_c_error``, ``signal_c_testing``, and ``signal_c_debug``.
 
-.. NOTE:: ``cat_all`` is used internally, and does not have a signal.
+.. NOTE:: ``IOCat::all`` is used internally, and does not have a signal.
     Use ``signal_all`` instead.
 
 The callbacks for category signals require the form
