@@ -45,7 +45,7 @@ number is needed.
 +----+--------------------+
 | 13 | FlexStack          |
 +----+--------------------+
-| 14 | SimplyLinkedList   |
+| 14 | SpeedList          |
 +----+--------------------+
 | 15 | FlexBit            |
 +----+--------------------+
@@ -57,11 +57,9 @@ number is needed.
 +----+--------------------+
 | 4x | Onestring (Sector) |
 +----+--------------------+
+| 40 | Onestring          |
++----+--------------------+
 | 41 | Onechar            |
-+----+--------------------+
-| 42 | QuickString        |
-+----+--------------------+
-| 43 | Onestring          |
 +----+--------------------+
 | 5x | Blueshell          |
 +----+--------------------+
@@ -71,6 +69,3 @@ number is needed.
 Any subsequent digits indicate the test number. A number may be shared
 between behavior and stress tests; both use the same implementation, but
 vary in their variables (such as iterations).
-
-An asterisk (``*``) at the end of test ID indicates that it is a comparative
-test, used only for benchmarking.

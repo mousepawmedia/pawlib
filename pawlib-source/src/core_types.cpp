@@ -7,8 +7,7 @@ namespace pawlib
     bool operator~(const uncertainty& rhs) noexcept
     {
         // Return the certainty of rhs.
-        bool r = rhs.data;
-        return r;
+        return (rhs.data);
     }
 
     std::ostream& operator<<(std::ostream& output, const uncertainty& in)

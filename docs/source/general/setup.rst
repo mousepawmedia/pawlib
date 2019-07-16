@@ -22,14 +22,11 @@ To build PawLIB, you must have the following installed on your system:
 
 * Clang 3.4+ OR GCC 5.3+ (MSVC is not presently supported.)
 
-* CPGF 1.5.6, from either:
+* CPGF 1.60, from either:
 
   * `libdeps 1.0 (GitHub) <https://github.com/mousepawmedia/libdeps/tree/v1.0.0>`_  [recommended], *or*
 
-  * `CPGF (GitHub) <https://github.com/cpgf/cpgf/tree/1.5.6>`_.
-
-..  WARNING:: PawLIB does not yet work with CPGF 1.6.0. Support will be added
-    in a future version.
+  * `CPGF (GitHub) <https://github.com/cpgf/cpgf/tree/1.6.0>`_.
 
 ..  _setup-building-config:
 
