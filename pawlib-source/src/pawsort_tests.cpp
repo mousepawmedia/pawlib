@@ -95,8 +95,8 @@ namespace pawlib
         register_test("P-tB3029",
             new TestInsertionSort(TestSort::TestArrayType::ARRAY_STAIRS), true);
 
-        register_test("P-tB3030*",
-            new TestInsertionSort(TestSort::TestArrayType::ARRAY_MOUNTAIN), true);
+        register_test("P-tB3030",
+            new TestInsertionSort(TestSort::ARRAY_MOUNTAIN), true);
 
         register_test("P-tB3031",
             new TestInsertionSort(TestSort::TestArrayType::ARRAY_DOUBLE_MOUNTAIN), true);
@@ -114,6 +114,30 @@ namespace pawlib
             new TestInsertionSort(TestSort::TestArrayType::ARRAY_CHICKEN), true);
 
         register_test("P-tB3036",
-            new TestInsertionSort(TestSort::TestArrayType::ARRAY_NIGHTMARE), true);
+            new TestInsertionSort(TestSort::ARRAY_NIGHTMARE), true);
+
+        register_test("P-tB3041",
+            new TestPawSortWrapper(TestSort::ARRAY_REVERSED), true);
+
+        register_test("P-tB3042",
+            new TestPawSortWrapper(TestSort::ARRAY_NEARLY_5), true);
+
+        register_test("P-tB3043",
+            new TestPawSortWrapper(TestSort::ARRAY_DOUBLE_DROP), true);
+
+        register_test("P-tB3044",
+            new TestPawSortWrapper(TestSort::ARRAY_DOUBLE_MOUNTAIN), true);
+
+        register_test("P-tB3045",
+            new TestPawSortWrapperForVector(TestSort::ARRAY_REVERSED), true);
+
+        register_test("P-tB3046",
+            new TestPawSortWrapperForVector(TestSort::ARRAY_NEARLY_5), true);
+
+        register_test("P-tB3047",
+            new TestPawSortWrapperForVector(TestSort::ARRAY_DOUBLE_DROP), true);
+
+        register_test("P-tB3048",
+            new TestPawSortWrapperForVector(TestSort::ARRAY_DOUBLE_MOUNTAIN), true);
     }
 }
