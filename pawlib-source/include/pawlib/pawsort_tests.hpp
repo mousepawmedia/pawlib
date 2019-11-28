@@ -1,11 +1,11 @@
 /** Tests for PawSort[PawLIB]
   * Version: 0.1
   *
-  * Author(s): Jason C. McDonald
+  * Author(s): Jason C. McDonald, lulu731
   */
 
 /* LICENSE
- * Copyright (c) 2016-2019 MousePaw Media.
+ * Copyright (c) 2019 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -233,14 +233,14 @@ unique values. Really, this is just evil incarnate.";
                 }
             }
 
-            virtual testdoc_t get_title() = 0;
+            virtual testdoc_t get_title() override = 0;
 
-            testdoc_t get_docs()
+            testdoc_t get_docs() override
             {
                 return docs;
             }
 
-            bool pre()
+            bool pre() override
             {
                 // Random seed
                 srand(time(NULL));
@@ -506,7 +506,7 @@ unique values. Really, this is just evil incarnate.";
 
                 return true;
             }
-            bool janitor()
+            bool janitor() override
             {
                 for(int i = 0; i < test_size; ++i)
                 {
@@ -514,7 +514,7 @@ unique values. Really, this is just evil incarnate.";
                 }
                 return true;
             }
-            virtual bool run()
+            virtual bool run() override
             {
                 return true;
             }
@@ -528,12 +528,12 @@ unique values. Really, this is just evil incarnate.";
             explicit TestStdSort(TestArrayType type):TestSort(type)
             {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return title + " (std::sort)";
             }
 
-            bool run()
+            bool run() override
             {
                 std::sort(std::begin(test_arr), std::end(test_arr));
 
@@ -560,12 +560,12 @@ unique values. Really, this is just evil incarnate.";
             explicit TestPawSort(TestArrayType type):TestSort(type)
             {}
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return title + " (pawsort)";
             }
 
-            bool run()
+            bool run() override
             {
                 pawsort::introsort(test_arr, 0, test_size-1);
                 // Verify sorting.
@@ -634,11 +634,11 @@ unique values. Really, this is just evil incarnate.";
 
             bool run() override
             {
-                /* Test sorting in range [index, test_size - index)*/              
+                /* Test sorting in range [index, test_size - index)*/
                 auto first = std::begin(test_arr) + INDEX;
                 auto last = std::begin(test_arr) + test_size - INDEX;
                 pawsort::sort(first, last);
-                
+
                 // Verify sorting.
                 for(int i = 1 + INDEX; i < test_size - INDEX ; ++i)
                 {
@@ -654,7 +654,7 @@ unique values. Really, this is just evil incarnate.";
             }
 
             ~TestPawSortWrapper(){}
-            
+
     private:
         const int INDEX = 100;
     };
@@ -672,27 +672,27 @@ unique values. Really, this is just evil incarnate.";
 
             bool run() override
             {
-                /* Test sorting in range [index, test_size - index)*/              
-                std::vector<int> test_vect;
+                /* Test sorting in range [index, test_size - index)*/
+                std::vector<int> test_vector;
                 for (int i = 0; i < test_size; ++i)
                 {
-                    test_vect.push_back(test_arr[i]);
+                    test_vector.push_back(test_arr[i]);
                 }
-                auto first = test_vect.begin() + INDEX;
-                auto last = test_vect.begin() + test_size - INDEX;
+                auto first = test_vector.begin() + INDEX;
+                auto last = test_vector.begin() + test_size - INDEX;
                 struct {
                     bool operator()(const int& a, const int& b)
-                    {   
+                    {
                         return a < b;
-                    }   
+                    }
                 } customLess;
                 pawsort::sort(first, last, customLess);
-                
+
                 // Verify sorting.
                 for(int i = 1 + INDEX; i < test_size - INDEX ; ++i)
                 {
                     // If the item is less than the previous item.
-                    if(test_vect[i] < test_vect[i-1])
+                    if(test_vector[i] < test_vector[i-1])
                     {
                         // Out of order. Fail.
                         return false;
@@ -703,7 +703,7 @@ unique values. Really, this is just evil incarnate.";
             }
 
             ~TestPawSortWrapperForVector(){}
-            
+
     private:
         const int INDEX = 100;
     };
@@ -713,9 +713,9 @@ unique values. Really, this is just evil incarnate.";
         public:
             explicit TestSuite_Pawsort(){}
 
-            void load_tests();
+            void load_tests() override;
 
-            testdoc_t get_title()
+            testdoc_t get_title() override
             {
                 return "PawLIB: Pawsort Tests";
             }
