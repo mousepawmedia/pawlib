@@ -47,6 +47,8 @@
 #define PAWLIB_PAWSORT_HPP
 
 #include <cmath>
+#include <iterator>
+
 
 namespace pawlib
 {
@@ -133,7 +135,6 @@ namespace pawlib
                     swap(arr[i], arr[0]);
                     sift_down(arr, 0, --i);
                 }
-
             }
 
             /** An implementation of the heap sort algorithm.
@@ -262,60 +263,250 @@ namespace pawlib
             template <typename T>
             static void introsort(T arr[], int left, int right, int maxdepth=-1)
             {
-                /* If the right index is smaller than the left, 
-                no matter, swap the indexes.*/
-                if(right <= left) { swap(arr[left], arr[right]); }
-                
-                //threshold, if reached end recursive algo with insertion sort
-                const int TINY_SIZE = 17;
-                
-                const int LEN = (right-left+1);
+                introsort(arr + left, arr + right, std::less<>(), maxdepth);
+            }
 
-                /* If this is the first run (maxdepth == -1), run through
-                 * once and ensure we don't have an already sorted array. */
-                if(maxdepth == -1)
+            /** A wrapper for the introsort algorithm, which
+              * accepts just the array and length.
+              * \param the array to sort
+              * \param the size of the array
+              */
+            template <typename T>
+            static void introsort(T arr[], int len)
+            {
+                introsort(arr, 0, len-1);
+            }
+
+            /** An implementation of the sorting using introspective sort algorithm 
+              * Sorts the elements in range [first; last) in ascending order.
+              * This implementation is a replacement for std::sort
+              * \param the first element
+              * \param the last element, excluded in sorting.
+              */
+            template <class RandomIt>
+            static void sort(RandomIt first, RandomIt last)
+            {
+                introsort(first, last-1, std::less<>());
+            }
+
+            /** Sorting using introspective sort algorithm.
+              * Sorts the elements in range [first; last) in ascending order.
+              * \param the first element
+              * \param the last element, excluded in sorting.
+              *\param comparison function.
+              */
+            template< class RandomIt, class Compare >
+            static void sort(RandomIt first, RandomIt last, Compare comp)
+            {
+                introsort(first, last-1, comp);
+            }
+
+        private:
+
+            /** pair insertion sort algorithm with iterators.
+              *
+              * \param the first element to sort
+              * \param the last element to sort
+              */
+            template <class RandomIt, class Compare>
+            static void insertion_sort(RandomIt first, RandomIt last, Compare comp)
+            {
+               /* Ensure the left index is less than the right index. */
+                if(last < first)
                 {
-                    for(int i=left+1; i<=right; ++i)
-                    {
-                        /* If the current value is greater than the
-                         * previous value...
-                         */
-                        if(arr[i] < arr[i-1])
-                        {
-                            //The array is NOT sorted. Break loop.
-                            break;
-                        }
-
-                        //If we get to the end without breaking...
-                        if(i == right)
-                        {
-                            // ...then the array is already sorted! End function.
-                            return;
-                        }
-                    }
-
-                    /* If we have no specified maximum depth, calculate it. */
-                    maxdepth = (log2(right-left+1)) * 2; 
-                    /* NOTE: maxdepth value is empirical (see
-                     * http://www.cs.rpi.edu/~musser/gp/introsort.ps*/
+                    auto tmp = first;
+                    first = last;
+                    last = tmp;
                 }
+                
+                const int LEN = last - first + 1;
+                
+                int i(0);
+                while (i < LEN - 1)
+                {
+                    /*x and y are the two next elements*/
+                    auto x(*(first+i)), y(*(first+i+1));
+                    /*Be sure value in x is greater than that in y*/
+                    if (comp(x, y)) {swap(x, y);}
+                    
+                    /*find insertion point for x
+                     * j goes from right to left*/
+                    auto j = i -1;
+                    while (j>=0 && comp(x, *(first+j)))
+                    {
+                        /*shift content by 2*/
+                        *(first+j+2) = *(first+j);
+                        j--;
+                    }
+                    /*insert x*/
+                    *(first+j+2) = x;
+                    
+                    /*keep on with j to find y insertion point*/
+                     while (j>=0 && comp(y, *(first+j)))
+                    {
+                        *(first+j+1) = *(first+j);
+                        j--;
+                    }
+                    *(first+j+1) = y;
+                    
+                    i = i + 2;
+                }
+                
+                /*if LEN is odd, we need to find insertion point
+                 * for last element*/
+                if (i == LEN - 1)
+                {
+                    auto y = *(first+i);
+                    auto j = i - 1;
+                    
+                    while (j>=0 && comp(y, *(first+j)))
+                    {
+                        *(first+j+1) = *(first+j);
+                        j--;
+                    }
+                    *(first+j+1) = y;
+                }
+            }
+                
+            /** A component of introsort. 
+              * Returns median of three elements.
+              * iterators should be in comp order :
+              * a < b < c, with comp = '<'
+              *
+              * \param first iterator.
+              * \param second iterator.
+              * \param third iterator.
+              * \param comparaison function
+              */
+            template <class RandomIt, class Compare>
+            static RandomIt median_of_three(RandomIt a, RandomIt b, RandomIt c, Compare comp)
+            {
+                if ((comp(*b,*a) && comp(*a, *c)) || (comp(*c,*a) && comp(*a, *b)))
+                {
+                    return a;
+                }
+                if ((comp(*b, *c) && comp(*c, *a)) || (comp(*a, *c) && comp(*c, *b)))
+                {
+                    return c;
+                }
+                return b;
+            }
+
+
+            /** A component of heap sort. Should only be called from within
+              * `heap_sort()`, so use that function to sort an array using
+              * the heap sort algorithm.
+              *
+              * \param the iterator on a container.
+              * \param the leftmost index to sort.
+              * \param the rightmost index to sort.
+              */
+            template <class RandomIt, class Compare>
+            static void sift_downIt(RandomIt it, int left, int right, Compare comp) 
+            {
+                /* Ensure the left index is less than the right index. */
+                if(right < left)
+                {
+                    int t = left;
+                    left = right;
+                    right = t;
+                }
+
+                int i(left);
+                auto root(it + left);
+                auto last(it + right);
+                RandomIt child ;
+                // While the root had at least one child...
+                while((it + 2 * i + 1) <= last)
+                {
+                    //it + 2 i +1 points to the left child
+                    child = it + (2 * i )+ 1;
+                    if((child + 1) <= last && comp(*child, *(child+1)))
+                    {
+                        child++;
+                    }
+                    if (comp(*root, *child))
+                    {
+                        // Swap root and child...
+                        auto tmp = *root;
+                        *root = *child;
+                        *child = tmp;
+                        // Repeat to continue sifting down.
+                         i = child - it;
+                         root = child;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+
+            /** Implementation of heap_sort wth iterators. 
+              *
+              * \param the first element to sort
+              * \param the last element to sort
+              */
+            template <class RandomIt, class Compare>
+            static void heap_sort(RandomIt first, RandomIt last, Compare comp)
+            {
+                /* Ensure the left index is less than the right index. */
+                if(last < first)
+                {
+                        auto t = first;
+                        first = last;
+                        last = t;
+                }
+
+                const int LEN = (last-first) + 1;
+
+                // Heapify...
+                for(int i = (LEN - 2) / 2; i >= 0; i--)
+                {
+                    /* sift down the node at index start to the proper
+                     * place such that all nodes below the start index
+                     * are in heap order */
+                    sift_downIt(first,  i, LEN-1, comp);
+                    /* after sifting down the root all nodes/elements
+                     * are in heap order. */
+                }
+                int i = LEN-1;
+                while(i > 0)
+                {
+                    std::iter_swap(first, first+i);
+                    sift_downIt(first, 0, --i, comp);
+                }
+            }
+
+            /** Loop for introsort function. 
+              * Range is from "first" to "last",included.
+              * \param first element to be sorted
+              * \param last element to be sorted
+              */
+            template <class RandomIt, class Compare>
+            static void introsort_loop(RandomIt first, RandomIt last, Compare comp, int maxdepth = -1)
+            {                
+                //threshold, if reached end recursive algo with insertion sort
+                const int TINY_SIZE = 100;
+                
+                const int LEN = last-first+1;
 
                 //If size is less than threshold, use insertion sort.
                 if(LEN <= TINY_SIZE)
                 {
-                    insertion_sort(arr, left, right);
+                    insertion_sort(first, last, comp);
                     return;
                 }
                 
                 //if number of levels reached, end with heap_sort
                 if(maxdepth == 0)
                 {
-                    heap_sort(arr, left, right);
+                    heap_sort(first, last, comp);
                     return;
                 }
    
                  /* Introsort typically uses median-of-three to find its
-                 * pivot value. However, because we need TWO pivot values,
+                 * pivot values. However, because we need TWO pivot values,
                  * we need a variant :
                  *    - divide the array into 2 arrays ([left-middle] and [middle-right]);
                  *    - apply median-of-3 on two sub-arrays
@@ -324,20 +515,19 @@ namespace pawlib
                  * Given three values a, b, c from each subarray, where a < b < c...
                  * pivot_subarray = b
                  */
+                RandomIt middle(first + LEN/4);
+                RandomIt mot = median_of_three(first, middle, (first + LEN/2), comp);
+                if (first != mot) {std::iter_swap(first, mot);}
                 
-                int middle(left + LEN/4);
-                sort_three(arr[left], arr[middle], arr[left + LEN/2]);
-                swap(arr[left], arr[middle]);
-                
-                middle = right - LEN/4;
-                sort_three(arr[left + LEN/2], arr[middle], arr[right]);
-                swap(arr[right], arr[middle]);
+                middle = last - LEN/4;
+                mot = median_of_three((first + LEN/2), middle, last, comp);
+                if (last != mot) {std::iter_swap(mot, last);}
                 
                 /* Swap values at left and right indices to ensure pivots are selected properly*/
-                if(arr[right] < arr[left]) { swap(arr[right], arr[left]); }
+                if (comp(*last, *first)) { std::iter_swap(first, last); }
                 
-                T pivot1 = arr[left];
-                T pivot2 = arr[right];
+                RandomIt pivot1(first);
+                RandomIt pivot2(last);
 
                 /* BASIC ALGORITHM: By defining two pivots, we are sorting into
                  * three partitions, in the following positions:
@@ -356,44 +546,48 @@ namespace pawlib
 
                 /* Set the lower marker to one more than the pivot1 index,
                  * and the upper marker to one less than the pivot2 index. */
-                int lower = (left + 1),
-                      upper = (right - 1);
+                RandomIt lower(first + 1),
+                                  upper(last - 1);
+
+                /* Check if values at beginning of array are at the good place
+                 * before looping.*/
+                while (comp(*lower,*pivot1) && lower < upper){lower++;}
 
                 /* Loop through the array from the lower to upper markers.
                  * Note that these markers move as we sort to prevent swapping
                  * values out of correct positions, therefore the range that
                  * we are sorting on will shrink as we go. */
-                int i;               
-                for(i = lower; i <= upper; ++i)
+                
+                for(RandomIt i = lower; i <= upper; ++i)
                 {
-                    // arr[i] is in section IV
+                    // i iterator is in section IV
                     /* If the current value is less than the first pivot... */
-                    if (arr[i] < pivot1)
+                    if (comp(*i, *pivot1))
                     {
-                        swap(arr[i], arr[lower]);
+                        std::iter_swap(i, lower);
                         lower++;
                     }
                     /* Else if the current value is greater than the
                      * second pivot... */
-                    else if(arr[i] > pivot2)
+                    else if (comp(*pivot2, *i))
                         {
                         /* Before we continue, let's make sure we're not sitting on
                          * any values that belong in partition II. */
-                                while(i < upper && arr[upper] > pivot2)
+                                while(i < upper && comp(*pivot2, *upper))
                                 {
                                     upper--;
                                 }
 
                         /* Swap the value into partition II and decrement the
                          * upper marker. */
-                         swap(arr[i], arr[upper]);
+                         std::iter_swap(i, upper);
                          upper--;
                          /* new arr[i] should be checked before movong i.
-                          * We know it is not > pivot2, but is it < pivot1
+                          * We know it is not > pivot2, but is it < pivot1 ?
                           */
-                         if (arr[i] < pivot1)
+                         if (comp(*i, *pivot1))
                           {
-                                swap(arr[i], arr[lower]);
+                                std::iter_swap(i, lower);
                                 lower++;
                           }
                           /* if not < pivot 1, then leave it where it is, in section III*/
@@ -402,23 +596,23 @@ namespace pawlib
 
                 /* Swap the leftmost position (same as pivot1) with the value
                  * at the inner boundary of partition I. */
-                swap(arr[left], arr[lower-1]);
+                std::iter_swap(first, lower-1);
 
                 /* Swap the rightmost position (same as pivot2) with the value
                  * at the inner boundary of partition II. */
-                swap(arr[upper+1], arr[right]);
+                std::iter_swap(upper+1, last);
 
                 // We have now sorted all values into the three partitions!
 
                 /* Recursively sort partition I, passing in one less than
                  * the maxdepth. */
-                introsort(arr, left, lower-1, maxdepth-1);
+                introsort_loop(first, lower-1, comp, maxdepth-1);
                 /* Recursively sort partition II, passing in one less than
                  * the maxdepth. */
-                introsort(arr, upper+1, right, maxdepth-1);
+                introsort_loop(upper+1, last, comp, maxdepth-1);
                 /* Recursively sort partition III, passing in one less than
                  * the maxdepth. */
-                introsort(arr, lower, upper, maxdepth-1);
+                introsort_loop(lower, upper, comp, maxdepth-1);
 
                 /* NOTE: In case of infinite recursion on the previous three lines,
                  * make sure that this function (the one being recursively called)
@@ -429,43 +623,33 @@ namespace pawlib
                  * now sorted correctly. */
             }
 
-            /** A wrapper for the introsort algorithm, which
-              * accepts just the array and length.
-              * \param the array to sort
-              * \param the size of the array
+            /** Sorts the elements in ascending order. 
+              * Range is from "first" to "last",included.
+              * \param first element to be sorted
+              * \param last element to be sorted
               */
-            template <typename T>
-            static void introsort(T arr[], int len)
+            template <class RandomIt, class Compare>
+            static void introsort(RandomIt first, RandomIt last, Compare comp, int maxdepth = -1)
             {
-                introsort(arr, 0, len-1);
-            }
-
-        private:
-            template <typename T>
-
-            /** A component of introsort. 
-              * Sorts three params.
-              *
-              * \param element to be sorted.
-              * \param element to be sorted.
-              * \param element to be sorted.
-              */
-            static void sort_three(T& a, T& b, T& c)
-            {
-                //T tmp_i;
-                /* Put three values in correct order. */
-                if(a > b)
-                {
-                    swap(a, b);
+                /* If the right index is smaller than the left, 
+                no matter, swap the indexes.*/
+                if(last < first) 
+                { 
+                    RandomIt tmp = first;
+                    first = last;
+                    last = tmp; 
                 }
-                if(a > c)
+                
+                /* If this is the first run (maxdepth == -1), run through
+                 * once and ensure we don't have an already sorted array. */
+                if(maxdepth == -1)
                 {
-                    swap(a, c);
+                    /* If we have no specified maximum depth, calculate it. */
+                    maxdepth = (log2(last - first +1)) * 2; 
+                    /* NOTE: maxdepth value is empirical (see
+                     * http://www.cs.rpi.edu/~musser/gp/introsort.ps*/
                 }
-                if(b > c)
-                {
-                    swap(b,c);
-                }
+                introsort_loop(first, last, comp, maxdepth);
             }
 
             /** Swaps two params.
@@ -474,10 +658,10 @@ namespace pawlib
               * \param Second element.
               */
             template <typename T>
-            static void swap(T& a, T& b){
-                T tmp = a;
-                a = b;
-                b = tmp;
+            inline static void swap(T& a, T& b){
+                a ^= b;
+                b ^= a;
+                a ^= b;
             }
 
             /** A component of heap sort. Should only be called from within
@@ -528,5 +712,4 @@ namespace pawlib
             }
     };
 }
-
 #endif // PAWLIB_PAWSORT_HPP

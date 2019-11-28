@@ -620,6 +620,92 @@ unique values. Really, this is just evil incarnate.";
         const int INDEX = 100;
     };
 
+    class TestPawSortWrapper : public TestSort
+    {
+        public:
+            explicit TestPawSortWrapper(TestArrayType type):TestSort(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return title + " (sort_wrapper)";
+            }
+
+            bool run() override
+            {
+                /* Test sorting in range [index, test_size - index)*/              
+                auto first = std::begin(test_arr) + INDEX;
+                auto last = std::begin(test_arr) + test_size - INDEX;
+                pawsort::sort(first, last);
+                
+                // Verify sorting.
+                for(int i = 1 + INDEX; i < test_size - INDEX ; ++i)
+                {
+                    // If the item is less than the previous item.
+                    if(test_arr[i] < test_arr[i-1])
+                    {
+                        // Out of order. Fail.
+                        return false;
+                    }
+                }
+                // If we make it this far, validation passed.
+                return true;
+            }
+
+            ~TestPawSortWrapper(){}
+            
+    private:
+        const int INDEX = 100;
+    };
+
+    class TestPawSortWrapperForVector : public TestSort
+    {
+        public:
+            explicit TestPawSortWrapperForVector(TestArrayType type):TestSort(type)
+            {}
+
+            testdoc_t get_title() override
+            {
+                return title + " (sort_wrapper_with_vector)";
+            }
+
+            bool run() override
+            {
+                /* Test sorting in range [index, test_size - index)*/              
+                std::vector<int> test_vect;
+                for (int i = 0; i < test_size; ++i)
+                {
+                    test_vect.push_back(test_arr[i]);
+                }
+                auto first = test_vect.begin() + INDEX;
+                auto last = test_vect.begin() + test_size - INDEX;
+                struct {
+                    bool operator()(const int& a, const int& b)
+                    {   
+                        return a < b;
+                    }   
+                } customLess;
+                pawsort::sort(first, last, customLess);
+                
+                // Verify sorting.
+                for(int i = 1 + INDEX; i < test_size - INDEX ; ++i)
+                {
+                    // If the item is less than the previous item.
+                    if(test_vect[i] < test_vect[i-1])
+                    {
+                        // Out of order. Fail.
+                        return false;
+                    }
+                }
+                // If we make it this far, validation passed.
+                return true;
+            }
+
+            ~TestPawSortWrapperForVector(){}
+            
+    private:
+        const int INDEX = 100;
+    };
 
     class TestSuite_Pawsort : public TestSuite
     {
