@@ -7,7 +7,7 @@
   * Author(s): Sergio Ramirez
   */
 
-/* LICENSE
+/* LICENSE (BSD-3-Clause)
  * Copyright (c) 2016-2019 MousePaw Media.
  * All rights reserved.
  *

@@ -4,7 +4,7 @@
   * Author(s): Jason C. McDonald, lulu731
   */
 
-/* LICENSE
+/* LICENSE (BSD-3-Clause)
  * Copyright (c) 2019 MousePaw Media.
  * All rights reserved.
  *

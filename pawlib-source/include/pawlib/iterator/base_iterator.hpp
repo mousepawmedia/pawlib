@@ -6,7 +6,7 @@
   * Author(s): Ankush Thakur
   */
 
-/* LICENSE
+/* LICENSE (BSD-3-Clause)
  * Copyright (c) 2018 MousePaw Media.
  * All rights reserved.
  *

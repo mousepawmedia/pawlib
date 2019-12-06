@@ -1,6 +1,6 @@
-# LICENSE
+# LICENSE (BSD-3-Clause)
 
-Copyright (C) 2016 MousePaw Media.
+Copyright (C) 2019 MousePaw Media.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
