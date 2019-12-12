@@ -47,111 +47,106 @@
 #include "pawlib/base_flex_array.hpp"
 #include "pawlib/iochannel.hpp"
 
-using pawlib::iochannel;
-
-namespace pawlib
+template <typename type, bool factor_double = true>
+class FlexQueue : public Base_FlexArr<type, factor_double>
 {
-    template <typename type, bool factor_double = true>
-    class FlexQueue : public Base_FlexArr<type, factor_double>
-    {
-        public:
-            /** Create a new FlexQueue with the default capacity.
-              */
-            FlexQueue()
-                :Base_FlexArr<type>()
-                {}
-
-            /** Create a new FlexQueue with the specified minimum capacity.
-              * \param the minimum number of elements that the FlexQueue can contain.
-              */
-            // cppcheck-suppress noExplicitConstructor
-            FlexQueue(size_t numElements)
-                :Base_FlexArr<type>(numElements)
-                {}
-
-            /** Adds the specified element to the FlexQueue.
-             * This is just an alias for enqueue()
-              * \param the element to enqueue
-              * \return true if successful, else false.
+    public:
+        /** Create a new FlexQueue with the default capacity.
              */
-            bool push(type newElement)
-            {
-                return enqueue(newElement);
-            }
+        FlexQueue()
+            :Base_FlexArr<type>()
+            {}
 
-            /** Adds the specified element to the FlexQueue.
-             * This is just an alias for enqueue()
-              * \param the element to enqueue
-              * \return true if successful, else false.
+        /** Create a new FlexQueue with the specified minimum capacity.
+             * \param the minimum number of elements that the FlexQueue can contain.
              */
-            bool push_back(type newElement)
+        // cppcheck-suppress noExplicitConstructor
+        FlexQueue(size_t numElements)
+            :Base_FlexArr<type>(numElements)
+            {}
+
+        /** Adds the specified element to the FlexQueue.
+         * This is just an alias for enqueue()
+             * \param the element to enqueue
+             * \return true if successful, else false.
+         */
+        bool push(type newElement)
+        {
+            return enqueue(newElement);
+        }
+
+        /** Adds the specified element to the FlexQueue.
+         * This is just an alias for enqueue()
+             * \param the element to enqueue
+             * \return true if successful, else false.
+         */
+        bool push_back(type newElement)
+        {
+            return enqueue(newElement);
+        }
+
+        /** Adds the specified element to the FlexQueue.
+             * \param the element to enqueue
+             * \return true if successful, else false.
+             */
+        bool enqueue(type newElement)
+        {
+            return this->insertAtTail(newElement, true);
+        }
+
+        /** Returns the next (first) element in the FlexQueue without
+             * modifying the data structure.
+             * \return the next element in the FlexQueue.
+             */
+        type peek()
+        {
+            // If the stack is empty
+            if(this->isEmpty())
             {
-                return enqueue(newElement);
+                // Throw a fatal error.
+                throw std::out_of_range("FlexQueue: Cannot peek() from empty FlexQueue.");
             }
 
-            /** Adds the specified element to the FlexQueue.
-              * \param the element to enqueue
-              * \return true if successful, else false.
-              */
-            bool enqueue(type newElement)
-            {
-                return this->insertAtTail(newElement, true);
-            }
+            return this->getFromHead();
+        }
 
-            /** Returns the next (first) element in the FlexQueue without
-              * modifying the data structure.
-              * \return the next element in the FlexQueue.
-              */
-            type peek()
-            {
-                // If the stack is empty
-                if(this->isEmpty())
-                {
-                    // Throw a fatal error.
-                    throw std::out_of_range("FlexQueue: Cannot peek() from empty FlexQueue.");
-                }
+        /**Return and remove the next element in the FlexStack.
+         * This is just an alias for dequeue()
+         * \return the next (first) element, now removed.
+         */
+        type pop()
+        {
+            return dequeue();
+        }
 
-                return this->getFromHead();
-            }
+        /**Return and remove the next element in the FlexStack.
+         * This is just an alias for dequeue()
+         * \return the next (first) element, now removed.
+         */
+        type pop_front()
+        {
+            return dequeue();
+        }
 
-            /**Return and remove the next element in the FlexStack.
-             * This is just an alias for dequeue()
+        /** Return and remove the next element in the FlexQueue.
              * \return the next (first) element, now removed.
              */
-            type pop()
+        type dequeue()
+        {
+            // If the stack is empty
+            if(this->isEmpty())
             {
-                return dequeue();
+                // Throw a fatal error.
+                throw std::out_of_range("FlexQueue: Cannot dequeue() from empty FlexQueue.");
             }
 
-            /**Return and remove the next element in the FlexStack.
-             * This is just an alias for dequeue()
-             * \return the next (first) element, now removed.
-             */
-            type pop_front()
-            {
-                return dequeue();
-            }
+            // Store the front element.
+            type temp = this->getFromHead();
+            // Remove the front element.
+            this->removeAtHead();
+            // Return the stored element.
+            return temp;
+        }
+};
 
-            /** Return and remove the next element in the FlexQueue.
-              * \return the next (first) element, now removed.
-              */
-            type dequeue()
-            {
-                // If the stack is empty
-                if(this->isEmpty())
-                {
-                    // Throw a fatal error.
-                    throw std::out_of_range("FlexQueue: Cannot dequeue() from empty FlexQueue.");
-                }
-
-                // Store the front element.
-                type temp = this->getFromHead();
-                // Remove the front element.
-                this->removeAtHead();
-                // Return the stored element.
-                return temp;
-            }
-    };
-}
-
-#endif // QUEUE_HPP_INCLUDED
+#endif // PAWLIB_FLEXQUEUE_HPP

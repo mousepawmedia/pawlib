@@ -41,9 +41,10 @@
  * on how to contribute to our projects.
  */
 
-#include "pawlib/iochannel.hpp"
+#ifndef PAWLIB_GOLDILOCKS_ASSERT_HPP
+#define PAWLIB_GOLDILOCKS_ASSERT_HPP
 
-using namespace pawlib;
+#include "pawlib/iochannel.hpp"
 
 // Assertion macros
 #define PL_ASSERT_TRUE(val) \
@@ -90,576 +91,576 @@ using namespace pawlib;
 
 // TODO: Predicate [P, v... => P(v...)], Throws, NaN, INF, no-throw, fail w/ message, skip, report, warn
 
-namespace pawlib {
-    template <typename T>
-    bool do_assert_true(T val)
+template <typename T>
+bool do_assert_true(T val)
+{
+    bool r = true;
+    if (!(val)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
     {
-        bool r = true;
-        if (!(val)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << val << " is " << true << IOCtrl::endl;
-        return r;
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
     }
 
-    template <typename T>
-    bool do_assert_true(T* val)
-    {
-        bool r = true;
-        if (!(*val)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << true << IOCtrl::endl;
-        return r;
-    }
-
-    template <typename T>
-    bool do_assert_false(T val)
-    {
-        bool r = true;
-        if (val) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << val << " is " << false << IOCtrl::endl;
-        return r;
-    }
-
-    template <typename T>
-    bool do_assert_false(T* val)
-    {
-       bool r = true;
-        if (*val) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << false << IOCtrl::endl;
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_equal(T lhs, U rhs)
-    {
-        bool r = true;
-        if (!(lhs == rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs
-            << " == "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_equal(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (!(*lhs == *rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " == "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_equal(T lhs, U rhs)
-    {
-        bool r = true;
-        if (lhs == rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs
-            << " == "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_equal(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (*lhs == *rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " == "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_not_equal(T lhs, U rhs)
-    {
-        bool r = true;
-        if (!(lhs != rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs
-            << " != "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_not_equal(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (!(*lhs != *rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " != "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_not_equal(T lhs, U rhs)
-    {
-        bool r = true;
-        if (lhs != rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs
-            << " != "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_not_equal(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (*lhs != *rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " != "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_less(T lhs, U rhs)
-    {
-        bool r = true;
-        if (!(lhs < rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs
-            << " < "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_less(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (!(*lhs < *rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " < "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_less(T lhs, U rhs)
-    {
-        bool r = true;
-        if (lhs < rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs
-            << " < "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_less(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (*lhs < *rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " < "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_less_equal(T lhs, U rhs)
-    {
-        bool r = true;
-        if (!(lhs <= rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs
-            << " <= "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_less_equal(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (!(*lhs <= *rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " <= "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_less_equal(T lhs, U rhs)
-    {
-        bool r = true;
-        if (lhs <= rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs
-            << " <= "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_less_equal(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (*lhs <= *rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " <= "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_greater(T lhs, U rhs)
-    {
-        bool r = true;
-        if (!(lhs > rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs
-            << " > "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_greater(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (!(*lhs > *rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " > "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_greater(T lhs, U rhs)
-    {
-        bool r = true;
-        if (lhs > rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs
-            << " > "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_greater(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (*lhs > *rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " > "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_greater_equal(T lhs, U rhs)
-    {
-        bool r = true;
-        if (!(lhs >= rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs
-            << " >= "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_assert_greater_equal(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (!(*lhs >= *rhs)) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " >= "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_greater_equal(T lhs, U rhs)
-    {
-        bool r = true;
-        if (lhs >= rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs
-            << " >= "
-            << rhs
-            << IOCtrl::endl;
-
-        return r;
-    }
-
-    template <typename T, typename U>
-    bool do_antiassert_greater_equal(T* lhs, U* rhs)
-    {
-        bool r = true;
-        if (*lhs >= *rhs) {
-            ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
-            r = false;
-        }
-        else
-        {
-            ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
-        }
-
-        ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
-            << " >= "
-            << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
-            << IOCtrl::endl;
-
-        return r;
-    }
+    ioc << val << " is " << true << IOCtrl::endl;
+    return r;
 }
+
+template <typename T>
+bool do_assert_true(T* val)
+{
+    bool r = true;
+    if (!(*val)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << true << IOCtrl::endl;
+    return r;
+}
+
+template <typename T>
+bool do_assert_false(T val)
+{
+    bool r = true;
+    if (val) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << val << " is " << false << IOCtrl::endl;
+    return r;
+}
+
+template <typename T>
+bool do_assert_false(T* val)
+{
+    bool r = true;
+    if (*val) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << val << " [@" << IOFormatPtr::address << val << IOFormatPtr::value << "] is " << false << IOCtrl::endl;
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_equal(T lhs, U rhs)
+{
+    bool r = true;
+    if (!(lhs == rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs
+        << " == "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_equal(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (!(*lhs == *rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " == "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_equal(T lhs, U rhs)
+{
+    bool r = true;
+    if (lhs == rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs
+        << " == "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_equal(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (*lhs == *rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " == "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_not_equal(T lhs, U rhs)
+{
+    bool r = true;
+    if (!(lhs != rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs
+        << " != "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_not_equal(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (!(*lhs != *rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " != "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_not_equal(T lhs, U rhs)
+{
+    bool r = true;
+    if (lhs != rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs
+        << " != "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_not_equal(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (*lhs != *rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " != "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_less(T lhs, U rhs)
+{
+    bool r = true;
+    if (!(lhs < rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs
+        << " < "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_less(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (!(*lhs < *rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " < "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_less(T lhs, U rhs)
+{
+    bool r = true;
+    if (lhs < rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs
+        << " < "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_less(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (*lhs < *rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " < "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_less_equal(T lhs, U rhs)
+{
+    bool r = true;
+    if (!(lhs <= rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs
+        << " <= "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_less_equal(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (!(*lhs <= *rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " <= "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_less_equal(T lhs, U rhs)
+{
+    bool r = true;
+    if (lhs <= rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs
+        << " <= "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_less_equal(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (*lhs <= *rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " <= "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_greater(T lhs, U rhs)
+{
+    bool r = true;
+    if (!(lhs > rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs
+        << " > "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_greater(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (!(*lhs > *rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " > "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_greater(T lhs, U rhs)
+{
+    bool r = true;
+    if (lhs > rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs
+        << " > "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_greater(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (*lhs > *rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " > "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_greater_equal(T lhs, U rhs)
+{
+    bool r = true;
+    if (!(lhs >= rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs
+        << " >= "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_assert_greater_equal(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (!(*lhs >= *rhs)) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " >= "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_greater_equal(T lhs, U rhs)
+{
+    bool r = true;
+    if (lhs >= rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs
+        << " >= "
+        << rhs
+        << IOCtrl::endl;
+
+    return r;
+}
+
+template <typename T, typename U>
+bool do_antiassert_greater_equal(T* lhs, U* rhs)
+{
+    bool r = true;
+    if (*lhs >= *rhs) {
+        ioc << IOCat::error << IOFormatTextFG::red << IOFormatTextAttr::bold << "[!] Anti-Assert ";
+        r = false;
+    }
+    else
+    {
+        ioc << IOCat::debug << IOFormatTextFG::green << IOFormatTextAttr::bold << "Anti-Assert ";
+    }
+
+    ioc << lhs << " [@" << IOFormatPtr::address << lhs << IOFormatPtr::value << "] "
+        << " >= "
+        << rhs << " [@" << IOFormatPtr::address << rhs << IOFormatPtr::value << "] "
+        << IOCtrl::endl;
+
+    return r;
+}
+
+#endif // PAWLIB_GOLDILOCKS_ASSERT_HPP

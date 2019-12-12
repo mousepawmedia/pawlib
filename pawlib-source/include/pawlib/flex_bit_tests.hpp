@@ -51,379 +51,375 @@
 #include "pawlib/iochannel.hpp"
 #include "pawlib/stdutils.hpp"
 
-namespace pawlib
+//Testing push function.
+class TestFlexBit_Push : public Test
 {
-    //Testing push function.
-    class TestFlexBit_Push : public Test
-    {
-        public:
+    public:
 
-            //Constructor.
-            explicit TestFlexBit_Push(unsigned int iterations): iters(iterations) {}
+        //Constructor.
+        explicit TestFlexBit_Push(unsigned int iterations): iters(iterations) {}
 
-            //Destructor
-            ~TestFlexBit_Push() {}
+        //Destructor
+        ~TestFlexBit_Push() {}
 
-            //Test title.
-            testdoc_t get_title() override
+        //Test title.
+        testdoc_t get_title() override
+        {
+            return "FlexBit: Push " + stdutils::itos(iters, 10) + " bytes.";
+        }
+
+        //Test description.
+        testdoc_t get_docs() override
+        {
+            return "Push " + stdutils::itos(iters, 10) + " bytes to a flex bit.";
+        }
+
+        //Run the test.
+        bool run() override
+        {
+            FlexBit flexbit;
+
+            try
             {
-                return "FlexBit: Push " + stdutils::itos(iters, 10) + " bytes.";
+                //Loop for the given amount of iterations.
+                for (unsigned int i = 0; i < iters; ++i)
+                {
+                    //Using Mod operator to limit the input size of the byte. (0 >= value <= 255)
+                    std::bitset<8> byte(i % 255);
+                    flexbit.push(byte);
+                }
+            }
+            catch (const std::exception& e)
+            {
+                //Any unaccounted for exception.
+                ioc << IOCat::error << "Error occurred: " << e << IOCtrl::endl;
+                return false;
+            }
+            catch (...)
+            {
+                //Unknown failure.
+                ioc << IOCat::error << "Unknown failure occurred." << IOCtrl::endl;
+                return false;
             }
 
-            //Test description.
-            testdoc_t get_docs() override
+            return true;
+        }
+
+    private:
+        unsigned int iters;
+};
+
+//Test peek function.
+class TestFlexBit_Peek : public Test
+{
+    public:
+
+        //Default constructor
+        TestFlexBit_Peek() {}
+
+        //Destructor
+        ~TestFlexBit_Peek() {}
+
+        //Test tittle.
+        testdoc_t get_title() override
+        {
+            return "FlexBit: Peek";
+        }
+
+        //Test description.
+        testdoc_t get_docs() override
+        {
+            return "Push 101 bytes to a flex bit then peek and test if its the right value.";
+        }
+
+        //Adding 100 bytes to a test FlexBit.
+        bool pre() override
+        {
+            try
             {
-                return "Push " + stdutils::itos(iters, 10) + " bytes to a flex bit.";
-            }
-
-            //Run the test.
-            bool run() override
-            {
-                FlexBit flexbit;
-
-                try
-                {
-                    //Loop for the given amount of iterations.
-                    for (unsigned int i = 0; i < iters; ++i)
-                    {
-                        //Using Mod operator to limit the input size of the byte. (0 >= value <= 255)
-                        std::bitset<8> byte(i % 255);
-                        flexbit.push(byte);
-                    }
-                }
-                catch (const std::exception& e)
-                {
-                    //Any unaccounted for exception.
-                    ioc << IOCat::error << "Error occurred: " << e << IOCtrl::endl;
-                    return false;
-                }
-                catch (...)
-                {
-                    //Unknown failure.
-                    ioc << IOCat::error << "Unknown failure occurred." << IOCtrl::endl;
-                    return false;
-                }
-
-                return true;
-            }
-
-        private:
-            unsigned int iters;
-    };
-
-    //Test peek function.
-    class TestFlexBit_Peek : public Test
-    {
-        public:
-
-            //Default constructor
-            TestFlexBit_Peek() {}
-
-            //Destructor
-            ~TestFlexBit_Peek() {}
-
-            //Test tittle.
-            testdoc_t get_title() override
-            {
-                return "FlexBit: Peek";
-            }
-
-            //Test description.
-            testdoc_t get_docs() override
-            {
-                return "Push 101 bytes to a flex bit then peek and test if its the right value.";
-            }
-
-            //Adding 100 bytes to a test FlexBit.
-            bool pre() override
-            {
-                try
-                {
-                    //Add 100 bytes to FlexBit.
-                    for (int i = 100; i >= 0; i--)
-                    {
-                        //Using Mod operator to limit the input size of the byte. (0 >= value <= 255)
-                        std::bitset<8> byte(i % 255);
-                        testFlexBit.push(byte);
-                    }
-                }
-                catch (const std::exception& e)
-                {
-                    //Any unaccounted for exception.
-                    std::cerr << "Error occurred: " << e.what() << std::endl;
-                    return false;
-                }
-                catch (...)
-                {
-                    //Unknown failure.
-                    std::cerr << "Unknown failure occurred." << std::endl;
-                    return false;
-                }
-
-                return true;
-            }
-
-            //Running the test to peek at the FlexBit.
-            bool run() override
-            {
-                try
-                {
-                    /* If the peek value is not "01100100" (decimal value: 100),
-                       which is the value that is in first position in the queue
-                       designed for this test. Then the test will fail. */
-                    std::bitset<8> peekValue = testFlexBit.peek();
-                    if (peekValue != std::bitset<8>(std::string("01100100")))
-                    {
-                        return false;
-                    }
-
-                }
-                catch (const std::out_of_range& e)
-                {
-                    //Out of range exception.
-                    ioc << IOCat::error << "Out of range error: " << e << IOCtrl::endl;
-                    return false;
-                }
-                catch (const std::exception& e)
-                {
-                    //Any unaccounted for exception.
-                    ioc << IOCat::error << "Error occurred: " << e << IOCtrl::endl;
-                    return false;
-                }
-                catch (...)
-                {
-                    //Unknown failure.
-                    ioc << IOCat::error << "Unknown failure occurred." << IOCtrl::endl;
-                    return false;
-                }
-
-                return true;
-            }
-
-            //Clean up.
-            bool post() override
-            {
-                testFlexBit.~FlexBit();
-
-                return true;
-            }
-
-        private:
-            FlexBit testFlexBit;
-
-
-    };
-
-    //Testing the poll(remove) function of flexbit.
-    class TestFlexBit_Poll : public Test
-    {
-        public:
-
-            //Default constructor.
-            explicit TestFlexBit_Poll(unsigned int iterations): iters(iterations) {}
-
-            //Destructor
-            ~TestFlexBit_Poll() {}
-
-            //Test title.
-            testdoc_t get_title() override
-            {
-                return "FlexBit: Poll " + stdutils::itos(iters, 10) + " bytes.";
-            }
-
-            //Test description.
-            testdoc_t get_docs() override
-            {
-                return "Push " + stdutils::itos(iters,
-                                                10) + " bytes to a flex bit then remove them.";
-            }
-
-            //Add given amount of bytes to a FlexBit.
-            bool pre() override
-            {
-                for (int i = iters - 1; i >= 0 ; i--)
+                //Add 100 bytes to FlexBit.
+                for (int i = 100; i >= 0; i--)
                 {
                     //Using Mod operator to limit the input size of the byte. (0 >= value <= 255)
                     std::bitset<8> byte(i % 255);
                     testFlexBit.push(byte);
                 }
-                return true;
+            }
+            catch (const std::exception& e)
+            {
+                //Any unaccounted for exception.
+                std::cerr << "Error occurred: " << e.what() << std::endl;
+                return false;
+            }
+            catch (...)
+            {
+                //Unknown failure.
+                std::cerr << "Unknown failure occurred." << std::endl;
+                return false;
             }
 
-            //Running the poll function until FlexBit is empty.
-            bool run() override
+            return true;
+        }
+
+        //Running the test to peek at the FlexBit.
+        bool run() override
+        {
+            try
             {
-                try
+                /* If the peek value is not "01100100" (decimal value: 100),
+                    which is the value that is in first position in the queue
+                    designed for this test. Then the test will fail. */
+                std::bitset<8> peekValue = testFlexBit.peek();
+                if (peekValue != std::bitset<8>(std::string("01100100")))
                 {
-                    //Checking if the size is not what its supposed to be.
-                    if (testFlexBit.getSize() != iters)
+                    return false;
+                }
+
+            }
+            catch (const std::out_of_range& e)
+            {
+                //Out of range exception.
+                ioc << IOCat::error << "Out of range error: " << e << IOCtrl::endl;
+                return false;
+            }
+            catch (const std::exception& e)
+            {
+                //Any unaccounted for exception.
+                ioc << IOCat::error << "Error occurred: " << e << IOCtrl::endl;
+                return false;
+            }
+            catch (...)
+            {
+                //Unknown failure.
+                ioc << IOCat::error << "Unknown failure occurred." << IOCtrl::endl;
+                return false;
+            }
+
+            return true;
+        }
+
+        //Clean up.
+        bool post() override
+        {
+            testFlexBit.~FlexBit();
+
+            return true;
+        }
+
+    private:
+        FlexBit testFlexBit;
+
+
+};
+
+//Testing the poll(remove) function of flexbit.
+class TestFlexBit_Poll : public Test
+{
+    public:
+
+        //Default constructor.
+        explicit TestFlexBit_Poll(unsigned int iterations): iters(iterations) {}
+
+        //Destructor
+        ~TestFlexBit_Poll() {}
+
+        //Test title.
+        testdoc_t get_title() override
+        {
+            return "FlexBit: Poll " + stdutils::itos(iters, 10) + " bytes.";
+        }
+
+        //Test description.
+        testdoc_t get_docs() override
+        {
+            return "Push " + stdutils::itos(iters,
+                                            10) + " bytes to a flex bit then remove them.";
+        }
+
+        //Add given amount of bytes to a FlexBit.
+        bool pre() override
+        {
+            for (int i = iters - 1; i >= 0 ; i--)
+            {
+                //Using Mod operator to limit the input size of the byte. (0 >= value <= 255)
+                std::bitset<8> byte(i % 255);
+                testFlexBit.push(byte);
+            }
+            return true;
+        }
+
+        //Running the poll function until FlexBit is empty.
+        bool run() override
+        {
+            try
+            {
+                //Checking if the size is not what its supposed to be.
+                if (testFlexBit.getSize() != iters)
+                {
+                    return false;
+                }
+                //Removing every single byte from the FlexBit.
+                for (int i = iters - 1; i >= 0 ; i--)
+                {
+                    //Making sure the value is what its suppose to.
+                    if (std::bitset<8>(i % 255) != testFlexBit.poll())
                     {
                         return false;
                     }
-                    //Removing every single byte from the FlexBit.
-                    for (int i = iters - 1; i >= 0 ; i--)
+                }
+
+            }
+            catch (const std::length_error& e)
+            {
+                //Length error, which is only thrown inside poll().
+                ioc << IOCat::error << "Length error: " << e << IOCtrl::endl;
+                return false;
+            }
+            catch (const std::exception& e)
+            {
+                //Any unaccounted for exception.
+                ioc << IOCat::error << "Error occurred: " << e << IOCtrl::endl;
+                return false;
+            }
+            catch (...)
+            {
+                //Unknown failure.
+                ioc << IOCat::error << "Unknown failure occurred." << IOCtrl::endl;
+                return false;
+            }
+
+            return true;
+
+        }
+
+        //Clean up.
+        bool post() override
+        {
+            testFlexBit.~FlexBit();
+
+            return true;
+        }
+
+    private:
+        FlexBit testFlexBit;
+        unsigned int iters;
+};
+
+//Basic test for the print function in flexbit.
+class TestFlexBit_ToString : public Test
+{
+    public:
+
+        //Default constructor.
+        explicit TestFlexBit_ToString(unsigned int iterations): iters(iterations) {}
+
+        //Destructor
+        ~TestFlexBit_ToString() {}
+
+        //Test tittle.
+        testdoc_t get_title() override
+        {
+            return "FlexBit: ToString " + stdutils::itos(iters, 10) + " bytes.";
+        }
+
+        //Test description.
+        testdoc_t get_docs() override
+        {
+            return "Push " + stdutils::itos(iters,
+                                            10) + " bytes to a flex bit and return as a readable string.";
+        }
+
+        //Add given amount of bytes to a FlexBit.
+        bool pre() override
+        {
+            for (int i = iters - 1; i >= 0 ; i--)
+            {
+                //Using Mod operator to limit the input size of the byte. (0 >= value <= 255)
+                std::bitset<8> byte(i % 255);
+                testFlexBit.push(byte);
+            }
+            return true;
+        }
+
+        //Running test to print given amount of bytes in the FlexBit.
+        bool run() override
+        {
+            try
+            {
+                std::string str = testFlexBit.toString();
+
+                //Only checking values from small flexbits,
+                //Anything larger than 100 elements will be
+                //purely stress testing.
+                if (iters <= 100)
+                {
+                    std::string compareStr = "";
+
+                    //Duplicating the method used to create the flexbit
+                    //to check if the values are correct.
+                    for (int i = iters - 1; i > 0 ; i--)
                     {
-                        //Making sure the value is what its suppose to.
-                        if (std::bitset<8>(i % 255) != testFlexBit.poll())
-                        {
-                            return false;
-                        }
+                        compareStr += std::bitset<8>(i % 255).to_string() + ", ";
                     }
 
-                }
-                catch (const std::length_error& e)
-                {
-                    //Length error, which is only thrown inside poll().
-                    ioc << IOCat::error << "Length error: " << e << IOCtrl::endl;
-                    return false;
-                }
-                catch (const std::exception& e)
-                {
-                    //Any unaccounted for exception.
-                    ioc << IOCat::error << "Error occurred: " << e << IOCtrl::endl;
-                    return false;
-                }
-                catch (...)
-                {
-                    //Unknown failure.
-                    ioc << IOCat::error << "Unknown failure occurred." << IOCtrl::endl;
-                    return false;
-                }
+                    compareStr += std::bitset<8>(0 % 255).to_string() + "\n";
 
-                return true;
-
-            }
-
-            //Clean up.
-            bool post() override
-            {
-                testFlexBit.~FlexBit();
-
-                return true;
-            }
-
-        private:
-            FlexBit testFlexBit;
-            unsigned int iters;
-    };
-
-    //Basic test for the print function in flexbit.
-    class TestFlexBit_ToString : public Test
-    {
-        public:
-
-            //Default constructor.
-            explicit TestFlexBit_ToString(unsigned int iterations): iters(iterations) {}
-
-            //Destructor
-            ~TestFlexBit_ToString() {}
-
-            //Test tittle.
-            testdoc_t get_title() override
-            {
-                return "FlexBit: ToString " + stdutils::itos(iters, 10) + " bytes.";
-            }
-
-            //Test description.
-            testdoc_t get_docs() override
-            {
-                return "Push " + stdutils::itos(iters,
-                                                10) + " bytes to a flex bit and return as a readable string.";
-            }
-
-            //Add given amount of bytes to a FlexBit.
-            bool pre() override
-            {
-                for (int i = iters - 1; i >= 0 ; i--)
-                {
-                    //Using Mod operator to limit the input size of the byte. (0 >= value <= 255)
-                    std::bitset<8> byte(i % 255);
-                    testFlexBit.push(byte);
-                }
-                return true;
-            }
-
-            //Running test to print given amount of bytes in the FlexBit.
-            bool run() override
-            {
-                try
-                {
-                    std::string str = testFlexBit.toString();
-
-                    //Only checking values from small flexbits,
-                    //Anything larger than 100 elements will be
-                    //purely stress testing.
-                    if (iters <= 100)
+                    //Checking if the string returned from the
+                    //flexbit toString method is what it should be.
+                    if (str.compare(compareStr) != 0)
                     {
-                        std::string compareStr = "";
-
-                        //Duplicating the method used to create the flexbit
-                        //to check if the values are correct.
-                        for (int i = iters - 1; i > 0 ; i--)
-                        {
-                            compareStr += std::bitset<8>(i % 255).to_string() + ", ";
-                        }
-
-                        compareStr += std::bitset<8>(0 % 255).to_string() + "\n";
-
-                        //Checking if the string returned from the
-                        //flexbit toString method is what it should be.
-                        if (str.compare(compareStr) != 0)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
-
                 }
-                catch (const std::length_error& e)
-                {
-                    //Length error.
-                    ioc << IOCat::error << "Length error: " << e << IOCtrl::endl;
-                    return false;
-                }
-                catch (const std::exception& e)
-                {
-                    //Any unaccounted for exception.
-                    ioc << IOCat::error << "Error occurred: " << e << IOCtrl::endl;
-                    return false;
-                }
-                catch (...)
-                {
-                    //Unknown failure.
-                    std::cerr << "Unknown failure occurred." << std::endl;
-                    ioc << IOCat::error << "Unknown failure occurred." << IOCtrl::endl;
-                    return false;
-                }
-
-                return true;
 
             }
-
-            //Clean up.
-            bool post() override
+            catch (const std::length_error& e)
             {
-                testFlexBit.~FlexBit();
-
-                return true;
+                //Length error.
+                ioc << IOCat::error << "Length error: " << e << IOCtrl::endl;
+                return false;
             }
-
-        private:
-            FlexBit testFlexBit;
-            unsigned int iters;
-    };
-
-
-    class TestSuite_FlexBit : public TestSuite
-    {
-        public:
-            void load_tests() override;
-            testdoc_t get_title() override
+            catch (const std::exception& e)
             {
-                return "PawLIB: FlexBit tests";
+                //Any unaccounted for exception.
+                ioc << IOCat::error << "Error occurred: " << e << IOCtrl::endl;
+                return false;
+            }
+            catch (...)
+            {
+                //Unknown failure.
+                std::cerr << "Unknown failure occurred." << std::endl;
+                ioc << IOCat::error << "Unknown failure occurred." << IOCtrl::endl;
+                return false;
             }
 
-    };
-}
+            return true;
 
+        }
+
+        //Clean up.
+        bool post() override
+        {
+            testFlexBit.~FlexBit();
+
+            return true;
+        }
+
+    private:
+        FlexBit testFlexBit;
+        unsigned int iters;
+};
+
+
+class TestSuite_FlexBit : public TestSuite
+{
+    public:
+        void load_tests() override;
+        testdoc_t get_title() override
+        {
+            return "PawLIB: FlexBit tests";
+        }
+
+};
 
 #endif // PAWLIB_FLEXBIT_TESTS_HPP

@@ -46,12 +46,8 @@
 
 #include <cstdint>
 
-namespace pawlib
-{
-    /** Indicates an invalid index. We actually use the largest
-      * unsigned int32 for this. */
-    static const uint32_t INVALID_INDEX = UINT32_MAX;
-
-}
+/** Indicates an invalid index. We actually use the largest
+     * unsigned int32 for this. */
+static const uint32_t INVALID_INDEX = UINT32_MAX;
 
 #endif // PAWLIB_CONSTANTS_HPP

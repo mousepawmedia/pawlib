@@ -57,86 +57,86 @@
 
 #include "pawlib/goldilocks.hpp"
 
-using namespace pawlib;
-
-namespace pawlib
+/* NOTE: We definitely don't want a copy constructor.
+    * Sharing the testmanager is a VERY bad idea in this current form.
+    * We may revisit this later.
+    */
+class GoldilocksShell
 {
-    // cppcheck-suppress noCopyConstructor
-    /* NOTE: We definitely don't want a copy constructor.
-     * Sharing the testmanager is a VERY bad idea in this current form.
-     * We may revisit this later.
-     */
-    class GoldilocksShell
-    {
-        public:
-            /** Default constructor*/
-            GoldilocksShell()
-            :testmanager(new TestManager), prompt(":")
-            {}
+    public:
+        /** Default constructor*/
+        GoldilocksShell()
+        :testmanager(new TestManager), prompt(":")
+        {}
 
-            /** Construct with a specific prompt string
-              * \param the prompt symbol for the shell interface
-              */
-            // cppcheck-suppress noExplicitConstructor
-            GoldilocksShell(const char* prompt_string)
-            :testmanager(new TestManager), prompt(prompt_string)
-            {}
+        // HACK: Disable copy constructor (not sure this is needed)
+        GoldilocksShell(const GoldilocksShell&) = delete;
 
-            /** Run using command-line arguments. Designed to directly accept
-              * the same arguments as `int main()`
-              * \param the argument count, as from 'int main()'.
-              * \param the argument array, as from 'int main()'.
-              * \param the number of arguments to skip, default 0
-              * \return the return code, to be returned by 'int main()'.
-              */
-            int command(int argc, char* argv[], unsigned int skip = 0);
+        /** Construct with a specific prompt string
+             * \param the prompt symbol for the shell interface
+             */
+        // cppcheck-suppress noExplicitConstructor
+        GoldilocksShell(const char* prompt_string)
+        :testmanager(new TestManager), prompt(prompt_string)
+        {}
 
-            /** Launch an interactive terminal session using IOChannel.
-              * \param the pointer to the Testcatalog instance being used.
-              */
-            void interactive();
+        /** Run using command-line arguments. Designed to directly accept
+             * the same arguments as `int main()`
+             * \param the argument count, as from 'int main()'.
+             * \param the argument array, as from 'int main()'.
+             * \param the number of arguments to skip, default 0
+             * \return the return code, to be returned by 'int main()'.
+             */
+        int command(int argc, char* argv[], unsigned int skip = 0);
 
-            template <typename T>
-            bool register_suite(std::string name)
+        /** Launch an interactive terminal session using IOChannel.
+             * \param the pointer to the Testcatalog instance being used.
+             */
+        void interactive();
+
+        template <typename T>
+        bool register_suite(std::string name)
+        {
+            /* Before we continue, ensure we are being asked to register an
+            * actual Goldilocks suite!
+            */
+            if(std::is_base_of<TestSuite, T>::value)
             {
-                /* Before we continue, ensure we are being asked to register an
-                * actual Goldilocks suite!
-                */
-                if(std::is_base_of<TestSuite, T>::value)
-                {
-                    // Register a new instance of the TestSuite with the given name.
-                    this->testmanager->register_suite(name, new T());
-                    return true;
-                }
-                return false;
+                // Register a new instance of the TestSuite with the given name.
+                this->testmanager->register_suite(name, new T());
+                return true;
             }
+            return false;
+        }
 
-            ~GoldilocksShell()
-            {
-                delete testmanager;
-                testmanager = 0;
-            }
+        // HACK: Disable copy assignment (not sure this is needed)
+        GoldilocksShell operator=(const GoldilocksShell&) = delete;
 
-        protected:
-            typedef std::vector<std::string> stringvector;
+        ~GoldilocksShell()
+        {
+            delete testmanager;
+            testmanager = 0;
+        }
 
-            TestManager* testmanager;
-            std::string prompt;
+    protected:
+        typedef std::vector<std::string> stringvector;
 
-            /** The full text of the help command for the shell.
-              */
-            void help();
+        TestManager* testmanager;
+        std::string prompt;
 
-            void about(stringvector&);
-            void benchmark(stringvector&);
-            void compare(stringvector&);
-            void list(stringvector&);
-            void listsuites(stringvector&);
-            void load(stringvector&);
-            void run(stringvector&);
+        /** The full text of the help command for the shell.
+             */
+        void help();
 
-            uint8_t validate_arguments(stringvector&, uint8_t, uint8_t = 0);
-    };
-}
+        void about(stringvector&);
+        void benchmark(stringvector&);
+        void compare(stringvector&);
+        void list(stringvector&);
+        void listsuites(stringvector&);
+        void load(stringvector&);
+        void run(stringvector&);
+
+        uint8_t validate_arguments(stringvector&, uint8_t, uint8_t = 0);
+};
 
 #endif //PAWLIB_GOLDILOCKS_SHELL_HPP

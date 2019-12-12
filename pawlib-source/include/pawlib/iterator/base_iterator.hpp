@@ -44,52 +44,49 @@
 #ifndef PAWLIB_BASE_ITERATOR_HPP
 #define PAWLIB_BASE_ITERATOR_HPP
 
-namespace pawlib
-{
-    template<class Type>
-    class BaseIterator {
-        private:
-            // the total number of elements currently in the data structure
-            unsigned int size;
+template<class Type>
+class BaseIterator {
+    private:
+        // the total number of elements currently in the data structure
+        unsigned int size;
 
-        public:
-            // The default constructor
-            // (Since it's an abstract class, there's no idea how will help :-/ )
-            BaseIterator() : size(0) {}
+    public:
+        // The default constructor
+        // (Since it's an abstract class, there's no idea how will help :-/ )
+        BaseIterator() : size(0) {}
 
-            // Function to check if the iterator is valid.
-            // It's currently not known how this will be used,
-            // but including this functinality seemed like a
-            // good idea. :D
-            virtual bool isValid() = 0;
+        // Function to check if the iterator is valid.
+        // It's currently not known how this will be used,
+        // but including this functinality seemed like a
+        // good idea. :D
+        virtual bool isValid() = 0;
 
-            // Function to get the first element in the collection
-            // Note: This does NOT move the iterator
-            virtual Type* getFirst() = 0;
+        // Function to get the first element in the collection
+        // Note: This does NOT move the iterator
+        virtual Type* getFirst() = 0;
 
-            // Function to get the last element in the collection
-            // Note: This does NOT move the iterator
-            virtual Type* getLast() = 0;
+        // Function to get the last element in the collection
+        // Note: This does NOT move the iterator
+        virtual Type* getLast() = 0;
 
-            // Get the size of the collection
-            unsigned int size() {
-                return this->size;
-            };
+        // Get the size of the collection
+        unsigned int size() {
+            return this->size;
+        };
 
-            // Move the iterator to the beginning of the collection
-            // Note: This does NOT return any element from the collection
-            virtual void moveToFirst() = 0;
+        // Move the iterator to the beginning of the collection
+        // Note: This does NOT return any element from the collection
+        virtual void moveToFirst() = 0;
 
-            // Move the iterator to the end of the collection
-            virtual void moveToLast() = 0;
+        // Move the iterator to the end of the collection
+        virtual void moveToLast() = 0;
 
-            // Move to the next element
-            // This becomes the part of the 'master' base class,
-            // because the idea is that all iterators will have a
-            // moveToNext() functionality. By contrast, moveToPrev()
-            // won't make sense on, say, singly linked lists.
-            virtual void moveToNext() = 0;
-    };
-}
+        // Move to the next element
+        // This becomes the part of the 'master' base class,
+        // because the idea is that all iterators will have a
+        // moveToNext() functionality. By contrast, moveToPrev()
+        // won't make sense on, say, singly linked lists.
+        virtual void moveToNext() = 0;
+};
 
 #endif

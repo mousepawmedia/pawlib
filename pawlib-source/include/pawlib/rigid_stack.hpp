@@ -47,110 +47,107 @@
 #include <cstdint>
 #include <stdexcept>
 
-namespace pawlib
+template<typename T, uint64_t S, bool F>
+class RigidStack
 {
-    template<typename T, uint64_t S, bool F>
-    class RigidStack
-    {
-        private:
-            // The length of the stack.
-            const uint64_t len;
-            /* Points to the next empty position in the stack. We track this
-             * instead of the "top" index, so empty is "next==0" and full is
-             * "next==S". */
-            uint64_t next;
-            // The stack's array.
-            T stk[S];
+    private:
+        // The length of the stack.
+        const uint64_t len;
+        /* Points to the next empty position in the stack. We track this
+            * instead of the "top" index, so empty is "next==0" and full is
+            * "next==S". */
+        uint64_t next;
+        // The stack's array.
+        T stk[S];
 
-        public:
-            /** Construct a new RigidStack. */
-            RigidStack()
-            :len(S), next(0), failsafe(F)
-            {}
+    public:
+        /** Construct a new RigidStack. */
+        RigidStack()
+        :len(S), next(0), failsafe(F)
+        {}
 
-            /** Access the top element in the stack.
-              * \return the element
-              */
-            T top()
+        /** Access the top element in the stack.
+             * \return the element
+             */
+        T top()
+        {
+            // If the stack is empty...
+            if(next == 0)
             {
-                // If the stack is empty...
-                if(next == 0)
+                throw std::out_of_range("Cannot get top() from empty RigidStack.");
+            }
+            //Else return the top element (next-1) without changing next.
+            return stk[next-1];
+        }
+
+        /** Access the front element in the stack. Alias for top().
+             * \return the element.
+             */
+        inline T front()
+        {
+            return top();
+        }
+
+        /** Access and remove the top element in the stack.
+             * \return the element */
+        T pop()
+        {
+            // If the stack is empty...
+            if(next == 0)
+            {
+                throw std::out_of_range("Cannot pop from empty RigidStack.");
+            }
+            // Else, decrement next and return the top element.
+            return stk[--next];
+        }
+
+        /** Push an element to the stack.
+             * \param the element to push */
+        void push(T ele)
+        {
+            // If the stack is full...
+            if(next >= len)
+            {
+                if(F)
                 {
-                    throw std::out_of_range("Cannot get top() from empty RigidStack.");
+                    return;
                 }
-                //Else return the top element (next-1) without changing next.
-                return stk[next-1];
+                throw std::length_error("Cannot push to full RigidStack.");
             }
+            // Else, store the element and increment next.
+            stk[next++] = ele;
+        }
 
-            /** Access the front element in the stack. Alias for top().
-              * \return the element.
-              */
-            inline T front()
-            {
-                return top();
-            }
+        /** Get the number of elements in the stack.
+             * \return the number of elements currently in the stack
+             */
+        uint64_t length()
+        {
+            return next;
+        }
 
-            /** Access and remove the top element in the stack.
-              * \return the element */
-            T pop()
-            {
-                // If the stack is empty...
-                if(next == 0)
-                {
-                    throw std::out_of_range("Cannot pop from empty RigidStack.");
-                }
-                // Else, decrement next and return the top element.
-                return stk[--next];
-            }
+        /** Returns whether there are elements in the stack.
+             * \return true if elements, else false
+             */
+        bool not_empty()
+        {
+            return (next > 0);
+        }
 
-            /** Push an element to the stack.
-              * \param the element to push */
-            void push(T ele)
-            {
-                // If the stack is full...
-                if(next >= len)
-                {
-                    if(F)
-                    {
-                        return;
-                    }
-                    throw std::length_error("Cannot push to full RigidStack.");
-                }
-                // Else, store the element and increment next.
-                stk[next++] = ele;
-            }
-
-            /** Get the number of elements in the stack.
-              * \return the number of elements currently in the stack
-              */
-            uint64_t length()
-            {
-                return next;
-            }
-
-            /** Returns whether there are elements in the stack.
-              * \return true if elements, else false
-              */
-            bool not_empty()
-            {
-                return (next > 0);
-            }
-
-            /** Get the maximum number of elements in the stack.
-              * \return the maximum number of elements that can fit in stack
-              */
-            uint64_t max_length()
-            {
-                return len;
-            }
+        /** Get the maximum number of elements in the stack.
+             * \return the maximum number of elements that can fit in stack
+             */
+        uint64_t max_length()
+        {
+            return len;
+        }
 
 
 
-            ~RigidStack(){}
-        private:
-            // Allow ignoring the relatively expensive "full stack" exception.
-            bool failsafe;
-    };
-}
+        ~RigidStack(){}
+    private:
+        // Allow ignoring the relatively expensive "full stack" exception.
+        bool failsafe;
+};
 
 #endif // PAWLIB_RIGIDSTACK_HPP

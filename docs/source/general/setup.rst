@@ -100,9 +100,6 @@ Using PawLIB
 All ``#include`` commands follow the format ``#include "pawlib/HEADER.hpp"``,
 where ``HEADER.hpp`` is the header file you wish to include.
 
-Everything in PawLIB is in ``namespace pawlib``. When using IOChannel, the
-formatting enumerations are in ``namespace pawlib::ioformat``.
-
 Building Tester
 ============================
 

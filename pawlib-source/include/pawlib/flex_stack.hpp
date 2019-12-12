@@ -49,86 +49,82 @@
 #include "pawlib/base_flex_array.hpp"
 #include "pawlib/iochannel.hpp"
 
-using pawlib::iochannel;
-
-namespace pawlib
+template <typename type, bool factor_double = true>
+class FlexStack : public Base_FlexArr<type, factor_double>
 {
-    template <typename type, bool factor_double = true>
-    class FlexStack : public Base_FlexArr<type, factor_double>
-    {
-        public:
-            FlexStack() : Base_FlexArr<type>() { }
+    public:
+        FlexStack() : Base_FlexArr<type>() { }
 
-            // cppcheck-suppress noExplicitConstructor
-            FlexStack(size_t numElements)
-            :Base_FlexArr<type>(numElements)
-            {}
+        // cppcheck-suppress noExplicitConstructor
+        FlexStack(size_t numElements)
+        :Base_FlexArr<type>(numElements)
+        {}
 
-            /** Add the specified element to the FlexStack.
-              * This is just an alias for push()
-              * \param the element to add.
-              * \return true if successful, else false.
-              */
-            bool push_back(type newElement)
+        /** Add the specified element to the FlexStack.
+             * This is just an alias for push()
+             * \param the element to add.
+             * \return true if successful, else false.
+             */
+        bool push_back(type newElement)
+        {
+            return push(newElement);
+        }
+
+        /** Add the specified element to the FlexStack.
+             * \param the element to add.
+             * \return true if successful, else false.
+             */
+        bool push(type newElement)
+        {
+            /* Use the deque tail insertion function.
+                * Use that function's error messages.
+                */
+            return this->insertAtTail(newElement, true);
+        }
+
+        /** Returns the next (last) element in the FlexStack without
+             * modifying the data structure.
+             * \return the next element in the FlexStack.
+             */
+        type peek()
+        {
+            // If the stack is empty
+            if(this->isEmpty())
             {
-                return push(newElement);
+                // Throw a fatal error.
+                throw std::out_of_range("FlexStack: Cannot peek() from empty FlexStack.");
             }
 
-            /** Add the specified element to the FlexStack.
-              * \param the element to add.
-              * \return true if successful, else false.
-              */
-            bool push(type newElement)
-            {
-                /* Use the deque tail insertion function.
-                 * Use that function's error messages.
-                 */
-                return this->insertAtTail(newElement, true);
-            }
+            return this->getFromTail();
+        }
 
-            /** Returns the next (last) element in the FlexStack without
-              * modifying the data structure.
-              * \return the next element in the FlexStack.
-              */
-            type peek()
-            {
-                // If the stack is empty
-                if(this->isEmpty())
-                {
-                    // Throw a fatal error.
-                    throw std::out_of_range("FlexStack: Cannot peek() from empty FlexStack.");
-                }
+        /** Return and remove the next element in the FlexStack.
+             * This is just an alias for pop()
+             * \return the next (last) element, now removed.
+             */
+        type pop_back()
+        {
+            return pop();
+        }
 
-                return this->getFromTail();
-            }
-
-            /** Return and remove the next element in the FlexStack.
-              * This is just an alias for pop()
-              * \return the next (last) element, now removed.
-              */
-            type pop_back()
+        /** Return and remove the next element in the FlexStack.
+             * \return the next (last) element, now removed.
+             */
+        type pop()
+        {
+            // If the stack is empty...
+            if(this->isEmpty())
             {
-                return pop();
+                // Throw a fatal error.
+                throw std::out_of_range("FlexStack: Cannot pop() from empty FlexStack.");
             }
+            // Get the current element at the tail.
+            type temp = this->getFromTail();
+            // Remove the tail element.
+            this->removeAtTail();
+            // Return the element we stored.
+            return temp;
+        }
+};
 
-            /** Return and remove the next element in the FlexStack.
-              * \return the next (last) element, now removed.
-              */
-            type pop()
-            {
-                // If the stack is empty...
-                if(this->isEmpty())
-                {
-                    // Throw a fatal error.
-                    throw std::out_of_range("FlexStack: Cannot pop() from empty FlexStack.");
-                }
-                // Get the current element at the tail.
-                type temp = this->getFromTail();
-                // Remove the tail element.
-                this->removeAtTail();
-                // Return the element we stored.
-                return temp;
-            }
-    };
-}
-#endif // STACK_HPP_INCLUDED
+#endif // PAWLIB_FLEXSTACK_HPP

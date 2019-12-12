@@ -46,9 +46,8 @@ instance.
 Documentation Assumptions
 -------------------------------------
 
-For purposes of expediency, the default global static instance ``pawlib::ioc``
-will be used in this documentation. Furthermore, we will assume that
-``using namespace pawlib;`` is being used. All namespaces outside of the
+For purposes of expediency, the default global static instance ``ioc``
+will be used in this documentation. All namespaces outside of the
 scope of PawLIB will be stated explicitly.
 
 ..  _iochannel_concepts:
@@ -169,7 +168,7 @@ Strings
 ----------------------------------------
 
 IOChannel natively supports string literals, cstring (char arrays),
-``std::string``, and ``pawlib::onestring``.
+``std::string``, and ``onestring``.
 
 These are passed in using the ``<<`` operator, as with anything being output
 via IOChannel. The message will not be broadcast until an EoT
@@ -606,7 +605,7 @@ using the `IOCursor::left` and `IOCursor::right` flags.
 ..  code-block:: c++
 
     std::string buffer;
-    pawlib::ioc << "Hello, world!"
+    ioc << "Hello, world!"
                 << IOCursor::left
                 << IOCursor::left
                 << IOCtrl::end;

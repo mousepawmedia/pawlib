@@ -50,7 +50,7 @@ six functions that may be overloaded.
 ``get_title()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Returns a string (of type ``pawlib::testdoc_t``) with the title of the test.
+Returns a string (of type ``testdoc_t``) with the title of the test.
 This is a required function for any test.
 
 ..  NOTE:: The title is separate from the ID (name) of the test used to
@@ -64,7 +64,7 @@ This is a required function for any test.
 ``get_docs()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Returns a string (of type ``pawlib::testdoc_t``) with the documentation
+Returns a string (of type ``testdoc_t``) with the documentation
 string for the test. This should describe what the test does.
 This is a required function for any test.
 
@@ -158,7 +158,7 @@ Creating a Test
 ----------------------------------------------------
 
 Creating a test is as simple as creating a class that inherits from
-``pawlib::Test (from goldilocks.hpp)``, which is a pure virtual base class.
+``Test (from goldilocks.hpp)``, which is a pure virtual base class.
 
 ..  IMPORTANT:: The constructor and destructor must obviously be defined,
     however, it is not recommended that they actually do anything - all setup
@@ -179,9 +179,6 @@ demonstrate their behavior.
 
     #include <iochannel.hpp>
     #include <goldilocks.hpp>
-
-    using namespace pawlib::ioformat;
-    using namespace pawlib;
 
     class TestFoo : public Test
     {
@@ -315,7 +312,7 @@ only has two functions to overload, but both are required.
 ``get_title()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Returns a string (of type ``pawlib::testsuitedoc_t``) with the title of the
+Returns a string (of type ``testsuitedoc_t``) with the title of the
 suite. This is the a required function for any test.
 
 ..  NOTE:: The title is separate from the ID (name) of the test used to

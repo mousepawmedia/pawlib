@@ -47,308 +47,305 @@
 #include "pawlib/goldilocks.hpp"
 #include "pawlib/flex_queue.hpp"
 
-namespace pawlib
+// P-tB1201*
+class TestSQueue_Push : public Test
 {
-    // P-tB1201*
-    class TestSQueue_Push : public Test
-    {
-        private:
-            unsigned int iters;
+    private:
+        unsigned int iters;
 
-        public:
-           explicit TestSQueue_Push(unsigned int iterations): iters(iterations){}
+    public:
+        explicit TestSQueue_Push(unsigned int iterations): iters(iterations){}
 
-            testdoc_t get_title()
-            {
-                return "FlexQueue: Push " + stdutils::itos(iters, 10) + " Integers (std::vector)";
-            }
+        testdoc_t get_title() override
+        {
+            return "FlexQueue: Push " + stdutils::itos(iters, 10) + " Integers (std::vector)";
+        }
 
-            testdoc_t get_docs()
-            {
-                return "Push " + stdutils::itos(iters, 10) + " integers to a std::vector.";
-            }
+        testdoc_t get_docs() override
+        {
+            return "Push " + stdutils::itos(iters, 10) + " integers to a std::vector.";
+        }
 
-            bool run()
-            {
-                // Create instance of queue.
-                // Technically we must use vector as a queue!
-                ////std::queue<unsigned int> sq;
-                std::vector<unsigned int> sq;
-
-                // Push each required element to the queue.
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    sq.push_back(i);
-                    if(sq.back() != i)
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            bool run_optimized()
-            {
-                // Create instance of queue.
-                // Technically we must use vector as a queue!
-                ////std::queue<unsigned int> sq;
-                std::vector<unsigned int> sq;
-
-                // Push each required element to the queue.
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    sq.push_back(i);
-                }
-                return true;
-            }
-
-            ~TestSQueue_Push(){}
-    };
-
-    // P-tB1201, P-tS1201
-    class TestFQueue_Push : public Test
-    {
-        private:
-            unsigned int iters;
-
-        public:
-            explicit TestFQueue_Push(unsigned int iterations)
-                :iters(iterations)
-                {}
-
-
-            testdoc_t get_title()
-            {
-                return "FlexQueue: Push " + stdutils::itos(iters, 10) + " Integers (FlexQueue)";
-            }
-
-            testdoc_t get_docs()
-            {
-                return "Push " + stdutils::itos(iters, 10) + " integers to a FlexQueue.";
-            }
-
-            bool run()
-            {
-                // Create an instance of FlexQueue.
-                pawlib::FlexQueue<unsigned int> fq;
-
-                // Push each required element.
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    // Attempt a push. If it fails...
-                    if(!fq.push(i))
-                    {
-                        // Report failure.
-                        return false;
-                    }
-                    // If last value is not what was pushed...
-                    if(fq.peek() != i)
-                    {
-                        // Report failure.
-                    }
-                }
-                return true;
-            }
-
-            bool run_optimized()
-            {
-                // Create an instance of FlexQueue.
-                pawlib::FlexQueue<unsigned int> fq;
-
-                // Push each required element.
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    fq.push(i);
-                }
-                return true;
-            }
-
-            ~TestFQueue_Push(){}
-    };
-
-    // P-tB1202
-    class TestFQueue_Peek : public Test
-    {
-        private:
-            pawlib::FlexQueue<int> fq;
-
-        public:
-            TestFQueue_Peek(){}
-
-            testdoc_t get_title()
-            {
-                return "FlexQueue: Peek";
-            }
-
-            testdoc_t get_docs()
-            {
-                return "Peek the first of five integers placed into a FlexQueue";
-            }
-
-            //Set up for the test.
-            bool pre()
-            {
-                /* We should set up only once, even if test is repeated
-                 * multiple times. */
-                for(int i=1; i<=5; ++i)
-                {
-                    fq.push(i);
-                }
-                return true;
-            }
-
-            bool run()
-            {
-                // Peek the value.
-                int i = fq.peek();
-
-                // If the peeked value is 1, return true; else, false.
-                return (i==1);
-            }
-
-            ~TestFQueue_Peek(){}
-    };
-
-    // P-tB1203*
-    class TestSQueue_Pop : public Test
-    {
-        private:
-            /* We must compare against a std::vector, as std::queue doesn't
-             * use contiguous memory, and cannot be based on std::vector.
-             */
+        bool run() override
+        {
+            // Create instance of queue.
+            // Technically we must use vector as a queue!
+            ////std::queue<unsigned int> sq;
             std::vector<unsigned int> sq;
-            unsigned int iters;
 
-        public:
-            explicit TestSQueue_Pop(unsigned int iterations)
-                :iters(iterations)
-                {}
-
-            testdoc_t get_title()
+            // Push each required element to the queue.
+            for(unsigned int i=0; i<iters; ++i)
             {
-                return "FlexQueue: Pop " + stdutils::itos(iters, 10) + " Integers (std::vector)";
-            }
-
-            testdoc_t get_docs()
-            {
-                return "Pop " + stdutils::itos(iters, 10) + " integers from a std::vector.";
-            }
-
-            bool pre()
-            {
-                return janitor();
-            }
-
-            bool janitor()
-            {
-                // Refill the std::queue
-                for(unsigned int i=0; i<iters; ++i)
+                sq.push_back(i);
+                if(sq.back() != i)
                 {
-                    sq.push_back(i);
+                    return false;
                 }
-                return true;
             }
+            return true;
+        }
 
-            bool run()
+        bool run_optimized() override
+        {
+            // Create instance of queue.
+            // Technically we must use vector as a queue!
+            ////std::queue<unsigned int> sq;
+            std::vector<unsigned int> sq;
+
+            // Push each required element to the queue.
+            for(unsigned int i=0; i<iters; ++i)
             {
-                for(unsigned int i=0; i<iters; ++i)
+                sq.push_back(i);
+            }
+            return true;
+        }
+
+        ~TestSQueue_Push(){}
+};
+
+// P-tB1201, P-tS1201
+class TestFQueue_Push : public Test
+{
+    private:
+        unsigned int iters;
+
+    public:
+        explicit TestFQueue_Push(unsigned int iterations)
+            :iters(iterations)
+            {}
+
+
+        testdoc_t get_title() override
+        {
+            return "FlexQueue: Push " + stdutils::itos(iters, 10) + " Integers (FlexQueue)";
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "Push " + stdutils::itos(iters, 10) + " integers to a FlexQueue.";
+        }
+
+        bool run() override
+        {
+            // Create an instance of FlexQueue.
+            FlexQueue<unsigned int> fq;
+
+            // Push each required element.
+            for(unsigned int i=0; i<iters; ++i)
+            {
+                // Attempt a push. If it fails...
+                if(!fq.push(i))
                 {
-                    sq.erase(sq.begin());
+                    // Report failure.
+                    return false;
                 }
-                return true;
-            }
-
-            bool run_optimized()
-            {
-                for(unsigned int i=0; i<iters; ++i)
+                // If last value is not what was pushed...
+                if(fq.peek() != i)
                 {
-                    sq.erase(sq.begin());
+                    // Report failure.
                 }
-                return true;
             }
+            return true;
+        }
 
-            ~TestSQueue_Pop(){}
-    };
+        bool run_optimized() override
+        {
+            // Create an instance of FlexQueue.
+            FlexQueue<unsigned int> fq;
 
-    // P-tB1203, P-tS1203
-    class TestFQueue_Pop : public Test
-    {
-        private:
-            pawlib::FlexQueue<unsigned int> fq;
-            unsigned int iters;
-
-        public:
-            explicit TestFQueue_Pop(unsigned int iterations)
-                :iters(iterations)
-                {}
-
-            testdoc_t get_title()
+            // Push each required element.
+            for(unsigned int i=0; i<iters; ++i)
             {
-                return "FlexQueue: Pop " + stdutils::itos(iters, 10) + " Integers (FlexQueue)";
+                fq.push(i);
             }
+            return true;
+        }
 
-            testdoc_t get_docs()
+        ~TestFQueue_Push(){}
+};
+
+// P-tB1202
+class TestFQueue_Peek : public Test
+{
+    private:
+        FlexQueue<int> fq;
+
+    public:
+        TestFQueue_Peek(){}
+
+        testdoc_t get_title() override
+        {
+            return "FlexQueue: Peek";
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "Peek the first of five integers placed into a FlexQueue";
+        }
+
+        //Set up for the test.
+        bool pre() override
+        {
+            /* We should set up only once, even if test is repeated
+                * multiple times. */
+            for(int i=1; i<=5; ++i)
             {
-                return "Pop " + stdutils::itos(iters, 10) + " integers from a FlexQueue.";
+                fq.push(i);
             }
+            return true;
+        }
 
-            bool pre()
+        bool run() override
+        {
+            // Peek the value.
+            int i = fq.peek();
+
+            // If the peeked value is 1, return true; else, false.
+            return (i==1);
+        }
+
+        ~TestFQueue_Peek(){}
+};
+
+// P-tB1203*
+class TestSQueue_Pop : public Test
+{
+    private:
+        /* We must compare against a std::vector, as std::queue doesn't
+            * use contiguous memory, and cannot be based on std::vector.
+            */
+        std::vector<unsigned int> sq;
+        unsigned int iters;
+
+    public:
+        explicit TestSQueue_Pop(unsigned int iterations)
+            :iters(iterations)
+            {}
+
+        testdoc_t get_title() override
+        {
+            return "FlexQueue: Pop " + stdutils::itos(iters, 10) + " Integers (std::vector)";
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "Pop " + stdutils::itos(iters, 10) + " integers from a std::vector.";
+        }
+
+        bool pre() override
+        {
+            return janitor();
+        }
+
+        bool janitor() override
+        {
+            // Refill the std::queue
+            for(unsigned int i=0; i<iters; ++i)
             {
-                return janitor();
+                sq.push_back(i);
             }
+            return true;
+        }
 
-            bool janitor()
+        bool run() override
+        {
+            for(unsigned int i=0; i<iters; ++i)
             {
-                // Refill FlexQueue.
-                for(unsigned int i=0; i<iters; ++i)
+                sq.erase(sq.begin());
+            }
+            return true;
+        }
+
+        bool run_optimized() override
+        {
+            for(unsigned int i=0; i<iters; ++i)
+            {
+                sq.erase(sq.begin());
+            }
+            return true;
+        }
+
+        ~TestSQueue_Pop(){}
+};
+
+// P-tB1203, P-tS1203
+class TestFQueue_Pop : public Test
+{
+    private:
+        FlexQueue<unsigned int> fq;
+        unsigned int iters;
+
+    public:
+        explicit TestFQueue_Pop(unsigned int iterations)
+            :iters(iterations)
+            {}
+
+        testdoc_t get_title() override
+        {
+            return "FlexQueue: Pop " + stdutils::itos(iters, 10) + " Integers (FlexQueue)";
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "Pop " + stdutils::itos(iters, 10) + " integers from a FlexQueue.";
+        }
+
+        bool pre() override
+        {
+            return janitor();
+        }
+
+        bool janitor() override
+        {
+            // Refill FlexQueue.
+            for(unsigned int i=0; i<iters; ++i)
+            {
+                fq.push(i);
+            }
+            return true;
+        }
+
+        bool run() override
+        {
+            // Pop each element.
+            for(unsigned int i=0; i<iters; ++i)
+            {
+                // If the element does not equal the next expected element...
+                if(fq.pop() != i)
                 {
-                    fq.push(i);
+                    // Report failure.
+                    return false;
                 }
-                return true;
             }
+            return true;
+        }
 
-            bool run()
+        bool run_optimized() override
+        {
+            // Pop each element.
+            for(unsigned int i=0; i<iters; ++i)
             {
-                // Pop each element.
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    // If the element does not equal the next expected element...
-                    if(fq.pop() != i)
-                    {
-                        // Report failure.
-                        return false;
-                    }
-                }
-                return true;
+                fq.pop();
             }
+            return true;
+        }
 
-            bool run_optimized()
-            {
-                // Pop each element.
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    fq.pop();
-                }
-                return true;
-            }
+        ~TestFQueue_Pop(){}
+};
 
-            ~TestFQueue_Pop(){}
-    };
+class TestSuite_FlexQueue : public TestSuite
+{
+    public:
+        explicit TestSuite_FlexQueue(){}
 
-    class TestSuite_FlexQueue : public TestSuite
-    {
-        public:
-            explicit TestSuite_FlexQueue(){}
+        void load_tests() override;
 
-            void load_tests();
+        testdoc_t get_title() override
+        {
+            return "PawLIB: FlexQueue Tests";
+        }
 
-            testdoc_t get_title()
-            {
-                return "PawLIB: FlexQueue Tests";
-            }
+        ~TestSuite_FlexQueue(){}
+};
 
-            ~TestSuite_FlexQueue(){}
-    };
-
-}
-#endif // PAWLIB_FLEXQUEUE_TESTS_HPP_H
+#endif // PAWLIB_FLEXQUEUE_TESTS_HPP

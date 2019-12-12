@@ -47,148 +47,145 @@
 #include <cstdint>
 #include <iostream>
 
-namespace pawlib
+class tril;
+
+/* The uncertainty class is never intended to be modified after creation.
+    * It is used to represent a "pure maybe" - a trilean with no valid boolean
+    * value. The constant "maybe" is an instance of this class. Initializing
+    * or assigning a tril with an uncertainty does not affect the tril's
+    * boolean value. */
+class uncertainty
 {
-    class tril;
+    /* tril has to be able to access protected data of
+        * uncertainty instances. */
+    friend class tril;
+    protected:
+        bool data;
 
-    /* The uncertainty class is never intended to be modified after creation.
-     * It is used to represent a "pure maybe" - a trilean with no valid boolean
-     * value. The constant "maybe" is an instance of this class. Initializing
-     * or assigning a tril with an uncertainty does not affect the tril's
-     * boolean value. */
-    class uncertainty
-    {
-        /* tril has to be able to access protected data of
-         * uncertainty instances. */
-        friend class tril;
-        protected:
-            bool data;
+    public:
+        /** Construct an uncertainty.
+         * \param the initial value (default true) */
+        explicit uncertainty(bool u=true) noexcept
+        :data(u)
+        {}
 
-        public:
-            /** Construct an uncertainty.
-             * \param the initial value (default true) */
-            explicit uncertainty(bool u=true) noexcept
-            :data(u)
-            {}
+        /** Returns TRUE if the certainty is MAYBE. */
+        friend bool operator~(const uncertainty&) noexcept;
 
-            /** Returns TRUE if the certainty is MAYBE. */
-            friend bool operator~(const uncertainty&) noexcept;
+        friend bool operator==(const uncertainty&, const uncertainty&) noexcept;
+        friend bool operator!=(const uncertainty&, const uncertainty&) noexcept;
 
-            friend bool operator==(const uncertainty&, const uncertainty&) noexcept;
-            friend bool operator!=(const uncertainty&, const uncertainty&) noexcept;
+        friend bool operator==(const uncertainty&, const bool&) noexcept;
+        friend bool operator!=(const uncertainty&, const bool&) noexcept;
 
-            friend bool operator==(const uncertainty&, const bool&) noexcept;
-            friend bool operator!=(const uncertainty&, const bool&) noexcept;
+        friend bool operator==(const bool&, const uncertainty&) noexcept;
+        friend bool operator!=(const bool&, const uncertainty&) noexcept;
 
-            friend bool operator==(const bool&, const uncertainty&) noexcept;
-            friend bool operator!=(const bool&, const uncertainty&) noexcept;
+        /* We see these again in the `tril` class. We're repeating the
+            * declaration here to ensure these functions are friends of
+            * BOTH classes. */
+        friend bool operator==(const tril&, const uncertainty&) noexcept;
+        friend bool operator!=(const tril&, const uncertainty&) noexcept;
 
-            /* We see these again in the `tril` class. We're repeating the
-             * declaration here to ensure these functions are friends of
-             * BOTH classes. */
-            friend bool operator==(const tril&, const uncertainty&) noexcept;
-            friend bool operator!=(const tril&, const uncertainty&) noexcept;
+        friend bool operator==(const uncertainty&, const tril&) noexcept;
+        friend bool operator!=(const uncertainty&, const tril&) noexcept;
 
-            friend bool operator==(const uncertainty&, const tril&) noexcept;
-            friend bool operator!=(const uncertainty&, const tril&) noexcept;
+        friend std::ostream& operator<<(std::ostream&, const uncertainty&);
 
-            friend std::ostream& operator<<(std::ostream&, const uncertainty&);
+        ~uncertainty() = default;
+};
 
-            ~uncertainty() = default;
-    };
+class tril
+{
+    protected:
+        /** The actual binary data. By using an int8_t, we are ensuring
+         * that a tril is never larger than one byte. */
+        int8_t data;
 
-    class tril
-    {
-        protected:
-            /** The actual binary data. By using an int8_t, we are ensuring
-             * that a tril is never larger than one byte. */
-            int8_t data;
+        /* These constants allow us to quickly check the three flags in
+            * our data byte. Simply use "data & FLAG", where FLAG is one of the
+            * following. */
+        static const int8_t B = (1 << 0);
+        static const int8_t U = (1 << 1);
 
-            /* These constants allow us to quickly check the three flags in
-             * our data byte. Simply use "data & FLAG", where FLAG is one of the
-             * following. */
-            static const int8_t B = (1 << 0);
-            static const int8_t U = (1 << 1);
+        /* We are employing the Safe Bool Idiom. */
+        typedef void (tril::*bool_type)() const noexcept;
+        void this_type_does_not_support_some_comparisons() const noexcept {}
 
-            /* We are employing the Safe Bool Idiom. */
-            typedef void (tril::*bool_type)() const noexcept;
-            void this_type_does_not_support_some_comparisons() const noexcept {}
+        /** Set the B (boolean) bit.
+         * \param the new value for the boolean bit. */
+        void set_b(bool) noexcept;
 
-            /** Set the B (boolean) bit.
-             * \param the new value for the boolean bit. */
-            void set_b(bool) noexcept;
+        /** Set the U (uncertainty) bit.
+         * \param the new value for the uncertainty bit. */
+        void set_u(bool) noexcept;
 
-            /** Set the U (uncertainty) bit.
-             * \param the new value for the uncertainty bit. */
-            void set_u(bool) noexcept;
+    public:
+        /** Construct a new trilean with a default value of certain false. */
+        tril() noexcept
+        :data(0)
+        {}
 
-        public:
-            /** Construct a new trilean with a default value of certain false. */
-            tril() noexcept
-            :data(0)
-            {}
+        /** Construct a new trilean with the specified flag values.
+         * \param the boolean bit (true/false)
+         * \param the uncertainty bit */
+        tril(bool, bool=false) noexcept;
 
-            /** Construct a new trilean with the specified flag values.
-             * \param the boolean bit (true/false)
-             * \param the uncertainty bit */
-            tril(bool, bool=false) noexcept;
+        /** Trilean copy constructor.
+         * \param the trilean to copy */
+        tril(const tril& in) noexcept
+        :data(in.data)
+        {}
 
-            /** Trilean copy constructor.
-             * \param the trilean to copy */
-            tril(const tril& in) noexcept
-            :data(in.data)
-            {}
+        /** Construct a new trilean with an uncertainty variable.
+         * \param the uncertainty to copy */
+        // cppcheck-suppress noExplicitConstructor
+        tril(const uncertainty& in) noexcept
+        :data(0)
+        {
+            set_u(in.data);
+        }
 
-            /** Construct a new trilean with an uncertainty variable.
-             * \param the uncertainty to copy */
-            // cppcheck-suppress noExplicitConstructor
-            tril(const uncertainty& in) noexcept
-            :data(0)
-            {
-                set_u(in.data);
-            }
+        /** Return last certain state of the trilean. Does not modify
+             * the trilean itself.
+             * \return the last certain state */
+        bool certain() const noexcept;
 
-            /** Return last certain state of the trilean. Does not modify
-              * the trilean itself.
-              * \return the last certain state */
-            bool certain() const noexcept;
+        /** Boolean cast, following the Safe Bool Idiom.
+             * Returns TRUE if the trilean is CERTAIN TRUE. */
+        operator bool_type() const noexcept;
 
-            /** Boolean cast, following the Safe Bool Idiom.
-              * Returns TRUE if the trilean is CERTAIN TRUE. */
-            operator bool_type() const noexcept;
+        /** Returns TRUE if the trilean is CERTAIN FALSE. */
+        friend bool operator!(const tril&) noexcept;
+        /** Returns TRUE if the trilean is MAYBE. */
+        friend bool operator~(const tril&) noexcept;
 
-            /** Returns TRUE if the trilean is CERTAIN FALSE. */
-            friend bool operator!(const tril&) noexcept;
-            /** Returns TRUE if the trilean is MAYBE. */
-            friend bool operator~(const tril&) noexcept;
+        /** Assign a boolean (true/false) to this trilean. */
+        tril& operator=(const bool&) noexcept;
+        /** Assign a trilean (true/false/maybe) to this trilean. */
+        tril& operator=(const tril&) noexcept;
+        /** Assign an uncertainty to this trilean, only modifying the
+         * uncertainty bit without modifying the boolean bit. */
+        tril& operator=(const uncertainty&) noexcept;
 
-            /** Assign a boolean (true/false) to this trilean. */
-            tril& operator=(const bool&) noexcept;
-            /** Assign a trilean (true/false/maybe) to this trilean. */
-            tril& operator=(const tril&) noexcept;
-            /** Assign an uncertainty to this trilean, only modifying the
-             * uncertainty bit without modifying the boolean bit. */
-            tril& operator=(const uncertainty&) noexcept;
+        /* Valid comparisons. All unspecified comparisons trigger compiler
+            * errors, thanks to the Safe Bool Idiom. */
+        friend bool operator==(const tril&, const bool&) noexcept;
+        friend bool operator==(const bool&, const tril&) noexcept;
+        friend bool operator==(const tril&, const tril&) noexcept;
+        friend bool operator==(const tril&, const uncertainty&) noexcept;
 
-            /* Valid comparisons. All unspecified comparisons trigger compiler
-             * errors, thanks to the Safe Bool Idiom. */
-            friend bool operator==(const tril&, const bool&) noexcept;
-            friend bool operator==(const bool&, const tril&) noexcept;
-            friend bool operator==(const tril&, const tril&) noexcept;
-            friend bool operator==(const tril&, const uncertainty&) noexcept;
+        friend bool operator!=(const tril&, const bool&) noexcept;
+        friend bool operator!=(const bool&, const tril&) noexcept;
+        friend bool operator!=(const tril&, const tril&) noexcept;
+        friend bool operator!=(const tril&, const uncertainty&) noexcept;
 
-            friend bool operator!=(const tril&, const bool&) noexcept;
-            friend bool operator!=(const bool&, const tril&) noexcept;
-            friend bool operator!=(const tril&, const tril&) noexcept;
-            friend bool operator!=(const tril&, const uncertainty&) noexcept;
+        friend std::ostream& operator<<(std::ostream&, const tril&);
 
-            friend std::ostream& operator<<(std::ostream&, const tril&);
+        ~tril() = default;
+};
 
-            ~tril() = default;
-    };
-
-    // We offer this constant to go alongside "true" and "false".
-    const uncertainty maybe = uncertainty();
-}
+// We offer this constant to go alongside "true" and "false".
+const uncertainty maybe = uncertainty();
 
 #endif // PAWLIB_CORETYPES_HPP

@@ -55,8 +55,6 @@
 #include "pawlib/onechar_tests.hpp"
 #include "pawlib/pool_tests.hpp"
 
-using namespace pawlib;
-
 /** Temporary test code goes in this function ONLY.
   * All test code that is needed long term should be
   * moved to a dedicated Goldilocks Test and TestSuite.
@@ -74,18 +72,18 @@ int main(int argc, char* argv[])
     int r = 0;
 
     //Set up signal handling.
-    pawlib::ioc.configure_echo(pawlib::IOEchoMode::cout);
+    ioc.configure_echo(IOEchoMode::cout);
 
-    pawlib::GoldilocksShell* shell = new GoldilocksShell(">> ");
-    shell->register_suite<pawlib::TestSuite_CoreTypes>("P-sB01");
-    shell->register_suite<pawlib::TestSuite_FlexArray>("P-sB10");
-    shell->register_suite<pawlib::TestSuite_FlexQueue>("P-sB12");
-    shell->register_suite<pawlib::TestSuite_FlexStack>("P-sB13");
-    shell->register_suite<pawlib::TestSuite_FlexBit>("P-sB15");
-    shell->register_suite<pawlib::TestSuite_Pool>("P-sB16");
-    shell->register_suite<pawlib::TestSuite_Pawsort>("P-sB30");
-    shell->register_suite<pawlib::TestSuite_Onestring>("P-sB40");
-    shell->register_suite<pawlib::TestSuite_Onechar>("P-sB41");
+    GoldilocksShell* shell = new GoldilocksShell(">> ");
+    shell->register_suite<TestSuite_CoreTypes>("P-sB01");
+    shell->register_suite<TestSuite_FlexArray>("P-sB10");
+    shell->register_suite<TestSuite_FlexQueue>("P-sB12");
+    shell->register_suite<TestSuite_FlexStack>("P-sB13");
+    shell->register_suite<TestSuite_FlexBit>("P-sB15");
+    shell->register_suite<TestSuite_Pool>("P-sB16");
+    shell->register_suite<TestSuite_Pawsort>("P-sB30");
+    shell->register_suite<TestSuite_Onestring>("P-sB40");
+    shell->register_suite<TestSuite_Onechar>("P-sB41");
 
     // If we got command-line arguments.
     if(argc > 1)
@@ -94,8 +92,8 @@ int main(int argc, char* argv[])
     }
     else
     {
-        ioc << pawlib::IOFormatTextAttr::bold << pawlib::IOFormatTextFG::blue
-            << "===== PawLIB Tester =====\n" << pawlib::IOCtrl::endl;
+        ioc << IOFormatTextAttr::bold << IOFormatTextFG::blue
+            << "===== PawLIB Tester =====\n" << IOCtrl::endl;
 
         test_code();
 

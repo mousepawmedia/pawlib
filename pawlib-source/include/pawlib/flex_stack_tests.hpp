@@ -49,301 +49,302 @@
 
 //SStack classes test the standard library version of Stack
 //FStack classes test the pawlib versions of FlexStack
-namespace pawlib
+
+// P-tB1301*
+class TestSStack_Push : public Test
 {
+    private:
+        unsigned int iters;
+        std::stack<unsigned int, std::vector<unsigned int>> stk;
 
-    // P-tB1301*
-    class TestSStack_Push : public Test
-    {
-        private:
-            unsigned int iters;
-            std::stack<unsigned int, std::vector<unsigned int>> stk;
+    public:
+        //TestSStack_PushU with iterators
+        explicit TestSStack_Push(unsigned int iterations)
+            :iters(iterations)
+            {}
 
-        public:
-            //TestSStack_PushU with iterators
-            explicit TestSStack_Push(unsigned int iterations)
-                :iters(iterations)
-                {}
+        //Test title
+        testdoc_t get_title() override
+        {
+            return "FlexStack: Push " + stdutils::itos(iters, 10) + " Integers (std::stack)";
+        }
+        //get documentation section
+        testdoc_t get_docs() override
+        {
+            return "Push " + stdutils::itos(iters, 10) + " integers to a std:;stack.";
+        }
 
-            //Test title
-            testdoc_t get_title()
+        //Run the test
+        bool run() override
+        {
+            for(unsigned int i=0; i<iters; ++i)
             {
-                return "FlexStack: Push " + stdutils::itos(iters, 10) + " Integers (std::stack)";
-            }
-            //get documentation section
-            testdoc_t get_docs()
-            {
-                return "Push " + stdutils::itos(iters, 10) + " integers to a std:;stack.";
-            }
-
-            //Run the test
-            bool run()
-            {
-                for(unsigned int i=0; i<iters; ++i)
+                stk.push(i);
+                if(stk.top() != i)
                 {
-                    stk.push(i);
-                    if(stk.top() != i)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-                return true;
             }
+            return true;
+        }
 
-            bool run_optimized()
+        bool run_optimized() override
+        {
+            for(unsigned int i=0; i<iters; ++i)
             {
-                for(unsigned int i=0; i<iters; ++i)
+                stk.push(i);
+            }
+            return true;
+        }
+
+        ~TestSStack_Push(){}
+};
+
+// P-tB1301, P-tS1301
+class TestFStack_Push : public Test
+{
+    private:
+        unsigned int iters;
+        FlexStack<unsigned int> fstk;
+    public:
+        explicit TestFStack_Push(unsigned int iterations)
+            :iters(iterations)
+            {}
+
+        //Test title
+        testdoc_t get_title() override
+        {
+            return "FlexStack: Push " + stdutils::itos(iters, 10) + " Integers (FlexStack)";
+        }
+        //Test documentation
+        testdoc_t get_docs() override
+        {
+            return "Push " + stdutils::itos(iters, 10) + " integers to a FlexStack.";
+
+        }
+        // Run the test
+        bool run() override
+        {
+            // Insert each required element via a push.
+            for(unsigned int i=0; i<iters; ++i)
+            {
+                // Attempt a push. If it fails...
+                if(!fstk.push(i))
                 {
-                    stk.push(i);
+                    // Report failure.
+                    return false;
                 }
-                return true;
-            }
-
-            ~TestSStack_Push(){}
-    };
-
-    // P-tB1301, P-tS1301
-    class TestFStack_Push : public Test
-    {
-        private:
-            unsigned int iters;
-            pawlib::FlexStack<unsigned int> fstk;
-        public:
-            explicit TestFStack_Push(unsigned int iterations)
-                :iters(iterations)
-                {}
-
-            //Test title
-            testdoc_t get_title()
-            {
-                return "FlexStack: Push " + stdutils::itos(iters, 10) + " Integers (FlexStack)";
-            }
-            //Test documentation
-            testdoc_t get_docs()
-            {
-                return "Push " + stdutils::itos(iters, 10) + " integers to a FlexStack.";
-
-            }
-            // Run the test
-            bool run()
-            {
-                // Insert each required element via a push.
-                for(unsigned int i=0; i<iters; ++i)
+                // If last value is not what was pushed...
+                if(fstk.peek() != i)
                 {
-                    // Attempt a push. If it fails...
-                    if(!fstk.push(i))
-                    {
-                        // Report failure.
-                        return false;
-                    }
-                    // If last value is not what was pushed...
-                    if(fstk.peek() != i)
-                    {
-                        // Report failure.
-                    }
+                    // Report failure.
                 }
-                // Report success.
-                return true;
             }
+            // Report success.
+            return true;
+        }
 
-            bool run_optimized()
+        bool run_optimized() override
+        {
+            // Insert each required element via a push.
+            for(unsigned int i=0; i<iters; ++i)
             {
-                // Insert each required element via a push.
-                for(unsigned int i=0; i<iters; ++i)
+                fstk.push(i);
+            }
+            // Report success.
+            return true;
+        }
+
+        ~TestFStack_Push(){}
+};
+
+// P-tB1302
+class TestFStack_Peek : public Test
+{
+    private:
+        FlexStack<int> fq;
+
+    public:
+        TestFStack_Peek(){}
+
+        testdoc_t get_title() override
+        {
+            return "FlexStack: Peek";
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "FlexStack: Peek the last of five integers placed into a FlexStack";
+        }
+
+        //Set up for the test.
+        bool pre() override
+        {
+            /* We should set up only once, even if test is repeated
+                * multiple times. */
+            for(int i=1; i<=5; ++i)
+            {
+                fq.push(i);
+            }
+            return true;
+        }
+
+        bool run() override
+        {
+            // Peek the value.
+            int i = fq.peek();
+
+            // If the peeked value is 5, return true; else, false.
+            return (i==5);
+        }
+
+        ~TestFStack_Peek(){}
+};
+
+// P-tB1303*
+class TestSStack_Pop : public Test
+{
+    private:
+        std::stack<unsigned int, std::vector<unsigned int>> stk;
+        unsigned int iters;
+    public:
+        explicit TestSStack_Pop(unsigned int iterations)
+            :iters(iterations)
+            {}
+
+        // Test title
+        testdoc_t get_title() override
+        {
+            return"FlexStack: Pop " + stdutils::itos(iters, 10) + " integers from a std::stack.";
+        }
+        // test documentation
+        testdoc_t get_docs() override
+        {
+            return "Pop " + stdutils::itos(iters, 10) + " integers from a std::stack.";
+        }
+
+        bool pre() override
+        {
+            return janitor();
+        }
+
+        bool janitor() override
+        {
+            // Refill the std::stack.
+            for(unsigned int i=0; i<iters; ++i)
+            {
+                stk.push(i);
+            }
+            return true;
+        }
+
+        bool run() override
+        {
+            for(unsigned int i=0; i<iters; ++i)
+            {
+                unsigned int temp = stk.top();
+
+                // Can't happen, so if it does, things went weird.
+                if(stk.top() != temp)
                 {
-                    fstk.push(i);
+                    return false;
                 }
-                // Report success.
-                return true;
+
+                stk.pop();
             }
+            return true;
+        }
 
-            ~TestFStack_Push(){}
-    };
-
-    // P-tB1302
-    class TestFStack_Peek : public Test
-    {
-        private:
-            pawlib::FlexStack<int> fq;
-
-        public:
-            TestFStack_Peek(){}
-
-            testdoc_t get_title()
+        bool run_optimized() override
+        {
+            for(unsigned int i=0; i<iters; ++i)
             {
-                return "FlexStack: Peek";
+                stk.pop();
             }
+            return true;
+        }
 
-            testdoc_t get_docs()
+        ~TestSStack_Pop(){}
+};
+
+// P-tB1303, P-tS1303
+class TestFStack_Pop : public Test
+{
+    private:
+        FlexStack<unsigned int> fstk;
+        unsigned int iters;
+
+    public:
+        explicit TestFStack_Pop(unsigned int iterations)
+            :iters(iterations)
+            {}
+
+        testdoc_t get_title() override
+        {
+            return"FlexStack: Pop " + stdutils::itos(iters, 10) + " integers from a FlexStack.";
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "Pop " + stdutils::itos(iters, 10) + " integers from a FlexStack.";
+        }
+
+        bool pre() override
+        {
+            return janitor();
+        }
+
+        bool janitor() override
+        {
+            // Refill the FlexStack.
+            for(unsigned int i=0; i<iters; ++i)
             {
-                return "FlexStack: Peek the last of five integers placed into a FlexStack";
+                fstk.push(i);
             }
+            return true;
+        }
 
-            //Set up for the test.
-            bool pre()
+        bool run() override
+        {
+            // Pop each element.
+            for(unsigned int i=(iters-1); i; --i)
             {
-                /* We should set up only once, even if test is repeated
-                 * multiple times. */
-                for(int i=1; i<=5; ++i)
+                // If the element does not equal the next expected element...
+                if(fstk.pop() != i)
                 {
-                    fq.push(i);
+                    // Report failure.
+                    return false;
                 }
-                return true;
             }
+            return true;
+        }
 
-            bool run()
+        bool run_optimized() override
+        {
+            // Pop each element.
+            for(unsigned int i=(iters-1); i; --i)
             {
-                // Peek the value.
-                int i = fq.peek();
-
-                // If the peeked value is 5, return true; else, false.
-                return (i==5);
+                fstk.pop();
             }
+            return true;
+        }
 
-            ~TestFStack_Peek(){}
-    };
+        ~TestFStack_Pop(){}
+};
 
-    // P-tB1303*
-    class TestSStack_Pop : public Test
-    {
-        private:
-            std::stack<unsigned int, std::vector<unsigned int>> stk;
-            unsigned int iters;
-        public:
-            explicit TestSStack_Pop(unsigned int iterations)
-                :iters(iterations)
-                {}
+class TestSuite_FlexStack : public TestSuite
+{
+    public:
+        explicit TestSuite_FlexStack(){}
 
-            // Test title
-            testdoc_t get_title()
-            {
-                return"FlexStack: Pop " + stdutils::itos(iters, 10) + " integers from a std::stack.";
-            }
-            // test documentation
-            testdoc_t get_docs()
-            {
-                return "Pop " + stdutils::itos(iters, 10) + " integers from a std::stack.";
-            }
+        void load_tests() override;
 
-            bool pre()
-            {
-                return janitor();
-            }
+        testdoc_t get_title() override
+        {
+            return "PawLIB: FlexStack Tests";
+        }
 
-            bool janitor()
-            {
-                // Refill the std::stack.
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    stk.push(i);
-                }
-                return true;
-            }
+    private:
+};
 
-            bool run()
-            {
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    unsigned int temp = stk.top();
-
-                    // Can't happen, so if it does, things went weird.
-                    if(stk.top() != temp)
-                    {
-                        return false;
-                    }
-
-                    stk.pop();
-                }
-                return true;
-            }
-            bool run_optimized()
-            {
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    stk.pop();
-                }
-                return true;
-            }
-
-            ~TestSStack_Pop(){}
-    };
-
-    // P-tB1303, P-tS1303
-    class TestFStack_Pop : public Test
-    {
-        private:
-            pawlib::FlexStack<unsigned int> fstk;
-            unsigned int iters;
-
-        public:
-            explicit TestFStack_Pop(unsigned int iterations)
-                :iters(iterations)
-                {}
-
-            testdoc_t get_title()
-            {
-                return"FlexStack: Pop " + stdutils::itos(iters, 10) + " integers from a FlexStack.";
-            }
-
-            testdoc_t get_docs()
-            {
-                return "Pop " + stdutils::itos(iters, 10) + " integers from a FlexStack.";
-            }
-
-            bool pre()
-            {
-                return janitor();
-            }
-
-            bool janitor()
-            {
-                // Refill the FlexStack.
-                for(unsigned int i=0; i<iters; ++i)
-                {
-                    fstk.push(i);
-                }
-                return true;
-            }
-            bool run()
-            {
-                // Pop each element.
-                for(unsigned int i=(iters-1); i; --i)
-                {
-                    // If the element does not equal the next expected element...
-                    if(fstk.pop() != i)
-                    {
-                        // Report failure.
-                        return false;
-                    }
-                }
-                return true;
-            }
-            bool run_optimized()
-            {
-                // Pop each element.
-                for(unsigned int i=(iters-1); i; --i)
-                {
-                    fstk.pop();
-                }
-                return true;
-            }
-
-            ~TestFStack_Pop(){}
-    };
-
-    class TestSuite_FlexStack : public TestSuite
-    {
-        public:
-            explicit TestSuite_FlexStack(){}
-
-            void load_tests();
-
-            testdoc_t get_title()
-            {
-                return "PawLIB: FlexStack Tests";
-            }
-
-        private:
-    };
-}
-#endif // FLEX_STACK_TESTS_H
+#endif // PAWLIB_FLEXSTACK_TESTS_HPP

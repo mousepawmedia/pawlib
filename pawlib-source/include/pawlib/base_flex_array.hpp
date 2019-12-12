@@ -51,665 +51,660 @@
 
 #include "pawlib/iochannel.hpp"
 
-using pawlib::iochannel;
-
-namespace pawlib
+template <typename type, bool factor_double = true>
+class Base_FlexArr
 {
-    template <typename type, bool factor_double = true>
-    class Base_FlexArr
-    {
-        public:
-            /** Create a new base flex array, with the default starting size.
-              */
-            Base_FlexArr()
-            :internalArray(nullptr), internalArrayBound(nullptr),
-             head(nullptr), tail(nullptr), resizable(true),
-             _elements(0), _capacity(0)
-            {
-                /* The call to resize() will sets the capacity to 8
-                 * on initiation. */
+    public:
+        /** Create a new base flex array, with the default starting size.
+             */
+        Base_FlexArr()
+        :internalArray(nullptr), internalArrayBound(nullptr),
+            head(nullptr), tail(nullptr), resizable(true),
+            _elements(0), _capacity(0)
+        {
+            /* The call to resize() will sets the capacity to 8
+                * on initiation. */
 
-                // Allocate the structure with an initial size.
-                resize(8);
+            // Allocate the structure with an initial size.
+            resize(8);
+        }
+
+        /** Create a new base flex array with room for the specified number
+             * of elements.
+             * \param the number of elements the structure can hold.
+             */
+        // cppcheck-suppress noExplicitConstructor
+        Base_FlexArr(size_t numElements)
+        :internalArray(nullptr), head(nullptr), tail(nullptr), resizable(true),
+            _elements(0), _capacity(0)
+        {
+            // Never allow instantiating with a capacity less than 2.
+            if(numElements > 1)
+            {
+                // Allocate the structure with the requested size.
+                resize(numElements);
+            }
+            else
+            {
+                resize(2);
             }
 
-            /** Create a new base flex array with room for the specified number
-              * of elements.
-              * \param the number of elements the structure can hold.
-              */
-            // cppcheck-suppress noExplicitConstructor
-            Base_FlexArr(size_t numElements)
-            :internalArray(nullptr), head(nullptr), tail(nullptr), resizable(true),
-             _elements(0), _capacity(0)
+        }
+
+        /** Destructor. */
+        ~Base_FlexArr()
+        {
+            if(internalArray != nullptr)
             {
-                // Never allow instantiating with a capacity less than 2.
-                if(numElements > 1)
+                delete[] internalArray;
+            }
+        }
+
+        /** Access an element at a given index using the [] operator.
+             * For example, "internalArray[5]".
+             */
+        type& operator[](size_t index)
+        {
+            return at(index);
+        }
+
+        /** Access an element at the given index.
+             * \param the index to access.
+             * \return the element at the given index.
+             */
+        type& at(size_t index)
+        {
+            if(!validateIndex(index, false))
+            {
+                throw std::out_of_range("BaseFlexArray: Index out of range!");
+            }
+
+            return internalArray[toInternalIndex(index)];
+        }
+
+        /** Clear all the elements in the array.
+             * \return true if successful, else false
+             */
+        bool clear()
+        {
+            this->_elements = 0;
+            this->head = this->internalArray;
+            this->tail = this->internalArray;
+            return true;
+        }
+
+        /** Check if the data structure is empty.
+             * \return true if empty, else false
+             */
+        bool isEmpty()
+        {
+            return (_elements == 0);
+        }
+
+        /** Check to see if the data structure is full.
+             * \return true is full, else false
+             */
+        bool isFull()
+        {
+                return (_capacity == _elements);
+        }
+
+        /** Erase the elements in the specified range.
+             * \param the first index in the range to remove
+             * \param the last index in the range to remove
+             */
+        bool erase(size_t first, size_t last=0)
+        {
+            /* If no last index was specified, prepare to delete only
+                * the element 'first'. */
+            if(last == 0)
+            {
+                last = first;
+            }
+
+            // If the range [first-last] is valid...
+            if(last >= first && last < this->_elements)
+            {
+                size_t removeCount = (last+1) - first;
+
+                //...and if we'll have leftovers after `last`
+                if(last < this->_elements - 1)
                 {
-                    // Allocate the structure with the requested size.
-                    resize(numElements);
+                    // Shift the leftovers backwards into place.
+                    memShift(last+1, -removeCount);
                 }
-                else
-                {
-                    resize(2);
-                }
+                // Recalculate the elements we have.
+                this->_elements -= removeCount;
 
-            }
-
-            /** Destructor. */
-            ~Base_FlexArr()
-            {
-                if(internalArray != nullptr)
-                {
-                    delete[] internalArray;
-                }
-            }
-
-            /** Access an element at a given index using the [] operator.
-              * For example, "internalArray[5]".
-              */
-            type& operator[](size_t index)
-            {
-                return at(index);
-            }
-
-            /** Access an element at the given index.
-              * \param the index to access.
-              * \return the element at the given index.
-              */
-            type& at(size_t index)
-            {
-                if(!validateIndex(index, false))
-                {
-                    throw std::out_of_range("BaseFlexArray: Index out of range!");
-                }
-
-                return internalArray[toInternalIndex(index)];
-            }
-
-            /** Clear all the elements in the array.
-              * \return true if successful, else false
-              */
-            bool clear()
-            {
-                this->_elements = 0;
-                this->head = this->internalArray;
-                this->tail = this->internalArray;
                 return true;
             }
-
-            /** Check if the data structure is empty.
-              * \return true if empty, else false
-              */
-            bool isEmpty()
+            else
             {
-                return (_elements == 0);
+                // Throw non-fatal error.
+                ioc << IOCat::error << "BaseFlexArray Erase: Invalid range ("
+                    << first << " - " << last << "). Took no action."
+                    << IOCtrl::endl;
+                return false;
             }
+        }
 
-            /** Check to see if the data structure is full.
-              * \return true is full, else false
-              */
-            bool isFull()
+        /** Get the current number of elements in the structure.
+             * \return the number of elements
+             */
+        size_t length()
+        {
+            return _elements;
+        }
+
+        /** Get the maximum number of elements the structure can hold
+             * without resizing.
+             * \return the maximum number of elements
+             */
+        size_t capacity()
+        {
+            return _capacity;
+        }
+
+        /** Reserves room for the exact number of elements.
+             * \param the number of elements to reserve
+             * \return true if successful, else false
+             */
+        bool reserve(size_t size)
+        {
+            return resize(size);
+        }
+
+        bool shrink()
+        {
+            // Never allow shrinking smaller than 2.
+            if(this->_elements < 2)
             {
-                  return (_capacity == _elements);
+                return resize(2, true);
             }
+            // (implicit else)
+            return resize(this->_elements, true);
+        }
+    protected:
+        /// The pointer to the actual structure in memory.
+        type* internalArray;
 
-            /** Erase the elements in the specified range.
-              * \param the first index in the range to remove
-              * \param the last index in the range to remove
-              */
-            bool erase(size_t first, size_t last=0)
+        /// The pointer to the end of the internal array.
+        type* internalArrayBound;
+
+        /// Pointer to the head element.
+        type* head;
+
+        /// Pointer to one past the tail element.
+        type* tail;
+
+        /// Whether the structure can be resized.
+        bool resizable;
+
+        /// The current number of elements in the structure.
+        size_t _elements;
+
+        /** The maximum number of elements (capacity) that can be contained
+             * in the structure without resizing. (1-based) */
+        size_t _capacity;
+
+        /** Directly access a value in the internal array.
+             * Does not check for bounds.
+             * \param the internal index to access
+             * \return the element at index
+             */
+        type& rawAt(size_t index)
+        {
+            return internalArray[toInternalIndex(index)];
+        }
+
+        /** Validate the given index is in range
+             * \param the index to validate
+             * \param whether to show an error message on failure, default false
+             * \return true if index is in range, else false
+             */
+        inline bool validateIndex(size_t index, bool yell = false)
+        {
+            /* If the index is greater than the number of elements
+                * in the array currently. */
+            if(index > this->_elements - 1)
             {
-                /* If no last index was specified, prepare to delete only
-                 * the element 'first'. */
-                if(last == 0)
+                if(yell)
                 {
-                    last = first;
+                    // Throw a non-fatal error. Numbers are 0-based.
+                    ioc << IOCat::error << IOVrb::quiet << "Index " << index
+                    << " out of bounds [0 - " << this->_elements - 1
+                    << "]." << IOCtrl::endl;
                 }
+                // Report failure.
+                return false;
+            }
+            // Otherwise, return true.
+            return true;
+        }
 
-                // If the range [first-last] is valid...
-                if(last >= first && last < this->_elements)
-                {
-                    size_t removeCount = (last+1) - first;
+        /** Convert an index to an internal index.
+             * \param the (external) index to access
+             * \return the (internal) index
+             */
+        inline size_t toInternalIndex(size_t index)
+        {
+            /* Get the internal index, by adding the external index
+                * to the head index, and then accounting for the
+                * circular buffer.
+                * Thanks to pydsigner and nisstyre in ##python-offtopic
+                * for suggesting the modulus.
+                */
+            return (this->head - this->internalArray + index) % this->_capacity;
+        }
 
-                    //...and if we'll have leftovers after `last`
-                    if(last < this->_elements - 1)
-                    {
-                        // Shift the leftovers backwards into place.
-                        memShift(last+1, -removeCount);
-                    }
-                    // Recalculate the elements we have.
-                    this->_elements -= removeCount;
+        type& getFromHead()
+        {
+            return *(this->head);
+        }
 
-                    return true;
-                }
-                else
-                {
-                    // Throw non-fatal error.
-                    ioc << IOCat::error << "BaseFlexArray Erase: Invalid range ("
-                        << first << " - " << last << "). Took no action."
-                        << IOCtrl::endl;
-                    return false;
-                }
+        type& getFromTail()
+        {
+            if(this->tail == this->internalArray)
+            {
+                // We have to get the element at the end of the internalArray.
+                return *(this->internalArray + (this->_capacity - 1));
+            }
+            return *(this->tail - 1);
+        }
+
+        /** Efficiently insert a value at the head of the array.
+             * \param the value to insert
+             * \param whether to show an error message on failure, default false
+             * \return true if successful, else false
+             */
+        bool insertAtHead(type value, bool yell = false)
+        {
+            // Check capacity and attempt a resize if necessary.
+            if(!checkSize(yell)) { return false; }
+
+            shiftHeadBack();
+
+            // Insert our value at the new head position.
+            *(this->head) = value;
+
+            // Increment the number of current elements in the array.
+            ++this->_elements;
+
+            return true;
+        }
+
+
+        /** Efficiently insert a value at the tail of the array.
+             * \param the value to insert
+             * \param whether to show an error message on failure, default false
+             * return true if successful, else false
+             */
+        bool insertAtTail(type value, bool yell = false)
+        {
+            // Check capacity and attempt a resize if necessary.
+            if(!checkSize(yell)) { return false; }
+
+            *(this->tail) = value;
+
+            shiftTailForward();
+
+            // Increment the number of current elements in the array
+            ++this->_elements;
+
+            return true;
+        }
+
+        /** Insert a value at the given position in the array.
+             * Does NOT check index validity.
+             * \param the value to insert
+             * \param the index to insert the value at
+             * \param whether to show an error message on failure, default false
+             * \return true if successful, else false
+             */
+        bool insertAtIndex(type value, size_t index, bool yell = false)
+        {
+            // Check capacity and attempt a resize if necessary.
+            if(!checkSize(yell)) { return false; }
+
+            // Shift the values to make room.
+            memShift(index, 1);
+            // Store the new value.
+            this->internalArray[toInternalIndex(index)] = value;
+
+            // Leave the head/tail shifting to memShift!
+
+            // Increment the number of current elements in the array.
+            ++this->_elements;
+
+            return true;
+        }
+
+        /** Efficiently remove a value from the head.
+             * Does NOT check if the array is empty.
+             * \return true if successful, else false
+             */
+        bool removeAtHead()
+        {
+            shiftHeadForward();
+
+            // Decrement the number of elements we're currently storing.
+            --this->_elements;
+
+            return true;
+        }
+
+        /** Efficiently remove a value from the tail.
+             * Does NOT check if the array is empty.
+             * \return true if successful, else false
+             */
+        bool removeAtTail()
+        {
+            /* Move the tail position back, so the previous last value
+                * is now ignored.
+                */
+
+            shiftTailBack();
+
+            // Decrement the number of elements we're currently storing.
+            --this->_elements;
+
+            return true;
+        }
+
+        /** Remove a value from the array.
+             * Does NOT check index validity.
+             * Does NOT check if the array is empty.
+             * \param the index to remove
+             * \return true if successful, else false
+             */
+        bool removeAtIndex(size_t index)
+        {
+            /* Decrement the number of elements we're storing.
+                * If we have more than one element remaining...
+                */
+            if(this->_elements-- > 1)
+            {
+                /* Shift all the elements after the index left one position,
+                * overwriting the element we're removing.
+                */
+                memShift(index, -1);
+            }
+            else
+            {
+                /* If we have only one element remaining, we should not
+                    * memShift. Just ignore the element's existence.
+                    */
+                shiftTailBack();
             }
 
-            /** Get the current number of elements in the structure.
-              * \return the number of elements
-              */
-            size_t length()
+            return true;
+        }
+
+        /** Check if the array is full and attempt a resize if necessary.
+             * \param whether to show an error message on failure, default false
+             * \return true if resize successful or no resize necessary
+             */
+        inline bool checkSize(bool yell = false)
+        {
+            // If we're full, attempt a resize.
+            if(this->_elements >= this->_capacity)
             {
-                return _elements;
-            }
-
-            /** Get the maximum number of elements the structure can hold
-              * without resizing.
-              * \return the maximum number of elements
-              */
-            size_t capacity()
-            {
-                return _capacity;
-            }
-
-            /** Reserves room for the exact number of elements.
-              * \param the number of elements to reserve
-              * \return true if successful, else false
-              */
-            bool reserve(size_t size)
-            {
-                return resize(size);
-            }
-
-            bool shrink()
-            {
-                // Never allow shrinking smaller than 2.
-                if(this->_elements < 2)
-                {
-                    return resize(2, true);
-                }
-                // (implicit else)
-                return resize(this->_elements, true);
-            }
-        protected:
-            /// The pointer to the actual structure in memory.
-            type* internalArray;
-
-            /// The pointer to the end of the internal array.
-            type* internalArrayBound;
-
-            /// Pointer to the head element.
-            type* head;
-
-            /// Pointer to one past the tail element.
-            type* tail;
-
-            /// Whether the structure can be resized.
-            bool resizable;
-
-            /// The current number of elements in the structure.
-            size_t _elements;
-
-            /** The maximum number of elements (capacity) that can be contained
-              * in the structure without resizing. (1-based) */
-            size_t _capacity;
-
-            /** Directly access a value in the internal array.
-              * Does not check for bounds.
-              * \param the internal index to access
-              * \return the element at index
-              */
-            type& rawAt(size_t index)
-            {
-                return internalArray[toInternalIndex(index)];
-            }
-
-            /** Validate the given index is in range
-              * \param the index to validate
-              * \param whether to show an error message on failure, default false
-              * \return true if index is in range, else false
-              */
-            inline bool validateIndex(size_t index, bool yell = false)
-            {
-                /* If the index is greater than the number of elements
-                 * in the array currently. */
-                if(index > this->_elements - 1)
+                // If we weren't able to resize, report failure.
+                if(!resize())
                 {
                     if(yell)
                     {
-                        // Throw a non-fatal error. Numbers are 0-based.
-                        ioc << IOCat::error << IOVrb::quiet << "Index " << index
-                        << " out of bounds [0 - " << this->_elements - 1
-                        << "]." << IOCtrl::endl;
+                        ioc << IOCat::error
+                        << "Data structure is full and cannot be resized."
+                        << IOCtrl::endl;
                     }
-                    // Report failure.
                     return false;
                 }
-                // Otherwise, return true.
-                return true;
             }
+            /* If no resize was necessary, or if resize was successful,
+                * report success.
+                */
+            return true;
+        }
 
-            /** Convert an index to an internal index.
-              * \param the (external) index to access
-              * \return the (internal) index
-              */
-            inline size_t toInternalIndex(size_t index)
-            {
-                /* Get the internal index, by adding the external index
-                 * to the head index, and then accounting for the
-                 * circular buffer.
-                 * Thanks to pydsigner and nisstyre in ##python-offtopic
-                 * for suggesting the modulus.
-                  */
-                return (this->head - this->internalArray + index) % this->_capacity;
-            }
+        /** Double the capacity of the structure.
+             * \param the number of elements to reserve space for
+             * \param whether we're allowed to non-destructively shrink.
+             * \return true if it was able to double capacity, else false.
+             */
+        bool resize(size_t reserve = 0, bool allow_shrink = false)
+        {
+            // If we're not allowed to resize, report failure.
+            if(!resizable){ return false; }
 
-            type& getFromHead()
-            {
-                return *(this->head);
-            }
+            size_t oldCapacity = this->_capacity;
 
-            type& getFromTail()
+            if(reserve == 0)
             {
-                if(this->tail == this->internalArray)
+                // check to see if maximum size is being approached
+                if(this->_capacity >= UINT32_MAX/2)
                 {
-                    // We have to get the element at the end of the internalArray.
-                    return *(this->internalArray + (this->_capacity - 1));
+                    // set it to limit defined by UINT32_MAX
+                    this->_capacity = UINT32_MAX;
+                    // set it so that array can no longer be doubled in size
+                    resizable = false;
                 }
-                return *(this->tail - 1);
-            }
+                // Increase the capacity.
 
-            /** Efficiently insert a value at the head of the array.
-              * \param the value to insert
-              * \param whether to show an error message on failure, default false
-              * \return true if successful, else false
-              */
-            bool insertAtHead(type value, bool yell = false)
-            {
-                // Check capacity and attempt a resize if necessary.
-                if(!checkSize(yell)) { return false; }
-
-                shiftHeadBack();
-
-                // Insert our value at the new head position.
-                *(this->head) = value;
-
-                // Increment the number of current elements in the array.
-                ++this->_elements;
-
-                return true;
-            }
-
-
-            /** Efficiently insert a value at the tail of the array.
-              * \param the value to insert
-              * \param whether to show an error message on failure, default false
-              * return true if successful, else false
-              */
-            bool insertAtTail(type value, bool yell = false)
-            {
-                // Check capacity and attempt a resize if necessary.
-                if(!checkSize(yell)) { return false; }
-
-                *(this->tail) = value;
-
-                shiftTailForward();
-
-                // Increment the number of current elements in the array
-                ++this->_elements;
-
-                return true;
-            }
-
-            /** Insert a value at the given position in the array.
-              * Does NOT check index validity.
-              * \param the value to insert
-              * \param the index to insert the value at
-              * \param whether to show an error message on failure, default false
-              * \return true if successful, else false
-              */
-            bool insertAtIndex(type value, size_t index, bool yell = false)
-            {
-                // Check capacity and attempt a resize if necessary.
-                if(!checkSize(yell)) { return false; }
-
-                // Shift the values to make room.
-                memShift(index, 1);
-                // Store the new value.
-                this->internalArray[toInternalIndex(index)] = value;
-
-                // Leave the head/tail shifting to memShift!
-
-                // Increment the number of current elements in the array.
-                ++this->_elements;
-
-                return true;
-            }
-
-            /** Efficiently remove a value from the head.
-              * Does NOT check if the array is empty.
-              * \return true if successful, else false
-              */
-            bool removeAtHead()
-            {
-                shiftHeadForward();
-
-                // Decrement the number of elements we're currently storing.
-                --this->_elements;
-
-                return true;
-            }
-
-            /** Efficiently remove a value from the tail.
-              * Does NOT check if the array is empty.
-              * \return true if successful, else false
-              */
-            bool removeAtTail()
-            {
-                /* Move the tail position back, so the previous last value
-                 * is now ignored.
-                 */
-
-                shiftTailBack();
-
-                // Decrement the number of elements we're currently storing.
-                --this->_elements;
-
-                return true;
-            }
-
-            /** Remove a value from the array.
-              * Does NOT check index validity.
-              * Does NOT check if the array is empty.
-              * \param the index to remove
-              * \return true if successful, else false
-              */
-            bool removeAtIndex(size_t index)
-            {
-                /* Decrement the number of elements we're storing.
-                 * If we have more than one element remaining...
-                 */
-                if(this->_elements-- > 1)
+                /* Which option we use depends on whether we want to
+                    * optimize for SPEED (2) or SPACE (1.5). */
+                if(factor_double)
                 {
-                    /* Shift all the elements after the index left one position,
-                    * overwriting the element we're removing.
-                    */
-                    memShift(index, -1);
+                    this->_capacity = this->_capacity * 2;
                 }
                 else
                 {
-                    /* If we have only one element remaining, we should not
-                     * memShift. Just ignore the element's existence.
-                     */
+                    this->_capacity += this->_capacity / 2;
+                }
+            }
+            else
+            {
+                // If the reservation would destroy elements...
+                if(reserve < this->_elements)
+                {
+                    // Report error.
+                    return false;
+                }
+                /* If the reservation would shrink the structure
+                    * without permission... */
+                else if(!allow_shrink && reserve <= this->_capacity)
+                {
+                    // Report error.
+                    return false;
+                }
+                this->_capacity = reserve;
+            }
+
+            /* Create the new structure with the new capacity.*/
+            type* tempArray = new type[this->_capacity];
+
+            // If there was an error allocating the new array...
+            if(tempArray == nullptr)
+            {
+                // Report failure.
+                return false;
+            }
+
+            // If an old array exists...
+            if(this->internalArray != nullptr)
+            {
+                /* Transfer all of the elements over.
+                    * Since this is a circular buffer, we have to move things
+                    * so it has room for expansion. The fastest way to do this
+                    * is by storing the head element back at index 0.
+                    * To do this, we'll move everything in two parts:
+                    * (1) head to end of space, and (2) 0 to head-1.
+                    */
+                size_t headIndex = this->head - this->internalArray;
+                size_t step1 = oldCapacity - headIndex;
+                size_t step2 = headIndex;
+                memcpy(
+                    tempArray,
+                    this->head,
+                    sizeof(type) * step1
+                );
+                memcpy(
+                    tempArray + step1,
+                    this->internalArray,
+                    sizeof(type) * step2
+                );
+
+                // Delete the old structure.
+                delete[] this->internalArray;
+                this->internalArray = nullptr;
+            }
+
+            // Store the new structure.
+            this->internalArray = tempArray;
+            this->internalArrayBound = this->internalArray + this->_capacity;
+
+            // Reset the head and tail
+            this->head = this->internalArray;
+            this->tail = this->internalArray + this->_elements;
+
+            // Report success.
+            return true;
+        }
+
+        /** Shift all elements from the given position the given direction
+             * and distance. This is intended for internal use only, and does
+             * not check for memory errors.
+             * \param the index to shift elements from
+             * \param the direction and distance to shift the elements in.
+             */
+        void memShift(size_t fromIndex, int8_t direction)
+        {
+            /* Check if the index was valid given the number of elements
+                * we're actually storing. (We have to offset so we do our math
+                * in 1-indexing).
+                */
+            if(fromIndex >= this->_elements)
+            {
+                return;
+            }
+
+            // If the array is already empty, there's nothing to move.
+            if(isEmpty()){ return; }
+
+            // If we haven't yet had wraparound, move the tail section.
+            if(this->tail > this->head && this->tail < this->internalArrayBound)
+            {
+                memmove(
+                    // Move TO the given index.
+                    this->head + fromIndex + direction,
+                    // Move FROM the given index.
+                    this->head + fromIndex,
+                    // Total move size is the number of elements to be moved,
+                    // times element size. The number of elements we move
+                    // is calculated from the 1-based total number of elements.
+                    sizeof(type) * (this->_elements - fromIndex)
+                );
+
+                shiftTail(direction);
+            }
+            // Else If we've already had wraparound, move the head section.
+            else if(this->tail < this->head)
+            {
+                /* There is an ironic side-effect here that, if we are
+                    * inserting at 0, we'll only move the head, and not
+                    * actually shift anything! (Weird, but it works.)
+                    */
+                memmove(
+                    // Move TO the given index.
+                    // Must invert direction for this to work right.
+                    this->head - direction,
+                    // Move FROM the given index.
+                    this->head,
+                    sizeof(type) * fromIndex
+                );
+
+                shiftHead(-direction);
+            }
+            else
+            {
+                // NOTE: Test for this.
+                ioc << "weird edge case" << IOCtrl::endl;
+            }
+        }
+
+        inline void shiftHead(size_t direction)
+        {
+            size_t magnitude = direction;
+            if(direction > 0)
+            {
+                for(size_t i = 0; i < magnitude; ++i)
+                {
+                    shiftHeadForward();
+                }
+            }
+            else
+            {
+                for(size_t i = 0; i < magnitude; ++i)
+                {
+                    shiftHeadBack();
+                }
+            }
+        }
+
+        inline void shiftHeadBack()
+        {
+            // Move the head back, accounting for wraparound.
+            if(this->head-- <= this->internalArray)
+            {
+                this->head = this->internalArray + (this->_capacity - 1);
+            }
+        }
+
+        inline void shiftHeadForward()
+        {
+            // Move the head forward, accounting for wraparound.
+            if(++this->head - this->internalArray >= int(this->_capacity))
+            {
+                this->head = this->internalArray;
+            }
+        }
+
+        inline void shiftTail(size_t direction)
+        {
+            size_t magnitude = direction;
+            if(direction > 0)
+            {
+                for(size_t i = 0; i < magnitude; ++i)
+                {
+                    shiftTailForward();
+                }
+            }
+            else
+            {
+                for(size_t i = 0; i < magnitude; ++i)
+                {
                     shiftTailBack();
                 }
-
-                return true;
             }
+        }
 
-            /** Check if the array is full and attempt a resize if necessary.
-              * \param whether to show an error message on failure, default false
-              * \return true if resize successful or no resize necessary
-              */
-            inline bool checkSize(bool yell = false)
+        inline void shiftTailBack()
+        {
+            // Move the tail back, accounting for wraparound.
+            if(this->tail-- == this->internalArray)
             {
-                // If we're full, attempt a resize.
-                if(this->_elements >= this->_capacity)
-                {
-                    // If we weren't able to resize, report failure.
-                    if(!resize())
-                    {
-                        if(yell)
-                        {
-                            ioc << IOCat::error
-                            << "Data structure is full and cannot be resized."
-                            << IOCtrl::endl;
-                        }
-                        return false;
-                    }
-                }
-                /* If no resize was necessary, or if resize was successful,
-                 * report success.
-                 */
-                return true;
+                this->tail = this->internalArray + (this->_capacity - 1);
             }
+        }
 
-            /** Double the capacity of the structure.
-              * \param the number of elements to reserve space for
-              * \param whether we're allowed to non-destructively shrink.
-              * \return true if it was able to double capacity, else false.
-              */
-            bool resize(size_t reserve = 0, bool allow_shrink = false)
+        inline void shiftTailForward()
+        {
+            // Move the tail forward, accounting for wraparound.
+            if(++this->tail >= this->internalArrayBound)
             {
-                // If we're not allowed to resize, report failure.
-                if(!resizable){ return false; }
-
-                size_t oldCapacity = this->_capacity;
-
-                if(reserve == 0)
-                {
-                    // check to see if maximum size is being approached
-                    if(this->_capacity >= UINT32_MAX/2)
-                    {
-                        // set it to limit defined by UINT32_MAX
-                        this->_capacity = UINT32_MAX;
-                        // set it so that array can no longer be doubled in size
-                        resizable = false;
-                    }
-                    // Increase the capacity.
-
-                    /* Which option we use depends on whether we want to
-                     * optimize for SPEED (2) or SPACE (1.5). */
-                    if(factor_double)
-                    {
-                        this->_capacity = this->_capacity * 2;
-                    }
-                    else
-                    {
-                        this->_capacity += this->_capacity / 2;
-                    }
-                }
-                else
-                {
-                    // If the reservation would destroy elements...
-                    if(reserve < this->_elements)
-                    {
-                        // Report error.
-                        return false;
-                    }
-                    /* If the reservation would shrink the structure
-                     * without permission... */
-                    else if(!allow_shrink && reserve <= this->_capacity)
-                    {
-                        // Report error.
-                        return false;
-                    }
-                    this->_capacity = reserve;
-                }
-
-                /* Create the new structure with the new capacity.*/
-                type* tempArray = new type[this->_capacity];
-
-                // If there was an error allocating the new array...
-                if(tempArray == nullptr)
-                {
-                    // Report failure.
-                    return false;
-                }
-
-                // If an old array exists...
-                if(this->internalArray != nullptr)
-                {
-                    /* Transfer all of the elements over.
-                     * Since this is a circular buffer, we have to move things
-                     * so it has room for expansion. The fastest way to do this
-                     * is by storing the head element back at index 0.
-                     * To do this, we'll move everything in two parts:
-                     * (1) head to end of space, and (2) 0 to head-1.
-                     */
-                    size_t headIndex = this->head - this->internalArray;
-                    size_t step1 = oldCapacity - headIndex;
-                    size_t step2 = headIndex;
-                    memcpy(
-                        tempArray,
-                        this->head,
-                        sizeof(type) * step1
-                    );
-                    memcpy(
-                        tempArray + step1,
-                        this->internalArray,
-                        sizeof(type) * step2
-                    );
-
-                    // Delete the old structure.
-                    delete[] this->internalArray;
-                    this->internalArray = nullptr;
-                }
-
-                // Store the new structure.
-                this->internalArray = tempArray;
-                this->internalArrayBound = this->internalArray + this->_capacity;
-
-                // Reset the head and tail
-                this->head = this->internalArray;
-                this->tail = this->internalArray + this->_elements;
-
-                // Report success.
-                return true;
+                this->tail = this->internalArray;
             }
-
-            /** Shift all elements from the given position the given direction
-              * and distance. This is intended for internal use only, and does
-              * not check for memory errors.
-              * \param the index to shift elements from
-              * \param the direction and distance to shift the elements in.
-              */
-            void memShift(size_t fromIndex, int8_t direction)
-            {
-                /* Check if the index was valid given the number of elements
-                 * we're actually storing. (We have to offset so we do our math
-                 * in 1-indexing).
-                 */
-                if(fromIndex >= this->_elements)
-                {
-                    return;
-                }
-
-                // If the array is already empty, there's nothing to move.
-                if(isEmpty()){ return; }
-
-                // If we haven't yet had wraparound, move the tail section.
-                if(this->tail > this->head && this->tail < this->internalArrayBound)
-                {
-                    memmove(
-                        // Move TO the given index.
-                        this->head + fromIndex + direction,
-                        // Move FROM the given index.
-                        this->head + fromIndex,
-                        // Total move size is the number of elements to be moved,
-                        // times element size. The number of elements we move
-                        // is calculated from the 1-based total number of elements.
-                        sizeof(type) * (this->_elements - fromIndex)
-                    );
-
-                    shiftTail(direction);
-                }
-                // Else If we've already had wraparound, move the head section.
-                else if(this->tail < this->head)
-                {
-                    /* There is an ironic side-effect here that, if we are
-                     * inserting at 0, we'll only move the head, and not
-                     * actually shift anything! (Weird, but it works.)
-                     */
-                    memmove(
-                        // Move TO the given index.
-                        // Must invert direction for this to work right.
-                        this->head - direction,
-                        // Move FROM the given index.
-                        this->head,
-                        sizeof(type) * fromIndex
-                    );
-
-                    shiftHead(-direction);
-                }
-                else
-                {
-                    // NOTE: Test for this.
-                    ioc << "weird edge case" << IOCtrl::endl;
-                }
-            }
-
-            inline void shiftHead(size_t direction)
-            {
-                size_t magnitude = direction;
-                if(direction > 0)
-                {
-                    for(size_t i = 0; i < magnitude; ++i)
-                    {
-                        shiftHeadForward();
-                    }
-                }
-                else
-                {
-                    for(size_t i = 0; i < magnitude; ++i)
-                    {
-                        shiftHeadBack();
-                    }
-                }
-            }
-
-            inline void shiftHeadBack()
-            {
-                // Move the head back, accounting for wraparound.
-                if(this->head-- <= this->internalArray)
-                {
-                    this->head = this->internalArray + (this->_capacity - 1);
-                }
-            }
-
-            inline void shiftHeadForward()
-            {
-                // Move the head forward, accounting for wraparound.
-                if(++this->head - this->internalArray >= int(this->_capacity))
-                {
-                    this->head = this->internalArray;
-                }
-            }
-
-            inline void shiftTail(size_t direction)
-            {
-                size_t magnitude = direction;
-                if(direction > 0)
-                {
-                    for(size_t i = 0; i < magnitude; ++i)
-                    {
-                        shiftTailForward();
-                    }
-                }
-                else
-                {
-                    for(size_t i = 0; i < magnitude; ++i)
-                    {
-                        shiftTailBack();
-                    }
-                }
-            }
-
-            inline void shiftTailBack()
-            {
-                // Move the tail back, accounting for wraparound.
-                if(this->tail-- == this->internalArray)
-                {
-                    this->tail = this->internalArray + (this->_capacity - 1);
-                }
-            }
-
-            inline void shiftTailForward()
-            {
-                // Move the tail forward, accounting for wraparound.
-                if(++this->tail >= this->internalArrayBound)
-                {
-                    this->tail = this->internalArray;
-                }
-            }
-    };
-}
+        }
+};
 
 #endif // PAWLIB_BASEFLEXARRAY_HPP
