@@ -706,7 +706,7 @@ void iochannel::transmit(bool keep)
             case IOVrb::quiet:
             {
                 // Dispatch the "quiet" verbosity signal.
-                signal_v_quiet.dispatch(msg, cat);
+                signal_v_quiet(msg, cat);
                 /* Fall through, so the lower signals get emitted to.
                     * This allows outputs to connect to the HIGHEST
                     * verbosity they will allow, and get the rest regardless.
@@ -716,19 +716,19 @@ void iochannel::transmit(bool keep)
             case IOVrb::normal:
             {
                 // Dispatch the "normal" verbosity signal.
-                signal_v_normal.dispatch(msg, cat);
+                signal_v_normal(msg, cat);
                 [[fallthrough]];
             }
             case IOVrb::chatty:
             {
                 // Dispatch the "chatty" verbosity signal.
-                signal_v_chatty.dispatch(msg, cat);
+                signal_v_chatty(msg, cat);
                 [[fallthrough]];
             }
             case IOVrb::tmi:
             {
                 // Dispatch the "TMI" verbosity signal.
-                signal_v_tmi.dispatch(msg, cat);
+                signal_v_tmi(msg, cat);
                 break;
             }
         }
@@ -736,32 +736,32 @@ void iochannel::transmit(bool keep)
         if(static_cast<bool>(cat & IOCat::normal))
         {
             // Dispatch the "normal" category signal.
-            signal_c_normal.dispatch(msg, vrb);
+            signal_c_normal(msg, vrb);
         }
         if(static_cast<bool>(cat & IOCat::debug))
         {
             // Dispatch the "debug" category signal.
-            signal_c_debug.dispatch(msg, vrb);
+            signal_c_debug(msg, vrb);
         }
         if(static_cast<bool>(cat & IOCat::warning))
         {
             // Dispatch the "warning" category signal.
-            signal_c_warning.dispatch(msg, vrb);
+            signal_c_warning(msg, vrb);
         }
         if(static_cast<bool>(cat & IOCat::error))
         {
             // Dispatch the "error" category signal.
-            signal_c_error.dispatch(msg, vrb);
+            signal_c_error(msg, vrb);
         }
         if(static_cast<bool>(cat & IOCat::testing))
         {
             // Dispatch the "testing" category signal.
-            signal_c_testing.dispatch(msg, vrb);
+            signal_c_testing(msg, vrb);
         }
 
         // Dispatch the general purpose signals.
-        signal_full.dispatch(msg, vrb, cat);
-        signal_all.dispatch(msg);
+        signal_full(msg, vrb, cat);
+        signal_all(msg);
 
         //If we are supposed to be echoing
         if(echo_mode != IOEchoMode::none)

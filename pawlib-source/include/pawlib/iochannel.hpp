@@ -111,12 +111,11 @@
 #include <exception>
 
 //Signals and callbacks.
-#include "cpgf/gcallbacklist.h"
+#include "eventpp/callbacklist.h"
 
 /*We are only using std::string and std::queue temporarily.
 These need to be swapped out for pawlib alternatives ASAP.*/
 #include <string>
-#include <queue>
 
 //We use C's classes often.
 #include <cstdio>
@@ -501,19 +500,23 @@ class iochannel
         /**Declares a new iochannel instance.*/
         iochannel();
 
-        /** CPGF multi-output signal (callback list) for categories. */
-        typedef cpgf::GCallbackList<void (std::string,
+        /** Eventpp signal (callback list) for categories. */
+        typedef eventpp::CallbackList<void (std::string,
             IOCat)> IOSignalCat;
-        /** CPGF multi-output signal (callback list) for verbosities. */
-        typedef cpgf::GCallbackList<void (std::string,
+
+        /** Eventpp signal (callback list) for verbosities. */
+        typedef eventpp::CallbackList<void (std::string,
             IOVrb)> IOSignalVrb;
-        /** CPGF multi-output signal (callback list) for everything,
+
+        /** Eventpp signal (callback list) for everything,
              * transmitting the message, the verbosity, and the category. */
-        typedef cpgf::GCallbackList<void (std::string,
+        typedef eventpp::CallbackList<void (std::string,
             IOVrb, IOCat)> IOSignalFull;
-        /** CPGF multi-output signal (callback list) for everything,
+
+        /** Eventpp signal (callback list) for everything,
              * transmitting only the message. */
-        typedef cpgf::GCallbackList<void (std::string)> IOSignalAll;
+        typedef eventpp::CallbackList<void (std::string)> IOSignalAll;
+
 
         /* NOTE: In the examples below, the verbosity-related signals must
             * transmit what category the message is (since verbosity is
