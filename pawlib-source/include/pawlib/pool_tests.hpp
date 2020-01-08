@@ -88,8 +88,9 @@ class DummyClass
 class TestPool_ThriceFillAlloc : public Test
 {
     public:
-        // cppcheck-suppress uninitMemberVar
-        TestPool_ThriceFillAlloc(){}
+        TestPool_ThriceFillAlloc()
+        : refs()
+        {}
 
         testdoc_t get_title() override
         {
@@ -128,8 +129,9 @@ class TestPool_ThriceFillAlloc : public Test
 class TestPool_ThriceFill : public Test
 {
     public:
-        // cppcheck-suppress uninitMemberVar
-        TestPool_ThriceFill(){}
+        TestPool_ThriceFill()
+        : pool(nullptr), refs(nullptr)
+        {}
 
         testdoc_t get_title() override
         {
@@ -225,8 +227,8 @@ class TestPool_Create : public Test
             COPY_FAILSAFE
         };
 
-        // cppcheck-suppress uninitMemberVar
         explicit TestPool_Create(TestPoolCreateMode mode)
+        : pool(nullptr), poolrf(nullptr)
         {
             switch(mode)
             {
@@ -351,8 +353,9 @@ class TestPool_Create : public Test
 class TestPool_Access : public Test
 {
     public:
-        // cppcheck-suppress uninitMemberVar
-        TestPool_Access(){}
+        TestPool_Access()
+        : pool(nullptr), poolrf(nullptr)
+        {}
 
         testdoc_t get_title() override
         {
@@ -427,8 +430,9 @@ class TestPool_Access : public Test
 class TestPool_Destroy : public Test
 {
     public:
-        // cppcheck-suppress uninitMemberVar
-        TestPool_Destroy(){}
+        TestPool_Destroy()
+        : pool(nullptr), poolrf(nullptr)
+        {}
 
         testdoc_t get_title() override
         {
@@ -513,9 +517,8 @@ class TestPool_Exception : public Test
             POOL_DES_FOREIGN_REF
         };
 
-        // cppcheck-suppress uninitMemberVar
         explicit TestPool_Exception(FailTestType ex)
-        :type(ex)
+        :type(ex), pool(nullptr)
         {
             switch(type)
             {
