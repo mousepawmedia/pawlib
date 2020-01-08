@@ -33,4 +33,8 @@ void TestSuite_FlexArray::load_tests()
     register_test("P-tS1007", new TestFArray_Erase(HUNTHOU), false);
 
     register_test("P-tB1008", new TestFArray_Peek(), true, new TestVector_Peek());
+
+    register_test("P-tB1009", new TestFArray_Contained(), true);
+    register_test("P-tB1010", new TestFArray_SharedPtr(), true);
+    register_test("P-tB1011", new TestFArray_UniquePtr(), true);
 }

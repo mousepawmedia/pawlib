@@ -80,6 +80,21 @@ When the FlexStack is first created, you must specify the type of its elements.
 
     FlexStack<int>* dish_sizes = new FlexStack<int>;
 
+Raw Copy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, FlexStack uses standard assignment for moving items when the
+internal data structure resizes. However, if you're storing atomic data types,
+such as integers, additional performance gains may be achieved by having
+FlexStack use raw memory copying (`memcpy`) instead.
+
+To switch to Raw Copy Mode, include ``true`` as the second template
+parameter (``raw_copy``).
+
+..  code-block:: c++
+
+    FlexStack<int, true> i_use_rawcopy;
+
 Resize Factor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -92,12 +107,12 @@ This provides the best general performance. However, if you want to preserve
 memory at a small performance cost, you can switch to a resize factor of
 ``n * 1.5`` (internally implemented as ``n + n / 2``).
 
-To switch to the ``1.5`` factor, include ``false`` as the second template
+To switch to the ``1.5`` factor, include ``false`` as the third template
 parameter (``factor_double``).
 
 ..  code-block:: c++
 
-    FlexStack<int, false> i_resize_slower;
+    FlexStack<int, true, false> i_resize_slower;
 
 Reserve Size
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

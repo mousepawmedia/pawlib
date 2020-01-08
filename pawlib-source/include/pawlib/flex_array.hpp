@@ -1,14 +1,15 @@
 /** FlexArray [PawLIB]
-  * Version: 1.1
+  * Version: 2.0
   *
   * A dynamic array with a low dynamic allocation demand.
   * Designed to take the place of 'std::vector'.
   *
-  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
+  * Author(s): Jason C. McDonald, Michael Parkman,
+  *            Jonathan Theodore, Moshe Uminer
   */
 
 /* LICENSE (BSD-3-Clause)
- * Copyright (c) 2016-2019 MousePaw Media.
+ * Copyright (c) 2016-2020 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,28 +48,29 @@
 
 #include <stdio.h>
 #include <stdexcept>
+#include <utility>
 
 #include "pawlib/base_flex_array.hpp"
 #include "pawlib/constants.hpp"
 #include "pawlib/iochannel.hpp"
 
-template <typename type, bool factor_double = true>
-class FlexArray : public Base_FlexArr<type, factor_double>
+template <typename type, bool raw_copy = false, bool factor_double = true>
+class FlexArray : public Base_FlexArr<type, raw_copy, factor_double>
 {
     public:
         /** Create a new FlexArray with the default capacity.
-             */
+         */
         FlexArray()
-            :Base_FlexArr<type>()
-            {}
+        :Base_FlexArr<type, raw_copy, factor_double>()
+        {}
 
         /** Create a new FlexArray with the specified minimum capacity.
-             * \param the minimum number of elements that the FlexArray can contain.
-             */
+         * \param the minimum number of elements that the FlexArray can contain.
+         */
         // cppcheck-suppress noExplicitConstructor
         FlexArray(size_t numElements)
-            :Base_FlexArr<type>(numElements)
-            {}
+        :Base_FlexArr<type, raw_copy, factor_double>(numElements)
+        {}
 
         /** Insert an element into the FlexArray at the given index.
          * Unsigned to prevent negative indices.
@@ -76,7 +78,18 @@ class FlexArray : public Base_FlexArr<type, factor_double>
          * \param the index to insert the element at.
          * \return true if insert successful, else false.
          */
-        bool insert(type newElement, size_t index)
+        bool insert(type& newElement, size_t index)
+        {
+            return insert(std::move(newElement), index);
+        }
+
+        /** Insert an element into the FlexArray at the given index.
+         * Unsigned to prevent negative indices.
+         * \param the element to insert
+         * \param the index to insert the element at.
+         * \return true if insert successful, else false.
+         */
+        bool insert(type&& newElement, size_t index)
         {
             if(!this->validateIndex(index))
             {
@@ -86,7 +99,7 @@ class FlexArray : public Base_FlexArr<type, factor_double>
                     << "]." << IOCtrl::endl;
                 return false;
             }
-            return this->insertAtIndex(newElement, index);
+            return this->insertAtIndex(std::move(newElement), index);
         }
 
         type& peek_front()
@@ -100,11 +113,33 @@ class FlexArray : public Base_FlexArr<type, factor_double>
             return this->getFromHead();
         }
 
+        const type& peek_front() const
+        {
+            // If the array is empty...
+            if(this->isEmpty())
+            {
+                // Throw a fatal error.
+                throw std::out_of_range("FlexArray: Cannot peek_front() from empty FlexArray.");
+            }
+            return this->getFromHead();
+        }
+
         /** Returns the last element in the FlexArray without modifying
-             * the data structure.
-             * \return the last element in the FlexArray.
-             */
-        type peek()
+         * the data structure.
+         * \return the last element in the FlexArray.
+         */
+        type& peek()
+        {
+            // If the array is empty...
+            if(this->isEmpty())
+            {
+                // Throw a fatal error.
+                throw std::out_of_range("FlexArray: Cannot peek() from empty FlexArray.");
+            }
+            return this->getFromTail();
+        }
+
+        const type& peek() const
         {
             // If the array is empty...
             if(this->isEmpty())
@@ -116,19 +151,24 @@ class FlexArray : public Base_FlexArr<type, factor_double>
         }
 
         /** Returns the last element in FlexArray without modifying
-             * the data structure
-             * Just an alias for peek.
-             * \return the first element in the FlexArray.
-             */
-        type peek_back()
+         * the data structure
+         * Just an alias for peek.
+         * \return the first element in the FlexArray.
+         */
+        type& peek_back()
+        {
+            return peek();
+        }
+
+        const type& peek_back() const
         {
             return peek();
         }
 
         /** Remove and return the element at the given index.
-             * \param the index to act on.
-             * \return the element from the given index.
-             */
+         * \param the index to act on.
+         * \return the element from the given index.
+         */
         type yank(size_t index)
         {
             // If there are no elements in the array...
@@ -153,30 +193,49 @@ class FlexArray : public Base_FlexArr<type, factor_double>
         }
 
         /** Insert an element at the beginning of the FlexArray.
-             * Just an alias for shift()
-             * \param the element to insert.
-             * \return true if successful, else false.
-             */
-        bool push_front(type newElement)
+         * Just an alias for shift()
+         * \param the element to insert.
+         * \return true if successful, else false.
+         */
+        bool push_front(type& newElement)
         {
-            return shift(newElement);
+            return shift(std::move(newElement));
         }
 
         /** Insert an element at the beginning of the FlexArray.
-             * \param the element to insert.
-             * \return true if successful, else false.
-             */
-        bool shift(type newElement)
+         * Just an alias for shift()
+         * \param the element to insert.
+         * \return true if successful, else false.
+         */
+        bool push_front(type&& newElement)
+        {
+            return shift(std::move(newElement));
+        }
+
+        /** Insert an element at the beginning of the FlexArray.
+         * \param the element to insert.
+         * \return true if successful, else false.
+         */
+        bool shift(type& newElement)
+        {
+            return shift(std::move(newElement));
+        }
+
+        /** Insert an element at the beginning of the FlexArray.
+         * \param the element to insert.
+         * \return true if successful, else false.
+         */
+        bool shift(type&& newElement)
         {
             /* We'll use the deque head insertion here.
-                * Use that function's error messages.
-                */
-            return this->insertAtHead(newElement, true);
+            * Use that function's error messages.
+            */
+            return this->insertAtHead(std::move(newElement), true);
         }
 
         /** Returns and removes the first element in the FlexArray.
-             * \return the first element, now removed.
-             */
+         * \return the first element, now removed.
+         */
         type unshift()
         {
             // If the array is empty...
@@ -195,17 +254,17 @@ class FlexArray : public Base_FlexArr<type, factor_double>
         }
 
         /** Return and remove the last element in the FlexArray.
-             * Just an alias for pop()
-             * \return the last element, now removed.
-             */
+         * Just an alias for pop()
+         * \return the last element, now removed.
+         */
         type pop_back()
         {
             return pop();
         }
 
         /** Return and remove the last element in the FlexArray.
-             * \return the last element, now removed.
-             */
+         * \return the last element, now removed.
+         */
         type pop()
         {
             // If the array is empty...
@@ -224,25 +283,44 @@ class FlexArray : public Base_FlexArr<type, factor_double>
         }
 
         /** Add the specified element to the end of the FlexArray.
-             * Just an alias for push()
-             * \param the element to add.
-             * \return true if successful, else false.
-             */
-        bool push_back(type newElement)
+         * Just an alias for push()
+         * \param the element to add.
+         * \return true if successful, else false.
+         */
+        bool push_back(type& newElement)
         {
-            return push(newElement);
+            return push(std::move(newElement));
         }
 
         /** Add the specified element to the end of the FlexArray.
-             * \param the element to add.
-             * \return true if successful, else false.
-             */
-        bool push(type newElement)
+         * Just an alias for push()
+         * \param the element to add.
+         * \return true if successful, else false.
+         */
+        bool push_back(type&& newElement)
+        {
+            return push(std::move(newElement));
+        }
+
+        /** Add the specified element to the end of the FlexArray.
+         * \param the element to add.
+         * \return true if successful, else false.
+         */
+        bool push(type& newElement)
+        {
+            return push(std::move(newElement));
+        }
+
+        /** Add the specified element to the end of the FlexArray.
+         * \param the element to add.
+         * \return true if successful, else false.
+         */
+        bool push(type&& newElement)
         {
             /* We'll use the deque tail insert here.
-                * Use that function's error messages.
-                */
-            return this->insertAtTail(newElement, true);
+             * Use that function's error messages.
+             */
+            return this->insertAtTail(std::move(newElement), true);
         }
 };
 #endif // PAWLIB_FLEXARRAY_HPP

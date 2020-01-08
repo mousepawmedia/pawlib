@@ -1,13 +1,14 @@
 /** FlexStack [PawLIB]
-  * Version: 1.1
+  * Version: 2.0
   *
   * A Flex-based stack with a low dynamic allocation demand.
   *
-  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
+  * Author(s): Jason C. McDonald, Michael Parkman,
+  *            Jonathan Theodore, Moshe Uminer
   */
 
 /* LICENSE (BSD-3-Clause)
- * Copyright (c) 2016-2019 MousePaw Media.
+ * Copyright (c) 2016-2020 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,44 +50,77 @@
 #include "pawlib/base_flex_array.hpp"
 #include "pawlib/iochannel.hpp"
 
-template <typename type, bool factor_double = true>
-class FlexStack : public Base_FlexArr<type, factor_double>
+template <typename type, bool raw_copy = false, bool factor_double = true>
+class FlexStack : public Base_FlexArr<type, raw_copy, factor_double>
 {
     public:
-        FlexStack() : Base_FlexArr<type>() { }
+        FlexStack()
+        :Base_FlexArr<type, raw_copy, factor_double>()
+        {}
 
         // cppcheck-suppress noExplicitConstructor
         FlexStack(size_t numElements)
-        :Base_FlexArr<type>(numElements)
+        :Base_FlexArr<type, raw_copy, factor_double>(numElements)
         {}
 
         /** Add the specified element to the FlexStack.
-             * This is just an alias for push()
-             * \param the element to add.
-             * \return true if successful, else false.
-             */
-        bool push_back(type newElement)
+         * This is just an alias for push()
+         * \param the element to add.
+         * \return true if successful, else false.
+         */
+        bool push_back(type& newElement)
         {
-            return push(newElement);
+            return push(std::move(newElement));
         }
 
         /** Add the specified element to the FlexStack.
-             * \param the element to add.
-             * \return true if successful, else false.
-             */
-        bool push(type newElement)
+         * This is just an alias for push()
+         * \param the element to add.
+         * \return true if successful, else false.
+         */
+        bool push_back(type&& newElement)
+        {
+            return push(std::move(newElement));
+        }
+
+        /** Add the specified element to the FlexStack.
+         * \param the element to add.
+         * \return true if successful, else false.
+         */
+        bool push(type& newElement)
+        {
+            return push(std::move(newElement));
+        }
+
+        /** Add the specified element to the FlexStack.
+         * \param the element to add.
+         * \return true if successful, else false.
+         */
+        bool push(type&& newElement)
         {
             /* Use the deque tail insertion function.
-                * Use that function's error messages.
-                */
-            return this->insertAtTail(newElement, true);
+             * Use that function's error messages.
+             */
+            return this->insertAtTail(std::move(newElement), true);
         }
 
         /** Returns the next (last) element in the FlexStack without
-             * modifying the data structure.
-             * \return the next element in the FlexStack.
-             */
-        type peek()
+         * modifying the data structure.
+         * \return the next element in the FlexStack.
+         */
+        type& peek()
+        {
+            // If the stack is empty
+            if(this->isEmpty())
+            {
+                // Throw a fatal error.
+                throw std::out_of_range("FlexStack: Cannot peek() from empty FlexStack.");
+            }
+
+            return this->getFromTail();
+        }
+
+        const type& peek() const
         {
             // If the stack is empty
             if(this->isEmpty())
@@ -99,17 +133,17 @@ class FlexStack : public Base_FlexArr<type, factor_double>
         }
 
         /** Return and remove the next element in the FlexStack.
-             * This is just an alias for pop()
-             * \return the next (last) element, now removed.
-             */
+         * This is just an alias for pop()
+         * \return the next (last) element, now removed.
+         */
         type pop_back()
         {
             return pop();
         }
 
         /** Return and remove the next element in the FlexStack.
-             * \return the next (last) element, now removed.
-             */
+         * \return the next (last) element, now removed.
+         */
         type pop()
         {
             // If the stack is empty...

@@ -1,14 +1,15 @@
 /** Base FlexArray [PawLIB]
-  * Version: 1.1
+  * Version: 2.0
   *
   * The base class for a dynamic array with a low dynamic allocation demand.
   * FlexArray, FlexQueue, and FlexStack all rely on these.
   *
-  * Author(s): Jason C. McDonald, Michael Parkman, Jonathan Theodore
+  * Author(s): Jason C. McDonald, Michael Parkman,
+  *            Jonathan Theodore, Moshe Uminer
   */
 
 /* LICENSE (BSD-3-Clause)
- * Copyright (c) 2016-2019 MousePaw Media.
+ * Copyright (c) 2016-2020 MousePaw Media.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,12 +52,12 @@
 
 #include "pawlib/iochannel.hpp"
 
-template <typename type, bool factor_double = true>
+template <typename type, bool raw_copy = false, bool factor_double = true>
 class Base_FlexArr
 {
     public:
         /** Create a new base flex array, with the default starting size.
-             */
+         */
         Base_FlexArr()
         :internalArray(nullptr), internalArrayBound(nullptr),
             head(nullptr), tail(nullptr), resizable(true),
@@ -69,14 +70,43 @@ class Base_FlexArr
             resize(8);
         }
 
+        /** Create a new base flex array from another base flex array.
+         * Copies the contents of the source array.
+         * \param the source array
+         */
+        Base_FlexArr(const Base_FlexArr<type>& cpy)
+        :internalArray(nullptr), internalArrayBound(nullptr),
+         head(nullptr), tail(nullptr), resizable(cpy.resizable),
+         _elements(0), _capacity(0)
+        {
+            // Resize to the reserved size of the old array (handles _capacity)
+            resize(cpy._capacity);
+            // Copy elements over to the new memory (handles _elements)
+            copyForeignMemory(cpy);
+        }
+
+        /** Move the contents of a flex array.
+         * Moves (steals) the contents of the source array.
+         * \param the source array
+         */
+        Base_FlexArr(Base_FlexArr<type>&& mov)
+        :internalArray(std::move(mov.internalArray)),
+         internalArrayBound(mov.internalArrayBound),
+         head(mov.head), tail(mov.tail), resizable(mov.resizable),
+         _elements(mov._elements), _capacity(mov._capacity)
+        {
+            // Prevent double-free when source object is destroyed.
+            mov.internalArray = nullptr;
+        }
+
         /** Create a new base flex array with room for the specified number
-             * of elements.
-             * \param the number of elements the structure can hold.
-             */
+         * of elements.
+         * \param the number of elements the structure can hold.
+         */
         // cppcheck-suppress noExplicitConstructor
         Base_FlexArr(size_t numElements)
         :internalArray(nullptr), head(nullptr), tail(nullptr), resizable(true),
-            _elements(0), _capacity(0)
+         _elements(0), _capacity(0)
         {
             // Never allow instantiating with a capacity less than 2.
             if(numElements > 1)
@@ -100,18 +130,75 @@ class Base_FlexArr
             }
         }
 
+        Base_FlexArr<type>& operator=(const Base_FlexArr<type>& rhs)
+        {
+            // Don't copy from self.
+            if (&rhs == this) { return *(this); }
+
+            // Free original array
+            if(this->internalArray != nullptr)
+            {
+                delete[] this->internalArray;
+            }
+            this->internalArray = nullptr;
+            this->internalArrayBound = nullptr;
+            this->head = nullptr;
+            this->tail = nullptr;
+
+            // Redefine properties
+            this->resizable = rhs.resizable;
+
+            // Resize to the reserved size of the old array (handles _capacity)
+            resize(rhs._capacity);
+            // Copy elements over to the new memory (handles _elements)
+            copyForeignMemory(rhs);
+
+            return *(this);
+        }
+
+        Base_FlexArr<type>& operator=(Base_FlexArr&& rhs)
+        {
+            // Don't copy from self.
+            if (&rhs == this) { return *(this); }
+
+            // Free original array
+            if(this->internalArray != nullptr)
+            {
+                delete[] this->internalArray;
+            }
+
+            // Directly steal the contents of the source array.
+            this->internalArray = std::move(rhs.internalArray);
+            this->internalArrayBound = rhs.internalArrayBound;
+            this->head = rhs.head;
+            this->tail = rhs.tail;
+            this->resizable = rhs.resizable;
+            this->_elements = rhs._elements;
+            this->_capacity = rhs._capacity;
+
+            // Prevent double-free when source object is destroyed.
+            rhs.internalArray = nullptr;
+
+            return *(this);
+        }
+
         /** Access an element at a given index using the [] operator.
-             * For example, "internalArray[5]".
-             */
+         * For example, "internalArray[5]".
+         */
         type& operator[](size_t index)
         {
             return at(index);
         }
 
+        const type& operator[](size_t index) const
+        {
+            return at(index);
+        }
+
         /** Access an element at the given index.
-             * \param the index to access.
-             * \return the element at the given index.
-             */
+         * \param the index to access.
+         * \return the element at the given index.
+         */
         type& at(size_t index)
         {
             if(!validateIndex(index, false))
@@ -122,9 +209,14 @@ class Base_FlexArr
             return internalArray[toInternalIndex(index)];
         }
 
+        const type& at(size_t index) const
+        {
+            return at(index);
+        }
+
         /** Clear all the elements in the array.
-             * \return true if successful, else false
-             */
+         * \return true if successful, else false
+         */
         bool clear()
         {
             this->_elements = 0;
@@ -136,27 +228,27 @@ class Base_FlexArr
         /** Check if the data structure is empty.
              * \return true if empty, else false
              */
-        bool isEmpty()
+        bool isEmpty() const
         {
             return (_elements == 0);
         }
 
         /** Check to see if the data structure is full.
-             * \return true is full, else false
-             */
-        bool isFull()
+         * \return true is full, else false
+         */
+        bool isFull() const
         {
                 return (_capacity == _elements);
         }
 
         /** Erase the elements in the specified range.
-             * \param the first index in the range to remove
-             * \param the last index in the range to remove
-             */
+         * \param the first index in the range to remove
+         * \param the last index in the range to remove
+         */
         bool erase(size_t first, size_t last=0)
         {
             /* If no last index was specified, prepare to delete only
-                * the element 'first'. */
+            * the element 'first'. */
             if(last == 0)
             {
                 last = first;
@@ -189,26 +281,26 @@ class Base_FlexArr
         }
 
         /** Get the current number of elements in the structure.
-             * \return the number of elements
-             */
-        size_t length()
+         * \return the number of elements
+         */
+        size_t length() const
         {
             return _elements;
         }
 
         /** Get the maximum number of elements the structure can hold
-             * without resizing.
-             * \return the maximum number of elements
-             */
-        size_t capacity()
+         * without resizing.
+         * \return the maximum number of elements
+         */
+        size_t capacity() const
         {
             return _capacity;
         }
 
         /** Reserves room for the exact number of elements.
-             * \param the number of elements to reserve
-             * \return true if successful, else false
-             */
+         * \param the number of elements to reserve
+         * \return true if successful, else false
+         */
         bool reserve(size_t size)
         {
             return resize(size);
@@ -244,25 +336,30 @@ class Base_FlexArr
         size_t _elements;
 
         /** The maximum number of elements (capacity) that can be contained
-             * in the structure without resizing. (1-based) */
+         * in the structure without resizing. (1-based) */
         size_t _capacity;
 
         /** Directly access a value in the internal array.
-             * Does not check for bounds.
-             * \param the internal index to access
-             * \return the element at index
-             */
+         * Does not check for bounds.
+         * \param the internal index to access
+         * \return the element at index
+         */
         type& rawAt(size_t index)
         {
             return internalArray[toInternalIndex(index)];
         }
 
+        const type& rawAt(size_t index) const
+        {
+            return internalArray[toInternalIndex(index)];
+        }
+
         /** Validate the given index is in range
-             * \param the index to validate
-             * \param whether to show an error message on failure, default false
-             * \return true if index is in range, else false
-             */
-        inline bool validateIndex(size_t index, bool yell = false)
+         * \param the index to validate
+         * \param whether to show an error message on failure, default false
+         * \return true if index is in range, else false
+         */
+        inline bool validateIndex(size_t index, bool yell = false) const
         {
             /* If the index is greater than the number of elements
                 * in the array currently. */
@@ -283,10 +380,10 @@ class Base_FlexArr
         }
 
         /** Convert an index to an internal index.
-             * \param the (external) index to access
-             * \return the (internal) index
-             */
-        inline size_t toInternalIndex(size_t index)
+         * \param the (external) index to access
+         * \return the (internal) index
+         */
+        inline size_t toInternalIndex(size_t index) const
         {
             /* Get the internal index, by adding the external index
                 * to the head index, and then accounting for the
@@ -302,6 +399,11 @@ class Base_FlexArr
             return *(this->head);
         }
 
+        const type& getFromHead() const
+        {
+            return *(this->head);
+        }
+
         type& getFromTail()
         {
             if(this->tail == this->internalArray)
@@ -312,12 +414,22 @@ class Base_FlexArr
             return *(this->tail - 1);
         }
 
+        const type& getFromTail() const
+        {
+            if(this->tail == this->internalArray)
+            {
+                // We have to get the element at the end of the internalArray.
+                return *(this->internalArray + (this->_capacity - 1));
+            }
+            return *(this->tail - 1);
+        }
+
         /** Efficiently insert a value at the head of the array.
-             * \param the value to insert
-             * \param whether to show an error message on failure, default false
-             * \return true if successful, else false
-             */
-        bool insertAtHead(type value, bool yell = false)
+         * \param the value to insert
+         * \param whether to show an error message on failure, default false
+         * \return true if successful, else false
+         */
+        bool insertAtHead(type&& value, bool yell = false)
         {
             // Check capacity and attempt a resize if necessary.
             if(!checkSize(yell)) { return false; }
@@ -325,7 +437,7 @@ class Base_FlexArr
             shiftHeadBack();
 
             // Insert our value at the new head position.
-            *(this->head) = value;
+            *(this->head) = std::move(value);
 
             // Increment the number of current elements in the array.
             ++this->_elements;
@@ -335,16 +447,16 @@ class Base_FlexArr
 
 
         /** Efficiently insert a value at the tail of the array.
-             * \param the value to insert
-             * \param whether to show an error message on failure, default false
-             * return true if successful, else false
-             */
-        bool insertAtTail(type value, bool yell = false)
+         * \param the value to insert
+         * \param whether to show an error message on failure, default false
+         * return true if successful, else false
+         */
+        bool insertAtTail(type&& value, bool yell = false)
         {
             // Check capacity and attempt a resize if necessary.
             if(!checkSize(yell)) { return false; }
 
-            *(this->tail) = value;
+            *(this->tail) = std::move(value);
 
             shiftTailForward();
 
@@ -355,13 +467,13 @@ class Base_FlexArr
         }
 
         /** Insert a value at the given position in the array.
-             * Does NOT check index validity.
-             * \param the value to insert
-             * \param the index to insert the value at
-             * \param whether to show an error message on failure, default false
-             * \return true if successful, else false
-             */
-        bool insertAtIndex(type value, size_t index, bool yell = false)
+         * Does NOT check index validity.
+         * \param the value to insert
+         * \param the index to insert the value at
+         * \param whether to show an error message on failure, default false
+         * \return true if successful, else false
+         */
+        bool insertAtIndex(type&& value, size_t index, bool yell = false)
         {
             // Check capacity and attempt a resize if necessary.
             if(!checkSize(yell)) { return false; }
@@ -369,7 +481,7 @@ class Base_FlexArr
             // Shift the values to make room.
             memShift(index, 1);
             // Store the new value.
-            this->internalArray[toInternalIndex(index)] = value;
+            this->internalArray[toInternalIndex(index)] = std::move(value);
 
             // Leave the head/tail shifting to memShift!
 
@@ -380,9 +492,9 @@ class Base_FlexArr
         }
 
         /** Efficiently remove a value from the head.
-             * Does NOT check if the array is empty.
-             * \return true if successful, else false
-             */
+         * Does NOT check if the array is empty.
+         * \return true if successful, else false
+         */
         bool removeAtHead()
         {
             shiftHeadForward();
@@ -394,14 +506,14 @@ class Base_FlexArr
         }
 
         /** Efficiently remove a value from the tail.
-             * Does NOT check if the array is empty.
-             * \return true if successful, else false
-             */
+         * Does NOT check if the array is empty.
+         * \return true if successful, else false
+         */
         bool removeAtTail()
         {
             /* Move the tail position back, so the previous last value
-                * is now ignored.
-                */
+             * is now ignored.
+             */
 
             shiftTailBack();
 
@@ -412,11 +524,11 @@ class Base_FlexArr
         }
 
         /** Remove a value from the array.
-             * Does NOT check index validity.
-             * Does NOT check if the array is empty.
-             * \param the index to remove
-             * \return true if successful, else false
-             */
+         * Does NOT check index validity.
+         * Does NOT check if the array is empty.
+         * \param the index to remove
+         * \return true if successful, else false
+         */
         bool removeAtIndex(size_t index)
         {
             /* Decrement the number of elements we're storing.
@@ -441,9 +553,9 @@ class Base_FlexArr
         }
 
         /** Check if the array is full and attempt a resize if necessary.
-             * \param whether to show an error message on failure, default false
-             * \return true if resize successful or no resize necessary
-             */
+         * \param whether to show an error message on failure, default false
+         * \return true if resize successful or no resize necessary
+         */
         inline bool checkSize(bool yell = false)
         {
             // If we're full, attempt a resize.
@@ -467,11 +579,25 @@ class Base_FlexArr
             return true;
         }
 
+        /** Copy elements from another Flex-based data structure
+         * \param the source data structure
+         */
+        void copyForeignMemory(const Base_FlexArr<type>& cpy)
+        {
+            for (size_t i = 0; i < cpy._elements; ++i)
+            {
+                *(this->tail) = cpy.rawAt(i);
+                shiftTailForward();
+            }
+
+            this->_elements = cpy._elements;
+        }
+
         /** Double the capacity of the structure.
-             * \param the number of elements to reserve space for
-             * \param whether we're allowed to non-destructively shrink.
-             * \return true if it was able to double capacity, else false.
-             */
+         * \param the number of elements to reserve space for
+         * \param whether we're allowed to non-destructively shrink.
+         * \return true if it was able to double capacity, else false.
+         */
         bool resize(size_t reserve = 0, bool allow_shrink = false)
         {
             // If we're not allowed to resize, report failure.
@@ -534,25 +660,43 @@ class Base_FlexArr
             if(this->internalArray != nullptr)
             {
                 /* Transfer all of the elements over.
-                    * Since this is a circular buffer, we have to move things
-                    * so it has room for expansion. The fastest way to do this
-                    * is by storing the head element back at index 0.
-                    * To do this, we'll move everything in two parts:
-                    * (1) head to end of space, and (2) 0 to head-1.
-                    */
+                * Since this is a circular buffer, we have to move things
+                * so it has room for expansion. The fastest way to do this
+                * is by storing the head element back at index 0.
+                * To do this, we'll move everything in two parts:
+                * (1) head to end of space, and (2) 0 to head-1.
+                */
                 size_t headIndex = this->head - this->internalArray;
                 size_t step1 = oldCapacity - headIndex;
                 size_t step2 = headIndex;
-                memcpy(
-                    tempArray,
-                    this->head,
-                    sizeof(type) * step1
-                );
-                memcpy(
-                    tempArray + step1,
-                    this->internalArray,
-                    sizeof(type) * step2
-                );
+
+                if constexpr (raw_copy)
+                {
+                    memcpy(
+                        tempArray,
+                        this->head,
+                        sizeof(type) * step1
+                    );
+                    memcpy(
+                        tempArray + step1,
+                        this->internalArray,
+                        sizeof(type) * step2
+                    );
+                }
+                else
+                {
+                    size_t destIndex = 0;
+                    for (size_t i = headIndex; i < headIndex + step1; ++i)
+                    {
+                        tempArray[destIndex++] =
+                            std::move(this->internalArray[i]);
+                    }
+                    for (size_t i = 0; i < step2; ++i)
+                    {
+                        tempArray[destIndex++] =
+                            std::move(this->internalArray[i]);
+                    }
+                }
 
                 // Delete the old structure.
                 delete[] this->internalArray;
@@ -572,11 +716,11 @@ class Base_FlexArr
         }
 
         /** Shift all elements from the given position the given direction
-             * and distance. This is intended for internal use only, and does
-             * not check for memory errors.
-             * \param the index to shift elements from
-             * \param the direction and distance to shift the elements in.
-             */
+         * and distance. This is intended for internal use only, and does
+         * not check for memory errors.
+         * \param the index to shift elements from
+         * \param the direction and distance to shift the elements in.
+         */
         void memShift(size_t fromIndex, int8_t direction)
         {
             /* Check if the index was valid given the number of elements
@@ -594,16 +738,36 @@ class Base_FlexArr
             // If we haven't yet had wraparound, move the tail section.
             if(this->tail > this->head && this->tail < this->internalArrayBound)
             {
-                memmove(
-                    // Move TO the given index.
-                    this->head + fromIndex + direction,
-                    // Move FROM the given index.
-                    this->head + fromIndex,
-                    // Total move size is the number of elements to be moved,
-                    // times element size. The number of elements we move
-                    // is calculated from the 1-based total number of elements.
-                    sizeof(type) * (this->_elements - fromIndex)
-                );
+                if constexpr (raw_copy)
+                {
+                    memmove(
+                        // Move TO the given index.
+                        this->head + fromIndex + direction,
+                        // Move FROM the given index.
+                        this->head + fromIndex,
+                        // Total move size is the number of elements to be moved,
+                        // times element size. The number of elements we move
+                        // is calculated from the 1-based total number of elements.
+                        sizeof(type) * (this->_elements - fromIndex)
+                    );
+                }
+                else
+                {
+                    size_t headIndex = this->head - this->internalArray;
+                    size_t destIndex = headIndex + fromIndex + direction;
+                    size_t srcIndex = headIndex + fromIndex;
+                    size_t toMove = this->_elements - fromIndex;
+
+                    // We must move elements last to first to prevent overwrite.
+                    for (size_t i = toMove; i > 0; --i)
+                    {
+                        /* toMove is converted to zero-index here, so the
+                         * loop will break if toMove is 0 (undef behavior) */
+                        // MOVE elements instead of copying
+                        this->internalArray[destIndex + i - 1] =
+                            std::move(this->internalArray[srcIndex + i - 1]);
+                    }
+                }
 
                 shiftTail(direction);
             }
@@ -611,24 +775,64 @@ class Base_FlexArr
             else if(this->tail < this->head)
             {
                 /* There is an ironic side-effect here that, if we are
-                    * inserting at 0, we'll only move the head, and not
-                    * actually shift anything! (Weird, but it works.)
-                    */
-                memmove(
-                    // Move TO the given index.
-                    // Must invert direction for this to work right.
-                    this->head - direction,
-                    // Move FROM the given index.
-                    this->head,
-                    sizeof(type) * fromIndex
-                );
+                 * inserting at 0, we'll only move the head, and not
+                 * actually shift anything! (Weird, but it works.)
+                 */
+                if constexpr (raw_copy)
+                {
+                    memmove(
+                        // Move TO the given index.
+                        // Must invert direction for this to work right.
+                        this->head - direction,
+                        // Move FROM the given index.
+                        this->head,
+                        sizeof(type) * fromIndex
+                    );
+                }
+                else
+                {
+                    size_t headIndex = this->head - this->internalArray;
+                    size_t destIndex = headIndex - direction;
+                    size_t srcIndex = headIndex;
+                    size_t toMove = fromIndex;
+
+                    // We must move elements first-to-last to prevent overwrite.
+                    for (size_t i = 0; i < toMove; ++i)
+                    {
+                        // MOVE elements instead of copying
+                        this->internalArray[destIndex + i] =
+                            std::move(this->internalArray[srcIndex + i]);
+                    }
+                }
 
                 shiftHead(-direction);
             }
             else
             {
-                // NOTE: Test for this.
-                ioc << "weird edge case" << IOCtrl::endl;
+                ioc << "Flex: Impossible circular buffer arrangement."
+                    << IOCtrl::endl;
+
+                ioc << "Internal Array: " << IOFormatPtr::address
+                    << this->internalArray << IOCtrl::endl;
+
+                ioc << "Head: " << IOFormatPtr::address
+                    << this->head << IOCtrl::endl;
+
+                ioc << "Tail: " << IOFormatPtr::address
+                    << this->tail << IOCtrl::endl;
+
+                ioc << "Array Bound: " << IOFormatPtr::address
+                    << this->internalArrayBound << IOCtrl::endl;
+
+                ioc << "Capacity: " << IOFormatPtr::address
+                    << this->_capacity << IOCtrl::endl;
+
+                ioc << "Elements: " << IOFormatPtr::address
+                    << this->_elements << IOCtrl::endl;
+
+                throw std::runtime_error(
+                    "Flex: Impossible situation. Aborting!"
+                );
             }
         }
 

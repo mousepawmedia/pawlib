@@ -1056,6 +1056,88 @@ class TestFArray_Peek : public Test
 
 };
 
+// P-tB1009
+class TestFArray_Contained : public Test
+{
+    protected:
+        FlexArray<int> inner;
+        FlexArray<FlexArray<int>> outer;
+    public:
+        TestFArray_Contained(){}
+
+        testdoc_t get_title() override
+        {
+            return "FlexArray: Contained";
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "Ensure FlexArray handles its memory correctly when contained.";
+        }
+
+        bool run() override
+        {
+            PL_ASSERT_TRUE(outer.push(inner));
+            return true;
+        }
+};
+
+// P-tB1010
+class TestFArray_SharedPtr : public Test
+{
+    protected:
+        FlexArray<std::shared_ptr<int>> arr;
+    public:
+        TestFArray_SharedPtr(){}
+
+        testdoc_t get_title() override
+        {
+            return "FlexArray: Shared Ptr";
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "Ensure FlexArray works correctly with std::shared_ptr.";
+        }
+
+        bool run() override
+        {
+            for (size_t i = 0; i < 10; ++i)
+            {
+                PL_ASSERT_TRUE(arr.push(std::make_shared<int>(i)));
+            }
+            return true;
+        }
+};
+
+// P-tB1011
+class TestFArray_UniquePtr : public Test
+{
+    protected:
+        FlexArray<std::unique_ptr<int>> arr;
+    public:
+        TestFArray_UniquePtr(){}
+
+        testdoc_t get_title() override
+        {
+            return "FlexArray: Unique Ptr";
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "Ensure FlexArray works correctly with std::unique_ptr.";
+        }
+
+        bool run() override
+        {
+            for (size_t i = 0; i < 10; ++i)
+            {
+                PL_ASSERT_TRUE(arr.push_back(std::make_unique<int>(i)));
+            }
+            return true;
+        }
+};
+
 class TestSuite_FlexArray : public TestSuite
 {
     public:
