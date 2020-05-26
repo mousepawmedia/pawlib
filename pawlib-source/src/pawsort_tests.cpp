@@ -137,4 +137,68 @@ void TestSuite_Pawsort::load_tests()
 
     register_test("P-tB3048",
         new TestPawSortWrapperForVector(TestSort::TestArrayType::ARRAY_DOUBLE_MOUNTAIN), true);
+
+    register_test("P-tB3051",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_SORTED), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_SORTED));
+
+        register_test("P-tB3052",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_REVERSED), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_REVERSED));
+
+        register_test("P-tB3053",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_NEARLY_2), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_NEARLY_2));
+
+        register_test("P-tB3054",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_NEARLY_5), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_NEARLY_5));
+
+        register_test("P-tB3055",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_FEW_UNIQUE), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_FEW_UNIQUE));
+
+        register_test("P-tB3056",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_BLACK_SHEEP), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_BLACK_SHEEP));
+
+        register_test("P-tB3057",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_DOUBLE_CLIMB), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_DOUBLE_CLIMB));
+
+        register_test("P-tB3058",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_DOUBLE_DROP), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_DOUBLE_DROP));
+
+        register_test("P-tB3059",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_STAIRS), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_STAIRS));
+
+        register_test("P-tB3060",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_MOUNTAIN), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_MOUNTAIN));
+
+        register_test("P-tB3061",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_DOUBLE_MOUNTAIN), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_DOUBLE_MOUNTAIN));
+
+        register_test("P-tB3062",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_EVEREST), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_EVEREST));
+
+        register_test("P-tB3063",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_CLIFF), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_CLIFF));
+
+        register_test("P-tB3064",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_SPIKE), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_SPIKE));
+
+        register_test("P-tB3065",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_CHICKEN), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_CHICKEN));
+
+        register_test("P-tB3066",
+            new TestPawSortDPQS(TestSort::TestArrayType::ARRAY_NIGHTMARE), true,
+            new TestPawSort(TestSort::TestArrayType::ARRAY_NIGHTMARE));
 }
