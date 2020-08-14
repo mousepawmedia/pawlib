@@ -130,6 +130,33 @@ class pure_tril;
 class tril;
 class iochannel;
 
+template<typename T>
+T flags_and(const T& lhs, const T& rhs)
+{
+    return static_cast<T>
+        (static_cast<int>(lhs) & static_cast<int>(rhs));
+}
+
+template<typename T>
+T flags_or(const T& lhs, const T& rhs)
+{
+    return static_cast<T>
+        (static_cast<int>(lhs) | static_cast<int>(rhs));
+}
+
+template<typename T>
+T flags_xor(const T& lhs, const T& rhs)
+{
+    return static_cast<T>
+        (static_cast<int>(lhs) ^ static_cast<int>(rhs));
+}
+
+template<typename T>
+T flags_twiddle(const T& rhs)
+{
+    return static_cast<T>(~static_cast<int>(rhs));
+}
+
 /** The category of the message. */
 enum class IOCat
 {
@@ -148,6 +175,27 @@ enum class IOCat
     /// All message categories. Internal use only; no correlating signal.
     all = 31
 };
+
+inline IOCat operator&(const IOCat& lhs, const IOCat& rhs)
+{
+    return flags_and(lhs, rhs);
+}
+
+inline IOCat operator|(const IOCat& lhs, const IOCat& rhs)
+{
+    return flags_or(lhs, rhs);
+}
+
+inline IOCat operator^(const IOCat& lhs, const IOCat& rhs)
+{
+    return flags_xor(lhs, rhs);
+}
+
+inline IOCat operator~(const IOCat& lhs)
+{
+    return flags_twiddle(lhs);
+}
+
 
 /** Controls the output of the IOChannel. */
 enum class IOCtrl
@@ -169,6 +217,26 @@ enum class IOCtrl
     /// End with line feed (\n), clear formatting
     endl = 1 | 2 | 8 | 16,
 };
+
+inline IOCtrl operator&(const IOCtrl& lhs, const IOCtrl& rhs)
+{
+    return flags_and(lhs, rhs);
+}
+
+inline IOCtrl operator|(const IOCtrl& lhs, const IOCtrl& rhs)
+{
+    return flags_or(lhs, rhs);
+}
+
+inline IOCtrl operator^(const IOCtrl& lhs, const IOCtrl& rhs)
+{
+    return flags_xor(lhs, rhs);
+}
+
+inline IOCtrl operator~(const IOCtrl& lhs)
+{
+    return flags_twiddle(lhs);
+}
 
 /** Basic cursor movement. */
 enum class IOCursor
@@ -270,6 +338,26 @@ enum class IOFormatMemSep
     ///Output with spaces between bytes and bars between words.
     all = 3
 };
+
+inline IOFormatMemSep operator&(const IOFormatMemSep& lhs, const IOFormatMemSep& rhs)
+{
+    return flags_and(lhs, rhs);
+}
+
+inline IOFormatMemSep operator|(const IOFormatMemSep& lhs, const IOFormatMemSep& rhs)
+{
+    return flags_or(lhs, rhs);
+}
+
+inline IOFormatMemSep operator^(const IOFormatMemSep& lhs, const IOFormatMemSep& rhs)
+{
+    return flags_xor(lhs, rhs);
+}
+
+inline IOFormatMemSep operator~(const IOFormatMemSep& lhs)
+{
+    return flags_twiddle(lhs);
+}
 
 enum class IOFormatNumCase
 {
@@ -401,18 +489,6 @@ enum class IOVrb
     debugging, and driving the developers crazy.*/
     tmi = 3
 };
-
-template<typename T>
-T operator|(const T& lhs, const T& rhs);
-
-template<typename T>
-T operator&(const T& lhs, const T& rhs);
-
-template<typename T>
-T operator^(const T& lhs, const T& rhs);
-
-template<typename T>
-T operator~(const T& rhs);
 
 class IOFormat
 {

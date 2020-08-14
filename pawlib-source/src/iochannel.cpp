@@ -1,45 +1,6 @@
 #include "pawlib/iochannel.hpp"
 
-template<typename T>
-T operator&(const T& lhs, const T& rhs)
-{
-    return static_cast<T>
-        (static_cast<int>(lhs) & static_cast<int>(rhs));
-}
-template IOCat operator&<IOCat>(const IOCat&, const IOCat&);
-template IOCtrl operator&<IOCtrl>(const IOCtrl&, const IOCtrl&);
-template IOFormatMemSep operator&<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
-
-template<typename T>
-T operator|(const T& lhs, const T& rhs)
-{
-    return static_cast<T>
-        (static_cast<int>(lhs) | static_cast<int>(rhs));
-}
-template IOCat operator|<IOCat>(const IOCat&, const IOCat&);
-template IOCtrl operator|<IOCtrl>(const IOCtrl&, const IOCtrl&);
-template IOFormatMemSep operator|<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
-
-template<typename T>
-T operator^(const T& lhs, const T& rhs)
-{
-    return static_cast<T>
-        (static_cast<int>(lhs) ^ static_cast<int>(rhs));
-}
-template IOCat operator^<IOCat>(const IOCat&, const IOCat&);
-template IOCtrl operator^<IOCtrl>(const IOCtrl&, const IOCtrl&);
-template IOFormatMemSep operator^<IOFormatMemSep>(const IOFormatMemSep&, const IOFormatMemSep&);
-
-template<typename T>
-T operator~(const T& rhs)
-{
-    return static_cast<T>(~static_cast<int>(rhs));
-}
-template IOCat operator~<IOCat>(const IOCat&);
-template IOCtrl operator~<IOCtrl>(const IOCtrl&);
-template IOFormatMemSep operator~<IOFormatMemSep>(const IOFormatMemSep&);
-
-//Declaring global instance of ioc.
+//Declaring global instance of ic.
 iochannel ioc;
 
 iochannel::iochannel()
