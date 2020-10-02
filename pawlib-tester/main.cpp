@@ -50,7 +50,7 @@
 #include "pawlib/flex_bit_tests.hpp"
 #include "pawlib/flex_queue_tests.hpp"
 #include "pawlib/flex_stack_tests.hpp"
-#include "pawlib/pawsort_tests.hpp"
+//#include "pawlib/pawsort_tests.hpp"
 #include "pawlib/onestring_tests.hpp"
 #include "pawlib/onechar_tests.hpp"
 #include "pawlib/pool_tests.hpp"
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
     shell->register_suite<TestSuite_FlexStack>("P-sB13");
     shell->register_suite<TestSuite_FlexBit>("P-sB15");
     shell->register_suite<TestSuite_Pool>("P-sB16");
-    shell->register_suite<TestSuite_Pawsort>("P-sB30");
+    //shell->register_suite<TestSuite_Pawsort>("P-sB30");
     shell->register_suite<TestSuite_Onestring>("P-sB40");
     shell->register_suite<TestSuite_Onechar>("P-sB41");
 

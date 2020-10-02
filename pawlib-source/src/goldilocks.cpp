@@ -1182,7 +1182,7 @@ bool TestManager::run_compare(Test* test1, Test* test2, unsigned int repeat,
 void TestManager::resultFromArray(BenchmarkResult& result, uint64_t arr[], int repeat)
 {
     // Sort the array.
-    pawsort::introsort(arr, repeat);
+    std::sort(arr, arr + repeat);
 
     // Store the repetition count.
     result.repeat = repeat;

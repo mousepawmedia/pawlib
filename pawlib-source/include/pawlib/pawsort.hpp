@@ -48,9 +48,8 @@
 #include <cmath>
 #include <iterator>
 
-class pawsort
+namespace pawsort
 {
-public:
     /** An implementation of the selection sort algorithm.
      * Seriously, why would you even want to use this?
      * Consider `insertion_sort` instead.
@@ -58,6 +57,18 @@ public:
      * \param the array to sort
      * \param the length of the array
      */
+
+    /** Swaps two params.
+     *
+     * \param First element.
+     * \param Second element.
+     */
+    template<typename T> inline static void swap(T& a, T& b)
+    {
+        a ^= b;
+        b ^= a;
+        a ^= b;
+    }
 
     template<typename T> static void selection_sort(T arr[], int len)
     {
@@ -302,7 +313,6 @@ public:
         dual_pivot_quick_sort(arr + left, arr + right);
     }
 
-private:
     /** pair insertion sort algorithm with iterators.
      *
      * \param the first element to sort
@@ -822,18 +832,6 @@ private:
         introsort_loop(first, last, comp, maxdepth);
     }
 
-    /** Swaps two params.
-     *
-     * \param First element.
-     * \param Second element.
-     */
-    template<typename T> inline static void swap(T& a, T& b)
-    {
-        a ^= b;
-        b ^= a;
-        a ^= b;
-    }
-
     /** A component of heap sort. Should only be called from within
      * `heap_sort()`, so use that function to sort an array using
      * the heap sort algorithm.
@@ -879,6 +877,6 @@ private:
             }
         }
     }
-};
+}
 
 #endif // PAWLIB_PAWSORT_HPP

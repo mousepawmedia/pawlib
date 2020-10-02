@@ -160,8 +160,8 @@ add_library(${TARGET_NAME} STATIC
     include/pawlib/onechar_tests.hpp
     include/pawlib/onestring.hpp
     include/pawlib/onestring_tests.hpp
-    include/pawlib/pawsort.hpp
-    include/pawlib/pawsort_tests.hpp
+    #include/pawlib/pawsort.hpp
+    #include/pawlib/pawsort_tests.hpp
     include/pawlib/pool.hpp
     include/pawlib/pool_tests.hpp
     include/pawlib/rigid_stack.hpp
@@ -181,7 +181,7 @@ add_library(${TARGET_NAME} STATIC
     src/onechar_tests.cpp
     src/onestring.cpp
     src/onestring_tests.cpp
-    src/pawsort_tests.cpp
+    #src/pawsort_tests.cpp
     src/pool_tests.cpp
     src/stdutils.cpp
 
