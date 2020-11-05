@@ -3019,6 +3019,95 @@ class TestOnestring_ForceResizeStress : public Test
         }
 };
 
+
+// P-tB4040
+class TestOnestring_OpPlus : public TestOnestring
+{
+    protected:
+        onestring start = "TEST";
+        onestring test = "TEST";
+
+    public:
+        explicit TestOnestring_OpPlus(TestStringType type)
+        :TestOnestring(type)
+        {}
+
+        testdoc_t get_title() override
+        {
+            return "Onestring: Plus (+) " + title;
+        }
+
+        testdoc_t get_docs() override
+        {
+            return "Test appending to a onestring with the + operator.";
+        }
+
+        bool janitor() override {
+            test = start;
+            return (test == start);
+        }
+
+        bool run() override {
+            switch(stringType)
+            {
+                case TestStringType::CHAR:
+                {
+                    char ch = '!';
+                    test = test + ch;
+                    PL_ASSERT_EQUAL(test, "TEST!");
+                    return true;
+                }
+                case TestStringType::CSTR_ASCII:
+                {
+                    std::string str = "!!!";
+                    test  = test + str.c_str();
+                    PL_ASSERT_EQUAL(test, "TEST!!!");
+                    return true;
+                }
+                case TestStringType::CSTR_UNICODE:
+                {
+                    std::string str = "‽‽‽";
+                    test = test + str.c_str();
+                    PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+                    return true;
+                }
+                case TestStringType::STR_ASCII:
+                {
+                    std::string str = "!!!";
+                    test = test + str;
+                    PL_ASSERT_EQUAL(test, "TEST!!!");
+                    return true;
+                }
+                case TestStringType::STR_UNICODE:
+                {
+                    std::string str = "‽‽‽";
+                    test = test + str;
+                    PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+                    return true;
+                }
+                case TestStringType::OSTR_ASCII:
+                {
+                    onestring ostr = "!!!";
+                    test = test + ostr;
+                    PL_ASSERT_EQUAL(test, "TEST!!!");
+                    return true;
+                }
+                case TestStringType::OSTR_UNICODE:
+                {
+                    onestring ostr = "‽‽‽";
+                    test = test + ostr;
+                    PL_ASSERT_EQUAL(test, "TEST‽‽‽");
+                    return true;
+                }
+                default:
+                {
+                    // Can't reach
+                    return false;
+                }
+            }
+        }
+};
+
 class TestSuite_Onestring : public TestSuite
 {
     public:

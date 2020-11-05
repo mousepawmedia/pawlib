@@ -609,13 +609,38 @@ class onestring
         onestring& operator=(const onechar& ochr) { assign(ochr); return *this; }
         onestring& operator=(const char* cstr) { assign(cstr); return *this; }
         onestring& operator=(const std::string& str) { assign(str); return *this; }
-        onestring& operator=(onestring& ostr) { assign(ostr); return *this; }
+        onestring& operator=(const onestring& ostr) { assign(ostr); return *this; }
 
         void operator+=(const char ch) { append(ch); }
         void operator+=(const onechar& ochr) { append(ochr); }
         void operator+=(const char* cstr) { append(cstr); }
         void operator+=(const std::string& str) { append(str); }
         void operator+=(const onestring& ostr) { append(ostr); }
+
+     /** Combines a onestring and a char.
+      * \param lhs: the operand on the left of the operator 
+      * \param rhs: the operand on the right of the operator
+      * \return a new onestring object
+      */
+        friend onestring operator+(const onestring& lhs, const char& rhs);
+     
+     // Combines a onestring and a char.
+        friend onestring operator+(const char& lhs, const onestring& rhs);
+     
+     // Combine a onestring and a std::string.
+        friend onestring operator+(const onestring& lhs, const std::string& rhs);
+     
+     // Combine a onestring and a std::string.
+        friend onestring operator+(const std::string& lhs, const onestring& rhs);
+     
+     // Combine a onestring and a c string.
+        friend onestring operator+(const onestring& lhs, const char* rhs);
+     
+     // Combine a onestring and a c string.
+        friend onestring operator+(const char* lhs, const onestring& rhs);
+
+     // Combine a onestring and a onestring.
+        friend onestring operator+(const onestring& lhs, const onestring& rhs);
 
         bool operator==(const char ch) const { return equals(ch); }
         bool operator==(const onechar& ochr) const { return equals(ochr); }
@@ -703,5 +728,7 @@ class onestring
             return os;
         }
 };
+
+
 
 #endif // PAWLIB_ONESTRING_HPP

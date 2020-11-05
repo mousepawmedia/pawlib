@@ -158,6 +158,14 @@ void TestSuite_Onestring::load_tests()
     register_test("P-tB4034", new TestOnestring_ForceResize());
     register_test("P-tS4034", new TestOnestring_ForceResizeStress(), false);
 
+    register_test("P-tB4040a", new TestOnestring_OpPlus(TestOnestring::TestStringType::CHAR));
+    register_test("P-tB4040b", new TestOnestring_OpPlus(TestOnestring::TestStringType::CSTR_ASCII));
+    register_test("P-tB4040c", new TestOnestring_OpPlus(TestOnestring::TestStringType::CSTR_UNICODE));
+    register_test("P-tB4040d", new TestOnestring_OpPlus(TestOnestring::TestStringType::STR_ASCII));
+    register_test("P-tB4040e", new TestOnestring_OpPlus(TestOnestring::TestStringType::STR_UNICODE));
+    register_test("P-tB4040f", new TestOnestring_OpPlus(TestOnestring::TestStringType::OSTR_ASCII));
+    register_test("P-tB4040g", new TestOnestring_OpPlus(TestOnestring::TestStringType::OSTR_UNICODE));
+
     // tB4035: find
     // tB4036: find_first_not_of
     // tB4037: find_first_of

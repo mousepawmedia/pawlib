@@ -984,3 +984,64 @@ void onestring::swap(onestring& ostr)
     ostr.assign(*this);
     this->assign(temp);
 }
+
+/** Combine a onestring and a char.
+  * \param lhs: the operand on the left of the operator
+  * \param rhs: the operand on the right of the operator
+  * \return a new onestring object
+  */
+
+onestring operator+(const onestring& lhs, const char& rhs)
+{
+    onestring new_ostr(lhs);
+    new_ostr.append(rhs);
+    return new_ostr;
+}
+
+//Combines a char and a onestring
+onestring operator+(const char& lhs, const onestring& rhs)
+{
+    onestring new_ostr(lhs);
+    new_ostr.append(rhs);
+    return new_ostr;
+}
+
+//Combines a onestring and a std::string
+onestring operator+(const onestring& lhs, const std::string& rhs)
+{
+    onestring new_ostr(lhs);
+    new_ostr.append(rhs);
+    return new_ostr;
+}
+
+//Combines a std::string and a onestring
+onestring operator+(const std::string& lhs, const onestring& rhs)
+{
+    onestring new_ostr(lhs);
+    new_ostr.append(rhs);
+    return new_ostr;
+}
+
+//Combines a onestring and a cstr
+onestring operator+(const onestring& lhs, const char* rhs)
+{
+    onestring new_ostr(lhs);
+    new_ostr.append(rhs);
+    return new_ostr;
+}
+
+//Combines a cstr and a onestring
+onestring operator+(const char* lhs, const onestring& rhs)
+{
+    onestring new_ostr(lhs);
+    new_ostr.append(rhs);
+    return new_ostr;
+}
+
+//Combines a onestring and a onestring
+onestring operator+(const onestring& lhs, const onestring& rhs)
+{
+    onestring new_ostr(lhs);
+    new_ostr.append(rhs);
+    return new_ostr;
+}
