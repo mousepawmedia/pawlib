@@ -211,7 +211,12 @@ class Base_FlexArr
 
         const type& at(size_t index) const
         {
-            return at(index);
+            if(!validateIndex(index, false))
+            {
+                throw std::out_of_range("BaseFlexArray: Index out of range!");
+            }
+
+            return internalArray[toInternalIndex(index)];
         }
 
         /** Clear all the elements in the array.
