@@ -141,6 +141,16 @@ int GoldilocksShell::command(int argc_s, char* argv[], unsigned int skip)
             // If run item succeeds, set the return code to 0, else 1 (error).
             r = this->testmanager->run(tokens[++i]) ? 0 : 1;
         }
+        // If runall flag is provided...
+        else if(tokens[i] == "--runall")
+        {
+            // Load all the suites first.
+            this->testmanager->load_suite();
+            loaded = true;
+
+            // If run item succeeds, set the return code to 0, else 1 (error).
+            r = this->testmanager->runall() ? 0 : 1;
+        }
         // If benchmark flag and subsequent argument are provided...
         else if(tokens[i] == "--benchmark")
         {

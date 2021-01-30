@@ -444,6 +444,19 @@ bool TestManager::run(testname_t item, unsigned int number)
     return false;
 }
 
+bool TestManager::runall()
+{
+    /* Loop through all the indexes in the map `suites`...
+     * SOURCE: http://stackoverflow.com/a/110255/472647
+     */
+    for(std::map<testsuitename_t, testsuiteptr_t>::iterator it = suites.begin(); it != suites.end(); ++it)
+    {
+        // Run each suite.
+        run_suite(it->first);
+    }
+    return true;
+}
+
 bool TestManager::run_suite(testsuitename_t suite)
 {
     /* ENTRY: Run a suite of tests.*/

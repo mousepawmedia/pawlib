@@ -296,6 +296,10 @@ public:
          * \return true if the item ran successfully, else false */
     bool run(testname_t, unsigned int = 1);
 
+    /** Run all tests.
+     * \return true if the items ran successfully, else false */
+    bool runall();
+
     /**Run a test by name.
      * \param the name of the test to run
      * \param the number of times to repeat the test
