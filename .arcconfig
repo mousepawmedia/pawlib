@@ -1,7 +1,11 @@
 {
-	"phabricator.uri" : "https://phabricator.mousepawmedia.net",
+	"phabricator.uri" : "https://phab.mousepawmedia.com",
 	"repository.callsign" : "P",
 	"load" : [
-		".arclibs/cppcheck"
-	]
+		".arclibs/cppcheck",
+		".arclibs/clang-format-linter"
+	],
+	"phutil_libraries": [
+   		 ".arclib"
+        ]
 }

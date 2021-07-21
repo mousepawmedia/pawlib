@@ -1,0 +1,3 @@
+[submodule ".arclibs/clang-format-linter"]
+	path = .arclibs/clang-format-linter
+	url = https://github.com/vhbit/clang-format-linter.git

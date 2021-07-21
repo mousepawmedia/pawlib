@@ -23,3 +23,8 @@ pawlib.project
 .DS_Store
 *.kdev4
 .vscode/ipch
+opus/Makefile
+opus/config.log
+opus/config.status
+opus/doc/Makefile
+opus/libtool

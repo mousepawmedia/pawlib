@@ -1,5 +1,9 @@
 {
     "linters": {
+        "clang-format": {
+            "type": "clang-format",
+            "include": "(\\.(hpp|cpp)$)"
+        },
         "cpp": {
             "type": "cppcheck",
             "include": "(\\.cpp$)"
